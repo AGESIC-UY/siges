@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmNoticiaPopup">
+
+        <ice:panelPopup  autoCentre="true" modal="true"  draggable="true"   rendered="#{noticiaMB.renderPopupHistorial}">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hNoticia} "/>
+                    <ice:commandButton styleClass="botonCerrar"    action="#{noticiaMB.cerrarPopupHistorial()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid width="100%">
+
+                    <ace:dataTable value="#{noticiaMB.listaHitorial}" var="row"
+                                   paginator="true" pageCount="5" rows="#{aplicacionMB.filasHistorial}">
+                        <ace:column headerText="#{labels.hVersion}">
+                            <ice:outputText value="#{row.notVersion}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hCodigo}">
+                            <ice:outputText value="#{row.notCodigo}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hDescripcion}">
+                            <ice:outputText value="#{row.notDescripcion}"/>
+                        </ace:column>
+
+
+                        <ace:column headerText="#{labels.hUltMod}">
+                            <ice:outputText value="#{row.notUltModFecha}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltUsuario}">
+                            <ice:outputText value="#{row.notUltModUsu}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+
+        <ice:panelPopup rendered="#{noticiaMB.renderPopupEdicion}" autoCentre="true" modal="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.noticia}"/>
+                    <ice:commandButton styleClass="botonCerrar"     action="#{noticiaMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid>
+                    <ace:messages />
+                    <ice:panelGrid columns="2" rowClasses="fila0,fila1">
+                        <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
+                        <ice:panelGrid columns="3">
+                            <ace:textEntry value="#{noticiaMB.notEnEdicion.notCodigo}"/>
+
+                            <ice:outputLabel value="#{labels.titulo}"  styleClass="obligatorio"/>
+                            <ace:textEntry value="#{noticiaMB.notEnEdicion.notTitulo}"/>
+                        </ice:panelGrid>
+                        <ice:outputLabel value="#{labels.texto}"  styleClass="obligatorio"/>
+                        <ace:richTextEntry value="#{noticiaMB.notEnEdicion.notContenido}" height="50px" toolbar="Basic" saveOnSubmit="true"/>
+
+                        <ice:outputLabel value="#{labels.ampliar}"  styleClass="obligatorio"/>
+                        <ace:textEntry value="#{noticiaMB.notEnEdicion.notAmpliar}"/>
+                        <ice:outputLabel value="#{labels.desde}"  styleClass="obligatorio"/>
+                        <ice:panelGrid columns="3">
+                            <ace:dateTimeEntry  value="#{noticiaMB.notEnEdicion.notDesde}" renderAsPopup="true"
+                                               pattern="#{aplicacionMB.patronFechas}" timeZone="#{aplicacionMB.timeZone}"
+                                       showOn="both" styleClass="fecha"
+                                       locale="#{aplicacionMB.locale}" navigator="true" />
+                            <ice:outputLabel value="#{labels.hasta}"  styleClass="obligatorio"/>
+                            <ace:dateTimeEntry    value="#{noticiaMB.notEnEdicion.notHasta}" renderAsPopup="true"
+                                               pattern="#{aplicacionMB.patronFechas}" timeZone="#{aplicacionMB.timeZone}"
+                                       showOn="both" styleClass="fecha"
+                                       locale="#{aplicacionMB.locale}" navigator="true" />
+                        </ice:panelGrid>
+                        <ice:panelGrid/>
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:pushButton value="#{labels.guardar}" action="#{noticiaMB.guardar}" styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cancelar}" action="#{noticiaMB.cancelar()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+    </ice:form>
+
+
+
+
+</ui:composition>

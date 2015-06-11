@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <style>
+        .ui-footer-column{
+            background-color: white !important;
+        }
+    </style>
+    <ice:panelGroup id="panelRiesgos" 
+                    style="#{fichaMB.selectedMostrar == 2 ? 'width: 100%; padding-right:25px' : ''}" 
+                    styleClass="col-sm-6 cuadro" 
+                    rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 2) and fichaMB.fieldRendered('panelRiesgos')}">
+        <ice:panelGroup id="cabezalRiesgos" styleClass="cabezal">
+            <ice:outputText value="#{labels.riesgos}"/>
+            <ace:pushButton value="" action="#{fichaMB.miMostrar(2)}"
+                            styleClass="#{fichaMB.selectedMostrar == 2 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
+        </ice:panelGroup>
+
+        <!--El panel con el resumen de Riesgos -->
+        <ice:panelGroup id="resumenRiesgos" rendered="#{not fichaMB.mostrar[2]}" styleClass="cuerpo">
+            <ice:panelGroup styleClass="exposicionRiesgo" 
+                            rendered="#{fichaMB.exposicionRiesgo != null}">
+                <ice:outputLabel value="#{labels.exposicionRiesgo}:"/>
+                <ice:outputText value="#{fichaMB.exposicionRiesgo}" converter="decimalFormatConverter"/>
+                <ice:commandButton style="background-color: #{fichaMB.exposicionRiesgoColor}"
+                                   styleClass="botonSemaforo"
+                                   disabled="true"/>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="actualizacionRiesgo" 
+                            rendered="#{fichaMB.riesgoActualizacion != null or fichaMB.riesgoActualizacion == ''}">
+                <ice:outputLabel value="#{labels.actualizacionRiesgo}:"/>
+                <ice:outputText value="#{fichaMB.riesgoActualizacion}" converter="fechaConverter"/>
+                <ice:commandButton style="background-color: #{fichaMB.riesgoActualizacionColor}"
+                                   styleClass="botonSemaforo"
+                                   disabled="true"/>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="actualizacionRiesgo" 
+                            rendered="#{(fichaMB.riesgosCantAltos != null or fichaMB.riesgosCantAltos >= 0) and fichaMB.exposicionRiesgo != null}">
+                <ice:outputLabel value="#{labels.cantAltosRiesgo}:"/>
+                <ice:outputText value="#{fichaMB.riesgosCantAltos}"/>
+            </ice:panelGroup>
+
+            <ace:dataTable id="riesgosTable"
+                           value="#{fichaMB.listaRiesgosResumen}"
+                           styleClass="tablaFicha"
+                           var="riesgo"
+                           rendered="#{not empty fichaMB.listaRiesgosResumen}"
+                           paginator="true"
+                           paginatorPosition="bottom"
+                           rows="10">
+                <ace:column id="id_r" headerText="#{labels.resumen_top_riesgo}">
+                    <c:set var="largo" value="#{fn:length(riesgo.riskNombre)}" />
+                    <c:set var="riskNombre" value="#{fn:substring(riesgo.riskNombre, 0, 25)}#{largo > 25 ? '...' : ''}" />
+                    <h:outputText value="#{riesgo.exposicion}" 
+                                  style="font-weight: bold; color: #{riesgo.exposicionColor};"
+                                  converter="decimalFormatConverter"/>
+                    <h:outputText value=" - #{riskNombre}"
+                                  title="#{riesgo.exposicion} - #{riesgo.riskNombre}"/>
+                </ace:column>
+            </ace:dataTable>
+
+            <ice:panelGroup rendered="#{empty fichaMB.listaRiesgosResumen}">
+                <ice:outputText value="#{labels.msg_sin_riegos}" />
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{fichaMB.mostrar[2]}" styleClass="cuerpo">
+
+            <!-- Formulario de alta -->
+            <ice:panelGroup id="riesgosForm">
+                <ice:panelCollapsible expanded="#{fichaMB.riskFormDataExpanded}" >
+                    <f:facet name="header">
+                        <h:panelGrid columns="1">
+                            <h:commandButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
+                                             rendered="#{!fichaMB.riskFormDataExpanded and fichaMB.fieldRendered('agregarRiesgo')}"
+                                             styleClass="boton principal #{fichaMB.riesgo.riskPk ne null ? 'editar' : 'agregar'}" />
+                        </h:panelGrid>
+                    </f:facet>
+
+                    <ice:panelGroup id="riesgosFormData">
+                        <ice:panelGrid  styleClass="formulario " columns="4">
+                            <ice:outputLabel value="#{labels['riesgo.nombre']}"/>
+                            <ace:textEntry value="#{fichaMB.riesgo.riskNombre}" />
+
+                            <ice:outputLabel value="#{labels['riesgo.fechaLimite']}"/>
+                            <ace:dateTimeEntry value="#{fichaMB.riesgo.riskFechaLimite}"
+                                               pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                               timeZone="#{inicioMB.calendarTimeZone}"/>
+
+                            <ice:outputLabel value="#{labels['riesgo.probabilidad']}"/>
+                            <ace:simpleSelectOneMenu id="comboProbabilidad"
+                                                     value="#{fichaMB.listaRiskProbabilidadCombo.selected}">
+                                <f:selectItems value="#{fichaMB.listaRiskProbabilidadCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+
+                            <ice:outputLabel value="#{labels['riesgo.impacto']}"/>
+                            <ace:simpleSelectOneMenu id="comboImpacto"
+                                                     value="#{fichaMB.listaRiskImpactoCombo.selected}">
+                                <f:selectItems value="#{fichaMB.listaRiskImpactoCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+
+                            <ice:outputLabel value="#{labels['riesgo.efecto']}"/>
+                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskEfecto}" />
+
+                            <ice:outputLabel value="#{labels['riesgo.estrategia']}"/>
+                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskEstrategia}" />
+
+                            <ice:outputLabel value="#{labels['riesgo.disparador']}"/>
+                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskDisparador}" />
+
+                            <ice:outputLabel value="#{labels['riesgo.contingencia']}"/>
+                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskContingencia}" />
+                        </ice:panelGrid>
+                    </ice:panelGroup> 
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="riesgosMsg"/>
+                        <ace:pushButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
+                                        styleClass="boton principal" 
+                                        action="#{fichaMB.agregarRiesgoAction()}"/>
+                        <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" 
+                                         action="#{fichaMB.limpiarRiesgo()}"/>
+                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                         action="#{fichaMB.cerrarFormCollapsable()}"/>
+                    </ice:panelGroup>
+                </ice:panelCollapsible>
+            </ice:panelGroup>
+
+            <ice:panelGroup id="tablaLimiteGestionRiesgoResume" styleClass="impacoYriesgo">
+                <ice:panelGroup id="tablaLimiteGestionRiesgo" styleClass="impacto">
+                    <c:set var="styleNo0" value="font-weight: bold; color: black;" />
+                    <ace:dataTable id="tblConfRiesgo" 
+                                   value="#{fichaMB.limiteGestionRiesgos}" 
+                                   var="risk"
+                                   paginator="true" 
+                                   pageCount="5" 
+                                   rows="#{configuracionMB.cantElementosPorPagina}">
+                        <ace:column styleClass="columnaImpacto">
+                            <h:outputText value="#{risk.impacto}"/>
+                        </ace:column>
+                        <ace:column footerText="20%" style="background-color: #{configuracionMB.riesgoColor(risk.val1)}">
+                            <h:outputText value="#{risk.cant1}" style="#{risk.cant1 gt 0 ? styleNo0 : ''}"/>
+                        </ace:column>
+                        <ace:column footerText="40%" style="background-color: #{configuracionMB.riesgoColor(risk.val2)}" >
+                            <h:outputText value="#{risk.cant2}" style="#{risk.cant2 gt 0 ? styleNo0 : ''}"/>
+                        </ace:column>
+                        <ace:column footerText="60%" style="background-color: #{configuracionMB.riesgoColor(risk.val3)}">
+                            <h:outputText value="#{risk.cant3}" style="#{risk.cant3 gt 0 ? styleNo0 : ''}"/>
+                        </ace:column>
+                        <ace:column footerText="80%" style="background-color: #{configuracionMB.riesgoColor(risk.val4)}" >
+                            <h:outputText value="#{risk.cant4}" style="#{risk.cant4 gt 0 ? styleNo0 : ''}"/>
+                        </ace:column>
+                        <ace:column footerText="100%"  style="background-color: #{configuracionMB.riesgoColor(risk.val5)}">
+                            <h:outputText value="#{risk.cant5}" style="#{risk.cant5 gt 0 ? styleNo0 : ''}"
+                                          styleClass="filaProbabilidad"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="resumenFrameRiesgo">
+
+                    <ice:panelGroup styleClass="exposicionRiesgo" 
+                                    rendered="#{fichaMB.exposicionRiesgo != null}">
+                        <ice:outputLabel value="#{labels.exposicionRiesgo}"/>
+                        <ice:outputText value="#{fichaMB.exposicionRiesgo}" converter="decimalFormatConverter"/>
+                        <ice:commandButton style="background-color: #{fichaMB.exposicionRiesgoColor}"
+                                           styleClass="botonSemaforo"
+                                           disabled="true"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="actualizacionRiesgo" 
+                                    rendered="#{fichaMB.riesgoActualizacion != null || fichaMB.riesgoActualizacion == ''}">
+                        <ice:outputLabel value="#{labels.actualizacionRiesgo}"/>
+                        <ice:outputText value="#{fichaMB.riesgoActualizacion}" converter="fechaConverter"/>
+                        <ice:commandButton style="background-color: #{fichaMB.riesgoActualizacionColor}"
+                                           styleClass="botonSemaforo"
+                                           disabled="true"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="actualizacionRiesgo" 
+                                    rendered="#{fichaMB.riesgosCantAltos != null || fichaMB.riesgosCantAltos == ''}">
+                        <ice:outputLabel value="#{labels.cantAltosRiesgo}:"/>
+                        <ice:outputText value="#{fichaMB.riesgosCantAltos}"/>
+                    </ice:panelGroup>
+
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <!-- Lista de Riegos-->
+            <ice:panelGroup id="riesgosList" styleClass="resultado recuadro">
+                <ice:panelGrid rendered="#{not empty fichaMB.fichaTO.riesgos}" width="100%" >
+                    <ice:panelGroup styleClass="funcionalidadesResultado">
+                        <ace:dataExporter target="tblResultadosRiegos" 
+                                          label="Exportar a Planilla Electrónica" 
+                                          type="xls" fileName="Riesgos_Exportacion"
+                                          includeHeaders="true" />
+                    </ice:panelGroup>
+                    <ace:dataTable  id="tblResultadosRiegos"  value="#{fichaMB.fichaTO.riesgos}" var="risk"
+                                    paginator="true" pageCount="5" 
+                                    rows="#{configuracionMB.cantElementosPorPagina}">
+
+                        <c:set var="styleRisk" value="#{risk.riskSuperado ?'riesgoSuperado':''}"/>
+                        <ace:column headerText="" >
+                            <h:outputText  styleClass="#{styleRisk}" 
+                                           value="#{risk.riskPk != null ?  risk.riskPk : ''}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels['riesgo.nombre']}" >
+                            <h:outputText   styleClass="#{styleRisk}" 
+                                            value="#{risk.riskNombre != null ?  risk.riskNombre : ''}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels['riesgo.fechaAct']}">
+                            <h:outputText   styleClass="#{styleRisk}" 
+                                            value="#{risk.riskFechaActualizacion != null ?  risk.riskFechaActualizacion : ''}" 
+                                            converter="fechaConverter"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels['riesgo.probabilidad']}">
+                            <h:outputText   styleClass="#{styleRisk}" 
+                                            value="#{risk.riskProbabilidad != null ?  risk.riskProbabilidadStr : ''}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels['riesgo.impacto']}">
+                            <h:outputText   styleClass="#{styleRisk}" 
+                                            value="#{risk.riskImpacto != null ?  risk.riskImpacto : ''}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels['riesgo.exposicion']}">
+                            <h:outputText styleClass="#{styleRisk}" 
+                                          value="#{risk.exposicion != null ?  risk.exposicion : ''}" 
+                                          style="#{!risk.riskSuperado ? 'font-weight: bold;' : ''};color: #{!risk.riskSuperado ? risk.exposicionColor : ''};"
+                                          converter="decimalFormatConverter"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels['riesgo.fechaLimite']}">
+                            <h:outputText style="#{!risk.riskSuperado ? 'font-weight: bold;' : ''};color: #{!risk.riskSuperado ? risk.fechaLimiteColor : ''};"
+                                          styleClass="#{styleRisk}" 
+                                          value="#{risk.riskFechaLimite != null ?  risk.riskFechaLimite : ''}" 
+                                          converter="fechaConverter"/>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton">
+                            <ace:tooltip id="tooltipVer" for="btnVerRiesgos">
+                                <ice:outputText value="#{labels.riesgoVer}" />
+                            </ace:tooltip>
+                            <ace:pushButton id="btnVerRiesgos"
+                                            action="#{fichaMB.riesgoPopup(risk.riskPk)}" 
+                                            styleClass="iconoTabla botonVer"/>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton"
+                                    rendered="#{fichaMB.fieldRendered('superarRiesgo')}">
+                            <h:commandButton id="btnSuperar"
+                                             styleClass="botonSuperar iconoTabla"
+                                             rendered="#{!risk.riskSuperado}"
+                                             title="#{labels.riesgoSuperarTooltip}"
+                                             onclick="confirmationSuperarRiesgo#{risk.riskPk}.show();" />
+                            <ace:confirmationDialog widgetVar="confirmationSuperarRiesgo#{risk.riskPk}" 
+                                                    message="#{labels.riesgoSuperarTooltip}: &#13;#{risk.riskNombre}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesDelSuperar" 
+                                                     value="#{labels.si}" 
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();" 
+                                                     actionListener="#{fichaMB.superarRiesgoAction(risk.riskPk)}"/>
+                                    <h:commandButton id="noDelSuperar"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton"
+                                    rendered="#{fichaMB.fieldRendered('editarRiesgo')}">
+                            <ace:tooltip id="tooltipEditar" for="btnEditar">
+                                <ice:outputText value="#{labels.editarTooltip}" />
+                            </ace:tooltip>
+                            <ace:pushButton id="btnEditar"
+                                            styleClass="botonEditar iconoTabla" 
+                                            action="#{fichaMB.editarRiesgoAction(risk.riskPk)}"
+                                            rendered="#{!risk.riskSuperado}"/>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton"
+                                    rendered="#{fichaMB.fieldRendered('eliminarRiesgo')}">
+
+                            <h:commandButton id="btnEliminarRiesgo"
+                                             styleClass="botonEliminar iconoTabla"
+                                             rendered="#{!risk.riskSuperado}"
+                                             title="#{labels.eliminar_riesgo}:&#13;#{risk.riskNombre}"
+                                             onclick="confirmationEliminarRiesgo#{risk.riskPk}.show();" />
+                            <ace:confirmationDialog widgetVar="confirmationEliminarRiesgo#{risk.riskPk}" 
+                                                    message="#{labels.eliminar}: &#13;#{risk.riskNombre}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesDelRiesgo" 
+                                                     value="#{labels.si}" 
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationEliminarRiesgo#{risk.riskPk}.hide();" 
+                                                     actionListener="#{fichaMB.eliminarRiesgoAction(risk.riskPk)}"/>
+                                    <h:commandButton id="noDelRiesgo"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationEliminarRiesgo#{risk.riskPk}.hide();"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGrid>
+
+                <ice:panelGrid rendered="#{empty fichaMB.fichaTO.riesgos}" width="100%">
+                    <ice:outputText value="#{labels['riesgo.noHayRiesgos']}"/>
+                </ice:panelGrid>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

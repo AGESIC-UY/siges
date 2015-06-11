@@ -1,0 +1,9 @@
+# Configuraciones varias de la aplicaci\u00f3n.
+
+grp_url = https://siges.agesic.gub.uy/SS-SIGES-web/
+
+
+# Timer Schedule
+timer_schedule_hora_inicio = 2
+timer_schedule_minutos_inicio = 0
+timer_schedule_intervalo_minutos = 1440

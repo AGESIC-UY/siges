@@ -1,0 +1,259 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.interceptors.LoggedInterceptor;
+import com.sofis.data.daos.EntregablesDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.Cronogramas;
+import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.ProdMes;
+import com.sofis.entities.data.Productos;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.utils.SsUsuariosUtils;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.generico.utils.generalutils.DatesUtils;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "EntregablesBean")
+@LocalBean
+@Interceptors({LoggedInterceptor.class})
+public class EntregablesBean {
+
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @EJB
+    private ProductosBean productosBean;
+    @EJB
+    private ProyectosBean proyectosBean;
+
+    public Entregables obtenerEntPorPk(Integer entPk) {
+        return obtenerEntPorPk(entPk, false, false, false, false, false);
+    }
+
+    public Entregables obtenerEntPorPk(Integer entPk, boolean cargarProd, boolean cargarHistLB, boolean cargarDoc, boolean cargarPart, boolean cargarRegHoras) {
+        EntregablesDAO dao = new EntregablesDAO(em);
+        try {
+            Entregables result = dao.findById(Entregables.class, entPk);
+
+            if (cargarProd) {
+                result.getEntProductosSet().isEmpty();
+            }
+            if (cargarHistLB) {
+                result.getEntHistLBSet().isEmpty();
+            }
+            if (cargarDoc) {
+                result.getEntDocumentosSet().isEmpty();
+            }
+            if (cargarPart) {
+                result.getEntParticipantesSet().isEmpty();
+            }
+            if (cargarRegHoras) {
+                result.getEntRegistrosHorasSet().isEmpty();
+            }
+
+            return result;
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(EntregablesBean.class.getName()).log(Level.SEVERE, null, ex);
+            BusinessException be = new BusinessException();
+            be.addError(MensajesNegocio.ERROR_ENTREGABLES_OBTENER);
+            throw be;
+        }
+    }
+
+    public List<Entregables> obtenerEntPorProyPk(Integer proyPk) {
+        EntregablesDAO dao = new EntregablesDAO(em);
+        return dao.obtenerEntPorProyPk(proyPk);
+    }
+
+    public boolean tieneDependencias(Integer entPk) {
+        EntregablesDAO dao = new EntregablesDAO(em);
+        return dao.tienePagosDependientes(entPk);
+    }
+
+    public Entregables guardar(Entregables ent) {
+        EntregablesDAO dao = new EntregablesDAO(em);
+        try {
+            return dao.update(ent);
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(EntregablesBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public List<Entregables> obtenerEntPorCoord(Integer proyPk, Integer coord) {
+        if (proyPk != null) {
+            EntregablesDAO dao = new EntregablesDAO(em);
+            dao.obtenerEntregablesPorCoord(proyPk, coord);
+        }
+        return null;
+    }
+
+    public Double calcularAvanceEntPorProd(Integer entPk) {
+        if (entPk != null) {
+            List<Productos> listProd = productosBean.obtenerProdPorEnt(entPk);
+            if (CollectionsUtils.isNotEmpty(listProd)) {
+                Calendar cal = new GregorianCalendar();
+                int pesoPlanTotal = 0;
+                double avancePesoTotal = 0;
+                for (Productos prod : listProd) {
+                    double totalPlan = 0;
+                    double avanceReal = 0;
+                    for (ProdMes prodMes : prod.getProdMesList()) {
+                        if (prodMes.getProdmesReal() != null) {
+                            if (prodMes.getProdmesAnio() < cal.get(Calendar.YEAR)
+                                    || (prodMes.getProdmesAnio() == cal.get(Calendar.YEAR)
+                                    && prodMes.getProdmesMes() <= cal.get(Calendar.MONTH))) {
+                                avanceReal += prodMes.getProdmesReal();
+                            }
+                            totalPlan += prodMes.getProdmesPlan();
+                        }
+                    }
+                    pesoPlanTotal += totalPlan * prod.getProdPeso();
+                    avancePesoTotal += avanceReal * prod.getProdPeso();
+                }
+
+                return avancePesoTotal != 0 ? avancePesoTotal * 100 / pesoPlanTotal : 0d;
+            }
+        }
+        return null;
+    }
+
+    public void guardarAvanceReal(Integer entPk) {
+        Entregables ent = obtenerEntPorPk(entPk);
+        if (ent != null) {
+            Double avance = calcularAvanceEntPorProd(entPk);
+            if (avance != null) {
+                ent.setEntProgreso((int) Math.round(avance));
+                guardar(ent);
+            }
+        }
+    }
+
+    public Set<Entregables> copiarProyEntregables(Set<Entregables> entregablesSet, Cronogramas nvoCro, int desfasajeDias) {
+        if (CollectionsUtils.isNotEmpty(entregablesSet) && nvoCro != null) {
+            Set<Entregables> result = new HashSet<>();
+            for (Entregables ent : entregablesSet) {
+                Entregables nvoEnt = new Entregables();
+                nvoEnt.setCoordinadorUsuFk(ent.getCoordinadorUsuFk());
+                nvoEnt.setEntAssigs(ent.getEntAssigs());
+                nvoEnt.setEntCodigo(ent.getEntCodigo());
+                nvoEnt.setEntCollapsed(ent.getEntCollapsed());
+                nvoEnt.setEntCroFk(nvoCro);
+                nvoEnt.setEntDescripcion(ent.getEntDescripcion());
+                nvoEnt.setEntDuracion(ent.getEntDuracion());
+                nvoEnt.setEntDuracionLineaBase(ent.getEntDuracionLineaBase());
+                nvoEnt.setEntEsfuerzo(ent.getEntEsfuerzo());
+                nvoEnt.setEntFinEsHito(ent.getEntFinEsHito());
+                nvoEnt.setEntHorasEstimadas(ent.getEntHorasEstimadas());
+                nvoEnt.setEntId(ent.getEntId());
+                nvoEnt.setEntInicioEsHito(ent.getEntInicioEsHito());
+                nvoEnt.setEntNivel(ent.getEntNivel());
+                nvoEnt.setEntNombre(ent.getEntNombre());
+                nvoEnt.setEntPredecesorDias(ent.getEntPredecesorDias());
+                nvoEnt.setEntPredecesorFk(ent.getEntPredecesorFk());
+                nvoEnt.setEntProductosSet(productosBean.copiarProyProductos(ent, nvoEnt, desfasajeDias));
+                nvoEnt.setEntProgreso(0);
+                nvoEnt.setEntStatus(ent.getEntStatus());
+
+                Date date;
+                if (ent.getEntFin() != null && ent.getEntFin() > 0) {
+                    date = DatesUtils.incrementarDias(ent.getEntFinDate(), desfasajeDias);
+                    nvoEnt.setEntFin(date.getTime());
+                }
+                if (ent.getEntFinLineaBase() != null && ent.getEntFinLineaBase() > 0) {
+                    date = DatesUtils.incrementarDias(ent.getEntFinLineaBaseDate(), desfasajeDias);
+                    nvoEnt.setEntFinLineaBase(date.getTime());
+                }
+                if (ent.getEntInicio() != null && ent.getEntInicio() > 0) {
+                    date = DatesUtils.incrementarDias(ent.getEntInicioDate(), desfasajeDias);
+                    nvoEnt.setEntInicio(date.getTime());
+                }
+                if (ent.getEntInicioLineaBase() != null && ent.getEntInicioLineaBase() > 0) {
+                    date = DatesUtils.incrementarDias(ent.getEntInicioLineaBaseDate(), desfasajeDias);
+                    nvoEnt.setEntInicioLineaBase(date.getTime());
+                }
+
+                result.add(nvoEnt);
+            }
+            return result;
+        }
+        return null;
+    }
+
+    public Date obtenerPrimeraFecha(Set<Entregables> entSet) {
+        Date result = null;
+        if (CollectionsUtils.isNotEmpty(entSet)) {
+            for (Entregables e : entSet) {
+                if (e.getEntInicioDate() != null
+                        && (result == null || DatesUtils.esMayor(result, e.getEntInicioDate()))) {
+                    result = e.getEntInicioDate();
+
+                }
+                if (e.getEntInicioLineaBaseDate() != null
+                        && (result == null || DatesUtils.esMayor(result, e.getEntInicioLineaBaseDate()))) {
+                    result = e.getEntInicioLineaBaseDate();
+                }
+            }
+        }
+        return result;
+    }
+
+    public Date obtenerUltimaFecha(Set<Entregables> entregablesSet) {
+        Date result = null;
+        if (CollectionsUtils.isNotEmpty(entregablesSet)) {
+            for (Entregables e : entregablesSet) {
+                if (e.getEntFinDate() != null
+                        && (result == null || DatesUtils.esMayor(e.getEntFinDate(), result))) {
+                    result = e.getEntFinDate();
+                }
+                if (e.getEntFinLineaBaseDate() != null
+                        && (result == null || DatesUtils.esMayor(e.getEntFinLineaBaseDate(), result))) {
+                    result = e.getEntFinLineaBaseDate();
+                }
+            }
+        }
+        return result;
+    }
+
+    public Entregables actualizarAvance(Integer proyPk, Integer entPk, Integer avance, SsUsuario usuario) {
+        if (entPk != null && avance != null) {
+            Entregables ent = obtenerEntPorPk(entPk);
+            if (ent != null) {
+                Proyectos proy = proyectosBean.obtenerProyPorId(proyPk);
+                boolean isGerente = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(proy, usuario);
+                if (isGerente || (ent.getCoordinadorUsuFk() != null && ent.getCoordinadorUsuFk().equals(usuario))) {
+                    ent.setEntProgreso(avance);
+                    return guardar(ent);
+                } else {
+                    BusinessException be = new BusinessException();
+                    be.addError(MensajesNegocio.ERROR_ENTREGABLE_AVANCE_COORD);
+                    throw be;
+                }
+            }
+        }
+        return null;
+    }
+}

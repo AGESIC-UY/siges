@@ -1,0 +1,29 @@
+package com.sofis.entities.tipos;
+
+import com.sofis.entities.data.Moneda;
+
+/**
+ *
+ * @author Usuario
+ */
+public class MonedaImporteTO {
+
+    private Moneda moneda;
+    private Double importe;
+
+    public MonedaImporteTO() {
+    }
+
+    public MonedaImporteTO(Moneda moneda, Double importe) {
+        this.moneda = moneda;
+        this.importe = importe;
+    }
+
+    public Moneda getMoneda() {
+        return moneda;
+    }
+
+    public Double getImporte() {
+        return importe;
+    }
+}

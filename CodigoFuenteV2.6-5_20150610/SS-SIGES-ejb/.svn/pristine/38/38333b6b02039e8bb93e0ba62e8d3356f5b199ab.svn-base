@@ -1,0 +1,108 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.interceptors.LoggedInterceptor;
+import com.sofis.business.validations.GastosValidacion;
+import com.sofis.data.daos.GastosDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Gastos;
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.entities.data.TipoGasto;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.sofisform.to.CriteriaTO;
+import com.sofis.sofisform.to.MatchCriteriaTO;
+import com.sofis.utils.CriteriaTOUtils;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "GastoBean")
+@LocalBean
+@Interceptors({LoggedInterceptor.class})
+public class GastosBean {
+    
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @Inject
+    private DatosUsuario du;
+
+    public Gastos registrarGasto(Gastos gasto) {
+        if (gasto == null) {
+            return null;
+        }
+        GastosValidacion.validar(gasto);
+        GastosDAO dao = new GastosDAO(em);
+        try {
+            gasto = dao.update(gasto);
+        } catch (BusinessException be) {
+            //Si es de tipo negocio envía la misma excepción
+            throw be;
+        } catch (Exception ex) {
+            logger.logp(Level.SEVERE, ParticipantesBean.class.getName(), "registrarHoras", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+        return gasto;
+    }
+
+    public List<Gastos> obtenerRegistrosGastos(Integer usuId, Integer proyPk, Date fDesde, Date fHasta, TipoGasto tipoGasto, Long desde, Long cant) {
+        List<Gastos> registrosGastos = new LinkedList<>();
+        try {
+            GastosDAO dao = new GastosDAO(em);
+
+            List<CriteriaTO> crits = new LinkedList<>();
+
+            if (usuId != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasUsuarioFk.usuId", usuId));
+            }
+            if (proyPk != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasProyFk.proyPk", proyPk));
+            }
+            if (fDesde != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "gasFecha", fDesde));
+            }
+            if (fHasta != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "gasFecha", fHasta));
+            }
+            if (tipoGasto != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "gasTipoFk.tipogasPk", tipoGasto.getTipogasPk()));
+            }
+
+            if (crits.isEmpty()) {
+                registrosGastos = dao.findAll(Gastos.class);
+            } else {
+                CriteriaTO crit = CriteriaTOUtils.createANDTO(crits.toArray(new CriteriaTO[0]));
+                String[] orderBy1 = new String[]{"gasFecha", "gasUsuarioFk.usuPrimerNombre", "gasUsuarioFk.usuPrimerApellido", "gasProyFk.proyNombre"};
+                boolean[] orderBy2 = new boolean[]{false, true, true, true};
+                registrosGastos = dao.findEntityByCriteria(Gastos.class, crit, orderBy1, orderBy2, desde, cant);
+            }
+            return registrosGastos;
+        } catch (BusinessException be) {
+            //Si es de tipo negocio envía la misma excepción
+            throw be;
+        } catch (Exception ex) {
+            logger.logp(Level.SEVERE, ParticipantesBean.class.getName(), "registrarHoras", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+    }
+    
+    
+}

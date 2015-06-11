@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <!-- Filtro de Horas -->
+    <ice:panelGroup id="buscador"
+                    styleClass="buscador recuadro filtroProyecto margen-inf"
+                    rendered="#{revisionHorasMB.detalleHorasRendered}">
+
+        <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/>
+
+        <ice:panelGroup rendered="#{!(revisionHorasMB.revisionHorasListado ne null and revisionHorasMB.revisionHorasListado.size() gt 0)}"
+                        styleClass="mensajeBusqueda">
+            <ice:graphicImage value="../img/mens-info-busqueda.png" />
+            <ice:outputText value=" #{labels.info_sin_resultados_busqueda}" />
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="col-sm-12">
+            <ice:panelGrid styleClass="formulario" columns="4">
+                <ice:outputLabel value="#{labels.revisionHoras_usuario}" />
+                <ice:outputText value="#{revisionHorasMB.participante.partUsuarioFk.nombreApellido}" />
+
+                <ice:outputLabel value="#{labels.revisionHoras_proyecto}" />
+                <ice:outputText value="#{revisionHorasMB.participante.partProyectoFk.proyNombre}" />
+
+                <ice:outputLabel value="#{labels.revisionHoras_entregable}" />
+                <ice:selectOneMenu value="#{revisionHorasMB.listaEntregablesCombo.selected}">
+                    <f:selectItems value="#{revisionHorasMB.listaEntregablesCombo.items}" />
+                </ice:selectOneMenu>
+                
+                <ice:outputLabel value="#{labels.revisionHoras_aprobado}" />
+                <ice:selectOneMenu value="#{revisionHorasMB.listaAprobCombo.selected}">
+                    <f:selectItems value="#{revisionHorasMB.listaAprobCombo.items}" />
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.revisionHoras_fechaDesde}" />
+                <ace:dateTimeEntry value="#{revisionHorasMB.filtroFechaDesde}"
+                                   pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                   timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+
+                <ice:outputLabel value="#{labels.revisionHoras_fechaHasta}" />
+                <ace:dateTimeEntry value="#{revisionHorasMB.filtroFechaHasta}"
+                                   pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                   timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="panelAcciones">
+            <ice:panelGroup styleClass="panelBotones" >
+                <ace:messages id="filtroBusquedaMsg" />
+                <ace:pushButton value="#{labels.revisionHoras_buscarConFiltro}" 
+                                action="#{revisionHorasMB.buscarConFiltro()}" 
+                                styleClass="boton principal buscar"/>
+                <ace:pushButton value="#{labels.revisionHoras_buscarSinFiltro}" 
+                                action="#{revisionHorasMB.buscarSinFiltro()}" 
+                                styleClass="boton principal buscar"/>
+
+                <ace:linkButton value="#{labels.limpiar}" 
+                                styleClass="boton secundario" style="margin-left: 10px;"
+                                action="#{revisionHorasMB.limpiarFiltro()}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+    </ice:panelGroup>
+
+    <!-- Listado de Horas -->
+    <ice:panelGroup id="participanteHoras" styleClass="resultado recuadro"
+                    rendered="#{revisionHorasMB.detalleHorasRendered}">
+        <ace:linkButton value="Lista Participantes" 
+                        action="#{revisionHorasMB.cambiarUsuDetalleHs(null, null)}"
+                        styleClass="boton secundario" />
+        <ice:panelGrid width="100%" >
+            <h:outputText value="#{revisionHorasMB.participante.partUsuarioFk.nombreApellido}"/>
+
+            <ace:dataTable id="tblResultadosHoras" 
+                           value="#{revisionHorasMB.revisionHorasListado}"
+                           var="hora"
+                           paginator="true" pageCount="5" 
+                           rows="#{configuracionMB.cantElementosPorPagina}">
+                <ace:column headerText="#{labels.revisionHoras_head_Fecha}" >
+                    <h:outputText value="#{hora.rhFecha}"
+                                  converter="fechaConverter" title="#{hora.rhComentario}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.revisionHoras_head_Entregable}">
+                    <h:outputText value="#{hora.rhEntregableFk.entNombre}"
+                                  title="#{hora.rhComentario}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.revisionHoras_head_Horas}">
+                    <h:outputText value="#{hora.rhHoras}"
+                                  title="#{hora.rhComentario}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.revisionHoras_head_Aprobada}">
+                    <ace:checkboxButton value="#{hora.rhAprobado}"
+                                        disabled="#{!revisionHorasMB.participante.partActivo}"/>
+                </ace:column>
+
+                <ace:column styleClass="columnaBoton"
+                            rendered="#{fichaMB.fieldRendered('eliminarParticipante')}">
+                    <h:commandButton id="btnEliminarHoras"
+                                     styleClass="botonEliminar iconoTabla" 
+                                     title="#{labels.eliminarTooltip}"
+                                     onclick="confirmationEliminarPart#{hora.rhPk}.show();"
+                                     rendered="#{!hora.rhAprobado and revisionHorasMB.participante.partActivo}"/>
+                    <ace:confirmationDialog widgetVar="confirmationEliminarPart#{hora.rhPk}" 
+                                            message="#{labels.confirmacionEliminacion}"
+                                            header="#{labels.hConfirmacion}"
+                                            closable="true"
+                                            closeOnEscape="true"
+                                            severity="info"
+                                            modal="true"
+                                            position="center">
+                        <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                            <h:commandButton id="yesDelHoras"
+                                             value="#{labels.si}"
+                                             styleClass="boton principal botonContinuar"
+                                             onclick="confirmationEliminarPart#{hora.rhPk}.hide();" 
+                                             actionListener="#{revisionHorasMB.eliminarHorasAction(hora.rhPk)}"/>
+                            <h:commandButton id="noDelHoras"
+                                             value="#{labels.no}"
+                                             styleClass="boton principal botonEliminar"
+                                             onclick="confirmationEliminarPart#{hora.rhPk}.hide();"  />
+                        </h:panelGrid>
+                    </ace:confirmationDialog>
+                </ace:column>
+            </ace:dataTable>
+
+            <ice:panelGroup id="panelAccionesHoras" 
+                            styleClass="panelBotones margen-sup">
+                <ace:messages id="partHorasMsg"/>
+                <ice:commandButton value="#{labels.revisionHoras_generarHoras}" 
+                                   action="#{revisionHorasMB.mostrarPopupGenerarHoras()}" 
+                                   styleClass="boton principal"/>
+                <ice:commandButton value="#{labels.revisionHoras_guardar}" 
+                                   action="#{revisionHorasMB.guardar()}" 
+                                   rendered="#{not empty revisionHorasMB.revisionHorasListado}"
+                                   styleClass="boton principal botonGuardar"/>
+                <ace:linkButton value="#{labels.revisionHoras_cancelar}" action="#{revisionHorasMB.cancelarHoras()}"/>
+            </ice:panelGroup>
+
+        </ice:panelGrid>
+    </ice:panelGroup>
+</ui:composition>

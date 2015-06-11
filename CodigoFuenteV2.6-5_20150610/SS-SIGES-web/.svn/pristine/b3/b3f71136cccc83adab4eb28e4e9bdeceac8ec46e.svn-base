@@ -1,0 +1,25 @@
+package com.sofis.web.delegates;
+
+import com.sofis.business.ejbs.AreasConocimientoBean;
+import com.sofis.data.daos.AreaConocimientoDAO;
+import com.sofis.entities.data.AreaConocimiento;
+import java.util.List;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+public class AreasConocimientoDelegate {
+
+    @Inject
+    AreasConocimientoBean areasConocimientoBean;
+
+    public List<AreaConocimiento> obtenerAreaConPorOrg(Integer orgPk) {
+        return areasConocimientoBean.obtenerAreaConPorOrg(orgPk);
+    }
+
+    public List<AreaConocimiento> obtenerAreasConPorLeccPk(Integer leccAprPk) {
+        return areasConocimientoBean.obtenerAreasConPorLeccPk(leccAprPk);
+    }
+}

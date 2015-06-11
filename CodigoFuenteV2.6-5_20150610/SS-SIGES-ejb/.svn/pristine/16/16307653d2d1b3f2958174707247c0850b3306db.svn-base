@@ -1,0 +1,58 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.interceptors.LoggedInterceptor;
+import com.sofis.data.daos.FuenteFinanciamientoDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.FuenteFinanciamiento;
+import com.sofis.exceptions.GeneralException;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "FuenteFinanciamientoBean")
+@LocalBean
+@Interceptors({LoggedInterceptor.class})
+public class FuenteFinanciamientoBean {
+
+    @Inject
+    private ConsultaHistorico<FuenteFinanciamiento> ch;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    /**
+     * Obtener una lista de Fuentes de Financiamiento deacuero al organismo
+     * aportado.
+     *
+     * @param orgId
+     * @return Lista FuenteFinanciamiento
+     * @throws GeneralException
+     */
+    public List<FuenteFinanciamiento> obtenerFuentesPorOrgId(Integer orgId) throws GeneralException {
+        FuenteFinanciamientoDAO fueDao = new FuenteFinanciamientoDAO(em);
+        try {
+            List<FuenteFinanciamiento> result = fueDao.findByOneProperty(FuenteFinanciamiento.class, "fueOrgFk.orgPk", orgId);
+            return result;
+
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, FuenteFinanciamientoBean.class.getName(), "obtenerFuentesPorOrgId", ex.getMessage());
+            TechnicalException te = new TechnicalException();
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
+}

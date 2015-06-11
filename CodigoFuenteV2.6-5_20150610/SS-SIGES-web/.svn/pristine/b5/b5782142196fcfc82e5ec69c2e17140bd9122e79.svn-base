@@ -1,0 +1,21 @@
+package com.sofis.web.delegates;
+
+import com.sofis.business.ejbs.EstadosEditorBean;
+import com.sofis.entities.data.EstadosEditor;
+import com.sofis.exceptions.GeneralException;
+import java.util.List;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+public class EstadosEditorDelegate {
+    
+    @Inject
+    private EstadosEditorBean estadosEditorBean;
+    
+    public List<EstadosEditor> obtenerTodos() throws GeneralException {
+        return estadosEditorBean.obtenerTodos();
+    }
+}

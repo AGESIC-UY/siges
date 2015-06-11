@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="
+        http://java.sun.com/xml/ns/javaee
+        http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+
+    <application>
+        <locale-config>
+            <default-locale>es</default-locale>
+        </locale-config>
+        <message-bundle>
+            com.sofis.generico.ejb.mensajes.Labels
+        </message-bundle> 
+        <resource-bundle>
+            <base-name>com.sofis.generico.ejb.mensajes.Labels</base-name>
+            <var>labels</var>
+        </resource-bundle>
+        <!--
+        <system-event-listener>
+            <source-class>javax.faces.component.UIViewRoot</source-class>
+            <system-event-listener-class>com.sofis.web.utils.ViewMapSystemEventListener</system-event-listener-class>
+            <system-event-class>javax.faces.event.PostConstructViewMapEvent</system-event-class>
+        </system-event-listener>
+        -->
+    </application>
+
+    <lifecycle>
+        <phase-listener>com.sofis.web.filtros.AjaxLoginListener</phase-listener>
+    </lifecycle>
+
+    <converter>
+        <converter-id>estadoConverter</converter-id>
+        <converter-class>com.sofis.web.converter.EstadosConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>IntegerFormatConverter</converter-id>
+        <converter-class>com.sofis.web.converter.IntegerFormatConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>ImporteFormatConverter</converter-id>
+        <converter-class>com.sofis.web.converter.ImporteFormatConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>decimalFormatConverter</converter-id>
+        <converter-class>com.sofis.web.converter.DecimalFormatConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>fechaConverter</converter-id>
+        <converter-class>com.sofis.web.converter.FechaConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>usuarioConverter</converter-id>
+        <converter-class>com.sofis.web.converter.UsuarioConverter</converter-class>
+    </converter>
+
+    <converter>
+        <converter-id>sinoConverter</converter-id>
+        <converter-class>com.sofis.web.converter.SiNoConverter</converter-class>
+    </converter>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>tipDoc</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoDocumentoPersonaCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>tipEst</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoEstablecimientoCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracion</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionRiesgos</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionRiesgosCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionDocumentos</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionDocumentosCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionTiposDocumentos</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionTiposDocumentosCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>codErrores</from-outcome>
+            <to-view-id>/paginasPrivadas/gestionErroresCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>tipTelefono</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoTelefonoCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_INICIO</from-outcome>
+            <to-view-id>/paginasPrivadas/paginaInicioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_INICIO_PUBLICO</from-outcome>
+            <to-view-id>/paginasPublicas/inicioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>tipActividad</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoActividadCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>migracion_calc_indicadores</from-outcome>
+            <to-view-id>/paginasPrivadas/migraCalcIndicadores.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionPGE</from-outcome>
+            <to-view-id>/paginasPrivadas/pgeConfiguracionCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>CAMBIAR_CONTRASENIA</from-outcome>
+            <to-view-id>/paginasPrivadas/cambioContraseniaCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_AYUDA</from-outcome>
+            <to-view-id>/paginasPrivadas/ayudaCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_NOTICIAS</from-outcome>
+            <to-view-id>/paginasPrivadas/noticiaCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_NUEVA_FICHA</from-outcome>
+            <to-view-id>/paginasPrivadas/ficha.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_EDITAR_FICHA</from-outcome>
+            <to-view-id>/paginasPrivadas/ficha.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_PROYECTO</from-outcome>
+            <to-view-id>/paginasPrivadas/reporteProyecto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_PROYECTO_TABLAS</from-outcome>
+            <to-view-id>/paginasPrivadas/reporteProyectoTablas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_PROGRAMA</from-outcome>
+            <to-view-id>/paginasPrivadas/reportePrograma.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_CRONOGRAMA</from-outcome>
+            <to-view-id>/paginasPrivadas/reporteCronograma.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_PRESUPUESTO</from-outcome>
+            <to-view-id>/paginasPrivadas/reportePresupuesto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_CRONOGRAMA_ALCANCE</from-outcome>
+            <to-view-id>/paginasPrivadas/reporteCronoAlcance.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REPORTE_MIS_TAREAS</from-outcome>
+            <to-view-id>/paginasPrivadas/misTareas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_LECC_APRENDIDAS</from-outcome>
+            <to-view-id>/paginasPrivadas/leccAprendidas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_REGISTRO_HORAS</from-outcome>
+            <to-view-id>/paginasPrivadas/registroHoras.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsUsuario</from-outcome>
+            <to-view-id>/paginasPrivadas/ssUsuarioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_ORGANISMO</from-outcome>
+            <to-view-id>/paginasPrivadas/organismo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_USUARIOS</from-outcome>
+            <to-view-id>/paginasPrivadas/ssUsuarioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ERROR_PRIVADO</from-outcome>
+            <to-view-id>/paginasPrivadas/errorPrivado.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+  
+  
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PLANTILLAS</from-outcome>
+            <to-view-id>/paginasPrivadas/plantillaCronograma.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+	
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PERSONAS</from-outcome>
+            <to-view-id>/paginasPrivadas/personas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TIPO_DOCUMENTO</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoDocumento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AREAS_TEMATICAS</from-outcome>
+            <to-view-id>/paginasPrivadas/areaTematica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AMBITO</from-outcome>
+            <to-view-id>/paginasPrivadas/ambito.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_ORGANIZACION</from-outcome>
+            <to-view-id>/paginasPrivadas/organiIntProve.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AREA_CONOCIMIENTO</from-outcome>
+            <to-view-id>/paginasPrivadas/areaConocimiento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AREAS</from-outcome>
+            <to-view-id>/paginasPrivadas/areas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_FUENTE_FINANCIAMIENTO</from-outcome>
+            <to-view-id>/paginasPrivadas/fuenteFinanciamiento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_MAILS_TEMPLATE</from-outcome>
+            <to-view-id>/paginasPrivadas/mailsTemplate.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_MONEDA</from-outcome>
+            <to-view-id>/paginasPrivadas/moneda.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_NOTIFICACION</from-outcome>
+            <to-view-id>/paginasPrivadas/notificacion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_ROLES_INTERESADOS</from-outcome>
+            <to-view-id>/paginasPrivadas/rolesInteresados.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TEMAS_CALIDAD</from-outcome>
+            <to-view-id>/paginasPrivadas/temasCalidad.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TIPO_GASTO</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoGasto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+</faces-config>

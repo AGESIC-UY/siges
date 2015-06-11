@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelGroup id="leccAprendidaFormData">
+
+        <!-- Formulario de alta -->
+        <ice:panelGroup id="leccAprendidaForm">
+            <ice:panelCollapsible id="collapsibleLeccApr" expanded="#{LeccAprendidasMB.leccApreFormDataExpanded}" >
+                <f:facet name="header">
+                    <h:panelGrid columns="1">
+                        <h:commandButton value="#{labels.leccApr_form_btn_agregar}" 
+                                         rendered="#{!LeccAprendidasMB.leccApreFormDataExpanded and LeccAprendidasMB.fieldRendered('agregarLeccApre')}"
+                                         styleClass="boton principal botonAgregar" />
+                    </h:panelGrid>
+                </f:facet>
+
+                <ice:panelGrid  styleClass="formulario" columns="3">
+                    <ice:outputLabel value="#{labels.leccApr_form_texto}:"/>
+                    <ace:textAreaEntry value="#{LeccAprendidasMB.leccAprendida.lecaprDesc}"
+                                       styleClass="textoLargo"
+                                       style="height: 100px;"/>
+
+                    <ice:panelGrid  styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.leccApr_form_tipo}:"/>
+                        <ice:selectOneMenu id="comboTipoForm"
+                                           value="#{LeccAprendidasMB.listaTipoLeccComboForm.selected}" 
+                                           styleClass="textoMedio">
+                            <f:selectItems value="#{LeccAprendidasMB.listaTipoLeccComboForm.items}" />
+                        </ice:selectOneMenu>
+
+                        <ice:outputLabel value="#{labels.leccApr_form_proyecto}:"/>
+                        <ice:selectOneMenu id="comboProyectosForm"
+                                           value="#{LeccAprendidasMB.listaProyectosComboForm.selected}" 
+                                           styleClass="textoMedio">
+                            <f:selectItems value="#{LeccAprendidasMB.listaProyectosComboForm.items}" />
+                        </ice:selectOneMenu>
+                        
+                        <ice:outputLabel value="#{labels.leccApr_form_area_conocimineto}:"/>
+                        <ace:pushButton styleClass="botonEditar iconoTabla #{LeccAprendidasMB.areasConHasValues() ? 'valores' : ''}" 
+                                        action="#{LeccAprendidasMB.areaConPopup()}"/>
+                        
+                        <!--
+                        <ace:autoCompleteEntry id="autoCompleteProy" 
+                                               value="# {LeccAprendidasMB.leccAprendida.lecaprProyFk}"
+                                               rows="20" width="400"
+                                               styleClass="autocompletar" 
+                                               filterMatchMode="contains" 
+                                               filterBy="# {proyectos.proyNombre}"
+                                               binding="# {LeccAprendidasMB.autoCompleteProyectosComponent}"
+                                               listVar="proyectos"
+                                               listValue="# {LeccAprendidasMB.autoCompleteProyectosList}"
+                                               valueChangeListener="# {LeccAprendidasMB.autoCompleteProyectosValueChangeListener}">
+                            <ace:ajax />
+                            <f:facet name="row">
+                                <h:panelGrid columns="2" width="100%" >
+                                    <h:outputText value="# {personas.persNombre}" />
+                                    <h:outputText value="# {personas.persCargo}" />
+                                </h:panelGrid>
+                            </f:facet>
+                        </ace:autoCompleteEntry>
+                        -->
+
+                        
+                    </ice:panelGrid>
+                </ice:panelGrid>
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages id="leccAprendidasMsgForm"/>
+                    <ace:pushButton  value="#{labels.leccApr_form_guardar}" 
+                                     styleClass="boton principal guardar" 
+                                     action="#{LeccAprendidasMB.agregarLeccApreAction()}" />
+                    <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
+                                      action="#{LeccAprendidasMB.limpiarLeccApre()}"/>
+                    <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                     action="#{LeccAprendidasMB.cerrarFormCollapsable()}"/>
+                </ice:panelGroup>
+
+            </ice:panelCollapsible>
+        </ice:panelGroup>
+    </ice:panelGroup>
+
+</ui:composition>

@@ -1,0 +1,130 @@
+package com.sofis.entities.data;
+
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author Usuario
+ */
+@Entity
+@Table(name = "proy_editor_estado")
+@XmlRootElement
+public class ProyEditorEstado implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "proyediest_pk")
+    private Integer proyediestPk;
+
+    @Basic(optional = false)
+    @Column(name = "proyediest_fecha")
+    @Temporal(TemporalType.DATE)
+    private Date proyediestFecha;
+
+    @JoinColumn(name = "proyediest_estedi_fk", referencedColumnName = "estedi_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private EstadosEditor proyediestEstediFk;
+
+    @JoinColumn(name = "proyediest_usu_fk", referencedColumnName = "usu_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private SsUsuario proyediestUsuFk;
+
+    @JoinColumn(name = "proyediest_proy_fk", referencedColumnName = "proy_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Proyectos proyediestProyFk;
+
+    public ProyEditorEstado() {
+    }
+
+    public ProyEditorEstado(Integer proyediestPk) {
+        this.proyediestPk = proyediestPk;
+    }
+
+    public ProyEditorEstado(Integer proyediestPk, Date proyediestFecha) {
+        this.proyediestPk = proyediestPk;
+        this.proyediestFecha = proyediestFecha;
+    }
+
+    public Integer getProyediestPk() {
+        return proyediestPk;
+    }
+
+    public void setProyediestPk(Integer proyediestPk) {
+        this.proyediestPk = proyediestPk;
+    }
+
+    public Date getProyediestFecha() {
+        return proyediestFecha;
+    }
+
+    public void setProyediestFecha(Date proyediestFecha) {
+        this.proyediestFecha = proyediestFecha;
+    }
+
+    public EstadosEditor getProyediestEstediFk() {
+        return proyediestEstediFk;
+    }
+
+    public void setProyediestEstediFk(EstadosEditor proyediestEstediFk) {
+        this.proyediestEstediFk = proyediestEstediFk;
+    }
+
+    public SsUsuario getProyediestUsuFk() {
+        return proyediestUsuFk;
+    }
+
+    public void setProyediestUsuFk(SsUsuario proyediestUsuFk) {
+        this.proyediestUsuFk = proyediestUsuFk;
+    }
+
+    public Proyectos getProyediestProyFk() {
+        return proyediestProyFk;
+    }
+
+    public void setProyediestProyFk(Proyectos proyediestProyFk) {
+        this.proyediestProyFk = proyediestProyFk;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (proyediestPk != null ? proyediestPk.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof ProyEditorEstado)) {
+            return false;
+        }
+        ProyEditorEstado other = (ProyEditorEstado) object;
+        if ((this.proyediestPk == null && other.proyediestPk != null) || (this.proyediestPk != null && !this.proyediestPk.equals(other.proyediestPk))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.sofis.entities.data.ProyEditorEstado[ proyediestPk=" + proyediestPk + " ]";
+    }
+
+}

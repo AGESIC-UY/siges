@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="formularioMenu">
+        <ace:menuBar id="mnPrincipal" 
+                     effect="FADE"
+                     effectDuration="50"
+                     autoSubmenuDisplay="false">
+
+            <ace:menuItem id="menuInicio"
+                          value="#{labels.menu_inicio}"
+                          action="#{menuMB.fireAction('IR_A_INICIO')}"
+                          rendered="#{menuMB.permisos['INICIO']}">
+                <ace:ajax event="activate" execute="@this" />
+            </ace:menuItem>
+
+            <ace:menuItem id="nuevoProyecto"  
+                          value="#{labels.menu_nuevoProyectoPrograma}"
+                          action="#{menuMB.fireAction('IR_A_NUEVA_FICHA')}"
+                          rendered="#{menuMB.permisos['ADMIN_NUEVOFICHA']}">
+            </ace:menuItem>
+
+            <ace:menuItem id="LeccAprendidas"  
+                          value="#{labels.menu_lecc_aprendidas}"
+                          action="#{menuMB.fireAction('IR_A_LECC_APRENDIDAS')}"
+                          rendered="#{menuMB.permisos['LECC_APRENDIDAS']}">
+            </ace:menuItem>
+
+            <ace:submenu id="Reportes"
+                         label="#{labels.menu_reportes}"
+                         rendered="false">
+                <!--
+                rendered="# {menuMB.permisos['REPORTE_PRESUPUESTO'] or menuMB.permisos['REPORTE_CRONOGRAMA_ALCANCE']}" >
+                -->
+
+                <ace:menuItem id="Reportes_Presupuesto"  
+                              value="#{labels.menu_reportes_presupuesto}"
+                              action="#{menuMB.fireAction('IR_A_REPORTE_PRESUPUESTO')}"
+                              rendered="#{menuMB.permisos['REPORTE_PRESUPUESTO']}">
+                </ace:menuItem>
+                <ace:menuItem id="Reportes_Cronograma_Alcance"  
+                              value="#{labels.menu_reportes_crono_alcance}"
+                              action="#{menuMB.fireAction('IR_A_REPORTE_CRONOGRAMA_ALCANCE')}"
+                              rendered="#{menuMB.permisos['REPORTE_CRONOGRAMA_ALCANCE']}">
+                </ace:menuItem>
+            </ace:submenu>
+
+            <ace:menuItem id="RegistroHoras"  
+                          value="#{labels.menu_registro_horas}"
+                          action="#{menuMB.fireAction('IR_A_REGISTRO_HORAS')}"
+                          rendered="#{menuMB.permisos['REGISTRO_HORAS']}">
+            </ace:menuItem>
+
+            <!-- Administracion -->
+            <ace:submenu id="file"
+                         label="#{labels.menu_administracion}"
+                         rendered="#{menuMB.permisos['ADMINIS']}" >
+
+                <!-- Valores -->
+                <ace:submenu id="gestValores" 
+                             label="#{labels.gestion_valores}"
+                             rendered="#{menuMB.permisos['ADMIN_TDO'] or menuMB.permisos['ADMIN_ERR'] or menuMB.permisos['ADMIN_TEL']}">
+
+                    <ace:menuItem id="tipDoc"
+                                  value="#{labels.tipDoc}"
+                                  action="#{menuMB.fireAction('tipDoc')}"
+                                  rendered="#{menuMB.permisos['ADMIN_TDO']}">
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="codErrores"
+                                  value="#{labels.codErrores}"
+                                  action="#{menuMB.fireAction('codErrores')}"
+                                  rendered="#{menuMB.permisos['ADMIN_ERR']}">
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+                    <ace:menuItem id="tipTelefono"
+                                  value="#{labels.mTipoTelefono}"
+                                  action="#{menuMB.fireAction('tipTelefono')}"
+                                  rendered="#{menuMB.permisos['ADMIN_TEL']}">
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+                </ace:submenu>
+
+                <!-- Configuracion -->
+                <ace:submenu id="configuracion" 
+                             label="#{labels.configuracion}"
+                             rendered="#{menuMB.permisos['ADM_CONF']}">
+
+                    <ace:menuItem id="configuracionGeneral"  
+                                  value="#{labels.configuracionGeneral}"
+                                  action="#{menuMB.fireAction('configuracion')}"
+                                  rendered="#{menuMB.permisos['ADM_CONF']}" 
+                                  style="width: 150px">
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionAmbito"
+                                  value="#{labels.configuracionAmbito}"
+                                  action="#{menuMB.fireAction('IR_ABM_AMBITO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_AMBITO']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionAreaConocimiento"
+                                  value="#{labels.configuracionAreasConoc}"
+                                  action="#{menuMB.fireAction('IR_ABM_AREA_CONOCIMIENTO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_AREA_CONOCIMIENTO']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionAreasOrg"
+                                  value="#{labels.configuracionAreas}"
+                                  action="#{menuMB.fireAction('IR_ABM_AREAS')}"
+                                  rendered="#{menuMB.permisos['ADMIN_AREAS']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionAreaTematica"
+                                  value="#{labels.configuracionAreaTematica}"
+                                  action="#{menuMB.fireAction('IR_ABM_AREAS_TEMATICAS')}"
+                                  rendered="#{menuMB.permisos['ADMIN_AREA_TEMATICA']}" >
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionDocumentos"
+                                  value="#{labels.configuracionDocumentos}"
+                                  action="#{menuMB.fireAction('configuracionDocumentos')}"
+                                  rendered="#{menuMB.permisos['ADM_CONF']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionFuenteFinanc"
+                                  value="#{labels.configuracionFuenteFinanc}"
+                                  action="#{menuMB.fireAction('IR_ABM_FUENTE_FINANCIAMIENTO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_FUENTE_FINANC']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionNotificaciones"
+                                  value="#{labels.configuracionNotificaciones}"
+                                  action="#{menuMB.fireAction('IR_ABM_NOTIFICACION')}"
+                                  rendered="#{menuMB.permisos['ADMIN_NOTIFICACION']}" >
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionMailsTemplate"
+                                  value="#{labels.configuracionMailsTemplate}"
+                                  action="#{menuMB.fireAction('IR_ABM_MAILS_TEMPLATE')}"
+                                  rendered="#{menuMB.permisos['ADMIN_MAIL_TEMPLATE']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionMonedas"
+                                  value="#{labels.configuracionMonedas}"
+                                  action="#{menuMB.fireAction('IR_ABM_MONEDA')}"
+                                  rendered="#{menuMB.permisos['ADMIN_MONEDA']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionOrganizacion"
+                                  value="#{labels.configuracionOrganizaciones}"
+                                  action="#{menuMB.fireAction('IR_ABM_ORGANIZACION')}"
+                                  rendered="#{menuMB.permisos['ADMIN_ORGANIZACION']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionRiesgos"
+                                  value="#{labels.configuracionRiesgos}"
+                                  action="#{menuMB.fireAction('configuracionRiesgos')}"
+                                  rendered="#{menuMB.permisos['ADM_CONF']}" >
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionRolesInteresados"
+                                  value="#{labels.configuracionRolesInteresados}"
+                                  action="#{menuMB.fireAction('IR_ABM_ROLES_INTERESADOS')}"
+                                  rendered="#{menuMB.permisos['ADMIN_ROLES_INTERESADOS']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionTemaCalidad"
+                                  value="#{labels.configuracionTemaCalidad}"
+                                  action="#{menuMB.fireAction('IR_ABM_TEMAS_CALIDAD')}"
+                                  rendered="#{menuMB.permisos['ADMIN_TEMA_CALIDAD']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionTiposDocumentos"
+                                  value="#{labels.configuracionTiposDocumentos}"
+                                  action="#{menuMB.fireAction('IR_ABM_TIPO_DOCUMENTO')}"
+                                  rendered="#{menuMB.permisos['ADM_CONF']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracionTipoGastos"
+                                  value="#{labels.configuracionTipoGastos}"
+                                  action="#{menuMB.fireAction('IR_ABM_TIPO_GASTO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_TIPO_GASTOS']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+                </ace:submenu>
+
+                <!-- Usuarios -->
+                <ace:menuItem id="idSsUsuario"
+                              value="#{labels.usuarios}"
+                              action="#{menuMB.fireAction('IR_A_SsUsuario')}"
+                              rendered="#{menuMB.permisos['ADMIN_USU']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+
+                <ace:menuItem id="personas"  
+                              value="#{labels.personas}"
+                              action="#{menuMB.fireAction('IR_A_PERSONAS')}"
+                              rendered="#{menuMB.permisos['ADMIN_PERSONAS']}">
+                </ace:menuItem>
+
+                <!-- Plantilla de Cronogramas -->
+                <ace:menuItem id="plantillaCronograma"  
+                              value="#{labels.plantillaCronograma}"
+                              action="#{menuMB.fireAction('IR_A_PLANTILLAS')}">
+
+                </ace:menuItem>
+
+                <!-- Migración -->
+                <ace:menuItem id="migracionCalcularIndicadores"  
+                              value="#{labels.migracion_calcular_indicadores}"
+                              action="#{menuMB.fireAction('migracion_calc_indicadores')}"
+                              rendered="#{menuMB.permisos['MIGRA_CALC_INDICA']}" >
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionPGE"  
+                              value="#{labels.configuracionPGE}"
+                              action="#{menuMB.fireAction('configuracionPGE')}"
+                              rendered="#{menuMB.permisos['ADMIN_PGE']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="ayuda"  
+                              value="#{labels.ayuda}"
+                              action="#{menuMB.fireAction('IR_A_AYUDA')}"
+                              rendered="#{menuMB.permisos['ADMIN_AYU']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="noticia"  
+                              value="#{labels.noticias}"
+                              action="#{menuMB.fireAction('IR_A_NOTICIAS')}"
+                              rendered="#{menuMB.permisos['ADMIN_NOT']}">
+
+                </ace:menuItem>
+            </ace:submenu>
+
+            <ace:menuItem id="organismo"  
+                          value="#{labels.menu_editarOrganismo}"
+                          action="#{menuMB.fireAction('IR_ABM_ORGANISMO')}"
+                          rendered="#{menuMB.permisos['ADMINISTRADOR']}">
+            </ace:menuItem>
+        </ace:menuBar>
+    </ice:form>
+</ui:composition>

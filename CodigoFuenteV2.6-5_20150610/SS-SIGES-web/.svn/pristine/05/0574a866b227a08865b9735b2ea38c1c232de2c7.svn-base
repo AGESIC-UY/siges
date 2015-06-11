@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+  <security-domain>form-auth</security-domain>
+  <disable-audit>true</disable-audit>
+  <context-root>/SS-SIGES-web</context-root>
+  <!--
+  <valve>  
+    <class-name>com.sofis.agesic.sso.SofisServiceProviderValve</class-name>
+    <param><param-name>debug</param-name> <param-value>true</param-value></param>				    
+    <param><param-name>relaxValidityPeriod</param-name> <param-value>true</param-value></param>				    
+    <param><param-name>idpUrlLogin</param-name> <param-value>https://test-caccwebseal1.pge.red.uy:444/FIM1/sps/Plataforma/saml20/login</param-value></param>				    
+    <param><param-name>providerId</param-name> <param-value>http://test.siges.com.uy/SS-SIGES-web/sp</param-value></param>				    
+    <param><param-name>returnPath</param-name> <param-value>/sso</param-value></param>				    
+    <param><param-name>keystorePath</param-name> <param-value>/opt/jboss-as-7.1.1.Final/standalone/certificados/ks.sofis.com.uy.jks</param-value></param>				    
+    <param><param-name>keystorePass</param-name> <param-value>sofis2uy</param-value></param>				    
+    <param><param-name>certAlias</param-name> <param-value>sofissp</param-value></param>				    
+    <param><param-name>truststorePath</param-name> <param-value>/opt/jboss-as-7.1.1.Final/standalone/certificados/ts.sofis.com.uy.jks</param-value></param>				    
+    <param><param-name>truststorePass</param-name> <param-value>sofis2uy</param-value></param>				    
+    <param><param-name>restrictedUrls</param-name> <param-value>/SS-SIGES-web/paginasPrivadas/*</param-value></param>				    
+    <param><param-name>excludedUrls</param-name> <param-value></param-value></param>				    
+    <param><param-name>defaultRoles</param-name> <param-value>usuario_autenticado</param-value></param>				    
+    <param><param-name>attributeMappings</param-name> <param-value>SS-SIGES-web.PrimerNombre=Nombre,SS-SIGES-web.PrimerApellido=Apellido</param-value></param>				    
+    <param><param-name>privisioningConfigs</param-name> <param-value>SS-SIGES-web=/opt/jboss-as-7.1.1.Final/standalone/configuration/jdbc-siges.properties</param-value></param>				    
+  </valve> 
+  -->
+</jboss-web>

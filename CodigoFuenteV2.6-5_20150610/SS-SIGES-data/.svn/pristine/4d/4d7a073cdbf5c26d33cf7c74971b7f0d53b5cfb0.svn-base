@@ -1,0 +1,96 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.constantes.ConstantesErrores;
+import com.sofis.entities.data.ProyIndices;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public ProyectosDAO(EntityManager em) {
+        super(em);
+    }
+
+    public void updateIndices(Integer proyPk, ProyIndices ind) {
+        if (ind != null) {
+            String queryStr = "UPDATE Proyectos p SET p.proyIndices = :ind WHERE p.proyPk = :proyPk";
+            Query query = getEm().createQuery(queryStr);
+            query.setParameter("ind", ind);
+            query.setParameter("proyPk", proyPk);
+            query.executeUpdate();
+        }
+    }
+
+    public List<Proyectos> obtenerProyHermanos(Integer proyPk) {
+        if (proyPk != null) {
+            String queryStr = "SELECT p FROM Proyectos p"
+                    + " WHERE p.proyProgFk IN("
+                    + " SELECT y.proyProgFk FROM Proyectos y WHERE y.proyPk = :proyPk)";
+            Query query = getEm().createQuery(queryStr);
+            query.setParameter("proyPk", proyPk);
+            return query.getResultList();
+        }
+        return null;
+    }
+
+    public List<Proyectos> obtenerProyComboPorOrg(int orgId) {
+        String queryStr = "SELECT NEW Proyectos(p.proyPk, p.proyNombre)"
+                + " FROM Proyectos p"
+                + " WHERE p.proyOrgFk.orgPk = :orgId"
+                + " AND p.activo != :activo"
+                + " AND p.proyEstFk.estOrdenProceso IS NOT NULL"
+                + " AND p.proyEstFk.estOrdenProceso > :iniciado"
+                + " ORDER BY p.proyNombre";
+        Query query = getEm().createQuery(queryStr);
+        query.setParameter("orgId", orgId);
+        query.setParameter("activo", Boolean.FALSE);
+        query.setParameter("iniciado", 1);
+        List<Proyectos> proyectosList = query.getResultList();
+
+        return proyectosList;
+    }
+
+    /**
+     * Retorna true si el proyecto tiene solicitud de cambio de estado.
+     *
+     * @param progPk
+     * @return Boolean
+     */
+    public boolean cambioEstadoPorProg(Integer progPk) {
+        if (progPk != null) {
+            String queryStr = "SELECT p.proyPk FROM Proyectos p"
+                    + " WHERE p.proyProgFk.progPk = :progPk"
+                    + " AND p.proyEstPendienteFk IS NOT NULL";
+            Query query = getEm().createQuery(queryStr);
+            query.setParameter("progPk", progPk);
+
+            return query.getResultList().size() > 0 ? true : false;
+        }
+        return false;
+    }
+
+    public List<Proyectos> obtenerProyProProgPk(Integer progPk) {
+        if (progPk != null) {
+            String queryStr = "SELECT p FROM Proyectos p"
+                    + " WHERE p.proyProgFk.progPk = :progPk";
+            Query query = getEm().createQuery(queryStr);
+            query.setParameter("progPk", progPk);
+
+            List<Proyectos> result = query.getResultList();
+            return result;
+        }
+        return null;
+    }
+}

@@ -1,0 +1,33 @@
+package com.sofis.web.delegates;
+
+import com.sofis.business.ejbs.AreasBean;
+import com.sofis.entities.data.Areas;
+import com.sofis.entities.data.AreasTags;
+import java.util.List;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+public class AreasDelegate {
+
+    @Inject
+    AreasBean areasBean;
+
+    public List<Areas> obtenerAreasPorOrganismo(int organismoId) {
+        return areasBean.obtenerAreasPorIdOrganismo(organismoId);
+    }
+
+    public List<AreasTags> obtenerAreasTematicasPorOrganizacion(int organismoId) {
+        return areasBean.obtenerAreasTematicasPorOrganizacion(organismoId);
+    }
+
+    public List<AreasTags> obtenerAreasTematicasPorFichaPk(int fichaPk, int tipoFicha) {
+        return areasBean.obtenerAreasTematicasPorFichaPk(fichaPk, tipoFicha);
+    }
+
+    public List<Areas> obtenerAreasRestringidasPorFichaPk(int fichaPk, int tipoFicha) {
+        return areasBean.obtenerAreasRestringidasPorFichaPk(fichaPk, tipoFicha);
+    }
+}

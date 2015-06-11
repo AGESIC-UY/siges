@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:form id="fichaReporteTablas" >
+
+        <ice:panelGroup>
+            <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+                <ice:outputText value="#{labels.reporte_proy_titulo} - " />
+                <ice:outputText value="#{reporteProyectoMB.fechaReporte()}" converter="fechaConverter"/>
+            </ice:panelGroup>
+            <ice:panelGroup styleClass="subtitulo">
+                <ice:outputText value="#{reporteProyectoMB.fichaTO.nombre} (#{reporteProyectoMB.fichaTO.fichaFk})" />
+            </ice:panelGroup>
+
+            <ice:panelGroup id="infoCronograma" styleClass="margen-sup">
+                <!-- Cronograma -->
+                <ui:include src="./../fragmentos/reporteCronogramaFragmento.xhtml" />
+            </ice:panelGroup>
+            
+            <ice:panelGroup id="infoAcumulados" styleClass="margen-sup">
+                <!-- Productos, Presupuesto -->
+                <ui:include src="./../fragmentos/reporteAcumuladosFragmento.xhtml" />
+            </ice:panelGroup>
+            
+            <ice:panelGroup id="infoCostos" styleClass="margen-sup">
+                <!-- Costos estimados -->
+                <ui:include src="./../fragmentos/reporteCostosEstFragmento.xhtml" />
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:form>
+</ui:composition>

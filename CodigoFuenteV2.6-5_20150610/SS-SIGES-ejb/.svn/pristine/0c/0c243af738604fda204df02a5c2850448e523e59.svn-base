@@ -1,0 +1,61 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.interceptors.LoggedInterceptor;
+import com.sofis.data.daos.MonedaDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Moneda;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "MonedaBean")
+@LocalBean
+@Interceptors({LoggedInterceptor.class})
+public class MonedaBean {
+
+    @Inject
+    private ConsultaHistorico<Moneda> ch;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    /**
+     * Obtener todas las monedas.
+     *
+     * @return Todas las monedas.
+     */
+    public List<Moneda> obtenerMonedas() {
+        MonedaDAO monedaDao = new MonedaDAO(em);
+        try {
+            List<Moneda> resultado = monedaDao.findAll(Moneda.class, "monPk");
+            return resultado;
+        } catch (DAOGeneralException ex) {
+            ex.printStackTrace();
+            throw new TechnicalException(ex.getMessage());
+        }
+    }
+
+    public Moneda obtenerMonedaPorId(Integer monPk) {
+        MonedaDAO monedaDao = new MonedaDAO(em);
+        try {
+            return monedaDao.findById(Moneda.class, monPk);
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(MonedaBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+}

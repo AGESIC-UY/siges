@@ -1,0 +1,25 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.sofis.web.delegates;
+
+import com.sofis.business.ejbs.FuenteFinanciamientoBean;
+import com.sofis.entities.data.FuenteFinanciamiento;
+import com.sofis.exceptions.GeneralException;
+import java.util.List;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+public class FuenteFinanciamientoDelegate {
+    
+    @Inject
+    FuenteFinanciamientoBean fuenteFinanciamientoBean;
+    
+    public List<FuenteFinanciamiento> obtenerFuentesPorOrgId(Integer orgId) throws GeneralException {
+        return fuenteFinanciamientoBean.obtenerFuentesPorOrgId(orgId);
+    }
+}

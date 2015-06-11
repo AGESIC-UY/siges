@@ -1,0 +1,281 @@
+package com.sofis.web.mb;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.AreasTags;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.exceptions.GeneralException;
+import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.web.componentes.SofisPopupUI;
+import com.sofis.web.delegates.AreaTematicaDelegate;
+import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.JSFUtils;
+import com.sofis.web.utils.SofisCombo;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "areaTematicaMB")
+@ViewScoped
+public class AreaTematicaMB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final String BUSQUEDA_AREA_TEM_MSG = "busquedaAreaTemMsg";
+    private static final String POPUP_AREA_TEM_MSG = "areaTemPopupMsg";
+    @ManagedProperty("#{inicioMB}")
+    private InicioMB inicioMB;
+    @Inject
+    private SofisPopupUI renderPopupEdicion;
+    @Inject
+    private AreaTematicaDelegate areaTematicaDelegate;
+    // Variables
+    private String cantElementosPorPagina = "25";
+    private String elementoOrdenacion = "areatagNombre";
+    // 0=descendente, 1=ascendente.
+    private int ascendente = 1;
+    private String filtroNombre;
+    private List<AreasTags> listaResultado;
+    private AreasTags areaTemEnEdicion;
+    private List<AreasTags> listAreasTags;
+    private SofisCombo listaAreasTagsCombo;
+
+    public AreaTematicaMB() {
+        filtroNombre = "";
+        listaResultado = new ArrayList<>();
+        areaTemEnEdicion = new AreasTags();
+        listAreasTags = new ArrayList<>();
+        listaAreasTagsCombo = new SofisCombo();
+    }
+
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+
+    @PostConstruct
+    public void init() {
+        inicioMB.cargarOrganismoSeleccionado();
+        
+        buscar();
+    }
+
+    public String getFiltroNombre() {
+        return filtroNombre;
+    }
+
+    public void setFiltroNombre(String filtroNombre) {
+        this.filtroNombre = filtroNombre;
+    }
+
+    public List<AreasTags> getListaResultado() {
+        return listaResultado;
+    }
+
+    public void setListaResultado(List<AreasTags> listaResultado) {
+        this.listaResultado = listaResultado;
+    }
+
+    public AreasTags getAreaTemEnEdicion() {
+        return areaTemEnEdicion;
+    }
+
+    public void setAreaTemEnEdicion(AreasTags areaTemEnEdicion) {
+        this.areaTemEnEdicion = areaTemEnEdicion;
+    }
+
+    public SofisPopupUI getRenderPopupEdicion() {
+        return renderPopupEdicion;
+    }
+
+    public void setRenderPopupEdicion(SofisPopupUI renderPopupEdicion) {
+        this.renderPopupEdicion = renderPopupEdicion;
+    }
+
+    public List<AreasTags> getListAreasTags() {
+        return listAreasTags;
+    }
+
+    public void setListAreasTags(List<AreasTags> listAreasTags) {
+        this.listAreasTags = listAreasTags;
+    }
+
+    public SofisCombo getListaAreasTagsCombo() {
+        return listaAreasTagsCombo;
+    }
+
+    public void setListaAreasTagsCombo(SofisCombo listaAreasTagsCombo) {
+        this.listaAreasTagsCombo = listaAreasTagsCombo;
+    }
+
+    public String getCantElementosPorPagina() {
+        return cantElementosPorPagina;
+    }
+
+    public void setCantElementosPorPagina(String cantElementosPorPagina) {
+        this.cantElementosPorPagina = cantElementosPorPagina;
+    }
+
+    public String getElementoOrdenacion() {
+        return elementoOrdenacion;
+    }
+
+    public void setElementoOrdenacion(String elementoOrdenacion) {
+        this.elementoOrdenacion = elementoOrdenacion;
+    }
+
+    public int getAscendente() {
+        return ascendente;
+    }
+
+    public void setAscendente(int ascendente) {
+        this.ascendente = ascendente;
+    }
+
+    /**
+     * Action agregar.
+     *
+     * @return
+     */
+    public String agregar() {
+        areaTemEnEdicion = new AreasTags();
+
+        listAreasTags = areaTematicaDelegate.busquedaAreaTemFiltro(inicioMB.getOrganismo().getOrgPk(), null, elementoOrdenacion, ascendente);
+        if (listaResultado != null) {
+            listaAreasTagsCombo = new SofisCombo((List) listAreasTags, "areatagNombre");
+            listaAreasTagsCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        renderPopupEdicion.abrir();
+        return null;
+    }
+
+    /**
+     * Action eliminar un area tematica.
+     *
+     * @return
+     */
+    public String eliminar(Integer atPk) {
+        if (atPk != null) {
+            try {
+                areaTematicaDelegate.eliminarAreaTematica(atPk);
+                for (AreasTags at : listaResultado) {
+                    if (at.getArastagPk().equals(atPk)) {
+                        listaResultado.remove(at);
+                        break;
+                    }
+                }
+//                buscar();
+            } catch (BusinessException e) {
+                logger.log(Level.SEVERE, null, e);
+                JSFUtils.agregarMsgs(BUSQUEDA_AREA_TEM_MSG, e.getErrores());
+                inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Action Buscar.
+     *
+     * @return
+     */
+    public String buscar() {
+        listaResultado = areaTematicaDelegate.busquedaAreaTemFiltro(inicioMB.getOrganismo().getOrgPk(), filtroNombre, elementoOrdenacion, ascendente);
+
+        return null;
+    }
+
+    public String editar(Integer atPk) {
+        try {
+            areaTemEnEdicion = areaTematicaDelegate.obtenerAreaTemPorPk(atPk);
+        } catch (BusinessException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsgs(POPUP_AREA_TEM_MSG, ex.getErrores());
+        }
+
+        listAreasTags = areaTematicaDelegate.busquedaAreaTemFiltro(inicioMB.getOrganismo().getOrgPk(), null, elementoOrdenacion, ascendente);
+        quitarAreaDeLista(listAreasTags, areaTemEnEdicion);
+        if (listaResultado != null) {
+            listaAreasTagsCombo = new SofisCombo((List) listAreasTags, "areatagNombre");
+            listaAreasTagsCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+        listaAreasTagsCombo.setSelectedObject(areaTemEnEdicion.getAreatagPadreFk());
+
+        renderPopupEdicion.abrir();
+        return null;
+    }
+
+    public String guardar() {
+        AreasTags areasTagsSelected = (AreasTags) listaAreasTagsCombo.getSelectedObject();
+
+        areaTemEnEdicion.setAreatagOrgFk(inicioMB.getOrganismo());
+        areaTemEnEdicion.setAreatagPadreFk(areasTagsSelected);
+
+        try {
+            areaTemEnEdicion = areaTematicaDelegate.guardarAreaTematica(areaTemEnEdicion);
+
+            if (areaTemEnEdicion != null) {
+                renderPopupEdicion.cerrar();
+                buscar();
+            }
+        } catch (BusinessException be) {
+            logger.log(Level.SEVERE, be.getMessage(), be);
+            JSFUtils.agregarMsgs(BUSQUEDA_AREA_TEM_MSG, be.getErrores());
+        }
+        return null;
+    }
+
+    public void cancelar() {
+        renderPopupEdicion.cerrar();
+    }
+
+    /**
+     * Action limpiar formulario de busqueda.
+     *
+     * @return
+     */
+    public String limpiar() {
+        filtroNombre = null;
+        listaResultado = null;
+        elementoOrdenacion = "areatagNombre";
+        ascendente = 1;
+
+        return null;
+    }
+
+    public void cambiarCantPaginas(ValueChangeEvent evt) {
+        buscar();
+    }
+
+    public void cambiarCriterioOrdenacion(ValueChangeEvent evt) {
+        elementoOrdenacion = evt.getNewValue().toString();
+        buscar();
+    }
+
+    public void cambiarAscendenteOrdenacion(ValueChangeEvent evt) {
+        ascendente = Integer.valueOf(evt.getNewValue().toString());
+        buscar();
+    }
+
+    private void quitarAreaDeLista(List<AreasTags> listAreasTags, AreasTags areaTemEnEdicion) {
+        if (CollectionsUtils.isNotEmpty(listAreasTags) && areaTemEnEdicion != null) {
+            for (AreasTags at : listAreasTags) {
+                if(at.getArastagPk().equals(areaTemEnEdicion.getArastagPk())){
+                    listAreasTags.remove(at);
+                    break;
+                }
+            }
+        }
+    }
+}

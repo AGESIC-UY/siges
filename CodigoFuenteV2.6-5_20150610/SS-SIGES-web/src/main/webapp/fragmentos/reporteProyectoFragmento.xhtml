@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:form id="fichaReporte" >
+
+        <ice:panelGroup>
+            <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+                <ice:outputText value="#{labels.reporte_proy_titulo}" />
+            </ice:panelGroup>
+
+            <ice:panelGroup id="infoBaseProy">
+                <ice:panelGroup id="infoBase" styleClass="row margen-inf">
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.nombreProgProy}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.fichaFk} - #{reporteProyectoMB.fichaTO.nombre}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6 fichaUltAct" 
+                                    rendered="#{reporteProyectoMB.fichaTO.fechaAct != null}">
+                        <ice:outputLabel value="#{labels.ficha_fechaActualizacion}:&nbsp;"/>
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.fechaAct}"
+                                        converter="fechaConverter"/>
+                        <ice:commandButton style="background-color: #{reporteProyectoMB.fichaTO.fechaActColor};"
+                                           styleClass="botonSemaforo" 
+                                           disabled="true"
+                                           rendered="#{reporteProyectoMB.fichaTO.fechaActColor != null}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.ficha_fase}:"/>
+                        <ice:outputText value="#{reporteProyectoMB.estadoStr(reporteProyectoMB.fichaTO.estado)}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.areaOrganizacionFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.areaFk.areaNombre}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.programaFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.progFk.progNombre}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.pesoFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.peso}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.gerenteFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.usrGerenteFk.nombreApellido}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.adjuntoFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.usrAdjuntoFk.nombreApellido}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.sponsorFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.usrSponsorFk.nombreApellido}" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="col-sm-6">
+                        <ice:outputLabel value="#{labels.pmoFederadaFicha}:" />
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.usrPmofedFk.nombreApellido}" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup >
+                    <ice:outputLabel value="#{labels.objFicha}"/>
+                    <ice:panelGroup styleClass="recuadro margen-inf">
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.objetivo}"
+                                        escape="false"/>
+                    </ice:panelGroup>
+
+                    <ice:outputLabel value="#{labels.objPublicoFicha}"/>
+                    <ice:panelGroup styleClass="recuadro margen-inf">
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.objPublico}"
+                                        escape="false"/>
+                    </ice:panelGroup>
+
+                    <ice:outputLabel value="#{labels.ficha_situacionActualFicha}:"/>
+                    <ice:outputLabel value="#{reporteProyectoMB.fichaTO.fechaUltimaSitAct}"
+                                     converter="fechaConverter"/>
+                    <ice:panelGroup styleClass="recuadro margen-inf">
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.situacionActual}"
+                                        escape="false"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+            </ice:panelGroup>
+
+            <ice:panelGroup id="infoResumenes" styleClass="row" style="padding-right: 15px;">
+                <!-- Resumen Riesgos -->
+                <ice:panelGroup id="panelRiesgos" 
+                                styleClass="cuadro col-sm-4">
+                    <ice:panelGroup id="cabezalRiesgos" styleClass="cabezal">
+                        <ice:outputText value="#{labels.riesgos}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup id="resumenRiesgos" styleClass="cuerpo">
+                        <ice:panelGroup styleClass="exposicionRiesgo" 
+                                        rendered="#{reporteProyectoMB.fichaMB.exposicionRiesgo != null}">
+                            <ice:outputLabel value="#{labels.exposicionRiesgo}:"/>
+                            <ice:outputText value="#{reporteProyectoMB.fichaMB.exposicionRiesgo}" converter="decimalFormatConverter"/>
+                            <ice:commandButton style="background-color: #{reporteProyectoMB.fichaMB.exposicionRiesgoColor}"
+                                               styleClass="botonSemaforo"
+                                               disabled="true"/>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="actualizacionRiesgo" 
+                                        rendered="#{reporteProyectoMB.fichaMB.riesgoActualizacion != null or reporteProyectoMB.fichaMB.riesgoActualizacion == ''}">
+                            <ice:outputLabel value="#{labels.actualizacionRiesgo}:"/>
+                            <ice:outputText value="#{reporteProyectoMB.fichaMB.riesgoActualizacion}" converter="fechaConverter"/>
+                            <ice:commandButton style="background-color: #{reporteProyectoMB.fichaMB.riesgoActualizacionColor}"
+                                               styleClass="botonSemaforo"
+                                               disabled="true"/>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="actualizacionRiesgo" 
+                                        rendered="#{(reporteProyectoMB.fichaMB.riesgosCantAltos != null or reporteProyectoMB.fichaMB.riesgosCantAltos >= 0) and reporteProyectoMB.fichaMB.exposicionRiesgo != null}">
+                            <ice:outputLabel value="#{labels.cantAltosRiesgo}:"/>
+                            <ice:outputText value="#{reporteProyectoMB.fichaMB.riesgosCantAltos}"/>
+                        </ice:panelGroup>
+
+                        <ace:dataTable id="riesgosTable"
+                                       value="#{reporteProyectoMB.fichaMB.listaRiesgosResumen}"
+                                       styleClass="tablaFicha"
+                                       var="riesgo"
+                                       rendered="#{not empty reporteProyectoMB.fichaMB.listaRiesgosResumen}"
+                                       paginator="true"
+                                       paginatorPosition="bottom"
+                                       rows="10">
+                            <ace:column id="id_r" headerText="#{labels.resumen_top_riesgo}">
+                                <c:set var="largo" value="#{fn:length(riesgo.riskNombre)}" />
+                                <c:set var="riskNombre" value="#{fn:substring(riesgo.riskNombre, 0, 25)}#{largo > 25 ? '...' : ''}" />
+                                <h:outputText value="#{riesgo.exposicion}" 
+                                              style="font-weight: bold; color: #{riesgo.exposicionColor};"
+                                              converter="decimalFormatConverter"/>
+                                <h:outputText value=" - #{riskNombre}"
+                                              title="#{riesgo.exposicion} - #{riesgo.riskNombre}"/>
+                            </ace:column>
+                        </ace:dataTable>
+
+                        <ice:panelGroup rendered="#{empty reporteProyectoMB.fichaMB.listaRiesgosResumen}">
+                            <ice:outputText value="#{labels.msg_sin_riegos}" />
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <!-- Resumen Presupuesto -->
+                <ice:panelGroup id="panelPresupuesto" 
+                                styleClass="cuadro col-sm-4" >
+                    <ice:panelGroup id="cabezalPresupuesto" styleClass="cabezal" >
+                        <ice:outputText value="#{labels.presupuesto_titulo}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup id="resumenPresupuesto" styleClass="cuerpo">
+                        <ice:panelGroup rendered="#{reporteProyectoMB.fichaTO.preFk != null}">
+                            <ice:panelGroup>
+                                <ice:outputLabel value="#{labels.presupuesto_aprobado}: "/>
+                                <ice:outputText value="#{reporteProyectoMB.fichaTO.preFk.preMoneda.monSigno} " />
+                                <ice:outputText value="#{reporteProyectoMB.fichaTO.preFk.preBase}" 
+                                                converter="ImporteFormatConverter"/>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup >
+                                <ice:outputLabel value="#{labels.resumen_fuente}: "/>
+                                <ice:outputText value=" #{reporteProyectoMB.fichaTO.preFk.fuenteFinanciamiento.fueNombre}" />
+                            </ice:panelGroup>
+
+                            <ace:dataTable value="#{reporteProyectoMB.fichaMB.presupuestoResumen}" 
+                                           var="preResumen">
+                                <ace:column headerText="">
+                                    <ice:outputText value="#{preResumen.title}"/>
+                                </ace:column>
+                                <c:forEach items="#{reporteProyectoMB.fichaMB.monedasPresupuesto}" 
+                                           var="colModel">
+
+                                    <c:set var="colorMon" value="#{reporteProyectoMB.fichaMB.getPrespuestoTablaDinamicaColor(preResumen, colModel.monPk)}"/>
+                                    <c:set var="styleMonColor" value="border-bottom: 6px solid #{colorMon}"/>
+                                    <c:set var="styleMon" value="#{colorMon != '' ? styleMonColor : ''}"/>
+
+                                    <ace:column headerText="#{colModel.monSigno}" 
+                                                style="#{styleMon}">
+                                        <ice:outputText value="#{reporteProyectoMB.fichaMB.getPrespuestoTablaDinamicaValor(preResumen, colModel.monPk)}"
+                                                        converter="ImporteFormatConverter"/>
+                                    </ace:column>
+                                </c:forEach>
+                            </ace:dataTable>
+                        </ice:panelGroup>
+                        <ice:panelGroup rendered="#{reporteProyectoMB.fichaTO.preFk eq null}">
+                            <ice:outputText value="#{labels.presupuesto_sin_cargar}" />
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <!-- Resumen Cronograma -->
+                <ice:panelGroup id="panelGannt" 
+                                styleClass="cuadro col-sm-4" >
+                    <ice:panelGroup id="cabezalGannt" styleClass="cabezal">
+                        <ice:outputText value="#{labels.cronograma}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="cuerpo">
+                        <c:set var="ganttIndice" value="1" />
+                        <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
+
+                        <ace:dataTable id="resumenEntregablesTable"
+                                       value="#{reporteProyectoMB.fichaMB.listaEntregablesResumen}"
+                                       styleClass="tablaFicha"
+                                       var="ent"
+                                       rendered="#{not empty reporteProyectoMB.fichaMB.listaEntregablesResumen}"
+                                       paginator="true"
+                                       paginatorPosition="bottom"
+                                       rows="5">
+                            <ace:column id="id_r" headerText="#{labels.titleResumenCronograma}">
+                                <c:set var="largo" value="#{fn:length(ent.entNombre)}" />
+                                <c:set var="entNombre" value="#{fn:substring(ent.entNombre, 0, 25)}#{largo > 25 ? '...' : ''}" />
+                                <h:outputText value="#{ent.entEsfuerzo} - #{entNombre} (#{100 - ent.entProgreso}%)"
+                                              title="#{labels.tooltip_esfuerzo}: #{ent.entEsfuerzo}&#13;#{labels.tooltip_nombre}: #{ent.entNombre}&#13;#{labels.tooltip_atraso}: #{100 - ent.entProgreso}%"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup rendered="false">
+                <ice:panelGroup id="infoCronograma" styleClass="margen-sup">
+                    <!-- Cronograma -->
+                    <ui:include src="./../fragmentos/reporteCronogramaFragmento.xhtml" />
+                </ice:panelGroup>
+
+                <ice:panelGroup id="infoAcumulados" styleClass="margen-sup">
+                    <!-- Productos, Presupuesto -->
+                    <ui:include src="./../fragmentos/reporteAcumuladosFragmento.xhtml" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:form>
+</ui:composition>

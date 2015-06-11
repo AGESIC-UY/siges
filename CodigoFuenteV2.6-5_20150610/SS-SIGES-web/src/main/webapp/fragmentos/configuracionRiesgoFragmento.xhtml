@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="configuracionRiesgos">
+
+        <style>
+            .ui-footer-column{
+                background-color: white !important;
+            }
+        </style>
+        <!-- Titulo -->
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloConfiguracionRiesgos}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="limiteRiesgos">
+            <ice:panelGrid  styleClass="formulario " columns="2">
+                <h:outputText value="#{labels.limiteAmarillo}"/>
+                <ace:textEntry value="#{configuracionMB.confRiesgoLimiteAmarillo.cnfValor}"
+                               converter="decimalFormatConverter"/>
+                
+                <h:outputText value="#{labels.limiteRojo}"/>
+                <ace:textEntry value="#{configuracionMB.confRiesgoLimiteRojo.cnfValor}"
+                               converter="decimalFormatConverter"/>
+                
+                <h:outputText value="#{labels.limiteTiempoAmarillo}"/>
+                <ace:textEntry value="#{configuracionMB.confRiesgoTiempoLimiteAmarillo.cnfValor}"
+                               converter="IntegerFormatConverter"/>
+                
+                <h:outputText value="#{labels.limiteTiempoRojo}"/>
+                <ace:textEntry value="#{configuracionMB.confRiesgoTiempoLimiteRojo.cnfValor}"
+                               converter="IntegerFormatConverter"/>
+            </ice:panelGrid>
+
+            <ice:panelGrid styleClass="panelBotonAgregar" >
+                <ace:messages />
+                <ace:pushButton value="Guardar" 
+                                action="#{configuracionMB.guardarRiesgoLimite}" 
+                                styleClass="guardar" />
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="tablaConf">
+            <ace:dataTable  id="tblConfRiesgo" value="#{configuracionMB.limiteGestionRiesgos}" var="risk"
+                            paginator="true" pageCount="5" 
+                            rows="#{configuracionMB.cantElementosPorPagina}">
+                <ace:column>
+                    <h:outputText value="#{risk.impacto}"/>
+                </ace:column>
+                <ace:column footerText="20%" style="background-color: #{configuracionMB.riesgoColor(risk.val1)}">
+                    <h:outputText value="#{risk.val1}"/>
+                </ace:column>
+                <ace:column footerText="40%" style="background-color: #{configuracionMB.riesgoColor(risk.val2)}" >
+                    <h:outputText value="#{risk.val2}"/>
+                </ace:column>
+                <ace:column footerText="60%" style="background-color: #{configuracionMB.riesgoColor(risk.val3)}">
+                    <h:outputText value="#{risk.val3}"/>
+                </ace:column>
+                <ace:column footerText="80%" style="background-color: #{configuracionMB.riesgoColor(risk.val4)}" >
+                    <h:outputText value="#{risk.val4}"/>
+                </ace:column>
+                <ace:column footerText="100%"  style="background-color: #{configuracionMB.riesgoColor(risk.val5)}">
+                    <h:outputText value="#{risk.val5}"/>
+                </ace:column>
+            </ace:dataTable>
+        </ice:panelGroup>
+    </ice:form>
+</ui:composition>

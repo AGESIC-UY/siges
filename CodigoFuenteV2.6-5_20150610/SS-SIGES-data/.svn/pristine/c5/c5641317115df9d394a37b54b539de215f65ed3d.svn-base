@@ -1,0 +1,68 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public RegistrosHorasDao(EntityManager em) {
+        super(em);
+    }
+
+    public Double obtenerHorasAbrobPorProy(Integer proyPk, Integer usuId) {
+        if (proyPk != null && usuId != null) {
+            String queryStr = "SELECT SUM(rhHoras) FROM RegistrosHoras"
+                    + " WHERE rhProyectoFk.proyPk = :proyPk"
+                    + " AND rhUsuarioFk.usuId = :usuId"
+                    + " AND rhAprobado = :aprobado";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("usuId", usuId);
+            q.setParameter("aprobado", Boolean.TRUE);
+
+            Double result = (Double) q.getSingleResult();
+            return result;
+        }
+        return null;
+    }
+
+    public Double obtenerHorasPendPorProy(Integer proyPk, Integer usuId) {
+        if (proyPk != null && usuId != null) {
+            String queryStr = "SELECT SUM(rhHoras) FROM RegistrosHoras"
+                    + " WHERE rhProyectoFk.proyPk = :proyPk"
+                    + " AND rhUsuarioFk.usuId = :usuId"
+                    + " AND (rhAprobado IS NULL OR rhAprobado = :aprobado)";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("usuId", usuId);
+            q.setParameter("aprobado", Boolean.FALSE);
+
+            Double result = (Double) q.getSingleResult();
+            return result;
+        }
+        return null;
+    }
+
+    public boolean usuTieneHorasAprob(Integer usuId, Integer proyPk) {
+        if (usuId != null && proyPk != null) {
+            Double d = obtenerHorasAbrobPorProy(proyPk, usuId);
+            if (d != null && d >= 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+}

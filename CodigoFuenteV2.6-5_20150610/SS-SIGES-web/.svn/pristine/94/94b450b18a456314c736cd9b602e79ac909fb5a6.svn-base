@@ -1,0 +1,36 @@
+package com.sofis.web.mb;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import java.io.Serializable;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "areasMB")
+@ViewScoped
+public class AreasMB implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @ManagedProperty("#{inicioMB}")
+    InicioMB inicioMB;
+
+    public AreasMB() {
+        
+    }
+
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+    
+    @PostConstruct
+    public void init() {
+        
+    }
+}

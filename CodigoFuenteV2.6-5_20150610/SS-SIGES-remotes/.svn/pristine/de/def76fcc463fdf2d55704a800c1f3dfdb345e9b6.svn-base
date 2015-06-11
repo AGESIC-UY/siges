@@ -1,0 +1,26 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.sofis.business.constantes;
+
+/**
+ * Constantes para usar en el atributo código de la configuracion.
+ * @author Usuario
+ */
+public class ConfiguracionConstantes {
+    
+    public static String RIESGO_TIEMPO_LIMITE_AMARILLO = "RIESGO_TIEMPO_LIMITE_AMARILLO";
+    public static String RIESGO_TIEMPO_LIMITE_ROJO = "RIESGO_TIEMPO_LIMITE_ROJO";
+    public static String RIESGO_INDICE_LIMITE_AMARILLO = "RIESGO_INDICE_LIMITE_AMARILLO";
+    public static String RIESGO_INDICE_LIMITE_ROJO = "RIESGO_INDICE_LIMITE_ROJO";
+    
+    public static String RIESGO_FECHA_LIMITE_CANT_DIAS = "RIESGO_FECHA_LIMITE_CANT_DIAS";
+    
+    public static String DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO = "DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO";
+    public static String DOCUMENTO_PORCENTAJE_LIMITE_ROJO = "DOCUMENTO_PORCENTAJE_LIMITE_ROJO";
+    
+    public static String TAMANIO_MAX_ARCHIVO_DOCUMENTO = "TAMANIO_MAX_ARCHIVO_DOCUMENTO";
+    public static String COSTO_ACTUAL_LIMITE_AMARILLO = "COSTO_ACTUAL_LIMITE_AMARILLO";
+    public static String COSTO_ACTUAL_LIMITE_ROJO = "COSTO_ACTUAL_LIMITE_ROJO";
+}

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelPopup rendered="#{fichaMB.renderAdqDevPopup.isRenderPopup()}" 
+                    draggable="true" 
+                    modal="true"
+                    style="width: 600px;">
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{labels.adquisicion_titulo}"/>
+                <ice:commandButton styleClass="botonCerrar" 
+                                   action="#{fichaMB.cancelarAdqDevPopup()}"/>
+            </ice:panelGroup>
+        </f:facet>
+
+        <f:facet name="body">
+            <ice:panelGroup id="formAdqDev">
+                <ice:panelGrid styleClass="formulario" columns="4">
+                    <ice:outputLabel value="#{labels.adquisicion_devengado_combo}:"/>
+                    <ace:simpleSelectOneMenu id="comboAdqDev"
+                                             value="#{fichaMB.listAdqCombo.selected}"
+                                             rendered="#{not empty fichaMB.listAdqCombo.items}">
+                        <f:selectItems value="#{fichaMB.listAdqCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+                    <ice:outputText value="#{labels.adquisicion_devengado_combo_vacio}"
+                                    rendered="#{empty fichaMB.listAdqCombo.items}"/>
+                </ice:panelGrid>
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages id="popupMsg"/>
+                    <ace:pushButton value="#{labels.guardar}" 
+                                    action="#{fichaMB.guardarAdqDev}" 
+                                    rendered="#{fichaMB.listAdqCombo.items.size() > 0}"
+                                    styleClass="boton principal guardar"/>
+                    <ace:linkButton value="#{labels.cancelar}" 
+                                    action="#{fichaMB.cancelarAdqDevPopup()}"
+                                    styleClass="boton secundario" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </f:facet>
+    </ice:panelPopup>
+
+    <ice:panelGroup styleClass="margen-sup">
+        <ice:panelGroup styleClass="controles" rendered="#{fichaMB.listAdqDev != null}">
+            <ice:outputText value="#{labels.adquisicion_devengado_titulo}" styleClass="subtitulo"/>
+
+            <ice:panelGroup styleClass="anioProducto">
+                <ice:commandLink action="#{fichaMB.retrocederAnioDevengado()}" >
+                    <ice:graphicImage value="../img/atrasar-fase.png" />
+                </ice:commandLink>
+                <ice:outputText value="#{fichaMB.anioDev}" title="#{labels.adquisicion_devengado_anio}"/>
+                <ice:commandLink action="#{fichaMB.avanzarAnioDevengado()}">
+                    <ice:graphicImage value="../img/adelantar-fase.png" />
+                </ice:commandLink>
+            </ice:panelGroup>
+
+            <ice:panelGroup>
+                <h:commandButton id="btnEditarDev"
+                                 styleClass="botonEditar iconoTabla" 
+                                 title="#{labels.adquisicion_devengado_editar}"
+                                 rendered="#{fichaMB.fieldRendered('editarDevengado')  and not fichaMB.editDev}"
+                                 action="#{fichaMB.editarDevengado()}" />
+                
+                <ace:linkButton value="#{labels.adquisicion_devengado_cancelar}" 
+                                action="#{fichaMB.editarDevengado()}"
+                                rendered="#{fichaMB.fieldRendered('cancelarDevengado') and fichaMB.editDev}"
+                                styleClass="" />
+
+                <h:commandButton id="btnGuardarDev"
+                                 styleClass="botonGuardar iconoTabla" 
+                                 title="#{labels.adquisicion_devengado_guardar}"
+                                 rendered="#{fichaMB.fieldRendered('guardarDevengado') and fichaMB.editDev}"
+                                 action="#{fichaMB.guardarDevengado()}" />
+
+                <h:commandButton id="btnAgregarDev"
+                                 styleClass="botonAgregar iconoTabla" 
+                                 title="#{labels.adquisicion_devengado_agregar}"
+                                 rendered="#{fichaMB.fieldRendered('agregarDevengado')}"
+                                 action="#{fichaMB.agregarAdqDevPopup()}" />
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelSeries value="#{fichaMB.listAdqDev}" 
+                         var="adq" 
+                         styleClass="panelDevengado">
+            <ice:panelGroup styleClass="datosProducto">
+                <ice:panelGroup rendered="#{adq.devengadoList != null and adq.devengadoList.size() > 0}">
+                    <div class="prodItem prodItemSubtitulo">
+                        <ice:outputText styleClass="prodItemTitle" />
+                        <ice:outputText value="#{adq.adqNombre} #{adq.adqMoneda.monSigno}"/>
+                    </div>
+                    <div class="prodItem prodItemSubtitulo">
+                        <ice:outputText styleClass="prodItemTitle" />
+                        <ice:outputText value="#{labels.adquisicion_devengado_planificado}:"/>
+                        <ice:outputText value="#{labels.adquisicion_devengado_real}:"/>
+                    </div>
+
+                    <ui:repeat value="#{adq.listDevAux}"
+                               var="devMes">
+                        <div class="prodItem">
+                            <ice:outputText styleClass="prodItemTitle" 
+                                            value="#{fichaMB.mesToStr(devMes.devMes, true)}"/>
+
+                            <ice:outputText value="#{devMes.devPlan > 0 ? devMes.devPlan : ''}"
+                                            rendered="#{!devMes.editarPlan}"
+                                            converter="ImporteFormatConverter"/>
+                            <ace:textEntry value="#{devMes.devPlan}" 
+                                           rendered="#{devMes.editarPlan}"
+                                           styleClass="textoCorto alinearDerecha"
+                                           converter="ImporteFormatConverter"/>
+
+                            <ice:outputText value="#{devMes.devReal > 0 ? devMes.devReal : ''}"
+                                            rendered="#{!devMes.editarReal}"
+                                            converter="ImporteFormatConverter"/>
+                            <ace:textEntry value="#{devMes.devReal}" 
+                                           rendered="#{devMes.editarReal}"
+                                           styleClass="textoCorto alinearDerecha"
+                                           converter="ImporteFormatConverter"/>
+                        </div>
+                    </ui:repeat>
+
+                    <div class="prodItem">
+                        <h:commandButton id="btnEliminarAdqDev"
+                                         styleClass="botonEliminar iconoTabla"
+                                         title="#{labels.adquisicion_devengado_eliminar}"
+                                         rendered="#{fichaMB.fieldRendered('eliminarDevengado')}"
+                                         onclick="confirmationEliminarAdqDev#{adq.adqPk}.show();" />
+                        <ace:confirmationDialog widgetVar="confirmationEliminarAdqDev#{adq.adqPk}" 
+                                                message="#{labels.adquisicion_devengado_conf_eliminar}: #{adq.adqNombre}"
+                                                header="#{labels.hConfirmacion}"
+                                                closable="true"
+                                                closeOnEscape="true"
+                                                severity="info"
+                                                modal="true">
+                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                <h:commandButton id="yesDelAdqDev"
+                                                 value="#{labels.si}"
+                                                 styleClass="boton principal botonContinuar"
+                                                 onclick="confirmationEliminarAdqDev#{adq.adqPk}.hide();" 
+                                                 actionListener="#{fichaMB.eliminarAdqDev(adq)}"/>
+                                <h:commandButton id="noDelAdqDev"
+                                                 value="#{labels.no}"
+                                                 styleClass="boton principal botonEliminar"
+                                                 onclick="confirmationEliminarAdqDev#{adq.adqPk}.hide();"/>
+                            </h:panelGrid>
+                        </ace:confirmationDialog>
+                    </div>
+                </ice:panelGroup>
+                
+                <ice:panelGroup rendered="#{adq.devengadoList == null or adq.devengadoList.size() le 0}">
+                    <ice:outputText value="#{labels.adquisicion_devengado_vacio}" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelSeries>
+    </ice:panelGroup>
+</ui:composition>

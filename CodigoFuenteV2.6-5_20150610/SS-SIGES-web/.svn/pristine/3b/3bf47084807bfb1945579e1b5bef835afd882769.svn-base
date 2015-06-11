@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:panelGroup rendered="#{not empty reporteProgramaMB.listaTasks}">
+        <ice:panelGroup styleClass="anioProducto">
+            <ice:commandLink action="#{reporteProgramaMB.retrocederAnio()}" 
+                             rendered="#{reporteProgramaMB.contieneAnioMenor()}">
+                <ice:graphicImage value="../img/atrasar-fase.png" />
+            </ice:commandLink>
+            <ice:outputText value="#{reporteProgramaMB.anio}" title="#{labels.reporte_proy_anio_desplegado}"/>
+            <ice:commandLink action="#{reporteProgramaMB.avanzarAnio()}"
+                             rendered="#{reporteProgramaMB.contieneAnioMayor()}">
+                <ice:graphicImage value="../img/adelantar-fase.png" />
+            </ice:commandLink>
+        </ice:panelGroup>
+
+        <ice:panelGroup>
+            <div class="reporteFicha">
+                <div class="cabezalMeses prodItem">
+                    <span class="prodItemTitle primerEspacio"></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_1}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_2}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_3}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_4}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_5}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_6}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_7}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_8}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_9}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_10}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_11}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_12}"/></span>
+                </div>
+
+                <div class="tituloReporte">
+                    <span>Cronograma</span>
+                </div>
+
+                <c:forEach var="task" items="#{reporteProgramaMB.listaTasks}">
+                    <div class="cadaEntregable">
+                        <span class="prodItemTitle primerEspacio">
+                            <ice:outputText value="#{task.proyDesc}"/>
+                            (<ice:outputText value="#{task.inicio}" 
+                                             converter="fechaConverter" /> - 
+                            <ice:outputText value="#{task.fin}" 
+                                            converter="fechaConverter" />)
+                        </span>
+                        <div class="tablaMeses">
+                            <c:set var="left" value="#{reporteProgramaMB.calcularLeftEntByDate(task.inicio)}px" />
+                            <c:set var="width" value="#{reporteProgramaMB.calcularWitdhEntByDate(task.inicio, task.fin, task.duracion)}px" />
+                            <c:set var="display" value="#{reporteProgramaMB.displayEnt(task) ? '' : 'none'}" />
+                            <c:set var="porc" value="%"/>
+                            <div class="indice3color" style="left:#{left}; width:#{width}; display:#{display};">
+                                <!-- barritas de colores -->
+                                <c:set var="azulPorc" value="#{task.grafFinalizado.azul}%" />
+                                <c:set var="verdePorc" value="#{task.grafFinalizado.verde}%" />
+                                <c:set var="rojoPorc" value="#{task.grafFinalizado.rojo}%" />
+
+                                <div class="indice3colorBlue" style="width:#{azulPorc}">#{task.grafFinalizado.azul}%</div>
+                                <div class="indice3colorGreen" style="width:#{verdePorc}">#{task.grafFinalizado.verde}%</div>
+                                <div class="indice3colorRed" style="width:#{rojoPorc}">#{task.grafFinalizado.rojo}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </ice:panelGroup>
+    </ice:panelGroup>
+
+    <ice:panelGroup id="infoReferenciaColoresGantt">
+        <ice:outputText value="#{reporteProyectoMB.coloresGantt()}" escape="false" />
+    </ice:panelGroup>
+</ui:composition>

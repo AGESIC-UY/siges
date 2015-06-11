@@ -1,0 +1,93 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Entregables;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class EntregablesDAO extends HibernateJpaDAOImp<Entregables, Integer> implements Serializable {
+
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final long serialVersionUID = 1L;
+
+    public EntregablesDAO(EntityManager em) {
+        super(em);
+    }
+
+    public void deleteEntregables(Integer entPk) {
+        String queryStr = "DELETE FROM Entregables e WHERE e.entPk = :entPk";
+        Query query = super.getEm().createQuery(queryStr);
+        query.setParameter("entPk", entPk);
+
+        query.executeUpdate();
+    }
+
+    public List<Entregables> obtenerEntregablesPorProy(Integer proyPk) {
+        if (proyPk != null) {
+            String queryStr = "SELECT e FROM Proyectos p, Cronogramas c, Entregables e"
+                    + " WHERE p.proyPk = :proyPk"
+                    + " AND p.proyCroFk.croPk = c.croPk"
+                    + " AND c.croPk = e.entCroFk.croPk";
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            try {
+                return q.getResultList();
+            } catch (Exception w) {
+                logger.log(Level.SEVERE, "obtenerEntregablesPorProy", w.getMessage());
+                TechnicalException te = new TechnicalException();
+                te.addError(w.getMessage());
+                throw te;
+            }
+        }
+        return null;
+    }
+
+    public boolean tienePagosDependientes(Integer entPk) {
+        if (entPk != null) {
+            String queryStr = "SELECT COUNT(p.pagPk) AS cant FROM Pagos p"
+                    + " WHERE p.entregables.entPk = :entPk";
+            Query query = super.getEm().createQuery(queryStr);
+            query.setParameter("entPk", entPk);
+            try {
+                Long cant = (Long) query.getSingleResult();
+                return cant > 0 ? true : false;
+            } catch (Exception w) {
+                logger.logp(Level.SEVERE, CronogramasDAO.class.getName(), "obtenerResumenCronograma", w.getMessage());
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public List<Entregables> obtenerEntregablesPorCoord(Integer proyPk, Integer coord) {
+        if (proyPk != null) {
+            String queryStr = "SELECT e FROM Proyectos p, Cronogramas c, Entregables e"
+                    + " WHERE p.proyPk = :proyPk"
+                    + " AND p.proyCroFk.croPk = c.croPk"
+                    + " AND c.croPk = e.entCroFk.croPk"
+                    + " AND e.coordinadorUsuFk.usuId = :coord";
+            Query query = super.getEm().createQuery(queryStr);
+            query.setParameter("proyPk", proyPk);
+            query.setParameter("coord", coord);
+            try {
+                return query.getResultList();
+            } catch (Exception w) {
+                logger.logp(Level.SEVERE, CronogramasDAO.class.getName(), "obtenerResumenCronograma", w.getMessage());
+                TechnicalException te = new TechnicalException();
+                te.addError(w.getMessage());
+                throw te;
+            }
+        }
+        return null;
+    }
+}

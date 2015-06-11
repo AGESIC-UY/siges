@@ -1,0 +1,319 @@
+package com.sofis.web.mb;
+
+import com.sofis.business.utils.EntregablesUtils;
+import com.sofis.entities.comparators.EntregablesComparator;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.web.delegates.EntregablesDelegate;
+import com.sofis.web.delegates.ParticipantesDelegate;
+import com.sofis.web.delegates.ProyectosDelegate;
+import com.sofis.web.delegates.RegistrosHorasDelegate;
+import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.JSFUtils;
+import com.sofis.web.utils.SofisCombo;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "registroHorasMB")
+@ViewScoped
+public class RegistroHorasMB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final String REGISTRO_FORM_MSG = "registroFormMsg";
+    @ManagedProperty("#{inicioMB}")
+    InicioMB inicioMB;
+    @Inject
+    ProyectosDelegate proyectoDelegate;
+    @Inject
+    RegistrosHorasDelegate registrosHorasDelegate;
+    @Inject
+    ParticipantesDelegate participantesDelegate;
+    @Inject
+    EntregablesDelegate entregablesDelegate;
+    //Atributos
+    private int cantElementosPorPagina = 25;
+    private RegistrosHoras registroHoras;
+    private List<Proyectos> listaProyectos;
+    private List<Entregables> listaEntregables;
+    private List<RegistrosHoras> registroHorasListado;
+    //Para el filtro
+    private Integer filtroProyPk;
+    private Date filtroFechaDesde;
+    private Date filtroFechaHasta;
+    private List<Proyectos> listaProyectosFiltro;
+    private List<Entregables> listaEntregablesFiltro;
+    private SofisCombo listaEntregablesCombo;
+    private List<SelectItem> listaAprobItems;
+    private SofisCombo listaAprobCombo;
+    private List<SelectItem> listaAvanceItems;
+    private SofisCombo listaAvanceCombo;
+
+    public RegistroHorasMB() {
+    }
+
+    public int getCantElementosPorPagina() {
+        return cantElementosPorPagina;
+    }
+
+    public void setCantElementosPorPagina(int cantElementosPorPagina) {
+        this.cantElementosPorPagina = cantElementosPorPagina;
+    }
+
+    public RegistrosHoras getRegistroHoras() {
+        return registroHoras;
+    }
+
+    public List<Entregables> getListaEntregables() {
+        return listaEntregables;
+    }
+
+    public List<Proyectos> getListaProyectos() {
+        return listaProyectos;
+    }
+
+    public List<RegistrosHoras> getRegistroHorasListado() {
+        return registroHorasListado;
+    }
+
+    public Integer getFiltroProyPk() {
+        return filtroProyPk;
+    }
+
+    public void setFiltroProyPk(Integer filtroProyPk) {
+        this.filtroProyPk = filtroProyPk;
+    }
+
+    public Date getFiltroFechaDesde() {
+        return filtroFechaDesde;
+    }
+
+    public void setFiltroFechaDesde(Date filtroFechaDesde) {
+        this.filtroFechaDesde = filtroFechaDesde;
+    }
+
+    public Date getFiltroFechaHasta() {
+        return filtroFechaHasta;
+    }
+
+    public void setFiltroFechaHasta(Date filtroFechaHasta) {
+        this.filtroFechaHasta = filtroFechaHasta;
+    }
+
+    public List<Proyectos> getListaProyectosFiltro() {
+        return listaProyectosFiltro;
+    }
+
+    public List<Entregables> getListaEntregablesFiltro() {
+        return listaEntregablesFiltro;
+    }
+
+    public SofisCombo getListaEntregablesCombo() {
+        return listaEntregablesCombo;
+    }
+
+    public void setListaEntregablesCombo(SofisCombo listaEntregablesCombo) {
+        this.listaEntregablesCombo = listaEntregablesCombo;
+    }
+
+    public List<SelectItem> getListaAprobItems() {
+        return listaAprobItems;
+    }
+
+    public void setListaAprobItems(List<SelectItem> listaAprobItems) {
+        this.listaAprobItems = listaAprobItems;
+    }
+
+    public SofisCombo getListaAprobCombo() {
+        return listaAprobCombo;
+    }
+
+    public void setListaAprobCombo(SofisCombo listaAprobCombo) {
+        this.listaAprobCombo = listaAprobCombo;
+    }
+
+    public SofisCombo getListaAvanceCombo() {
+        return listaAvanceCombo;
+    }
+
+    public void setListaAvanceCombo(SofisCombo listaAvanceCombo) {
+        this.listaAvanceCombo = listaAvanceCombo;
+    }
+
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+
+    public void setProyectoDelegate(ProyectosDelegate proyectoDelegate) {
+        this.proyectoDelegate = proyectoDelegate;
+    }
+
+    public void setRegistrosHorasDelegate(RegistrosHorasDelegate registrosHorasDelegate) {
+        this.registrosHorasDelegate = registrosHorasDelegate;
+    }
+
+    @PostConstruct
+    public void init() {
+        inicioMB.cargarOrganismoSeleccionado();
+
+        inicializarRegistroHoras();
+        inicializarFiltro();
+        buscarSinFiltro();
+    }
+
+    private void inicializarRegistroHoras() {
+
+        //Obtener el usuario logueado
+        SsUsuario usuario = inicioMB.getUsuario();
+        //Determinar los proyectos en los que participa
+        listaProyectos = participantesDelegate.obtenerProyectosPorUsuarioParticipante(usuario.getUsuId());
+        //Cargar los entregables del primer proyecto
+        Integer proyId = null;
+        if (listaProyectos != null && !listaProyectos.isEmpty()) {
+            proyId = listaProyectos.get(0).getProyPk();
+        }
+
+        //Crear una nueva instancia de RegistroHoras
+        registroHoras = new RegistrosHoras();
+        registroHoras.setRhFecha(new Date());
+        registroHoras.setRhUsuarioFk(usuario);
+        registroHoras.setRhProyectoFk(new Proyectos(0));
+        registroHoras.setRhEntregableFk(new Entregables(0));
+
+        listaAvanceItems = new ArrayList<>();
+        for (int i = 0; i <= 100; i = i + 10) {
+            listaAvanceItems.add(new SelectItem(i, "" + i));
+        }
+        listaAvanceCombo = new SofisCombo((List) listaAvanceItems, "label");
+        listaAvanceCombo.addEmptyItem("Sin cambios");
+
+        cargarEntregablesProyecto(proyId);
+    }
+
+    public void cambiarProyecto(ValueChangeEvent evt) {
+        Integer proyId = (Integer) evt.getNewValue();
+        cargarEntregablesProyecto(proyId);
+    }
+
+    private void cargarEntregablesProyecto(Integer proyId) {
+        listaEntregables = new LinkedList();
+        if (proyId != null && proyId.intValue() > 0) {
+            Proyectos proy = proyectoDelegate.obtenerProyPorId(proyId);
+            if (proy != null && proy.getProyCroFk() != null && proy.getProyCroFk().getEntregablesSet() != null) {
+                listaEntregables.addAll(proy.getProyCroFk().getEntregablesSet());
+            }
+        }
+        if (listaEntregables.isEmpty()) {
+            registroHoras.getRhEntregableFk().setEntPk(0);
+        } else {
+            listaEntregables = EntregablesUtils.textoComboPorId(listaEntregables);
+        }
+    }
+
+    public String registrarHoras() {
+        try {
+            SelectItem avance = (SelectItem) listaAvanceCombo.getSelectedObject();
+            if(!(registroHoras.getRhHoras().equals(0f) 
+                    && avance!=null)){
+            registroHoras = registrosHorasDelegate.registrarHoras(registroHoras);
+            }
+            Entregables ent = entregablesDelegate.actualizarAvance(registroHoras.getRhEntregableFk().getEntPk(), (Integer) avance.getValue());
+            if (ent != null) {
+                registroHoras.setRhEntregableFk(ent);
+            }
+
+        } catch (BusinessException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, ex.getErrores());
+        }
+        buscarConFiltro();
+        inicializarRegistroHoras();
+
+        return null;
+    }
+
+    private void inicializarFiltro() {
+        filtroFechaDesde = null;
+        filtroFechaHasta = null;
+        inicializarFiltroProyectos();
+    }
+
+    private void inicializarFiltroProyectos() {
+        listaProyectosFiltro = new LinkedList();
+        listaProyectosFiltro.addAll(listaProyectos);
+        listaProyectosFiltro.add(0, new Proyectos(0, Labels.getValue("comboTodos")));
+        cargarEntregablesProyectoFiltro(0);
+    }
+
+    private void cargarEntregablesProyectoFiltro(Integer proyId) {
+        listaEntregablesFiltro = new LinkedList();
+        if (proyId != null && proyId.intValue() > 0) {
+            Proyectos proy = proyectoDelegate.obtenerProyPorId(proyId);
+            if (proy != null && proy.getProyCroFk() != null && proy.getProyCroFk().getEntregablesSet() != null) {
+                listaEntregablesFiltro.addAll(proy.getProyCroFk().getEntregablesSet());
+            }
+        }
+//        listaEntregablesFiltro.add(0, new Entregables(0, 0, Labels.getValue("comboTodos"), 0));
+//        Collections.sort(listaEntregablesFiltro, new EntregablesComparator());
+        listaEntregablesFiltro = EntregablesUtils.textoComboPorId(listaEntregablesFiltro);
+        if (listaEntregablesFiltro != null) {
+            listaEntregablesCombo = new SofisCombo((List) listaEntregablesFiltro, "entNombre");
+            listaEntregablesCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        }
+
+        listaAprobItems = new ArrayList<>();
+        listaAprobItems.add(new SelectItem(0, Labels.getValue("revisionHoras_pendiente")));
+        listaAprobItems.add(new SelectItem(1, Labels.getValue("revisionHoras_aprobado")));
+        listaAprobCombo = new SofisCombo((List) listaAprobItems, "label");
+        listaAprobCombo.addEmptyItem(Labels.getValue("comboTodos"));
+    }
+
+    public void cambiarProyectoFiltro(ValueChangeEvent event) {
+        Integer proyId = (Integer) event.getNewValue();
+        cargarEntregablesProyectoFiltro(proyId);
+    }
+
+    public String buscarConFiltro() {
+        SsUsuario usuario = inicioMB.getUsuario();
+        SelectItem aprob = (SelectItem) listaAprobCombo.getSelectedObject();
+        Entregables entregable = (Entregables) listaEntregablesCombo.getSelectedObject();
+        registroHorasListado = registrosHorasDelegate.obtenerRegistrosHoras(usuario.getUsuId(),
+                (filtroProyPk != null && filtroProyPk.intValue() > 0 ? filtroProyPk : null),
+                (entregable != null ? entregable.getEntPk() : null),
+                filtroFechaDesde, filtroFechaHasta, null, null,
+                (aprob != null ? (Integer) aprob.getValue() : null));
+        Collections.sort(registroHorasListado);
+        return null;
+    }
+
+    public String buscarSinFiltro() {
+        filtroProyPk = null;
+        filtroFechaDesde = null;
+        filtroFechaHasta = null;
+        return buscarConFiltro();
+    }
+
+    public void limpiarFiltro() {
+    }
+}

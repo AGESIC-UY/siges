@@ -1,0 +1,14 @@
+package com.sofis.entities.codigueras;
+
+/**
+ *
+ * @author Usuario
+ */
+public class EstadosEditorCodigos {
+    
+    public static final String APROBADO_PM = "APROBADO_PM";
+    public static final String APROBADO_EDITOR = "APROBADO_EDITOR";
+    public static final String APROBADO_EDITOR_GRAL = "APROBADO_EDITOR_GRAL";
+    public static final String PUBLICADO = "PUBLICADO";
+    public static final String ACTUALIZA_PUBLICACION = "ACTUALIZA_PUBLICACION";
+}

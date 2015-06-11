@@ -1,0 +1,173 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.data.Moneda;
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public RegistrosHorasDao(EntityManager em) {
+        super(em);
+    }
+
+    public Double obtenerHorasAbrobPorProy(Integer proyPk, Integer usuId) {
+        if (proyPk != null && usuId != null) {
+            String queryStr = "SELECT SUM(rhHoras) FROM RegistrosHoras"
+                    + " WHERE rhProyectoFk.proyPk = :proyPk"
+                    + " AND rhUsuarioFk.usuId = :usuId"
+                    + " AND rhAprobado = :aprobado";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("usuId", usuId);
+            q.setParameter("aprobado", Boolean.TRUE);
+
+            Double result = (Double) q.getSingleResult();
+            return result;
+        }
+        return null;
+    }
+
+    public Double obtenerHorasPendPorProy(Integer proyPk, Integer usuId) {
+        if (proyPk != null && usuId != null) {
+            String queryStr = "SELECT SUM(rhHoras) FROM RegistrosHoras"
+                    + " WHERE rhProyectoFk.proyPk = :proyPk"
+                    + " AND rhUsuarioFk.usuId = :usuId"
+                    + " AND (rhAprobado IS NULL OR rhAprobado = :aprobado)";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("usuId", usuId);
+            q.setParameter("aprobado", Boolean.FALSE);
+
+            Double result = (Double) q.getSingleResult();
+            return result;
+        }
+        return null;
+    }
+
+    public boolean usuTieneHorasAprob(Integer usuId, Integer proyPk) {
+        if (usuId != null && proyPk != null) {
+            Double d = obtenerHorasAbrobPorProy(proyPk, usuId);
+            if (d != null && d >= 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public List<Moneda> obtenerMonedasPorProy(Integer proyPk) {
+        if (proyPk != null) {
+            String queryStr = "SELECT v.valHorMonedaFk FROM RegistrosHoras h, ValorHora v"
+                    + " WHERE h.rhUsuarioFk.usuId = v.valHorUsuarioFk.usuId"
+                    + " AND h.rhProyectoFk.proyPk = :proyPk"
+                    + " GROUP BY v.valHorMonedaFk";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+
+            return q.getResultList();
+        }
+        return null;
+    }
+
+    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer monPk, Integer mes, Integer year) {
+        if (proyPk != null && monPk != null) {
+            String queryStr = "SELECT SUM(h.rhHoras * v.valHorValor)"
+                    + " FROM RegistrosHoras h, ValorHora v"
+                    + " WHERE h.rhUsuarioFk.usuId = v.valHorUsuarioFk.usuId"
+                    + " AND h.rhProyectoFk.proyPk = :proyPk"
+                    + " AND v.valHorMonedaFk.monPk = :monPk"
+                    + " AND h.rhAprobado = :aprobado";
+            if (mes != null && year != null) {
+                queryStr = queryStr + " AND MONTH(h.rhFecha) = :mes";
+            }
+            if (year != null) {
+                queryStr = queryStr + " AND YEAR(h.rhFecha) = :anio";
+            }
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("monPk", monPk);
+            q.setParameter("aprobado", Boolean.TRUE);
+            if (mes != null && year != null) {
+                q.setParameter("mes", mes);
+            }
+            if (year != null) {
+                q.setParameter("anio", year);
+            }
+
+            Double total = (Double) q.getSingleResult();
+            return total;
+        }
+        return null;
+    }
+
+    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer monPk, Integer mes, Integer year) {
+        if (proyPk != null && monPk != null) {
+            String queryStr = "SELECT SUM(h.rhHoras * v.valHorValor)"
+                    + " FROM RegistrosHoras h, ValorHora v"
+                    + " WHERE h.rhUsuarioFk.usuId = v.valHorUsuarioFk.usuId"
+                    + " AND h.rhProyectoFk.proyPk = :proyPk"
+                    + " AND v.valHorMonedaFk.monPk = :monPk"
+                    + " AND (h.rhAprobado IS NULL OR h.rhAprobado = :aprobado)";
+            if (mes != null && year != null) {
+                queryStr = queryStr + " AND MONTH(h.rhFecha) = :mes";
+            }
+            if (year != null) {
+                queryStr = queryStr + " AND YEAR(h.rhFecha) = :anio";
+            }
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setParameter("monPk", monPk);
+            q.setParameter("aprobado", Boolean.FALSE);
+            if (mes != null && year != null) {
+                q.setParameter("mes", mes);
+            }
+            if (year != null) {
+                q.setParameter("anio", year);
+            }
+
+            Double total = (Double) q.getSingleResult();
+            return total;
+        }
+        return null;
+    }
+
+    public Date obtenerPrimeraFecha(Integer proyPk, boolean asc) {
+        if (proyPk != null) {
+            String queryStr = "SELECT h.rhFecha FROM RegistrosHoras h"
+                    + " WHERE h.rhProyectoFk.proyPk = :proyPk"
+                    + " ORDER BY h.rhFecha";
+            if(asc){
+                queryStr = queryStr+" ASC";
+            }else{
+                queryStr = queryStr+" DESC";
+            }
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            q.setMaxResults(1);
+
+             Date result = (Date) q.getSingleResult();
+             return result;
+        }
+        return null;
+    }
+}

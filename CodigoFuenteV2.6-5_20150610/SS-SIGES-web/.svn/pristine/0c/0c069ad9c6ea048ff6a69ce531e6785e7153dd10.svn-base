@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ace:panel id="presupuestoList" styleClass="tablaPresupuesto" >
+        <ice:panelGroup  styleClass="funcionalidadesResultado"  >
+            <ace:dataExporter target="preTable" label="#{labels.exportarPlanilla}" 
+                              type="xls" fileName="#{labels.exportarPlanillaPresupuesto}"
+                              includeHeaders="true" />
+        </ice:panelGroup>
+
+        <ace:dataTable id="preTable"
+                       value="#{fichaMB.listaAdqPagosFrame}"
+                       var="adq" 
+                       emptyMessage="#{label.adquisicion_no_existe}">
+
+            <ace:column id="pagoEntNombre" 
+                        headerText="#{labels.head_pre_gasto}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
+                <h:outputText value="#{adq.adqNombre}"/>
+            </ace:column>
+
+            <ace:column id="pagoAdqProcCompra" 
+                        headerText="#{labels.head_pre_proc_compra}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
+                <h:outputText value="#{adq.procCompra}" rendered="#{adq.tipo eq 1}"/>
+                <h:outputText value="#{adq.referencia}" rendered="#{adq.tipo eq 2}"/>
+            </ace:column>
+
+            <ace:column id="pagoAdqProvNombre" headerText="#{labels.head_pre_proveedor}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
+                <h:outputText value="#{adq.orgaNombre != null ? adq.orgaNombre : ''}"
+                              rendered="#{adq.tipo eq 1}"/>
+
+                <ice:panelGroup rendered="#{adq.tipo eq 2}"
+                                styleClass="linkFichaRight">
+                    <ice:outputResource 
+                        rendered="#{fichaMB.downloadFile[adq.pagoDoc.docsPk] != null}"
+                        resource="#{fichaMB.downloadFile[adq.pagoDoc.docsPk]}"
+                        label="#{fichaMB.downloadFile[adq.pagoDoc.docsPk] != null ? fichaMB.downloadFile[adq.pagoDoc.docsPk].docFile.docfileNombre : labels.pagos_documento}"
+                        fileName="#{fichaMB.downloadFile[adq.pagoDoc.docsPk] != null ? fichaMB.downloadFile[adq.pagoDoc.docsPk].docFile.docfileNombre : 'file'}"/>
+                </ice:panelGroup>
+            </ace:column>
+            <ace:column id="pagoAdqFuenteNombre" headerText=""
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
+                <h:outputText value="#{adq.fuenteNombre}" />
+            </ace:column>
+            <ace:column id="pagoAdqMoneda" headerText=""
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
+                <h:outputText value="#{adq.monedaSigno}" />
+            </ace:column>
+            <ace:column id="pagoFechaPlan" headerText="#{labels.head_pre_fechaPlan}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago">
+                <h:outputText value="#{adq.fechaPlan}" 
+                              converter="fechaConverter"/>
+            </ace:column>
+            <ace:column headerText="#{labels.head_pre_importePlan}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago colRight">
+                <ice:outputText value="#{adq.importePlan != null ? adq.importePlan : ''}"
+                                converter="ImporteFormatConverter"/>
+            </ace:column>
+            <ace:column headerText="#{labels.head_pre_fechaReal}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago">
+                <h:outputText value="#{adq.fechaReal}" 
+                              converter="fechaConverter"/>
+            </ace:column>
+            <ace:column headerText="#{labels.head_pre_importeReal}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago colRight">
+                <ice:outputText value="#{adq.importeReal != null ? adq.importeReal : ''}"
+                                converter="ImporteFormatConverter"/>
+            </ace:column>
+            <ace:column headerText="#{labels.head_pre_saldo}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago colRight">
+                <ice:outputText value="#{adq.importeSaldo != null ? adq.importeSaldo : ''}"
+                                converter="ImporteFormatConverter"/>
+            </ace:column>
+            <ace:column headerText="#{labels.head_pre_porcEjecucion}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago">
+                <ice:outputText value="#{adq.ejecucion != null ? adq.ejecucion : ''}"
+                                converter="ImporteFormatConverter"/>
+            </ace:column>
+
+            <!-- Botones Adquisicion -->
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('aprobarPago') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+            </ace:column>
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('editarAdquisicion') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+                <ace:tooltip id="tooltipAdqEditar" for="btnEditarAdq">
+                    <ice:outputText value="#{labels.editarAdqTooltip}" />
+                </ace:tooltip>
+                <ace:pushButton id="btnEditarAdq"
+                                styleClass="botonEditar iconoTabla" 
+                                action="#{fichaMB.verFormAdquisicionAction(adq.adqPk)}"/>
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('eliminarAdquisicion') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+                <h:commandButton id="btnEliminarAdq"
+                                 styleClass="botonEliminar iconoTabla" 
+                                 title="#{labels.eliminarAdqTooltip}"
+                                 onclick="confirmationEliminarAdq#{adq.adqPk}.show();" />
+                <ace:confirmationDialog widgetVar="confirmationEliminarAdq#{adq.adqPk}" 
+                                        message="#{labels.confirmacionEliminacion}"
+                                        header="#{labels.hConfirmacion}"
+                                        closable="true"
+                                        closeOnEscape="true"
+                                        severity="info"
+                                        modal="true"
+                                        position="center">
+                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                        <h:commandButton id="yesDelAdq"
+                                         value="#{labels.si}"
+                                         styleClass="boton principal botonContinuar"
+                                         onclick="confirmationEliminarAdq#{adq.adqPk}.hide();" 
+                                         actionListener="#{fichaMB.eliminarAdquisicionAction(adq.adqPk)}"/>
+                        <h:commandButton id="noDelAdq"
+                                         value="#{labels.no}"
+                                         styleClass="boton principal botonEliminar"
+                                         onclick="confirmationEliminarAdq#{adq.adqPk}.hide();"  />
+                    </h:panelGrid>
+                </ace:confirmationDialog>
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+                <ace:tooltip id="tooltipPagoAgregar" for="btnAgregarPag">
+                    <ice:outputText value="#{labels.agregarPagoTooltip}" />
+                </ace:tooltip>
+                <ace:pushButton id="btnAgregarPag"
+                                styleClass="botonAgregar iconoTabla" 
+                                action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
+            </ace:column>
+
+            <!-- Botones Pagos -->
+            <ace:column styleClass="columnaBoton"
+                        rendered="#{fichaMB.fieldRendered('confirmarPagoCol') and adq.tipo eq 2}">
+                <ice:commandButton styleClass="iconoTabla #{adq.confirmado ? 'botonRestablecer':'botonSuperar'}" 
+                                   title="#{adq.confirmado ? labels.noAprobarPagoTooltip : labels.aprobarPagoTooltip}"
+                                   rendered="#{fichaMB.fieldRendered('confirmarPagoBtn', adq.confirmado)}"
+                                   onclick="confirmationPago#{adq.pagPk}.show();" />
+                <ace:confirmationDialog widgetVar="confirmationPago#{adq.pagPk}" 
+                                        message="#{adq.confirmado ? labels.desconfirmarPago : labels.confirmarPago}"
+                                        header="#{labels.hConfirmacion}"
+                                        closable="true"
+                                        closeOnEscape="true"
+                                        severity="info"
+                                        modal="true"
+                                        position="center">
+                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                        <h:commandButton id="yesConfPag"
+                                         value="#{labels.si}"
+                                         styleClass="boton principal botonContinuar"
+                                         onclick="confirmationPago#{adq.pagPk}.hide();" 
+                                         actionListener="#{fichaMB.confirmarPago(adq.pagPk)}"/>
+                        <h:commandButton id="noConfPag"
+                                         value="#{labels.no}"
+                                         styleClass="boton principal botonEliminar"
+                                         onclick="confirmationPago#{adq.pagPk}.hide();"  />
+                    </h:panelGrid>
+                </ace:confirmationDialog>
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('editarPago') and adq.tipo eq 2}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
+                <ace:tooltip id="tooltipPagoEditar" for="btnEditarPag">
+                    <ice:outputText value="#{labels.editarPagoTooltip}" />
+                </ace:tooltip>
+                <ace:pushButton id="btnEditarPag"
+                                styleClass="botonEditar iconoTabla" 
+                                rendered="#{!adq.confirmado}"
+                                action="#{fichaMB.verFormPagoAction(adq.pagPk, adq.adqPk)}"/>
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('eliminarPago') and adq.tipo eq 2}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
+                <ice:commandButton styleClass="iconoTabla botonEliminar" 
+                                   title="#{labels.eliminarPagoTooltip}"
+                                   rendered="#{!adq.confirmado}"
+                                   onclick="eliminarPago#{adq.pagPk}.show();" />
+                <ace:confirmationDialog widgetVar="eliminarPago#{adq.pagPk}" 
+                                        message="#{labels.eliminarPago}"
+                                        header="#{labels.hConfirmacion}"
+                                        closable="true"
+                                        closeOnEscape="true"
+                                        severity="info"
+                                        modal="true"
+                                        position="center">
+                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                        <h:commandButton value="#{labels.si}"
+                                         styleClass="boton principal botonContinuar"
+                                         onclick="eliminarPago#{adq.pagPk}.hide();" 
+                                         actionListener="#{fichaMB.eliminarPagoAction(adq.pagPk)}"/>
+                        <h:commandButton value="#{labels.no}"
+                                         styleClass="boton principal botonEliminar"
+                                         onclick="eliminarPago#{adq.pagPk}.hide();"  />
+                    </h:panelGrid>
+                </ace:confirmationDialog>
+            </ace:column>
+            <ace:column headerText=""
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton"
+                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 2}">
+                <ice:outputText value="" />
+            </ace:column>
+        </ace:dataTable>
+    </ace:panel>
+</ui:composition>
