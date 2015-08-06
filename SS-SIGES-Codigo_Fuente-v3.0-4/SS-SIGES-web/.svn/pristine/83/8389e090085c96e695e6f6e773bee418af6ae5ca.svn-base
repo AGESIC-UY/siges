@@ -1,0 +1,725 @@
+package com.sofis.web.mb;
+
+import com.sofis.business.constantes.ConfiguracionCodigos;
+import com.sofis.entities.codigueras.SsRolCodigos;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.ConstantesEstandares;
+import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.Areas;
+import com.sofis.entities.data.AreasTags;
+import com.sofis.entities.data.Configuracion;
+import com.sofis.entities.data.Estados;
+import com.sofis.entities.data.Moneda;
+import com.sofis.entities.data.Organismos;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FichaTO;
+import com.sofis.entities.tipos.FiltroInicioItem;
+import com.sofis.entities.tipos.FiltroInicioResultadoTO;
+import com.sofis.entities.tipos.FiltroInicioTO;
+import com.sofis.entities.utils.SsUsuariosUtils;
+import com.sofis.exceptions.GeneralException;
+import com.sofis.generico.utils.generalutils.DatesUtils;
+import com.sofis.web.delegates.AreaTematicaDelegate;
+import com.sofis.web.delegates.AreasDelegate;
+import com.sofis.web.delegates.ConfiguracionDelegate;
+import com.sofis.web.delegates.EstadosDelegate;
+import com.sofis.web.delegates.ProgProyDelegate;
+import com.sofis.web.delegates.ProgramasProyectosDelegate;
+import com.sofis.web.delegates.ProySitActHistoricoDelegate;
+import com.sofis.web.delegates.SsUsuarioDelegate;
+import com.sofis.web.enums.FieldAttributeEnum;
+import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.JSFUtils;
+import com.sofis.web.utils.SofisComboG;
+import com.sofis.web.utils.WebUtils;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import org.icefaces.ace.model.tree.NodeStateMap;
+import org.icefaces.application.PortableRenderer;
+import org.icefaces.application.PushRenderer;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "publicacionWebMB")
+@ViewScoped
+public class PublicacionWebMB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    //Inject
+    @ManagedProperty("#{inicioMB}")
+    private InicioMB inicioMB;
+    @Inject
+    private EstadosDelegate estadosDelegate;
+    @Inject
+    private AreasDelegate areasDelegate;
+    @Inject
+    private ConfiguracionDelegate confDelegate;
+    @Inject
+    private ProgramasProyectosDelegate programasProyectosDelegate;
+    @Inject
+    private SsUsuarioDelegate ssUsuarioDelegate;
+    @Inject
+    private AreaTematicaDelegate areaTematicaDelegate;
+    @Inject
+    private ProySitActHistoricoDelegate proySitActHistoricoDelegate;
+    //Variables
+    private List<FiltroInicioResultadoTO> filtroInicioResultado = new ArrayList<>();
+    private int countFiltroThread;
+    private String cantElementosPorPagina = "25";
+//    private Estados estado;
+//    private Integer tipoFicha;
+//    private Areas area;
+    private static String GROUP_NAME = "everyone";
+    private PortableRenderer portableRenderer;
+    private long TIEMPO_ACTUALIZACION = 3000;
+    private List<Moneda> monedasUsadas = new ArrayList<>();
+    private boolean buscandoPorAreas = false;
+    private List<AreasTags> listaAreasTags;
+    private Set<AreasTags> areasTematicas;
+    //Filtro
+    private FiltroInicioTO filtro = new FiltroInicioTO();
+    private Boolean filtroRender;
+    private Boolean renderPopupAreaTematica = false;
+    private boolean renderPopupMensajes = false;
+    private List<MutableTreeNode> listaAreasTagsTreeNode = new ArrayList<>();
+//    private Set<AreasTags> areasTematicas;
+    private NodeStateMap areasTematicasStateMap;
+    private List<SelectItem> listaEstadosItem = new ArrayList<>();
+    //Filtro Combos
+//    private SofisComboG<> listaNivelItemsCombo = new SofisComboG<>();
+    private SofisComboG<SsUsuario> listaSponsorCombo = new SofisComboG<>();
+    private SofisComboG<Areas> listaAreasOrganismoCombo = new SofisComboG<>();
+    private SofisComboG<SsUsuario> listaAdjuntoCombo = new SofisComboG<>();
+    private SofisComboG<SsUsuario> listaGerenteCombo = new SofisComboG<>();
+    private SofisComboG<SsUsuario> listaPmoFederadaCombo = new SofisComboG<>();
+
+    public PublicacionWebMB() {
+        PushRenderer.addCurrentView(GROUP_NAME);
+        portableRenderer = PushRenderer.getPortableRenderer();
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+
+    public Boolean getFiltroRender() {
+        return filtroRender;
+    }
+
+    public void setFiltroRender(Boolean filtroRender) {
+        this.filtroRender = filtroRender;
+    }
+
+    public List<FiltroInicioResultadoTO> getFiltroInicioResultado() {
+        return filtroInicioResultado;
+    }
+
+    public void setFiltroInicioResultado(List<FiltroInicioResultadoTO> filtroInicioResultado) {
+        this.filtroInicioResultado = filtroInicioResultado;
+    }
+
+    public int getCountFiltroThread() {
+        return countFiltroThread;
+    }
+
+    public void setCountFiltroThread(int countFiltroThread) {
+        this.countFiltroThread = countFiltroThread;
+    }
+
+    public String getCantElementosPorPagina() {
+        return cantElementosPorPagina;
+    }
+
+    public void setCantElementosPorPagina(String cantElementosPorPagina) {
+        this.cantElementosPorPagina = cantElementosPorPagina;
+    }
+
+    public PortableRenderer getPortableRenderer() {
+        return portableRenderer;
+    }
+
+    public void setPortableRenderer(PortableRenderer portableRenderer) {
+        this.portableRenderer = portableRenderer;
+    }
+
+    public List<Moneda> getMonedasUsadas() {
+        return monedasUsadas;
+    }
+
+    public void setMonedasUsadas(List<Moneda> monedasUsadas) {
+        this.monedasUsadas = monedasUsadas;
+    }
+
+    public boolean isBuscandoPorAreas() {
+        return buscandoPorAreas;
+    }
+
+    public void setBuscandoPorAreas(boolean buscandoPorAreas) {
+        this.buscandoPorAreas = buscandoPorAreas;
+    }
+
+    public FiltroInicioTO getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(FiltroInicioTO filtro) {
+        this.filtro = filtro;
+    }
+
+    public Boolean getRenderPopupAreaTematica() {
+        return renderPopupAreaTematica;
+    }
+
+    public void setRenderPopupAreaTematica(Boolean renderPopupAreaTematica) {
+        this.renderPopupAreaTematica = renderPopupAreaTematica;
+    }
+
+    public boolean isRenderPopupMensajes() {
+        return renderPopupMensajes;
+    }
+
+    public void setRenderPopupMensajes(boolean renderPopupMensajes) {
+        this.renderPopupMensajes = renderPopupMensajes;
+    }
+
+    public List<MutableTreeNode> getListaAreasTagsTreeNode() {
+        return listaAreasTagsTreeNode;
+    }
+
+    public void setListaAreasTagsTreeNode(List<MutableTreeNode> listaAreasTagsTreeNode) {
+        this.listaAreasTagsTreeNode = listaAreasTagsTreeNode;
+    }
+
+    public NodeStateMap getAreasTematicasStateMap() {
+        return areasTematicasStateMap;
+    }
+
+    public void setAreasTematicasStateMap(NodeStateMap areasTematicasStateMap) {
+        this.areasTematicasStateMap = areasTematicasStateMap;
+    }
+
+    public SofisComboG<SsUsuario> getListaSponsorCombo() {
+        return listaSponsorCombo;
+    }
+
+    public void setListaSponsorCombo(SofisComboG<SsUsuario> listaSponsorCombo) {
+        this.listaSponsorCombo = listaSponsorCombo;
+    }
+
+    public SofisComboG<Areas> getListaAreasOrganismoCombo() {
+        return listaAreasOrganismoCombo;
+    }
+
+    public void setListaAreasOrganismoCombo(SofisComboG<Areas> listaAreasOrganismoCombo) {
+        this.listaAreasOrganismoCombo = listaAreasOrganismoCombo;
+    }
+
+    public SofisComboG<SsUsuario> getListaAdjuntoCombo() {
+        return listaAdjuntoCombo;
+    }
+
+    public void setListaAdjuntoCombo(SofisComboG<SsUsuario> listaAdjuntoCombo) {
+        this.listaAdjuntoCombo = listaAdjuntoCombo;
+    }
+
+    public SofisComboG<SsUsuario> getListaGerenteCombo() {
+        return listaGerenteCombo;
+    }
+
+    public void setListaGerenteCombo(SofisComboG<SsUsuario> listaGerenteCombo) {
+        this.listaGerenteCombo = listaGerenteCombo;
+    }
+
+    public SofisComboG<SsUsuario> getListaPmoFederadaCombo() {
+        return listaPmoFederadaCombo;
+    }
+
+    public void setListaPmoFederadaCombo(SofisComboG<SsUsuario> listaPmoFederadaCombo) {
+        this.listaPmoFederadaCombo = listaPmoFederadaCombo;
+    }
+
+    public List<SelectItem> getListaEstadosItem() {
+        return listaEstadosItem;
+    }
+
+    public void setListaEstadosItem(List<SelectItem> listaEstadosItem) {
+        this.listaEstadosItem = listaEstadosItem;
+    }
+
+    //</editor-fold>
+    @PostConstruct
+    public void init() {
+        cargarCombosFiltro();
+    }
+
+    public void buscarAction() {
+        if (inicioMB.getOrganismo() != null) {
+            buscandoPorAreas = true;
+            filtroInicioResultado.clear();
+            countFiltroThread = 0;
+
+            setAreasTematicasToFiltro();
+            obtenerCombosSeleccionados();
+
+            final Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+            final SsUsuario usuario = inicioMB.getUsuario();
+
+            if (usuario == null) {
+                return;
+            }
+            //para cada area comienzo a cargar los datos
+            //si el filtro tiene una area seteada entonces solo es para esa area
+            //si el filtro no tiene area seteada es para todas las areas
+            Integer areaOrganizacion = filtro.getAreasOrganizacion() != null ? filtro.getAreasOrganizacion().getAreaPk() : null;
+            final List<Areas> areas;
+            if (areaOrganizacion == null || areaOrganizacion.equals(-1)) {
+                areas = areasDelegate.obtenerAreasPorOrganismo(orgPk);
+            } else {
+                areas = new ArrayList();
+                areas.add(new Areas(areaOrganizacion));
+            }
+
+            //para cada area que se debe buscarAction la info se tira un hilo.
+            filtro.setNivel(1);
+            filtro.setPublicacionWeb(Boolean.TRUE);
+            filtro.setActivo(Boolean.TRUE);
+            Thread buscarPorFiltroThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    buscandoPorAreas = true;
+                    int x = 0;
+                    Configuracion confAmarillo = confDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_AMARILLO, orgPk);
+                    Configuracion confRojo = confDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO, orgPk);
+
+                    for (Areas area : areas) {
+                        final FiltroInicioResultadoTO resultado = programasProyectosDelegate.obtenerPrimerNivel(orgPk, area, usuario, filtro, confAmarillo, confRojo);
+                        if (resultado.getPrimerNivel() != null && !resultado.getPrimerNivel().isEmpty()) {
+                            filtroInicioResultado.add(resultado);
+                            if (x == 0) {
+                                //renderiza el area.
+                                portableRenderer.render(GROUP_NAME);
+                            }
+                            x++;
+                        }
+                    }
+                    buscandoPorAreas = false;
+                    //portableRenderer.render(GROUP_NAME);
+
+                    countFiltroThread--;
+                }
+            });
+            buscarPorFiltroThread.start();
+            countFiltroThread++;
+        }
+        buscandoPorAreas = false;
+    }
+
+    private void cargarCombosFiltro() {
+        Organismos org = inicioMB.getOrganismo();
+        List<Areas> listaAreas = areasDelegate.obtenerAreasPorOrganismo(org.getOrgPk());
+        if (listaAreas != null) {
+            listaAreasOrganismoCombo = new SofisComboG(listaAreas, "areaNombre");
+            listaAreasOrganismoCombo.addEmptyItem(Labels.getValue("comboTodas"));
+        }
+
+        //la lista de usuarios con rol Director son los que se pueden seleccionar como sponsor.
+        List<SsUsuario> listaSponsor = ssUsuarioDelegate.obtenerUsuariosPorRol(SsRolCodigos.DIRECTOR, org.getOrgPk(), new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"});
+        if (listaSponsor != null) {
+            listaSponsorCombo = new SofisComboG(listaSponsor, "usuNombreApellido");
+            listaSponsorCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        }
+
+        //la lista de usuarios de la organizacion son los que se puede selecionar como adjunto.
+        List<SsUsuario> listaAdjunto = ssUsuarioDelegate.obtenerTodosPorOrganismo(org.getOrgPk());
+        if (listaAdjunto != null) {
+            listaAdjuntoCombo = new SofisComboG(listaAdjunto, "usuNombreApellido");
+            listaAdjuntoCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        }
+
+        //la lista de los usuarios de la organizacion, son los que se pueden seleccionar como gerente
+        List<SsUsuario> listaGerente = ssUsuarioDelegate.obtenerTodosPorOrganismo(org.getOrgPk());
+        if (listaGerente != null) {
+            listaGerenteCombo = new SofisComboG(listaGerente, "usuNombreApellido");
+            listaGerenteCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        }
+
+        //la lista de usuarios con rol PMO Federeda
+        List<SsUsuario> listaPmoFederada = ssUsuarioDelegate.obtenerUsuariosPorRol(SsRolCodigos.PMO_FEDERADA, org.getOrgPk(), new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"});
+        listaPmoFederada.addAll(ssUsuarioDelegate.obtenerUsuariosPorRol(SsRolCodigos.PMO_TRANSVERSAL, org.getOrgPk(), new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"}));
+        if (listaPmoFederada != null) {
+            listaPmoFederadaCombo = new SofisComboG(listaPmoFederada, "usuNombreApellido");
+            listaPmoFederadaCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        }
+
+        listaEstadosItem = new ArrayList<>();
+        listaEstadosItem.add(new SelectItem(Estados.ESTADOS.INICIO.estado_id, Labels.getValue("estado_Inicio")));
+        listaEstadosItem.add(new SelectItem(Estados.ESTADOS.PLANIFICACION.estado_id, Labels.getValue("estado_Planificacion")));
+        listaEstadosItem.add(new SelectItem(Estados.ESTADOS.EJECUCION.estado_id, Labels.getValue("estado_Ejecucion")));
+        listaEstadosItem.add(new SelectItem(Estados.ESTADOS.FINALIZADO.estado_id, Labels.getValue("estado_Finalizado")));
+    }
+
+    public String areaTematicaPopup(Boolean renderPopup) {
+        logger.fine("areaTematicaPopup.");
+        try {
+            renderPopupAreaTematica = renderPopup != null ? renderPopup : true;
+
+            listaAreasTagsTreeNode = new ArrayList<>();
+            listaAreasTags = areaTematicaDelegate.obtenerAreasTematicasPorOrganizacion(inicioMB.getOrganismo().getOrgPk());
+            if (listaAreasTags != null && !listaAreasTags.isEmpty()) {
+                Map<String, Object> mapAreaTag = WebUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode, areasTematicas, areasTematicasStateMap);
+                listaAreasTagsTreeNode = (List<MutableTreeNode>) mapAreaTag.get(WebUtils.LISTA_AREAS_TAG_TREE_NODE);
+                areasTematicasStateMap = (NodeStateMap) mapAreaTag.get(WebUtils.AREAS_TEMATICAS_STATE_MAP);
+            }
+        } catch (GeneralException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    public boolean areasTematicasHasValues() {
+        if (areasTematicasStateMap == null) {
+            return areasTematicas != null ? areasTematicas.size() > 0 : false;
+        }
+        return getAreasTematicasSelected().size() > 0;
+    }
+
+    public List getAreasTematicasSelected() {
+        if (areasTematicasStateMap == null) {
+            return Collections.emptyList();
+        }
+        return areasTematicasStateMap.getSelected();
+    }
+
+    public void renderizarFiltro() {
+        if (filtroRender == null || filtroRender == false) {
+            filtroRender = true;
+        } else {
+            filtroRender = false;
+        }
+    }
+
+    public void limpiarFiltro() {
+        countFiltroThread = 0;
+        filtroPorDefecto();
+    }
+
+    public void filtroPorDefecto() {
+        filtro = new FiltroInicioTO();
+        //el usuario no tiene salvado el filtro, 
+        //se inicializa con los valores por defecto
+        List<Object> estadosDefecto = new ArrayList<>();
+        estadosDefecto.add(Estados.ESTADOS.INICIO.estado_id);
+        estadosDefecto.add(Estados.ESTADOS.PLANIFICACION.estado_id);
+        estadosDefecto.add(Estados.ESTADOS.EJECUCION.estado_id);
+        estadosDefecto.add(-100);
+        filtro.setEstados(estadosDefecto);
+
+//        List<Object> riesgosDefecto = new ArrayList<>();
+//        riesgosDefecto.add("1");
+//        riesgosDefecto.add("2");
+//        riesgosDefecto.add("3");
+//        filtro.setGradoRiesgo(riesgosDefecto);
+//        List<Object> indicadorAvanceDefecto = new ArrayList<>();
+//        indicadorAvanceDefecto.add(1);
+//        indicadorAvanceDefecto.add(2);
+//        filtro.setIndicadorAvance(indicadorAvanceDefecto);
+        listaPmoFederadaCombo.setSelected(-1);
+//        listaNivelItemsCombo.setSelected(1);
+        listaSponsorCombo.setSelected(-1);
+        listaAreasOrganismoCombo.setSelected(-1);
+        listaGerenteCombo.setSelected(-1);
+//        listaOrganizacionCombo.setSelected(-1);
+//        listaIntRolCombo.setSelected(-1);
+//        listaIntAmbitoCombo.setSelected(-1);
+//        listaIntRolCombo.setSelected(-1);
+//        listaOrgaProvCombo.setSelected(-1);
+//        listaFuentesCombo.setSelected(-1);
+        areasTematicas = null;
+        areasTematicasStateMap = null;
+    }
+
+    public String guardarFichaAction(FiltroInicioItem item) {
+        try {
+            Object obj = programasProyectosDelegate.guardarFiltroInicioItem(item, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+            if (obj != null) {
+                JSFUtils.agregarMsgInfo(String.format(Labels.getValue(MensajesNegocio.INFO_PUB_WEB_GUARDADO_ITEM), item.getNombre()));
+                inicioMB.setRenderPopupMensajes(true);
+            }
+        } catch (GeneralException ge) {
+            logger.log(Level.SEVERE, null, ge);
+            JSFUtils.agregarMsgError(String.format(Labels.getValue(MensajesNegocio.ERROR_PUB_WEB_GUARDAR_ITEM), item.getNombre()));
+            inicioMB.setRenderPopupMensajes(true);
+        }
+        return null;
+    }
+
+    public String guardarAprobarFichaAction(FiltroInicioItem item) {
+        item.setAprobarEditar(true);
+
+        guardarFichaAction(item);
+
+        return null;
+    }
+
+    public String fechaSitActual(FiltroInicioItem item) {
+        if (item != null) {
+            return DatesUtils.toStringFormat(proySitActHistoricoDelegate.obtenerUltimaFechaSitAct(item.getFichaFk()), ConstantesEstandares.CALENDAR_PATTERN);
+        }
+        return "";
+    }
+
+    public String estadoLabel(FiltroInicioItem item) {
+        if (item != null && item.getEstado() != null) {
+            return estadosDelegate.estadoStr(item.getEstado().getEstPk());
+        }
+        return "";
+    }
+
+    public String estadoEdicionFechaLabel(FiltroInicioItem item) {
+        if (item != null && item.getEstado() != null) {
+            Date fecha = null;
+            if (item.isPrograma()
+                    && item.getProgEditorEstado() != null) {
+                fecha = item.getProgEditorEstado().getProgediestFecha();
+            } else if (item.isProyecto()
+                    && item.getProyEditorEstado() != null) {
+                fecha = item.getProyEditorEstado().getProyediestFecha();
+            }
+            return DatesUtils.toStringFormat(fecha, ConstantesEstandares.CALENDAR_PATTERN);
+        }
+        return "";
+    }
+
+    public String estadoEdicionLabel(FiltroInicioItem item) {
+        if (item != null && item.getEstado() != null) {
+            String label = "";
+            if (item.isPrograma()
+                    && item.getProgEditorEstado() != null) {
+                label = item.getProgEditorEstado().getProgediestEstediFk().getEstediLabel();
+            } else if (item.isProyecto()
+                    && item.getProyEditorEstado() != null) {
+                label = item.getProyEditorEstado().getProyediestEstediFk().getEstediLabel();
+            }
+            return Labels.getValue(label);
+        }
+        return "";
+    }
+
+    public String caracteristicasTxt(FiltroInicioItem item) {
+        //TODO: armar este metodo.
+        return "";
+    }
+
+    public void setAreasTematicasToFiltro() {
+        if (areasTematicasStateMap != null) {
+            List lista = areasTematicasStateMap.getSelected();
+            if (lista != null && lista.size() > 0) {
+                filtro.setAreasTematicas(new ArrayList<AreasTags>());
+                for (Object object : lista) {
+                    if (object instanceof DefaultMutableTreeNode) {
+                        DefaultMutableTreeNode d = (DefaultMutableTreeNode) object;
+                        AreasTags at = (AreasTags) d.getUserObject();
+                        filtro.getAreasTematicas().add(at);
+                    }
+                }
+            } else {
+                filtro.setAreasTematicas(null);
+            }
+        }
+    }
+
+    public void obtenerCombosSeleccionados() {
+        if (filtro != null) {
+            filtro.setAreasOrganizacion((Areas) listaAreasOrganismoCombo.getSelectedT());
+
+            if (listaSponsorCombo.getSelectedT() != null) {
+                filtro.setSponsor((listaSponsorCombo.getSelectedT()).getUsuId());
+            } else {
+                filtro.setSponsor(null);
+            }
+
+            if (listaGerenteCombo.getSelectedT() != null) {
+                filtro.setGerenteOAdjunto((listaGerenteCombo.getSelectedT()).getUsuId());
+            } else {
+                filtro.setGerenteOAdjunto(null);
+            }
+
+            if (listaPmoFederadaCombo.getSelectedT() != null) {
+                filtro.setPmoFederada((listaPmoFederadaCombo.getSelectedT()).getUsuId());
+            } else {
+                filtro.setPmoFederada(null);
+            }
+
+            if (areasTematicasStateMap != null && areasTematicasStateMap.getSelected() != null) {
+                setAreasTematicasToFiltro();
+            } else {
+                filtro.setAreasTematicas(null);
+            }
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="fieldAttribute - metodos de visualización">
+    /**
+     * Retorna un booolean si el fieldName aportado debe estar deshabilitado
+     * para usar.
+     *
+     * @param fieldName
+     * @return
+     */
+    public boolean fieldDisabled(String fieldName) {
+        //dependiendo del usuario, estado etc es si esta habilitado o no
+        return fieldAttribute(fieldName, FieldAttributeEnum.DISABLED);
+    }
+
+    public boolean fieldDisabled(String fieldName, Object param) {
+        //dependiendo del usuario, estado etc es si esta habilitado o no
+        return fieldAttribute(fieldName, FieldAttributeEnum.DISABLED, param);
+    }
+
+    /**
+     * Retorna un booolean si el fieldName aportado debe ser desplegado en
+     * pantalla.
+     *
+     * @param fieldName
+     * @return
+     */
+    public boolean fieldRendered(String fieldName) {
+        //dependiendo del usuario, estado etc es si esta habilitado o no
+        return fieldAttribute(fieldName, FieldAttributeEnum.RENDERED);
+    }
+
+    public boolean fieldRendered(String fieldName, Object param) {
+        //dependiendo del usuario, estado etc es si esta habilitado o no
+        return fieldAttribute(fieldName, FieldAttributeEnum.RENDERED, param);
+    }
+
+    private boolean fieldAttribute(String fieldName, FieldAttributeEnum field) {
+        return fieldAttribute(fieldName, field, null);
+    }
+
+    private boolean fieldAttribute(String fieldName, FieldAttributeEnum field, Object param) {
+
+        boolean checkDisabled = field == FieldAttributeEnum.DISABLED;
+        boolean checkRendered = field == FieldAttributeEnum.RENDERED;
+
+        boolean disabled = false;
+        boolean rendered = true;
+
+        FiltroInicioItem item = param != null && param instanceof FiltroInicioItem ? (FiltroInicioItem) param : null;
+
+        boolean isGerente = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(item, inicioMB.getUsuario());
+        boolean isPMOT = inicioMB.isUsuarioOrgaPMOT();
+        boolean isPMOF = SsUsuariosUtils.isUsuarioPMOF(item, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+        boolean isEditor = SsUsuariosUtils.isUsuarioEditor(item, inicioMB.getUsuario());
+//        boolean isPublicador = SsUsuariosUtils.isUsuarioPublicador(item, inicioMB.getUsuario());
+        boolean isEditorGral = SsUsuariosUtils.isUsuarioEditorGral(inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+        boolean isProg = item != null && item.isPrograma();
+//        boolean isProy = item != null && item.isProyecto();
+
+        boolean hasEstado = item != null && item.getEstado() != null;
+        boolean isAlta = !hasEstado;
+
+        boolean isEstadoPendientes = hasEstado && item != null && item.getEstado().isPendientes();
+//        boolean isEstadoPendientePMOF = hasEstado && item != null && item.getEstado().isEstado(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
+//        boolean isEstadoPendientePMOT = hasEstado && item != null && item.getEstado().isEstado(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
+        boolean isEstadoInicio = item != null && item.getEstado().isEstado(Estados.ESTADOS.INICIO.estado_id);
+        boolean isEstadoPlanificacion = item != null && item.getEstado().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
+//        boolean isEstadoEjecucion = item != null && item.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id);
+        boolean isEstadoFinalizado = item != null && item.getEstado().isEstado(Estados.ESTADOS.FINALIZADO.estado_id);
+//        boolean isEstadoPendCerrar = item != null && item.getEstadoPendiente() != null && item.getEstadoPendiente().isEstado(Estados.ESTADOS.SOLICITUD_CANCELAR_PMOT.estado_id);
+
+        boolean isActivo = item != null && item.isActivo();
+
+        boolean deshabilitar = !isActivo
+                || (isEstadoPendientes)
+                || (!isAlta && (((isGerente && !(isEditor || isEditorGral)) && !(isEstadoInicio || isEstadoPlanificacion)) || !(isEditor || isEditorGral || isGerente)));
+        boolean deshabilitarFinalizado = deshabilitar || isEstadoFinalizado;
+
+//        boolean isProgPaso1_1 = isProg && isAlta;
+//        boolean isProyPaso1_1 = isProy && isAlta;
+//        boolean isSolAprobacion = item != null && item.getEstadoPendiente() != null
+//                && estadosDelegate.isOrdenProcesoMenor(item.getEstado(), item.getEstadoPendiente());
+        if (fieldName.equalsIgnoreCase("GuardarFicha")) {
+            if (deshabilitarFinalizado) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("AprobarGuardarFicha")) {
+            if (deshabilitarFinalizado) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("Objetivo")
+                || fieldName.equalsIgnoreCase("PubObjetivo")) {
+            if (deshabilitarFinalizado) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("SitActual")) {
+            if (isProg) {
+                //el programa no tiene este dato por lo tanto no se renderiza
+                rendered = false;
+            } else {
+                if (deshabilitarFinalizado) {
+                    disabled = true;
+                    rendered = false;
+                }
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("pubweb_descripcion")
+                || fieldName.equalsIgnoreCase("pubweb_alcance")
+                || fieldName.equalsIgnoreCase("pubweb_beneficios")
+                || fieldName.equalsIgnoreCase("pubweb_integrantes")
+                || fieldName.equalsIgnoreCase("pubweb_rol_organismo")) {
+            if (deshabilitarFinalizado) {
+                disabled = true;
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("Observaciones")) {
+            if (deshabilitarFinalizado || !(isPMOF || isPMOT || isEditor || isEditorGral)) {
+                disabled = true;
+                rendered = false;
+            }
+        }
+
+        if (deshabilitarFinalizado) {
+            disabled = true;
+        }
+
+        if (checkDisabled) {
+            return disabled;
+        } else if (checkRendered) {
+            return rendered;
+        } else {
+            return false;
+        }
+    }
+    // </editor-fold>
+}

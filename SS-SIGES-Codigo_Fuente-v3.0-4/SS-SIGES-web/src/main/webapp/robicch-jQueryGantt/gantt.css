@@ -1,0 +1,377 @@
+#workSpace{
+	margin: 0px !important;
+	width: 100% !important;
+	height: 500px !important;
+}
+
+.gdfTable {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.gdfTable td, .gdfTable th {
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+  font-size: 13px
+}
+
+.gdfCell, .gdfColHeader {
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.gdfCell {
+  overflow: hidden;
+  padding:4px 5px;
+}
+
+.gdfColHeader {
+  min-width: 5px;
+  height: 30px;
+  border-color: #024777;
+}
+th.gdfCell {
+  border-color: #024777;
+}
+th.gdfCell .teamworkIcon{
+  color: #ffffff;
+}
+.gdfCell.indentCell span{
+  padding-left: 6px;
+  display: block;
+  border-left-color: #dadada !important;
+}
+
+.ganttLines{
+  position:absolute;
+  width:100%;
+  height:1px;
+  border-top:1px solid #eee;
+  z-index:1;
+}
+
+.gdfCellInput {
+  border: 0 none;
+  font-size: 12px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: #d4fbe8;
+}
+
+.gdfCellWrap {
+  border: 0 none;
+  font-size: 12px;
+  height: 17px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+
+  background-color: #ffcccc;
+}
+
+.gdfColHeaderOver {
+  opacity: .7;
+}
+
+.gdfHResizing {
+  cursor: w-resize;
+}
+
+.splitterContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.splitBox1, .splitBox2 {
+  overflow-x: scroll;
+  overflow-y: hidden;
+
+  /*background-color: yellow;*/
+}
+
+.splitBox2 {
+  /*background-color: orange;*/
+}
+
+.unselectable {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.splitElement {
+  outline-style: none;
+  position: absolute;
+  height: 100%;
+}
+
+.vSplitBar {
+  width: 5px;
+  background-color: #024777 /*#aaa*/;
+  cursor: w-resize;
+  text-align: center;
+  color: white;
+}
+
+.end{
+  border-right:1px dotted #666
+}
+
+.holyH{
+    background-color: #024777;
+}
+.holy{
+  background-color: #f7f7f7;
+}
+
+
+.expcoll{
+  width:6px;
+  height:6px;
+  margin:1px;
+  padding:1px;
+  background-color:yellow;
+  display:inline-block;
+  border:1px solid gray;
+}
+.expcoll.exp{
+  display:none;
+}
+
+
+.ganttTable{
+  table-layout:fixed;
+}
+
+.ganttTable td,.ganttTable th{
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.ganttHead1,.ganttHead2{
+  height:20px;
+}
+
+.ganttHead1 th{
+  border-left:1px solid #024777;
+  font-size: 13px;
+}
+.ganttHead2 th{
+	border: 1px solid #024777;
+	border-bottom: none;
+	text-align: center;
+	font-size: 11px;
+}
+
+.ganttToday{
+  position:absolute;
+  top:0;
+  width:1px;
+  height:100%;
+  border-left:2px dotted #13AFA5;
+}
+
+.ganttHighLight{
+  position:absolute;
+  width:100%;
+  height:28px;
+  background-color:#fff4cc;
+  opacity:.8;
+}
+
+.ganttButtonBar{
+  position:relative;
+  padding:5px;
+}
+
+.ganttButtonBar .buttons {
+    float:left;
+}
+
+
+.ganttButtonBar .button span.teamworkIcon{
+  font-size: 150%
+}
+
+.ganttButtonSeparator{
+  border-left:1px solid #024777;
+  padding-right:10px;
+  margin-left:10px;
+  font-size: 130%
+}
+
+.ganttLinks{
+  z-index:10;
+}
+
+.taskBox{
+  position:absolute;
+  height:25px;
+  margin-top:3px;
+  z-index:100;
+}
+
+.taskBox .layout {
+  height:100%;
+  color:red;
+  border-radius:2px;
+  background: #ebf2f7 /*#eee*/; /* Old browsers */
+  border:1px solid #bbb;
+}
+
+.taskBox .taskStatus {
+    left:5px;
+    top:10px;
+    position:absolute;
+    width:10px;
+    height:10px;
+	border-radius: 10px;
+}
+
+.taskBox .layout .milestone{
+  top:0px;
+  position:absolute;
+  width:18px;
+  background: url(milestone.png) no-repeat;
+  height:18px;
+  display:none;
+}
+.taskBox .layout .milestone.end{
+  right:0;
+}
+.taskBox .layout .milestone.active{
+  display:block;
+}
+
+.taskBox.hasChild .layout{
+  border-top:3px solid black;
+}
+
+.taskBox .taskProgress{
+  height:5px;
+  position:absolute;
+}
+
+.taskBox .layout.extDep{
+  background-image:url(hasExternalDeps.png);
+}
+
+
+.taskLabel{
+  position:absolute;
+  height:28px;
+  color:black;
+  text-align:right;
+  padding-right:5px;
+  overflow:hidden;
+  left:-200px;
+  width:195px;
+  white-space:nowrap;
+}
+
+
+.taskDepLine {
+  border: 1px solid #9999ff;
+  overflow: hidden;
+  position: absolute;
+}
+
+
+.taskEditRow,.emptyRow {
+  height:30px;
+}
+
+.taskEditRow input{
+  border: 0 none;
+  font-size: 13px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: Arial, sans-serif
+}
+
+.taskEditRow.rowSelected td,.taskEditRow.rowSelected input{
+  background-color:#fff4cc;  
+}
+
+.taskStatusBox{
+  position:absolute;
+  border:1px solid #a0a0a0;
+  background-color:#fff;
+  margin-top:2px;
+  margin-left:-1px;
+  padding: 2px;
+  border-radius: 5px;
+}
+.taskStatus{
+  width:15px;
+  height:15px;
+  display:inline-block;
+}
+.taskStatus[status=STATUS_ACTIVE]{
+ background-color: #80c41c;
+}
+.taskStatus[status=STATUS_DONE]{
+ background-color: #035e9f;
+}
+.taskStatus[status=STATUS_FAILED]{
+ background-color: #ff0000;
+}
+.taskStatus[status=STATUS_SUSPENDED]{
+ background-color: #fdc600;
+}
+.taskStatus[status=STATUS_UNDEFINED]{
+ background-color: #dadada;
+}
+.taskStatus.selected{
+  border:#666 2px solid;
+}
+.taskStatusBox .taskStatus{
+  margin: 3px;
+}
+.ganttTaskEditor {
+    padding: 10px
+}
+.gdfCell .taskStatus {
+cursor: pointer;
+}
+
+.ui-resizable-helper {
+    border: 1px dotted #00F;
+}
+.ui-resizable-e, .ui-resizable-w {
+    width: 5px;
+}
+.ui-draggable{
+  cursor:move;
+}
+
+.parentTaskBar{
+    background-color: #BABABA;
+}
+
+.comunTaskBar{
+    background-color: #fff4cc;
+}
+
+.taskProgressBlue{
+    background-color: #035e9f;
+}
+
+.taskProgressRed{
+    background-color: #ff0000;
+}
+
+.taskProgressGreen{
+    background-color: #80c41c;
+}

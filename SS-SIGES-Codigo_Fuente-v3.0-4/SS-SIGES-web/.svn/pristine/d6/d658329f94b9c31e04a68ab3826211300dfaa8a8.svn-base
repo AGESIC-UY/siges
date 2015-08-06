@@ -1,0 +1,304 @@
+package com.sofis.web.mb;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.Participantes;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.enums.TipoFichaEnum;
+import com.sofis.web.delegates.ParticipantesDelegate;
+import com.sofis.web.delegates.ProyectosDelegate;
+import com.sofis.web.delegates.RegistrosHorasDelegate;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "revisionHorasMB")
+@ViewScoped
+public class RevisionHorasMB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @ManagedProperty("#{inicioMB}")
+    InicioMB inicioMB;
+    @Inject
+    ProyectosDelegate proyectoDelegate;
+    @Inject
+    RegistrosHorasDelegate registrosHorasDelegate;
+    @Inject
+    ParticipantesDelegate participantesDelegate;
+    //Atributos
+    private List<RegistrosHoras> revisionHorasListado;
+    private Participantes participante = null;
+    private int cantElementosPorPagina = 25;
+    //Para el filtro
+    private Integer filtroProyPk;
+    private Integer filtroEntPk;
+    private Date filtroFechaDesde;
+    private Date filtroFechaHasta;
+    private List<Entregables> listaEntregablesFiltro;
+    //Para la generacion de horas
+    private Integer generarHorasEntPk;
+    private Date generarHorasFechaDesde;
+    private Date generarHorasFechaHasta;
+    private Float generarHorasHorasDiarias;
+    private boolean renderPopupGenerarHoras = false;
+
+    public RevisionHorasMB() {
+        logger.finest("-- CREA FichaMB");
+    }
+
+    public List<RegistrosHoras> getRevisionHorasListado() {
+        return revisionHorasListado;
+    }
+
+    public Integer getFiltroProyPk() {
+        return filtroProyPk;
+    }
+
+    public void setFiltroProyPk(Integer filtroProyPk) {
+        this.filtroProyPk = filtroProyPk;
+    }
+
+    public Integer getFiltroEntPk() {
+        return filtroEntPk;
+    }
+
+    public void setFiltroEntPk(Integer filtroEntPk) {
+        this.filtroEntPk = filtroEntPk;
+    }
+
+    public Date getFiltroFechaDesde() {
+        return filtroFechaDesde;
+    }
+
+    public void setFiltroFechaDesde(Date filtroFechaDesde) {
+        this.filtroFechaDesde = filtroFechaDesde;
+    }
+
+    public Date getFiltroFechaHasta() {
+        return filtroFechaHasta;
+    }
+
+    public void setFiltroFechaHasta(Date filtroFechaHasta) {
+        this.filtroFechaHasta = filtroFechaHasta;
+    }
+
+    public List<Entregables> getListaEntregablesFiltro() {
+        return listaEntregablesFiltro;
+    }
+
+    public Participantes getParticipante() {
+        return participante;
+    }
+
+    public int getCantElementosPorPagina() {
+        return cantElementosPorPagina;
+    }
+
+    public void setCantElementosPorPagina(int cantElementosPorPagina) {
+        this.cantElementosPorPagina = cantElementosPorPagina;
+    }
+
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+
+    public void setProyectoDelegate(ProyectosDelegate proyectoDelegate) {
+        this.proyectoDelegate = proyectoDelegate;
+    }
+
+    public void setRegistrosHorasDelegate(RegistrosHorasDelegate registrosHorasDelegate) {
+        this.registrosHorasDelegate = registrosHorasDelegate;
+    }
+
+    public Integer getGenerarHorasEntPk() {
+        return generarHorasEntPk;
+    }
+
+    public void setGenerarHorasEntPk(Integer generarHorasEntPk) {
+        this.generarHorasEntPk = generarHorasEntPk;
+    }
+
+    public Date getGenerarHorasFechaDesde() {
+        return generarHorasFechaDesde;
+    }
+
+    public void setGenerarHorasFechaDesde(Date generarHorasFechaDesde) {
+        this.generarHorasFechaDesde = generarHorasFechaDesde;
+    }
+
+    public Date getGenerarHorasFechaHasta() {
+        return generarHorasFechaHasta;
+    }
+
+    public void setGenerarHorasFechaHasta(Date generarHorasFechaHasta) {
+        this.generarHorasFechaHasta = generarHorasFechaHasta;
+    }
+
+    public Float getGenerarHorasHorasDiarias() {
+        return generarHorasHorasDiarias;
+    }
+
+    public void setGenerarHorasHorasDiarias(Float generarHorasHorasDiarias) {
+        this.generarHorasHorasDiarias = generarHorasHorasDiarias;
+    }
+
+    public boolean isRenderPopupGenerarHoras() {
+        return renderPopupGenerarHoras;
+    }
+
+    public void setRenderPopupGenerarHoras(boolean renderPopupGenerarHoras) {
+        this.renderPopupGenerarHoras = renderPopupGenerarHoras;
+    }
+
+    @PostConstruct
+    public void init() {
+        inicializarRevisionHoras();
+    }
+
+    private void inicializarRevisionHoras() {
+        participante = null;
+        Integer partPk = (Integer) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("revisionHoras_partPk");
+        if (partPk != null) {
+            participante = participantesDelegate.obtenerParticipantesPorPk(partPk);
+            if (participante != null) {
+                filtroProyPk = participante.getPartProyectoFk().getProyPk();
+            } else {
+                filtroProyPk = 0;
+            }
+        } else {
+            filtroProyPk = 0;
+        }
+        cargarEntregablesProyectoFiltro(filtroProyPk);
+        filtroFechaDesde = null;
+        filtroFechaHasta = null;
+    }
+
+    private void cargarEntregablesProyectoFiltro(Integer proyId) {
+        listaEntregablesFiltro = new LinkedList();
+        if (proyId != null && proyId.intValue() > 0) {
+            Proyectos proy = proyectoDelegate.obtenerProyPorId(proyId);
+            if (proy != null && proy.getProyCroFk() != null && proy.getProyCroFk().getEntregablesSet() != null) {
+                listaEntregablesFiltro.addAll(proy.getProyCroFk().getEntregablesSet());
+            }
+        }
+        listaEntregablesFiltro.add(0, new Entregables(0, 0, " Todos ", 0));
+    }
+
+    public String buscarConFiltro() {
+        revisionHorasListado = registrosHorasDelegate.obtenerRegistrosHoras(participante.getPartUsuarioFk().getUsuId(),
+                participante.getPartProyectoFk().getProyPk(),
+                (filtroEntPk != null && filtroEntPk.intValue() > 0 ? filtroEntPk : null),
+                filtroFechaDesde, filtroFechaHasta, null, null);
+        Collections.sort(revisionHorasListado);
+        return null;
+    }
+
+    public String buscarSinFiltro() {
+        //Aunque sea sin filtro, siempre incluye el usuario y el proyecto
+        filtroEntPk = 0;
+        filtroFechaDesde = null;
+        filtroFechaHasta = null;
+        return buscarConFiltro();
+    }
+
+    public String guardar() {
+        for (RegistrosHoras rh : revisionHorasListado) {
+            if (rh.getRhAprobado() == null) {
+                rh.setRhAprobado(false);
+            }
+            registrosHorasDelegate.registrarHoras(rh);
+        }
+        return volverAFicha();
+    }
+
+    public String cancelar() {
+        return volverAFicha();
+    }
+
+    public String volverAFicha() {
+        String progProyId = TipoFichaEnum.PROYECTO.id + "-" + participante.getPartProyectoFk().getProyPk();
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("programaProyectoId", progProyId);
+        return "IR_A_EDITAR_FICHA";
+    }
+
+    public String mostrarPopupGenerarHoras() {
+        renderPopupGenerarHoras = true;
+        return null;
+    }
+
+    public String cerrarPopupGenerarHoras() {
+        renderPopupGenerarHoras = false;
+        return null;
+    }
+
+    public String confirmarGenerarHoras() {
+        if (generarHorasEntPk == null || generarHorasEntPk.intValue() <= 0 || generarHorasFechaDesde == null
+                || generarHorasFechaHasta == null || generarHorasHorasDiarias == null
+                || generarHorasFechaDesde.after(generarHorasFechaHasta)
+                || generarHorasHorasDiarias.intValue() < 0 || generarHorasHorasDiarias.intValue() > 24) {
+            return null;
+        }
+        Entregables entregable = null;
+        for (Entregables e : listaEntregablesFiltro) {
+            if (e.getEntPk().equals(generarHorasEntPk)) {
+                entregable = e;
+                break;
+            }
+        }
+        Proyectos proyecto = participante.getPartProyectoFk();
+        SsUsuario usuario = participante.getPartUsuarioFk();
+        RegistrosHoras registroHoras = null;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(generarHorasFechaDesde);
+
+        while (!cal.getTime().after(generarHorasFechaHasta)) {
+            registroHoras = new RegistrosHoras();
+            registroHoras.setRhAprobado(true);
+            registroHoras.setRhComentario("Generado automáticamente");
+            registroHoras.setRhEntregableFk(entregable);
+            registroHoras.setRhFecha(cal.getTime());
+            registroHoras.setRhHoras(generarHorasHorasDiarias);
+            registroHoras.setRhProyectoFk(proyecto);
+            registroHoras.setRhUsuarioFk(usuario);
+            registrosHorasDelegate.registrarHoras(registroHoras);
+
+            cal.add(Calendar.DATE, 1);
+        }
+        buscarConFiltro();
+        return cerrarPopupGenerarHoras();
+    }
+
+    public String cancelarGenerarHoras() {
+        return cerrarPopupGenerarHoras();
+    }
+
+    public boolean getPermitirAcceso() {
+        return participante != null;
+    }
+
+    public void limpiarFiltro() {
+//        participante = null;
+        listaEntregablesFiltro = null;
+        filtroFechaDesde = null;
+        filtroFechaHasta = null;
+    }
+    
+}

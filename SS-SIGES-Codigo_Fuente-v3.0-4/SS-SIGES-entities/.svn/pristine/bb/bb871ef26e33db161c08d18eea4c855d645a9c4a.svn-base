@@ -1,0 +1,103 @@
+package com.sofis.entities.utils;
+
+import com.sofis.entities.data.Programas;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.entities.data.SsRol;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FichaTO;
+import com.sofis.entities.tipos.FiltroInicioItem;
+import java.util.List;
+
+/**
+ *
+ * @author Usuario
+ */
+public class SsUsuariosUtils {
+
+    public static String[] arrayMailsUsuarios(List<SsUsuario> list) {
+        if (list != null && !list.isEmpty()) {
+            String[] arrUsuarios = new String[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                arrUsuarios[i] = list.get(i).getUsuCorreoElectronico();
+            }
+            return arrUsuarios;
+        }
+        return null;
+    }
+    
+    public static boolean isUsuarioPMO(Object ficha, SsUsuario usuario, Integer orgPk) {
+        boolean isPmot = isUsuarioPMOT(usuario, orgPk);
+        boolean isPmof = isUsuarioPMOF(ficha, usuario, orgPk);
+        
+        if(isPmot || isPmof){
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isUsuarioPMOT(SsUsuario usuario, Integer orgPk) {
+        return usuario.isRol(SsRol.ROLES.PMO_TRANSVERSAL, orgPk);
+    }
+
+    /**
+     *
+     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param usuario
+     * @param orgPk
+     * @return
+     */
+    public static boolean isUsuarioPMOF(Object ficha, SsUsuario usuario, Integer orgPk) {
+        SsUsuario usuarioPMOF = null;
+
+        if (ficha instanceof FichaTO) {
+            usuarioPMOF = ((FichaTO) ficha).getUsrPmofedFk();
+        } else if (ficha instanceof FiltroInicioItem) {
+            usuarioPMOF = new SsUsuario(((FiltroInicioItem) ficha).getPmofId());
+        } else if (ficha instanceof Proyectos) {
+            usuarioPMOF = ((Proyectos) ficha).getProyUsrPmofedFk();
+        } else if (ficha instanceof Programas) {
+            usuarioPMOF = ((Programas) ficha).getProgUsrPmofedFk();
+        }
+
+        return usuarioPMOF != null
+                && usuario.getUsuId().equals(usuarioPMOF.getUsuId())
+                && (usuario.isUsuarioPMOF(orgPk) || usuario.isUsuarioPMOT(orgPk));
+    }
+
+    public static boolean isUsuarioComun(Object ficha, SsUsuario usuario, Integer orgPk) {
+        return !(isUsuarioGerenteOAdjuntoFicha(ficha, usuario)
+                || usuario.isUsuarioPMOT(orgPk)
+                || isUsuarioPMOF(ficha, usuario, orgPk)
+                || usuario.isUsuarioDirector(orgPk));
+    }
+
+    /**
+     *
+     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param usuario
+     * @return
+     */
+    public static boolean isUsuarioGerenteOAdjuntoFicha(Object ficha, SsUsuario usuario) {
+        SsUsuario usuGerente = null;
+        SsUsuario usuAdjunto = null;
+
+        if (ficha instanceof FichaTO) {
+            usuGerente = ((FichaTO) ficha).getUsrGerenteFk();
+            usuAdjunto = ((FichaTO) ficha).getUsrAdjuntoFk();
+        } else if (ficha instanceof FiltroInicioItem) {
+            usuGerente = new SsUsuario(((FiltroInicioItem) ficha).getResponsableId());
+            usuAdjunto = new SsUsuario(((FiltroInicioItem) ficha).getResponsableId());
+        } else if (ficha instanceof Proyectos) {
+            usuGerente = ((Proyectos) ficha).getProyUsrGerenteFk();
+            usuAdjunto = ((Proyectos) ficha).getProyUsrAdjuntoFk();
+        } else if (ficha instanceof Programas) {
+            usuGerente = ((Programas) ficha).getProgUsrGerenteFk();
+            usuAdjunto = ((Programas) ficha).getProgUsrAdjuntoFk();
+        }
+
+        return usuGerente != null
+                && usuAdjunto != null
+                && (usuario.getUsuId().equals(usuGerente.getUsuId())
+                || usuario.getUsuId().equals(usuAdjunto.getUsuId()));
+    }
+}

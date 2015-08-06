@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelGroup id="buscador"
+                    styleClass="buscador recuadro filtroProyecto margen-inf"
+                    rendered="#{inicioMB.organismo != null}">
+
+        <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/>
+
+        <ice:panelGroup rendered="#{!(revisionHorasMB.revisionHorasListado ne null and revisionHorasMB.revisionHorasListado.size() gt 0)}"
+                        styleClass="mensajeBusqueda">
+            <ice:graphicImage value="../img/mens-info-busqueda.png" />
+            <ice:outputText value=" #{labels.info_sin_resultados_busqueda}" />
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="col-sm-12">
+            <ice:panelGrid styleClass="formulario" columns="4">
+                <ice:outputLabel value="#{labels.revisionHoras_usuario}" />
+                <ice:outputText value="#{revisionHorasMB.participante.partUsuarioFk.nombreApellido}" />
+
+                <ice:outputLabel value="#{labels.revisionHoras_proyecto}" />
+                <ice:outputText value="#{revisionHorasMB.participante.partProyectoFk.proyNombre}" />
+
+                <ice:outputLabel value="#{labels.revisionHoras_entregable}" />
+                <ice:selectOneMenu id="comboEntregableFiltro" value="#{revisionHorasMB.filtroEntPk}">
+                    <f:selectItems value="#{revisionHorasMB.listaEntregablesFiltro}" 
+                                   var="ent1" itemLabel="#{ent1.entNombre}" itemValue="#{ent1.entPk}"/>
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.revisionHoras_fechaDesde}" />
+                <ace:dateTimeEntry value="#{revisionHorasMB.filtroFechaDesde}"
+                                   pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                   timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+
+                <ice:outputLabel value="#{labels.revisionHoras_fechaHasta}" />
+                <ace:dateTimeEntry value="#{revisionHorasMB.filtroFechaHasta}"
+                                   pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                   timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="panelAcciones">
+            <ice:panelGroup styleClass="panelBotones" >
+                <ace:messages id="filtroBusquedaMsg" />
+                <ace:pushButton value="#{labels.revisionHoras_buscarConFiltro}" 
+                                action="#{revisionHorasMB.buscarConFiltro()}" 
+                                styleClass="boton principal buscar"/>
+                <ace:pushButton value="#{labels.revisionHoras_buscarSinFiltro}" 
+                                action="#{revisionHorasMB.buscarSinFiltro()}" 
+                                styleClass="boton principal buscar"/>
+
+                <ace:linkButton value="#{labels.limpiar}" 
+                                styleClass="boton secundario" style="margin-left: 10px;"
+                                action="#{revisionHorasMB.limpiarFiltro()}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+    </ice:panelGroup>
+</ui:composition>

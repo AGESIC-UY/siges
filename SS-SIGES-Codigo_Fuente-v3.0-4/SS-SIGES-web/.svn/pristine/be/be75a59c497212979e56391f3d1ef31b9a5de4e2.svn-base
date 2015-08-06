@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelGroup>
+        <ice:panelGroup  styleClass="row">
+            <ice:panelGroup  styleClass="col-sm-6">
+                <ice:commandLink id="linkEditarFicha12"
+                                 action="#{inicioMB.irEditarProgramaProyecto(item.progProyId, false)}" 
+                                 value="#{item.fichaFk} - #{item.nombre}"
+                                 styleClass="subtitulo"
+                                 title="#{item.fichaFk} - #{item.nombre}"/>
+            </ice:panelGroup>
+            <ice:panelGroup  styleClass="col-sm-4">
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.pub_web_area}:"/>
+                    <ice:outputText value="#{item.area}" />
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.ficha_programa}:" 
+                                     rendered="#{item.programa != null}"/>
+                    <!--
+                    <ice:outputText value="# {item.programa.progNombre}" 
+                                                    rendered="# {item.programa != null}"/>
+                    -->
+                </ice:panelGroup>
+            </ice:panelGroup>
+            <ice:panelGroup styleClass="col-sm-2">
+                <ace:pushButton rendered="#{publicacionWebMB.fieldRendered('ImprimirFicha', item)}"
+                                disabled="#{publicacionWebMB.fieldDisabled('ImprimirFicha', item)}"
+                                value="#{labels.pub_web_imprimir}"
+                                action="#{publicacionWebMB.imprimirFichaAction(item)}"
+                                styleClass="boton principal imprimir"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <fieldset class="fieldSetEdicion">
+            <legend><ice:outputText value="#{labels.pubweb_que_es_tab}" /></legend>
+
+            <ice:panelGroup >
+                <ice:outputLabel value="#{labels.pubweb_descripcion}"/>
+                <ace:richTextEntry id="descPubWeb"
+                                   value="#{item.descripcion}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('pubweb_descripcion', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('pubweb_descripcion', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('pubweb_descripcion', item)}">
+                    <ice:outputText rendered="#{!publicacionWebMB.fieldRendered('pubweb_descripcion', item)}"
+                                    value="#{item.descripcion}"
+                                    escape="false"/>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.pubweb_objetivo}" styleClass="margen-sup"/>
+                <ace:richTextEntry id="objetivoPubWeb"
+                                   value="#{item.objetivo}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('Objetivo', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('Objetivo', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('Objetivo', item)}">
+                    <ice:outputText value="#{item.objetivo}"
+                                    escape="false"/>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.pubweb_alcance}" styleClass="margen-sup"/>
+                <ace:richTextEntry id="alcancePubWeb"
+                                   value="#{item.alcance}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('pubweb_alcance', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('pubweb_alcance', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('pubweb_alcance', item)}">
+                    <ice:outputText value="#{item.alcance}"
+                                    escape="false"/>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.pubweb_pub_objetivo}" styleClass="margen-sup"/>
+                <ace:richTextEntry id="pubObjPubWeb"
+                                   value="#{item.objPublico}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('PubObjetivo', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('PubObjetivo', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('PubObjetivo', item)}">
+                    <ice:outputText value="#{item.objPublico}"
+                                    escape="false"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </fieldset>
+
+        <fieldset class="fieldSetEdicion">
+            <legend><ice:outputText value="#{labels.pubweb_beneficios_tab}" /></legend>
+            <ace:richTextEntry id="beneficiosPubWeb"
+                               value="#{item.beneficios}" 
+                               disabled="#{publicacionWebMB.fieldDisabled('pubweb_beneficios', item)}"
+                               rendered="#{publicacionWebMB.fieldRendered('pubweb_beneficios', item)}"
+                               toolbar="Basic" immediate="true" language="es"
+                               skin="kama" saveOnSubmit="true"
+                               styleClass="ancho100" height="80px" />
+
+            <ice:panelGroup styleClass="recuadro"
+                            rendered="#{!publicacionWebMB.fieldRendered('pubweb_beneficios', item)}">
+                <ice:outputText value="#{item.beneficios}"
+                                escape="false"/>
+            </ice:panelGroup>
+        </fieldset>
+
+        <fieldset class="fieldSetEdicion">
+            <legend><ice:outputText value="#{labels.pubweb_implementacion_tab}" /></legend>
+            <ice:panelGroup>
+                <ice:outputLabel value="#{labels.pubweb_integrantes}"/>
+                <ace:richTextEntry id="integrantesPubWeb"
+                                   value="#{item.quienesIntegran}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('pubweb_integrantes', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('pubweb_integrantes', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('pubweb_integrantes', item)}">
+                    <ice:outputText value="#{item.quienesIntegran}"
+                                    escape="false"/>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.pubweb_rol_de} #{inicioMB.organismo.orgNombre}" styleClass="margen-sup"/>
+                <ace:richTextEntry id="rolOrgPubWeb"
+                                   value="#{item.rolOrganismo}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('pubweb_rol_organismo', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('pubweb_rol_organismo', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('pubweb_rol_organismo', item)}">
+                    <ice:outputText value="#{item.rolOrganismo}"
+                                    escape="false"/>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.pubweb_sit_actual} #{publicacionWebMB.fechaSitActual(item)}" styleClass="margen-sup"/>
+                <ace:richTextEntry id="sitActPubWeb"
+                                   value="#{item.situacionActual}" 
+                                   disabled="#{publicacionWebMB.fieldDisabled('SitActual', item)}"
+                                   rendered="#{publicacionWebMB.fieldRendered('SitActual', item)}"
+                                   toolbar="Basic" immediate="true" language="es"
+                                   skin="kama" saveOnSubmit="true"
+                                   styleClass="ancho100" height="80px" />
+
+                <ice:panelGroup styleClass="recuadro"
+                                rendered="#{!publicacionWebMB.fieldRendered('SitActual', item)}">
+                    <ice:outputText value="#{item.situacionActual}"
+                                    escape="false"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </fieldset>
+
+        <fieldset class="fieldSetEdicion">
+            <legend><ice:outputText value="#{labels.ficha_observaciones}" /></legend>
+            <ace:richTextEntry id="observaciones"
+                               value="#{item.observaciones}" 
+                               disabled="#{publicacionWebMB.fieldDisabled('Observaciones', item)}"
+                               rendered="#{publicacionWebMB.fieldRendered('Observaciones', item)}"
+                               toolbar="Basic" immediate="true" language="es" 
+                               skin="kama" saveOnSubmit="true" 
+                               styleClass="ancho100" height="100px" />
+
+            <ice:panelGroup styleClass="recuadro"
+                            rendered="#{!publicacionWebMB.fieldRendered('Observaciones', item)}">
+                <ice:outputText value="#{item.observaciones}"
+                                escape="false"/>
+            </ice:panelGroup>
+        </fieldset>
+
+        <ice:panelGroup styleClass="recuadro">
+            <ice:panelGroup  styleClass="col-sm-12">
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.ficha_caracteristicas}:"/>
+                    <ice:outputText value="#{publicacionWebMB.caracteristicasTxt(item)}" />
+                </ice:panelGroup>
+
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.ficha_estado} #{item.tipoFicha == 1 ? labels.programa : labels.proyecto}:"/>
+                    <ice:outputText value="#{publicacionWebMB.estadoLabel(item)}" />
+                </ice:panelGroup>
+
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.ficha_edicion_estado}:"/>
+                    <ice:outputText value="#{publicacionWebMB.estadoEdicionLabel(item)}" />
+                </ice:panelGroup>
+
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.ficha_edicion_desde}:"/>
+                    <ice:outputText value="#{publicacionWebMB.estadoEdicionFechaLabel(item)}" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelGroup  styleClass="col-sm-12 margen-sup">
+            <ace:messages id="fichaMsg"/>
+
+            <ace:pushButton rendered="#{publicacionWebMB.fieldRendered('GuardarFicha', item)}"
+                            disabled="#{publicacionWebMB.fieldDisabled('GuardarFicha', item)}"
+                            value="#{labels.pub_web_guardar}"
+                            action="#{publicacionWebMB.guardarFichaAction(item)}"
+                            styleClass="boton principal guardar"/>
+
+            <h:commandButton value="#{labels.pub_web_aprobar_guardar}" 
+                             rendered="#{publicacionWebMB.fieldRendered('AprobarGuardarFicha', item)}" 
+                             onclick="confirmationAprobar#{item.fichaFk}.show()" 
+                             style="margin-left: 10px;"
+                             styleClass="boton principal botonGuardar"
+                             type="button"/>
+
+            <ace:confirmationDialog id="confirmDialogAprobar"
+                                    widgetVar="confirmationAprobar#{item.fichaFk}"
+                                    message="#{labels.pub_web_confirma_aprobar}"
+                                    header="#{labels.hConfirmacion}"
+                                    closable="true"
+                                    closeOnEscape="true"
+                                    severity="info"
+                                    modal="true"
+                                    position="center">
+                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                    <h:commandButton id="yesAprobar"
+                                     value="#{labels.si}"
+                                     styleClass="boton principal botonContinuar"
+                                     onclick="confirmationAprobar#{item.fichaFk}.hide()" 
+                                     actionListener="#{publicacionWebMB.guardarAprobarFichaAction(item)}"/>
+                    <h:commandButton id="noAprobar"
+                                     value="#{labels.no}"
+                                     styleClass="boton principal botonEliminar"
+                                     onclick="confirmationAprobar#{item.fichaFk}.hide()"  />
+                </h:panelGrid>
+            </ace:confirmationDialog> 
+        </ice:panelGroup>
+
+    </ice:panelGroup>
+</ui:composition>

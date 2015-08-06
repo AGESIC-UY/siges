@@ -1,0 +1,18 @@
+package com.sofis.web.delegates;
+
+import com.sofis.business.ejbs.DevengadoBean;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author Usuario
+ */
+public class DevengadoDelegate {
+    
+    @Inject
+    DevengadoBean devengadoBean;
+
+    public void eliminarDevPorAdqPk(Integer adqPk) {
+        devengadoBean.eliminarDevPorAdqPk(adqPk);
+    }
+}

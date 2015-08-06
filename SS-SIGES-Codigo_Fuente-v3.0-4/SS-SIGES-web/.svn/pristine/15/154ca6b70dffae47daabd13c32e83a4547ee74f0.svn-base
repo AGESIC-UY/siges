@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:panelGroup id="panelGannt" 
+                    style="#{fichaMB.selectedMostrar == 3 ? 'width: 100%; padding-right:25px' : ''}" 
+                    styleClass="col-sm-6 cuadro" 
+                    rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 3) and fichaMB.fieldRendered('panelGannt')}">
+
+        <script src="../robicch-jQueryGantt/libs/jquery.min.js"></script>
+        <script src="../robicch-jQueryGantt/libs/jquery-ui.min.js"></script>
+
+        <script src="../robicch-jQueryGantt/libs/jquery.livequery.min.js"></script>
+        <script src="../robicch-jQueryGantt/libs/jquery.timers.js"></script>
+        <script src="../robicch-jQueryGantt/libs/platform.js"></script>
+        <script src="../robicch-jQueryGantt/libs/date.js"></script>
+        <script src="../robicch-jQueryGantt/libs/i18nJs.js"></script>
+        <script src="../robicch-jQueryGantt/libs/dateField/jquery.dateField.js"></script>
+        <script src="../robicch-jQueryGantt/libs/JST/jquery.JST.js"></script>
+
+        <script src="../robicch-jQueryGantt/ganttUtilities.js"></script>
+        <script src="../robicch-jQueryGantt/ganttTask.js"></script>
+        <script src="../robicch-jQueryGantt/ganttDrawer.js"></script>
+        <script src="../robicch-jQueryGantt/ganttGridEditor.js"></script>
+        <script src="../robicch-jQueryGantt/ganttMaster.js"></script>
+
+        <ice:panelGroup id="cabezalGannt" styleClass="cabezal">
+            <ice:outputText value="#{labels.cronograma}"/>
+            <ace:pushButton value="" action="#{fichaMB.miMostrar(3)}"
+                            styleClass="#{fichaMB.selectedMostrar == 3 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
+        </ice:panelGroup>
+
+        <ice:commandButton id="btnGuardar"
+                           styleClass="guardarCronBtn" 
+                           action="#{fichaMB.guardarCronograma()}" 
+                           style="display: none;" />
+        <h:inputText id="dataCrono" value="#{fichaMB.dataCron}" style="display: none;"/>
+
+        <!--El panel con el resumen de gannt -->
+        <ice:panelGroup rendered="#{not fichaMB.mostrar[3]}" styleClass="cuerpo">
+            <c:set var="ganttIndice" value="1" />
+            <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
+
+            <ace:dataTable id="resumenEntregablesTable"
+                           value="#{fichaMB.listaEntregablesResumen}"
+                           styleClass="tablaFicha"
+                           var="ent"
+                           rendered="#{not empty fichaMB.listaEntregablesResumen}"
+                           paginator="true"
+                           paginatorPosition="bottom"
+                           rows="5">
+                <ace:column id="id_r" headerText="#{labels.titleResumenCronograma}">
+                    <c:set var="largo" value="#{fn:length(ent.entNombre)}" />
+                    <c:set var="entNombre" value="#{fn:substring(ent.entNombre, 0, 25)}#{largo > 25 ? '...' : ''}" />
+                    <h:outputText value="#{ent.entEsfuerzo} - #{entNombre} (#{100 - ent.entProgreso}%)"
+                                  title="#{labels.tooltip_esfuerzo}: #{ent.entEsfuerzo}&#13;#{labels.tooltip_nombre}: #{ent.entNombre}&#13;#{labels.tooltip_atraso}: #{100 - ent.entProgreso}%"/>
+                </ace:column>
+            </ace:dataTable>
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{fichaMB.mostrar[3]}" styleClass="cuerpo">
+
+            <!-- Formulario de alta -->
+            <ice:panelGroup id="ganntForm">
+                <c:set var="ganttIndice" value="2" />
+                <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
+
+                <ice:panelGroup styleClass="accesosCronograma">
+                    <ace:linkButton value="#{labels.prod_titulo}" 
+                                    action="#{fichaMB.miMostrar(5)}"/>
+                    <ace:linkButton value="#{labels.plaCrono_link}"
+                                    rendered="#{fichaMB.gerenteOAdjuntoFicha}"
+                                    action="#{fichaMB.plantillaCroPopup}" />
+                    <ace:linkButton value="#{labels.cro_hist_lineabase_link}"
+                                    rendered="#{fichaMB.fieldRendered('reporteCroHist')}"
+                                    action="#{inicioMB.irReporteCronograma(fichaMB.fichaTO.fichaFk, true)}" />
+                </ice:panelGroup>
+
+                <ace:messages id="ganttMsg" />
+
+                <div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:0 5px"></div>
+
+                <style>
+                    .resEdit {
+                        padding: 15px;
+                    }
+
+                    .resLine {
+                        width: 95%;
+                        padding: 3px;
+                        margin: 5px;
+                        border: 1px solid #d0d0d0;
+                    }
+                </style>
+
+                <form id="gimmeBack" style="display:none;" action="../gimmeBack.jsp" method="post" target="_blank">
+                    <input type="hidden" name="prj" id="gimBaPrj"/>
+                </form>
+
+                <script src="../robicch-jQueryGantt/gantt_config.js"></script>  
+
+                <div id="gantEditorTemplates" style="display:none;">
+
+                    <div class="__template__" type="GANTBUTTONS"><!--
+                    <div class="ganttButtonBar noprint">
+                      <h1 style="float:left"></h1>
+                      <div class="buttons">
+                      <button onclick="$('#workSpace').trigger('undo.gantt');" class="button textual" title="undo"><span class="teamworkIcon">&#39;</span></button>
+                      <button onclick="$('#workSpace').trigger('redo.gantt');" class="button textual" title="redo"><span class="teamworkIcon">&middot;</span></button>
+                      <span class="ganttButtonSeparator"></span>
+                      <button onclick="$('#workSpace').trigger('addAboveCurrentTask.gantt');" class="button textual" title="insert above"><span class="teamworkIcon">l</span></button>
+                      <button onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');" class="button textual" title="insert below"><span class="teamworkIcon">X</span></button>
+                      <span class="ganttButtonSeparator"></span>
+                      <button onclick="$('#workSpace').trigger('indentCurrentTask.gantt');" class="button textual" title="indent task"><span class="teamworkIcon">.</span></button>
+                      <button onclick="$('#workSpace').trigger('outdentCurrentTask.gantt');" class="button textual" title="unindent task"><span class="teamworkIcon">:</span></button>
+                      <span class="ganttButtonSeparator"></span>
+                      <button onclick="$('#workSpace').trigger('moveUpCurrentTask.gantt');" class="button textual" title="move up"><span class="teamworkIcon">k</span></button>
+                      <button onclick="$('#workSpace').trigger('moveDownCurrentTask.gantt');" class="button textual" title="move down"><span class="teamworkIcon">j</span></button>
+                      <span class="ganttButtonSeparator"></span>
+                      <button onclick="$('#workSpace').trigger('zoomMinus.gantt');" class="button textual" title="zoom out"><span class="teamworkIcon">)</span></button>
+                      <button onclick="$('#workSpace').trigger('zoomPlus.gantt');" class="button textual" title="zoom in"><span class="teamworkIcon">(</span></button>
+                      <span class="ganttButtonSeparator"></span>
+                      <button onclick="$('#workSpace').trigger('deleteCurrentTask.gantt');" class="button textual" title="delete"><span class="teamworkIcon">&cent;</span></button>
+                        &nbsp; &nbsp; &nbsp; &nbsp;
+                        <button onclick="saveGanttOnServer();" class="button first big" title="save">Guardar</button>
+                      </div></div>
+                        --></div>
+
+                    <div class="__template__" type="TASKSEDITHEAD"><!--
+                    <table class="gdfTable" cellspacing="0" cellpadding="0">
+                      <thead>
+                      <tr style="height:40px">
+                        <th class="gdfColHeader" style="width:35px;"></th>
+                        <th class="gdfColHeader" style="width:25px;"></th>
+                        <th class="gdfColHeader gdfResizable" style="width:300px;">Nombre</th>
+                        <th class="gdfColHeader gdfResizable" style="width:80px;">Fecha Inicio</th>
+                        <th class="gdfColHeader gdfResizable" style="width:80px;">Fecha Fin</th>
+                        <th class="gdfColHeader gdfResizable" style="width:114px;">Dependencia.</th>
+                      </tr>
+                      </thead>
+                    </table>
+                        --></div>
+
+                    <div class="__template__" type="TASKROW"><!--
+                    <tr taskId="(#=obj.id#)" class="taskEditRow" level="(#=level#)">
+                      <th class="gdfCell edit" align="right" style="cursor:pointer;"><span class="taskRowIndex">(#=obj.getRow()+1#)</span> <span class="teamworkIcon" style="font-size:12px;" >e</span></th>
+                      <td class="gdfCell" align="center"><div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div></td>
+                      <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10#)px;"><span type="text" name="name" style="(#=obj.level>0?'border-left:2px dotted orange':''#)">(#=obj.name + "-"+ obj.esfuerzo#)</span></td>
+                      <td class="gdfCell"><input type="text" name="start"  value="" class="date"></td>
+                      <td class="gdfCell"><input type="text" name="end" value="" class="date"></td>
+                      <td class="gdfCell"><input type="text" name="depends" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
+                    </tr>
+                        --></div>
+
+                    <div class="__template__" type="TASKEMPTYROW"><!--
+                    <tr class="taskEditRow emptyRow" >
+                      <th class="gdfCell" align="right"></th>
+                      <td class="gdfCell" align="center"></td>
+                      <td class="gdfCell"></td>
+                      <td class="gdfCell"></td>
+                      <td class="gdfCell"></td>
+                      <td class="gdfCell"></td>
+                      <td class="gdfCell"></td>
+                      <td class="gdfCell"></td>
+                    </tr>
+                        --></div>
+
+                    <div class="__template__" type="TASKBAR"><!--
+                    <div class="taskBox" taskId="(#=obj.id#)" >
+                      <div class="layout (#=obj.hasExternalDep?'extDep':''#)">
+                        <div class="taskStatus" status="(#=obj.status#)"></div>
+                        <div class="taskProgress" style="width:(#=obj.progress>100?100:obj.progress#)%; background-color:(#=obj.progress>100?'red':'rgb(153,255,51);'#);"></div>
+                        <div class="milestone (#=obj.startIsMilestone?'active':''#)" ></div>
+                  
+                        <div class="taskLabel"></div>
+                        <div class="milestone end (#=obj.endIsMilestone?'active':''#)" ></div>
+                      </div>
+                    </div>
+                        --></div>
+
+
+                    <div class="__template__" type="CHANGE_STATUS"><!--
+                      <div class="taskStatusBox">
+                        <div class="taskStatus cvcColorSquare" status="STATUS_ACTIVE" title="active"></div>
+                        <div class="taskStatus cvcColorSquare" status="STATUS_DONE" title="completed"></div>
+                        <div class="taskStatus cvcColorSquare" status="STATUS_FAILED" title="failed"></div>
+                        <div class="taskStatus cvcColorSquare" status="STATUS_SUSPENDED" title="suspended"></div>
+                        <div class="taskStatus cvcColorSquare" status="STATUS_UNDEFINED" title="undefined"></div>
+                      </div>
+                        --></div>
+
+
+                    <div class="__template__" type="TASK_EDITOR"><!--
+                    <div class="ganttTaskEditor">
+                    <table width="100%">
+                      <tr>
+                        <td>
+                          <table cellpadding="5">
+                            <tr>
+                              <td><label for="name">Nombre</label><br><input type="text" name="name" id="name" value=""  size="35" class="formElements"></td>
+                            </tr>
+                            <tr></tr>
+                              <td>
+                                <label for="description">Observaciones</label><br>
+                                <textarea rows="5" cols="30" id="description" name="description" class="formElements"></textarea>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td valign="top">
+                          <table cellpadding="5">
+                            <tr>
+                            <td colspan="2"><label for="status">Estado</label><br><div id="status" class="taskStatus" status=""></div></td>
+                            <tr>
+                            <td colspan="2"><label for="progress">% Avance</label><br><input type="text" name="progress" id="progress" value="" size="3" class="formElements"></td>
+                            </tr>
+                            
+                            <tr>
+                            <td colspan="2"><label for="esfuerzo">Esfuerzo</label><br><input type="text" name="esfuerzo" id="esfuerzo" value="" size="3" class="formElements"></td>
+                            </tr>
+                            <tr>
+                            <td>
+                                <label for="start">Fecha Inicio</label><br><input type="text" name="start" id="start"  value="" class="date" size="10" class="formElements">
+                                <input type="checkbox" id="startIsMilestone"> 
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                              <label for="end">Fecha Fin</label><br><input type="text" name="end" id="end" value="" class="date"  size="10" class="formElements">
+                              <input type="checkbox" id="endIsMilestone">
+                            </td>
+                          </table>
+                        </td>
+                      </tr>
+                      </table>
+                  
+                    <div style="text-align: right; padding-top: 20px"><button id="saveButton" class="button big">save</button></div>
+                    </div>
+                        --></div>
+
+
+                    <div class="__template__" type="ASSIGNMENT_ROW"><!--
+                      <tr taskId="(#=obj.task.id#)" assigId="(#=obj.assig.id#)" class="assigEditRow" >
+                        <td ><select name="resourceId"  class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#) ></select></td>
+                        <td ><select type="select" name="roleId"  class="formElements"></select></td>
+                        <td ><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
+                        <td align="center"><span class="teamworkIcon delAssig" style="cursor: pointer">d</span></td>
+                    </tr>
+                        --></div>
+
+                </div>
+
+                <script src="../robicch-jQueryGantt/gantt_decorator.js"></script>
+                
+                <ice:outputText value="#{labels.crono_referencia_gantt}" 
+                                escape="false"
+                                styleClass="comentario"/>
+
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

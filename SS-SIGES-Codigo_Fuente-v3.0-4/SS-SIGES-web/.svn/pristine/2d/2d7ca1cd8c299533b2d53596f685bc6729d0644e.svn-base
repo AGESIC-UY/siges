@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmCompletar">
+        <ice:panelGrid id="tituloPaginaCompletar" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloCompletar}"/>
+        </ice:panelGrid>
+        <ice:panelGrid width="100%" styleClass="panelBotonAgregar">
+            <ace:pushButton value="#{labels.agregarCompletar}" styleClass="boton agregar"  action="#{completarMB.agregar()}" />
+        </ice:panelGrid>
+        <fieldset>
+            <legend><ice:outputText value="#{labels.busqueda}"/></legend>
+
+            <ice:panelGrid columns="4" width="100%">
+                <ice:outputLabel value="#{labels.codigo}"/>
+                <ace:textEntry value="#{completarMB.bCodigo}" />
+                <ice:outputLabel value="#{labels.descripcion}"/>
+                <ace:textEntry value="#{completarMB.bDescripcion}" />
+                <ice:outputLabel value="#{labels.categoria}"/>
+
+                <ice:panelGrid />
+                <ice:panelGrid />
+                <ice:panelGrid columns="2">
+                    <ace:pushButton value="#{labels.buscar}"   styleClass="boton principal" action="#{completarMB.buscar()}"/>
+                    <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" action="#{completarMB.limpiar()}"/>
+                </ice:panelGrid>
+            </ice:panelGrid>
+        </fieldset>
+
+
+
+        <ice:panelGrid id="cnfResultado" width="100%" rendered="#{completarMB.renderResultado}">
+            <ice:outputText value="#{labels.resultadoBusqueda}: #{completarMB.listaResultado.size()} elemento(s)" styleClass="resultadoBusqueda"/>
+                <ice:panelGrid rendered="#{not empty completarMB.listaResultado}" width="100%" >
+                    <ice:panelGrid width="100%" columns="7">
+                        <ice:outputLabel value="Cantidad de elementos por página"/>
+                        <ace:simpleSelectOneMenu value="#{completarMB.cantElementosPorPagina}"
+                                                 valueChangeListener="#{completarMB.cambiarCantPaginas}">
+                            <f:selectItem itemLabel="25" itemValue="25"/>
+                            <f:selectItem itemLabel="50" itemValue="50"/>
+                            <f:selectItem itemLabel="100" itemValue="100"/>
+                            <ace:ajax />
+                        </ace:simpleSelectOneMenu>
+                        <ice:outputLabel value="Ordenar por:"/>
+                        <ace:simpleSelectOneMenu value="#{completarMB.elementoOrdenacion}"
+                                                 valueChangeListener="#{completarMB.cambiarCriterioOrdenacion}">
+                            <f:selectItem itemLabel="Código" itemValue="njuCodigo"/>
+                            <f:selectItem itemLabel="Nombre" itemValue="njuNombre"/>
+                            <f:selectItem itemLabel="Habilitado" itemValue="njuHabilitado"/>
+                            <ace:ajax />
+                        </ace:simpleSelectOneMenu>
+                        <ace:simpleSelectOneMenu value="#{completarMB.ascendente}"
+                                                 valueChangeListener="#{completarMB.cambiarAscendenteOrdenacion}">
+                            <f:selectItem itemLabel="Ascendente" itemValue="Ascendente"/>
+                            <f:selectItem itemLabel="Descendente" itemValue="Descendente"/>
+                             
+                            <ace:ajax />
+                        </ace:simpleSelectOneMenu>
+                        <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" type="csv" fileName="salida.csv"
+                                          includeHeaders="true" excludeColumns="4,5"  />
+                    </ice:panelGrid>
+                    <ace:dataTable  id="tblResultados" value="#{completarMB.listaResultado}" var="cnf" styleClass="tablaResultados"
+                                    paginator="true" pageCount="5" rows="#{completarMB.cantElementosPorPagina}">
+                        <ace:column headerText="#{labels.hId}" >
+                            <h:outputText value="#{cnf.propertyMap['id']}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hCodigo}">
+                            <h:outputText value="#{cnf.propertyMap['cnfCodigo']}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hValor}">
+                            <h:outputText value="#{cnf.propertyMap['cnfValor']}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hDescripcion}"  >
+                            <ice:outputText value="#{cnf.propertyMap['cnfDescripcion']}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                            <ice:panelGrid title="#{labels.editar}">
+                            <ace:pushButton styleClass="botonEditar"   action="#{completarMB.editar(cnf.id)}" />
+                            </ice:panelGrid>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hHistorico}" styleClass="columnaBoton">
+                            <ice:panelGrid title="#{labels.historial}">
+                            <ace:pushButton styleClass="botonHistorico"    action="#{completarMB.consultarHistorial(cnf.id)}"/>
+                              </ice:panelGrid>
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGrid>
+                <ice:panelGrid rendered="#{empty completarMB.listaResultado}" width="100%">
+                    <ice:outputText value="#{labels.noHayResultados}"/>
+                </ice:panelGrid>
+           
+        </ice:panelGrid>
+
+        <ice:panelPopup  autoCentre="true" modal="true"   rendered="#{completarMB.renderPopupHistorial}">
+            <f:facet name="header">
+                <ice:commandButton value="#{labels.cerrar}" action="#{completarMB.cerrarPopupHistorial()}"/>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid width="100%">
+                    <ice:outputText value="#{labels.tituloHistorial}"/>
+                    <ace:dataTable value="#{completarMB.listaHitorial}" var="row">
+                        <ace:column headerText="#{labels.hVersion}">
+                            <ice:outputText value="#{row.cnfVersion}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hCodigo}">
+                            <ice:outputText value="#{row.cnfCodigo}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hValor}">
+                            <ice:outputText value="#{row.cnfValor}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltMod}">
+                            <ice:outputText value="#{row.cnfUltMod}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltUsuario}">
+                            <ice:outputText value="#{row.cnfUltUsuario}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+
+        <ice:panelPopup rendered="#{completarMB.renderPopupEdicion}" autoCentre="true" modal="true">
+            <f:facet name="body">
+                <ice:panelGrid>
+                    <ace:messages />
+                <ice:panelGrid columns="2">
+                    <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
+                    <ace:textEntry value="#{completarMB.confEnEdicion.cnfCodigo}"/>
+                    <ice:outputLabel value="#{labels.valor}"/>
+                    <ace:textEntry value="#{completarMB.confEnEdicion.cnfValor}"/>
+                    <ice:outputLabel value="#{labels.descripcion}"  styleClass="obligatorio"/>
+                    <ace:textEntry value="#{completarMB.confEnEdicion.cnfDescripcion}"/>
+                    <ice:panelGrid/>
+                    <ice:panelGrid columns="2">
+                        <ace:pushButton value="#{labels.guardar}" action="#{completarMB.guardar}"/>
+                        <ace:linkButton value="#{labels.cancelar}" action="#{completarMB.cancelar()}"/>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+                    </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+    </ice:form>
+
+
+
+
+</ui:composition>

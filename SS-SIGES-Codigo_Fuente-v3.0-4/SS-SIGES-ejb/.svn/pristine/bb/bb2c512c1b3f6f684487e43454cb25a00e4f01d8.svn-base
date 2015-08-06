@@ -1,0 +1,29 @@
+package com.sofis.business.utils;
+
+import com.sofis.entities.data.Gastos;
+import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ *
+ * @author Usuario
+ */
+public class GastosUtils {
+
+    public static List<Gastos> sortByFecha(List<Gastos> listaGastos) {
+        if (CollectionsUtils.isNotEmpty(listaGastos)) {
+            Collections.sort(listaGastos, new Comparator<Gastos>() {
+                @Override
+                public int compare(Gastos rh1, Gastos rh2) {
+                    if (rh1 != null && rh1.getGasFecha() != null && rh2 != null && rh2.getGasFecha() != null) {
+                        return rh1.getGasFecha().compareTo(rh2.getGasFecha());
+                    }
+                    return 0;
+                }
+            });
+        }
+        return listaGastos;
+    }
+}

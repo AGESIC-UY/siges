@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="SS-SIGES-PU" transaction-type="JTA">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <jta-data-source>java:jboss/datasources/MySqlDS</jta-data-source>
+    <!--
+        <class>com.sofis.entities.data.Ayuda</class>
+        -->
+    <class>com.sofis.entities.data.Configuracion</class>
+    <class>com.sofis.entities.data.TipoDocumentoPersona</class>
+    <class>com.sofis.entities.data.Error</class>
+    <!-- 
+        <class>com.sofis.entities.data.Departamento</class>
+        <class>com.sofis.entities.data.Domicilio</class>
+        <class>com.sofis.entities.data.Error</class>
+        <class>com.sofis.entities.data.Localidad</class>
+        <class>com.sofis.entities.data.Noticia</class>
+        <class>com.sofis.entities.data.Pais</class>
+        <class>com.sofis.entities.data.Paridad</class>
+        <class>com.sofis.entities.data.Persona</class>
+        <class>com.sofis.entities.data.PgeConfiguraciones</class>
+        <class>com.sofis.entities.data.PgeInvocaciones</class>
+        <class>com.sofis.entities.data.Telefono</class>
+        <class>com.sofis.entities.data.TipoEntradaColectiva</class>
+        <class>com.sofis.entities.data.TipoTelefono</class>
+        <class>com.sofis.entities.data.TipoVialidad</class>
+        -->
+    <class>com.sofis.entities.data.Adquisicion</class>
+    <class>com.sofis.entities.data.Ambito</class>
+    <class>com.sofis.entities.data.AreaConocimiento</class>
+    <class>com.sofis.entities.tipos.AdqPagosTO</class>
+    <class>com.sofis.entities.data.AreaOrganiIntProve</class>
+    <class>com.sofis.entities.data.Areas</class>
+    <class>com.sofis.entities.data.AreasTags</class>
+    <class>com.sofis.entities.data.BusquedaFiltro</class>
+    <class>com.sofis.entities.data.Cronogramas</class>
+    <class>com.sofis.entities.data.Devengado</class>
+    <class>com.sofis.entities.data.Documentos</class>
+    <class>com.sofis.entities.data.DocFile</class>
+    <class>com.sofis.entities.data.Estados</class>
+    <class>com.sofis.entities.data.EntHistLineaBase</class>
+    <class>com.sofis.entities.data.Entregables</class>
+    <class>com.sofis.entities.data.FuenteFinanciamiento</class>
+    <class>com.sofis.entities.data.Gastos</class>
+    <class>com.sofis.entities.data.Interesados</class>
+    <class>com.sofis.entities.data.LeccionesAprendidas</class>
+    <class>com.sofis.entities.data.LineabaseHistorico</class>
+    <class>com.sofis.entities.data.MailsTemplate</class>
+    <class>com.sofis.entities.data.Moneda</class>
+    <class>com.sofis.entities.data.Notificacion</class>
+    <class>com.sofis.entities.data.NotificacionEnvio</class>
+    <class>com.sofis.entities.data.NotificacionInstancia</class>
+    <class>com.sofis.entities.data.OrganiIntProve</class>
+    <class>com.sofis.entities.data.Organismos</class>
+    <class>com.sofis.entities.data.Pagos</class>
+    <class>com.sofis.entities.data.Participantes</class>
+    <class>com.sofis.entities.data.Personas</class>
+    <class>com.sofis.entities.data.PlantillaCronograma</class>
+    <class>com.sofis.entities.data.PlantillaEntregables</class>
+    <class>com.sofis.entities.data.Presupuesto</class>
+    <class>com.sofis.entities.data.ProdMes</class>
+    <class>com.sofis.entities.data.Productos</class>
+    <class>com.sofis.entities.data.ProgDocs</class>
+    <class>com.sofis.entities.data.Programas</class>
+    <class>com.sofis.entities.data.ProgEditor</class>
+    <class>com.sofis.entities.data.ProgIndices</class>
+    <class>com.sofis.entities.data.ProgIndicesPre</class>
+    <class>com.sofis.entities.data.Proyectos</class>
+    <class>com.sofis.entities.data.ProyectosConCronograma</class>
+    <class>com.sofis.entities.data.ProyEditor</class>
+    <class>com.sofis.entities.data.ProyIndices</class>
+    <class>com.sofis.entities.data.ProyReplanificacion</class>
+    <class>com.sofis.entities.data.ProySitactHistorico</class>
+    <class>com.sofis.entities.data.ProgramasProyectos</class>
+    <class>com.sofis.entities.data.RegistrosHoras</class>
+    <class>com.sofis.entities.data.Riesgos</class>
+    <class>com.sofis.entities.data.RolesInteresados</class>
+    <class>com.sofis.entities.data.SsCategoper</class>
+    <class>com.sofis.entities.data.SsOficina</class>
+    <class>com.sofis.entities.data.SsOperacion</class>
+    <class>com.sofis.entities.data.SsRelRolOperacion</class>
+    <class>com.sofis.entities.data.SsRol</class>
+    <class>com.sofis.entities.data.SsUsuOfiRoles</class>
+    <class>com.sofis.entities.data.SsUsuario</class>
+    <class>com.sofis.entities.data.TipoDocumento</class>
+    <class>com.sofis.entities.data.TipoDocumentoInstancia</class>
+    <class>com.sofis.entities.data.TipoGasto</class>
+    <class>com.sofis.entities.data.TipoLeccion</class>
+    <class>com.sofis.entities.data.ValorHora</class>
+    
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="org.hibernate.envers.audit_table_prefix" value="aud_"/>
+      <property name="org.hibernate.envers.audit_table_suffix" value=""/>
+      <property name="org.hibernate.envers.do_not_audit_optimistic_locking_field" value="false"/>
+      <!-- <property name="hibernate.hbm2ddl.auto" value="update"/> -->
+      <property name="hibernate.hbm2ddl.auto" value="none"/>
+      <property name="hibernate.show_sql" value="false"/>
+    </properties>
+  </persistence-unit>
+</persistence>

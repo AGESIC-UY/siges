@@ -1,0 +1,55 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.data.daos.TipoDocumentoDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.TipoDocumento;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "TipoDocumentoBean")
+@LocalBean
+public class TipoDocumentoBean {
+
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    public TipoDocumento obtenerTipoDocPorId(Integer tipoDocPk) {
+        TipoDocumentoDAO tipoDocDao = new TipoDocumentoDAO(em);
+        try {
+            return tipoDocDao.findById(TipoDocumento.class, tipoDocPk);
+
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, TipoDocumentoBean.class.getName(), "obtenerTipoDocPorId", ex.getMessage(), ex);
+            TechnicalException te = new TechnicalException();
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
+
+    public List<TipoDocumento> obtenerTodos(Integer orgPk) {
+        TipoDocumentoDAO tipoDocDao = new TipoDocumentoDAO(em);
+        try {
+            List<TipoDocumento> tiposDocumentos = tipoDocDao.findByOneProperty(TipoDocumento.class, "tipoDocOrgFk.orgPk", orgPk);
+            return tiposDocumentos;
+        } catch (Exception ex) {
+            logger.logp(Level.SEVERE, TipoDocumentoBean.class.getName(), "obtenerTodos", ex.getMessage(), ex);
+            TechnicalException te = new TechnicalException();
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
+}

@@ -1,0 +1,62 @@
+<module xmlns="urn:jboss:module:1.1" name="com.sofis.sso">
+ 
+    <properties>
+        <property name="jboss.api" value="private"/>
+    </properties>
+
+    <resources>
+        <resource-root path="bcprov-jdk15on-1.51.jar"/>
+        <resource-root path="commons-codec-1.7.jar"/>
+        <resource-root path="commons-collections-3.2.1.jar"/>
+        <resource-root path="commons-httpclient-3.1.jar"/>
+        <resource-root path="commons-lang-2.6.jar"/>
+        <resource-root path="ehcache-2.9.0.jar"/>
+        <resource-root path="esapi-2.0.1.jar"/>
+        <resource-root path="jcl-over-slf4j-1.7.5.jar"/>
+        <resource-root path="joda-time-2.2.jar"/>
+        <resource-root path="jul-to-slf4j-1.7.5.jar"/>
+        <resource-root path="log4j-over-slf4j-1.7.5.jar"/>
+        <resource-root path="not-yet-commons-ssl-0.3.9.jar"/>
+        <resource-root path="opensaml-2.6.4.jar"/>
+        <resource-root path="openws-1.5.4.jar"/>
+        <resource-root path="slf4j-api-1.7.5.jar"/>
+        <resource-root path="SofisServiceProviderValve.jar"/>
+        <resource-root path="unboundid-ldapsdk-se-1.1.3.jar"/>
+        <resource-root path="velocity-1.7.jar"/>
+        <resource-root path="xmlsec-1.5.7.jar"/>
+        <resource-root path="xmltooling-1.4.4.jar"/>
+    </resources>
+
+ 
+    <!-- resources>
+        <resource-root path="SofisServiceProviderValve.jar"/>
+        <resource-root path="opensaml-2.6.3.jar"/>
+        <resource-root path="openws-1.5.3.jar"/>
+        <resource-root path="bcprov-jdk15on-1.51.jar"/>
+        <resource-root path="commons-codec-1.7.jar"/>
+        <resource-root path="commons-httpclient-3.1.jar"/>
+        <resource-root path="ehcache-2.9.0.jar"/>
+        <resource-root path="joda-time-2.2.jar"/>
+        <resource-root path="not-yet-commons-ssl-0.3.9.jar"/>
+        <resource-root path="unboundid-ldapsdk-se-1.1.3.jar"/>
+        <resource-root path="xmltooling-1.4.4.jar"/>
+        < !- - resource-root path="xmlsec-1.5.7.jar"/ - - >
+        < !- - resource-root path="slf4j-api-1.7.5.jar"/ - - >
+        < !- - resource-root path="esapi-2.0.1.jar"/ - - >
+        < !- - resource-root path="jcl-over-slf4j-1.7.5.jar"/ - - >
+        < !- - resource-root path="rt.jar"/ - - >
+    </resources -->
+ 
+    <dependencies>
+        <module name="sun.jdk"/>
+        <module name="org.apache.xerces"/>
+        <module name="org.jboss.as.web"/>
+        <module name="javaee.api"/>
+        <!-- module name="javax.servlet.api"/>
+        <module name="org.apache.cxf"/>
+        <module name="javax.validation.api"/>
+        <module name="org.apache.santuario.xmlsec"/>
+        <module name="org.slf4j"/ -->
+    </dependencies>
+ 
+</module>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmAreaTematica">
+        <ice:panelGroup id="tituloPaginaArea" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.moneda_titulo}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="btnAgregarABM">
+            <ace:pushButton value="#{labels.moneda_agregar}" 
+                            styleClass="boton principal agregar"
+                            action="#{monedaMB.agregar()}" />
+        </ice:panelGroup>
+
+        <ice:panelGroup id="espacioTrabajo" styleClass="buscador recuadro margen-inf">
+            <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
+
+            <ice:panelGrid styleClass="formulario" columns="6">
+                <ice:outputLabel value="#{labels.moneda_busqueda_nombre}"/>
+                <ace:textEntry value="#{monedaMB.filtroNombre}" />
+            </ice:panelGrid>
+            
+            <ice:panelGroup styleClass="panelAcciones" >
+                <ice:panelGroup styleClass="panelBotones" >
+                    <ace:messages id="busquedaMsg" />
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{monedaMB.buscar()}"/>
+
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{monedaMB.limpiar()}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="resultado" styleClass="resultado recuadro margen-sup" >
+            <ice:outputText value="#{labels.resultadoBusqueda}: #{monedaMB.listaResultado.size()} #{labels.elementosResultado}." 
+                            styleClass="resultadoBusqueda"/>
+            <ice:panelGroup rendered="#{not empty monedaMB.listaResultado}"
+                            styleClass="resultadoCompleto">
+                <ice:panelGroup  styleClass="funcionalidadesResultado"  >
+                    <ice:outputLabel value="#{labels.elementosPorPagina}"/>
+                    <ace:simpleSelectOneMenu value="#{monedaMB.cantElementosPorPagina}" 
+                                             styleClass="textoCorto"
+                                             valueChangeListener="#{monedaMB.cambiarCantPaginas}">
+                        <f:selectItem itemLabel="25" itemValue="25"/>
+                        <f:selectItem itemLabel="50" itemValue="50"/>
+                        <f:selectItem itemLabel="100" itemValue="100"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.ordenar_por}:"/>
+                    <ace:simpleSelectOneMenu value="#{monedaMB.elementoOrdenacion}" styleClass="textoMedio"
+                                             valueChangeListener="#{monedaMB.cambiarCriterioOrdenacion}">
+                        <f:selectItem itemLabel="#{labels.moneda_busqueda_nombre}" itemValue="monNombre"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+                    <ace:simpleSelectOneMenu value="#{monedaMB.ascendente}" styleClass="textoMedio"
+                                             valueChangeListener="#{monedaMB.cambiarAscendenteOrdenacion}">
+                        <f:selectItem itemLabel="#{labels.ascendente}" itemValue="1"/>
+                        <f:selectItem itemLabel="#{labels.descendente}" itemValue="0"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+
+                    <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
+                                      type="xls" fileName="#{labels.exportarPlantillaMoneda}"
+                                      includeHeaders="true" excludeColumns="4,5" />
+                </ice:panelGroup>
+
+                <ice:panelGroup rendered="#{monedaMB.listaResultado != null and not empty monedaMB.listaResultado}" 
+                                styleClass="cuerpo">
+                    <ace:dataTable id="tblResultados" 
+                                   value="#{monedaMB.listaResultado}" 
+                                   var="moneda" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true" pageCount="5" 
+                                   rows="#{monedaMB.cantElementosPorPagina}">
+                        <ace:column headerText="#{labels.moneda_head_pk}" >
+                            <h:outputText value="#{moneda.monPk}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.moneda_head_nombre}">
+                            <h:outputText value="#{moneda.monNombre}"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.moneda_head_signo}">
+                            <h:outputText value="#{moneda.monSigno}"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.moneda_head_cod_pais}">
+                            <h:outputText value="#{moneda.monCodPais}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.editar}">
+                                <ace:pushButton styleClass="botonEditar iconoTabla" 
+                                                action="#{monedaMB.editar(moneda.monPk)}" />
+                            </ice:panelGroup>
+                        </ace:column>
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.moneda_eliminar}">
+                                <h:commandButton onclick="confirmationEliminar#{moneda.monPk}.show()"
+                                                 styleClass="botonEliminar iconoTabla" 
+                                                 type="button"/>
+
+                                <ace:confirmationDialog id="confirmDialogEliminar"
+                                                        widgetVar="confirmationEliminar#{moneda.monPk}"
+                                                        message="#{labels.confirmacionEliminacion}"
+                                                        header="#{labels.hConfirmacion}"
+                                                        closable="true"
+                                                        closeOnEscape="true"
+                                                        severity="info"
+                                                        modal="true"
+                                                        position="center">
+                                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                        <h:commandButton id="yesEliminar"
+                                                         value="#{labels.si}"
+                                                         styleClass="boton principal botonContinuar"
+                                                         onclick="confirmationEliminar#{moneda.monPk}.hide()" 
+                                                         actionListener="#{monedaMB.eliminar(moneda.monPk)}"/>
+                                        <h:commandButton id="noEliminar"
+                                                         value="#{labels.no}"
+                                                         styleClass="boton principal botonEliminar"
+                                                         onclick="confirmationEliminar#{moneda.monPk}.hide()"  />
+                                    </h:panelGrid>
+                                </ace:confirmationDialog> 
+                            </ice:panelGroup>
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="noResultados" rendered="#{empty monedaMB.listaResultado}">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </ice:form>
+</ui:composition>

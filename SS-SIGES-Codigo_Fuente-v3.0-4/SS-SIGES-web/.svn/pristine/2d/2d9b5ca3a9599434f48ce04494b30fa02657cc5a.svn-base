@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmFichaMetodologiaPopup">
+        <ice:panelPopup draggable="true" autoCentre="true" modal="true" rendered="#{fichaMB.renderPopupMetodologia}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hMetodologiaPopup}"/>
+                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
+                                       action="#{fichaMB.cerrarPopupMetodologia()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup scrollHeight="450px">
+                    <ace:dataTable value="#{fichaMB.fichaTO.tipoDocumentoInstancias}"
+                                   var="row">
+                        <ace:column id="id_int_1" headerText="#{labels.tipoDocNombre}">
+                            <h:outputText id="idCell" value="#{row.tipodocInstTipoDocFk.tipodocNombre}"/>
+                        </ace:column>
+
+                        <ace:column id="int_org_1" headerText="#{labels.tipoDocExigidoDesde}">
+                            <ice:selectOneMenu value="#{row.tipodocExigidoDesde}"
+                                               disabled="#{fichaMB.fieldDisabled('MetodologiaPopupForm')}">
+                                <f:selectItem itemLabel="#{labels.estado_NoExigido}" itemValue="0"/>
+                                <f:selectItem itemLabel="#{labels.estado_Inicio}" itemValue="2"/>
+                                <f:selectItem itemLabel="#{labels.estado_Planificacion}" itemValue="3"/>
+                                <f:selectItem itemLabel="#{labels.estado_Ejecucion}" itemValue="4"/>
+                                <f:selectItem itemLabel="#{labels.estado_Finalizado}" itemValue="5"/>
+                            </ice:selectOneMenu> 
+                        </ace:column>
+
+                        <ace:column id="name_int_1" headerText="#{labels.metod_peso}">
+                            <h:outputText id="nameCell" value="#{row.tipodocInstTipoDocFk.tipodocPeso}"/>
+                        </ace:column>
+
+                        <!--
+                        <ace:column headerText="# {labels.metod_resum_ejecutivo}">
+                            <ace:checkboxButton id="checkBox" value="# {row.tipodocInstTipoDocFk.tipodocResumenEjecutivo}"
+                                                disabled="# {fichaMB.fieldDisabled('MetodologiaPopupForm')}"/>
+                        </ace:column>
+                        -->
+                    </ace:dataTable>
+                </ice:panelGroup>
+
+                <ace:messages id="metodologiaMsg"/>
+                <ace:pushButton value="#{labels.guardar}"
+                                action="#{fichaMB.guardarMetodologiaProyecto()}"
+                                rendered="#{fichaMB.fieldRendered('MetodologiaPopupForm')}"
+                                styleClass="boton principal guardar"/>
+                <ace:linkButton value="#{labels.cerrar}" 
+                                action="#{fichaMB.cerrarPopupMetodologia()}"/>
+            </f:facet>
+
+        </ice:panelPopup>
+    </ice:form>
+</ui:composition>

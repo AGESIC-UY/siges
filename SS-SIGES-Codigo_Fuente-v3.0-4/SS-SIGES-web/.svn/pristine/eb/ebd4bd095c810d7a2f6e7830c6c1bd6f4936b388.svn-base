@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:panelGroup styleClass="anioProducto">
+        <ice:commandLink action="#{reporteProyectoMB.retrocederAnio()}" 
+                         rendered="#{reporteProyectoMB.contieneAnioMenor()}">
+            <ice:graphicImage value="../img/atrasar-fase.png" />
+        </ice:commandLink>
+        <ice:outputText value="#{reporteProyectoMB.anio}" title="#{labels.reporte_proy_anio_desplegado}"/>
+        <ice:commandLink action="#{reporteProyectoMB.avanzarAnio()}"
+                         rendered="#{reporteProyectoMB.contieneAnioMayor()}">
+            <ice:graphicImage value="../img/adelantar-fase.png" />
+        </ice:commandLink>
+    </ice:panelGroup>
+
+    <ice:panelGroup>
+        <div class="reporteFicha">
+            <div class="cabezalMeses prodItem">
+                <span class="prodItemTitle primerEspacio"></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_1}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_2}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_3}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_4}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_5}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_6}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_7}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_8}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_9}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_10}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_11}"/></span>
+                <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_12}"/></span>
+            </div>
+
+            <div class="tituloReporte">
+                <span>Cronograma</span>
+            </div>
+
+            <c:forEach var="ent" items="#{reporteProyectoMB.listaEntregables}">
+                <div class="cadaEntregable">
+                    <span class="prodItemTitle primerEspacio">
+                        <ice:outputText value="#{ent.entNombre}"/>
+                        (<ice:outputText value="#{ent.entInicioDate}" 
+                                         converter="fechaConverter" /> - 
+                        <ice:outputText value="#{ent.entFinDate}" 
+                                        converter="fechaConverter" />)
+                    </span>
+                    <div class="tablaMeses">
+                        <c:set var="left" value="#{reporteProyectoMB.calcularLeftEntByDate(ent.entInicioDate)}px" />
+                        <c:set var="width" value="#{reporteProyectoMB.calcularWitdhEntByDate(ent.entInicioDate, ent.entFinDate, ent.entDuracion)}px" />
+                        <c:set var="display" value="#{reporteProyectoMB.displayEnt(ent) ? '' : 'none'}" />
+                        <div class="indice3color" style="left:#{left}; width:#{width}; display:#{display};">
+                            <c:if test="#{ent.padre}">
+                                <div class="" style="width: 100%;background-color: #bababa;">&nbsp;</div>
+                            </c:if>
+                            <c:if test="#{!ent.padre}">
+                                <!-- barritas de colores -->
+                                <c:set var="progresoPorc" value="#{ent.entProgreso}%" />
+                                <c:set var="faltante" value="#{100 - ent.entProgreso}" />
+                                <c:set var="faltantePorc" value="#{faltante}%" />
+                                <div class="indice3colorBlue" style="width:#{progresoPorc}">#{ent.entProgreso}%</div>
+                                <div class="#{reporteProyectoMB.entAtrasado(ent) ? 'indice3colorRed':'indice3colorGreen'}" style="width:#{faltantePorc}">#{faltante}%</div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+
+                <c:forEach var="entHist" items="#{ent.entHistLBSet}">
+                    <div class="cadaEntHistLineaBase">
+                        <span class="prodItemTitle primerEspacio">
+                            <ice:outputText value="#{entHist.enthistFecha}"
+                                            converter="fechaConverter"/>
+                            (<ice:outputText value="#{entHist.enthistInicioLineaBaseDate}" 
+                                             converter="fechaConverter" /> - 
+                            <ice:outputText value="#{entHist.enthistFinLineaBaseDate}" 
+                                            converter="fechaConverter" />)
+                        </span>
+                        <div class="tablaMeses">
+                            <c:set var="left" value="#{reporteProyectoMB.calcularLeftEntByDate(entHist.enthistInicioLineaBaseDate)}px" />
+                            <c:set var="width" value="#{reporteProyectoMB.calcularWitdhEntByDate(entHist.enthistInicioLineaBaseDate, entHist.enthistFinLineaBaseDate, entHist.enthistDuracion)}px" />
+                            <c:set var="display" value="#{reporteProyectoMB.displayEntHist(entHist) ? '' : 'none'}" />
+                            <div class="lineaBase" style="left:#{left}; width:#{width}; display:#{display};" />
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:forEach>
+        </div>
+    </ice:panelGroup>
+
+    <ice:panelGroup id="infoReferenciaColoresGantt">
+        <ice:outputText value="#{reporteProyectoMB.coloresGantt()}" escape="false" />
+    </ice:panelGroup>
+
+</ui:composition>

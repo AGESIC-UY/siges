@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ice:panelGroup rendered="#{not empty misTareasMB.misTareas}" >
+        <ice:panelGroup styleClass="subtitulo">
+            <ice:outputText value="#{labels.rep_tareas_titulo}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup>
+            <div class="reporteFicha">
+                <div class="cabezalMeses prodItem">
+                    <span class="prodItemTitle primerEspacio"></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_1}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_2}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_3}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_4}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_5}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_6}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_7}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_8}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_9}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_10}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_11}"/></span>
+                    <span class="prodItemTitle"><ice:outputText value="#{labels.date_mes_abreviado_12}"/></span>
+                </div>
+
+                <c:set var="progNomb" value=" " />
+                <c:set var="proyNomb" value=" " />
+                <c:forEach var="ent" items="#{misTareasMB.misTareas}">
+                    <ice:panelGroup styleClass="tituloReporte"
+                                    rendered="#{progNomb != ent.progNombre}">
+                        <span>#{ent.progNombre}</span>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="tituloReporte"
+                                    rendered="#{proyNomb != ent.proyNombre}">
+                        <span>#{ent.proyNombre}</span>
+                    </ice:panelGroup>
+                    
+                    <c:if test="#{progNomb != ent.progNombre}"><c:set var="progNomb" value="#{ent.progNombre}" /></c:if>
+                    <c:if test="#{proyNomb != ent.proyNombre}"><c:set var="proyNomb" value="#{ent.proyNombre}" /></c:if>
+
+                    <!-- Entregable -->
+                    <div class="cadaEntregable">
+                        <span class="prodItemTitle primerEspacio">
+                            <ice:outputText value="#{ent.entNombre}"/>
+                            (<ice:outputText value="#{ent.entInicio}" 
+                                             converter="fechaConverter" /> - 
+                            <ice:outputText value="#{ent.entFin}" 
+                                            converter="fechaConverter" />)
+                        </span>
+                        <div class="tablaMeses">
+                            <c:set var="left" value="#{misTareasMB.calcularLeftEntByDate(ent.entInicio)}px" />
+                            <c:set var="width" value="#{misTareasMB.calcularWitdhEntByDate(ent.entInicio, ent.entFin, ent.entDuracion)}px" />
+                            <div class="indice3color" style="left:#{left}; width:#{width};">
+                                <!--
+                                <c:if test="# {ent.padre}">
+                                    <div class="" style="width: 100%;background-color: #bababa;">&nbsp;</div>
+                                </c:if>
+                                <c:if test="# {!ent.padre}">
+                                -->
+                                <c:if test="#{true}">
+                                    <!-- barritas de colores -->
+                                    <c:set var="progresoPorc" value="#{ent.entProgreso}%" />
+                                    <c:set var="faltante" value="#{100 - ent.entProgreso}" />
+                                    <c:set var="faltantePorc" value="#{faltante}%" />
+                                    <div class="indice3colorBlue" style="width:#{progresoPorc}">#{ent.entProgreso}%</div>
+                                    <div class="#{misTareasMB.entAtrasado(ent.entFin, ent.entFinLineaBase) ? 'indice3colorRed':'indice3colorGreen'}" style="width:#{faltantePorc}">#{faltante}%</div>
+                                </c:if>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="infoReferenciaColoresGantt">
+            <ice:outputText value="#{misTareasMB.coloresGantt()}" escape="false" />
+        </ice:panelGroup>
+    </ice:panelGroup>
+
+</ui:composition>

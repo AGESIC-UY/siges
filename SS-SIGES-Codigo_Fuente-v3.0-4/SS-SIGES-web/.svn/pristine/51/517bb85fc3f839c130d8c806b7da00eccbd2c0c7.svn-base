@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmRevisionHoras" rendered="#{revisionHorasMB.permitirAcceso}">
+
+        <ice:panelPopup draggable="true" 
+                        autoCentre="true" 
+                        modal="true" 
+                        rendered="#{revisionHorasMB.renderPopupGenerarHoras}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.revisionHoras_generarHoras}"/>
+                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
+                                       action="#{revisionHorasMB.cerrarPopupGenerarHoras()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup>
+                    <ice:panelGroup>
+                        <ice:panelGrid styleClass="formulario " columns="2">
+                            <ice:outputLabel value="#{labels.revisionHoras_entregable}:" />
+                            <ice:selectOneMenu id="comboEntregableGenerarHoras" value="#{revisionHorasMB.generarHorasEntPk}">
+                                <f:selectItems value="#{revisionHorasMB.listaEntregablesFiltro}" 
+                                               var="ent" itemLabel="#{ent.entNombre}" itemValue="#{ent.entPk}"/>
+                            </ice:selectOneMenu>
+
+                            <ice:outputLabel value="#{labels.revisionHoras_fechaDesde}:" />
+                            <ace:dateTimeEntry value="#{revisionHorasMB.generarHorasFechaDesde}"
+                                               pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                               timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+
+                            <ice:outputLabel value="#{labels.revisionHoras_fechaHasta}:" />
+                            <ace:dateTimeEntry value="#{revisionHorasMB.generarHorasFechaHasta}"
+                                               pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" 
+                                               timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+
+                            <ice:outputLabel value="#{labels.revisionHoras_horasDiarias}:" />
+                            <ice:inputText value="#{revisionHorasMB.generarHorasHorasDiarias}" styleClass="textoExtraCorto" />
+                        </ice:panelGrid>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ice:commandButton styleClass="boton principal" value ="#{labels.confirmar}" 
+                                           action="#{revisionHorasMB.confirmarGenerarHoras()}"/>
+                        <ice:commandButton styleClass="boton principal" value ="#{labels.cancelar}" 
+                                           action="#{revisionHorasMB.cancelarGenerarHoras()}"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+
+        <ice:panelGroup id="revisionHoras" styleClass="proyectos">
+
+            <!-- Filtro -->
+            <ui:include src="./../fragmentos/revisionHorasFragmentoFiltro.xhtml" />
+
+            <ice:panelGroup id="revisionHorasListado" styleClass="proyPendientes">
+                <ice:panelGroup>
+                    <ice:outputText value="#{labels.fichaRevisionHoras_head_titulo}" />
+                </ice:panelGroup>
+
+                <ace:dataTable id="tblListadoRevisionHoras" 
+                               value="#{revisionHorasMB.revisionHorasListado}" 
+                               var="rh" 
+                               rowStyleClass="lineaNivel1" 
+                               paginator="true" 
+                               pageCount="5"
+                               paginatorAlwaysVisible="true"
+                               rows="#{revisionHorasMB.cantElementosPorPagina}">
+                    <ace:column headerText="#{labels.revisionHoras_head_Proyecto}">
+                        <ice:outputText value="#{rh.rhProyectoFk.proyPkNombre}" />
+                    </ace:column>
+                    <ace:column headerText="#{labels.revisionHoras_head_Entregable}">
+                        <ice:outputText value="#{rh.rhEntregableFk.entNombre}" />
+                    </ace:column>
+                    <ace:column headerText="#{labels.revisionHoras_head_Fecha}" >
+                        <ice:outputText value="#{rh.rhFecha}" converter="fechaConverter" />
+                    </ace:column>
+                    <ace:column headerText="#{labels.revisionHoras_head_Horas}" styleClass="colCenter">
+                        <ice:outputText value="#{rh.rhHoras}" />
+                    </ace:column>
+                    <ace:column headerText="#{labels.revisionHoras_head_Aprobada}" styleClass="colCenter">
+                        <ice:selectBooleanCheckbox value="#{rh.rhAprobado}" />
+                    </ace:column>
+                </ace:dataTable>
+            </ice:panelGroup>
+
+            <ice:panelGroup id="panelAcciones" 
+                            styleClass="panelBotones margen-sup">
+                <ace:messages id="fichaMsg"/>
+                <ice:commandButton value="#{labels.revisionHoras_generarHoras}" 
+                                   action="#{revisionHorasMB.mostrarPopupGenerarHoras()}" 
+                                   styleClass="boton principal"/>
+                <ice:commandButton value="#{labels.revisionHoras_guardar}" 
+                                   action="#{revisionHorasMB.guardar()}" 
+                                   styleClass="boton principal botonGuardar"/>
+                <ace:linkButton value="#{labels.revisionHoras_cancelar}" action="#{revisionHorasMB.cancelar()}"/>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </ice:form>
+
+    <ice:panelGroup rendered="#{not revisionHorasMB.permitirAcceso}">
+        <div id="content" class="fondo-blanco row">
+            <div class="col-sm-12 contenido" >
+                <div class="mensajeError" >
+                    <div class="mensajeErrorEncabezado">Proyecto no cargado.</div>
+                    <div>No puede acceder a esta página sin especificar el proyecto y el usuario</div>
+                    <ice:outputLink value="#{request.contextPath}/" >Ir a la página principal</ice:outputLink>
+                </div>
+            </div>
+        </div>
+    </ice:panelGroup>
+
+</ui:composition>

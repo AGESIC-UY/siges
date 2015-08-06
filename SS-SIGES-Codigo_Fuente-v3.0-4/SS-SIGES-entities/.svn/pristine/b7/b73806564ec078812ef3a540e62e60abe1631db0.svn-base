@@ -1,0 +1,295 @@
+package com.sofis.entities.data;
+
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author Usuario
+ */
+@Entity
+@Table(name = "programas_proyectos_seguimiento")
+@XmlRootElement
+public class ProgramasProyectosSeguimiento implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Size(max = 13)
+    @Column(name = "id")
+    private String id;
+    @Column(name = "fichaFk")
+    private Integer fichaFk;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tipoFicha")
+    private Long tipoFicha;
+    @Column(name = "fechaCrea")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaCrea;
+    @Column(name = "organismo")
+    private Integer organismo;
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "prog_pk")
+    private String progPk;
+    @Column(name = "prog_nombre")
+    private String progNombre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estado")
+    private Integer estado;
+
+    @Column(name = "estadoNombre")
+    private String estadoNombre;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estadoEditor")
+    private Integer estadoEditor;
+
+    @Column(name = "estadoEditorNombre")
+    private String estadoEditorNombre;
+
+    @Column(name = "areaPk")
+    private Integer areaPk;
+    @Column(name = "areaNombre")
+    private String areaNombre;
+    @Column(name = "areaAbreviacion")
+    private String areaAbreviacion;
+
+    @Column(name = "gerente")
+    private Integer gerente;
+    @Column(name = "gerentePrimerNombre")
+    private String gerentePrimerNombre;
+    @Column(name = "gerentePrimerApellido")
+    private String gerentePrimerApellido;
+
+    @Column(name = "editor")
+    private Integer editor;
+    @Column(name = "editorPrimerNombre")
+    private String editorPrimerNombre;
+    @Column(name = "editorPrimerApellido")
+    private String editorPrimerApellido;
+
+    @Column(name = "publicador")
+    private Integer publicador;
+    @Column(name = "publicadorPrimerNombre")
+    private String publicadorPrimerNombre;
+    @Column(name = "publicadorPrimerApellido")
+    private String publicadorPrimerApellido;
+
+    @Column(name = "activo")
+    private Boolean activo;
+
+    public ProgramasProyectosSeguimiento() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Integer getFichaFk() {
+        return fichaFk;
+    }
+
+    public void setFichaFk(Integer fichaFk) {
+        this.fichaFk = fichaFk;
+    }
+
+    public Long getTipoFicha() {
+        return tipoFicha;
+    }
+
+    public void setTipoFicha(Long tipoFicha) {
+        this.tipoFicha = tipoFicha;
+    }
+
+    public Integer getOrganismo() {
+        return organismo;
+    }
+
+    public void setOrganismo(Integer organismo) {
+        this.organismo = organismo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getProgPk() {
+        return progPk;
+    }
+
+    public void setProgPk(String progPk) {
+        this.progPk = progPk;
+    }
+
+    public String getProgNombre() {
+        return progNombre;
+    }
+
+    public void setProgNombre(String progNombre) {
+        this.progNombre = progNombre;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Integer getAreaPk() {
+        return areaPk;
+    }
+
+    public void setAreaPk(Integer areaPk) {
+        this.areaPk = areaPk;
+    }
+
+    public String getAreaNombre() {
+        return areaNombre;
+    }
+
+    public void setAreaNombre(String areaNombre) {
+        this.areaNombre = areaNombre;
+    }
+
+    public String getAreaAbreviacion() {
+        return areaAbreviacion;
+    }
+
+    public void setAreaAbreviacion(String areaAbreviacion) {
+        this.areaAbreviacion = areaAbreviacion;
+    }
+
+    public String getEstadoNombre() {
+        return estadoNombre;
+    }
+
+    public void setEstadoNombre(String estadoNombre) {
+        this.estadoNombre = estadoNombre;
+    }
+
+    public Integer getGerente() {
+        return gerente;
+    }
+
+    public void setGerente(Integer gerente) {
+        this.gerente = gerente;
+    }
+
+    public String getGerentePrimerNombre() {
+        return gerentePrimerNombre;
+    }
+
+    public void setGerentePrimerNombre(String gerentePrimerNombre) {
+        this.gerentePrimerNombre = gerentePrimerNombre;
+    }
+
+    public String getGerentePrimerApellido() {
+        return gerentePrimerApellido;
+    }
+
+    public void setGerentePrimerApellido(String gerentePrimerApellido) {
+        this.gerentePrimerApellido = gerentePrimerApellido;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public Date getFechaCrea() {
+        return fechaCrea;
+    }
+
+    public void setFechaCrea(Date fechaCrea) {
+        this.fechaCrea = fechaCrea;
+    }
+
+    public Integer getEstadoEditor() {
+        return estadoEditor;
+    }
+
+    public void setEstadoEditor(Integer estadoEditor) {
+        this.estadoEditor = estadoEditor;
+    }
+
+    public String getEstadoEditorNombre() {
+        return estadoEditorNombre;
+    }
+
+    public void setEstadoEditorNombre(String estadoEditorNombre) {
+        this.estadoEditorNombre = estadoEditorNombre;
+    }
+
+    public Integer getEditor() {
+        return editor;
+    }
+
+    public void setEditor(Integer editor) {
+        this.editor = editor;
+    }
+
+    public Integer getPublicador() {
+        return publicador;
+    }
+
+    public void setPublicador(Integer publicador) {
+        this.publicador = publicador;
+    }
+
+    public String getEditorPrimerNombre() {
+        return editorPrimerNombre;
+    }
+
+    public void setEditorPrimerNombre(String editorPrimerNombre) {
+        this.editorPrimerNombre = editorPrimerNombre;
+    }
+
+    public String getEditorPrimerApellido() {
+        return editorPrimerApellido;
+    }
+
+    public void setEditorPrimerApellido(String editorPrimerApellido) {
+        this.editorPrimerApellido = editorPrimerApellido;
+    }
+
+    public String getPublicadorPrimerNombre() {
+        return publicadorPrimerNombre;
+    }
+
+    public void setPublicadorPrimerNombre(String publicadorPrimerNombre) {
+        this.publicadorPrimerNombre = publicadorPrimerNombre;
+    }
+
+    public String getPublicadorPrimerApellido() {
+        return publicadorPrimerApellido;
+    }
+
+    public void setPublicadorPrimerApellido(String publicadorPrimerApellido) {
+        this.publicadorPrimerApellido = publicadorPrimerApellido;
+    }
+}

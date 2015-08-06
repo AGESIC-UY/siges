@@ -1,0 +1,163 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.validations.AdquisicionValidacion;
+import com.sofis.data.daos.AdquisicionDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Adquisicion;
+import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.Presupuesto;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.AdqPagosTO;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.exceptions.GeneralException;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "AdquisicionBean")
+@LocalBean
+public class AdquisicionBean {
+
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    @Inject
+    private DatosUsuario du;
+    @EJB
+    PresupuestoBean presupuestoBean;
+    @EJB
+    PagosBean pagosBean;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    private Adquisicion guardar(Adquisicion adquisicion) throws GeneralException {
+        AdquisicionValidacion.validar(adquisicion);
+        AdquisicionDAO preDao = new AdquisicionDAO(em);
+
+        try {
+            adquisicion = preDao.update(adquisicion, du.getCodigoUsuario(), du.getOrigen());
+
+        } catch (BusinessException | TechnicalException be) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", be.getMessage(), be);
+            throw be;
+        } catch (Exception ex) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+
+        return adquisicion;
+    }
+
+    public Adquisicion guardarAdquisicion(Adquisicion adquisicion, Integer fichaFk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
+        if (adquisicion.getAdqPreFk() == null) {
+            Presupuesto pre = new Presupuesto();
+            pre = (Presupuesto) presupuestoBean.guardarPresupuesto(pre, fichaFk, tipoFicha, usuario, orgPk, true);
+            adquisicion.setAdqPreFk(pre);
+        }
+
+        return guardar(adquisicion);
+    }
+
+    public List<AdqPagosTO> obtenerAdquisicionPagosList(Integer presupuestoId) {
+        AdquisicionDAO adqDao = new AdquisicionDAO(em);
+        try {
+            return adqDao.obtenerAdquisicionPagosList(presupuestoId);
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+    }
+
+    public Adquisicion obtenerAdquisicionPorId(Integer adqPk) {
+        AdquisicionDAO adqDao = new AdquisicionDAO(em);
+        Adquisicion adq = null;
+        try {
+            adq = adqDao.findById(Adquisicion.class, adqPk);
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+        return adq;
+    }
+    
+    public List<Adquisicion> obtenerAdquisicionPorPre(Integer prePk) {
+        AdquisicionDAO dao = new AdquisicionDAO(em);
+        try {
+            return dao.obtenerAdquisicionPorPre(prePk);
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+    }
+    
+    public List<Adquisicion> obtenerAdquisicionPorPreProg(Integer progPk) {
+        AdquisicionDAO dao = new AdquisicionDAO(em);
+        try {
+            return dao.obtenerAdquisicionPorPreProg(progPk);
+        } catch (DAOGeneralException ex) {
+            logger.logp(Level.SEVERE, PresupuestoBean.class.getName(), "guardar", ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException();
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
+    }
+
+    public void eliminarAdquisicion(Integer adqPk) {
+        AdquisicionDAO adqDao = new AdquisicionDAO(em);
+        try {
+            Adquisicion a = adqDao.findById(Adquisicion.class, adqPk);
+            adqDao.delete(a, du.getCodigoUsuario(), du.getOrigen());
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(AdquisicionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public Set<Adquisicion> copiarProyAdquisicion(Set<Adquisicion> adquisicionSet, Presupuesto pre, Set<Entregables> entSet, int desfasajeDias) {
+        if (adquisicionSet != null && pre != null) {
+            Set<Adquisicion> result = new HashSet<>();
+
+            Iterator<Adquisicion> iterator = adquisicionSet.iterator();
+            while (iterator.hasNext()) {
+                Adquisicion adq = iterator.next();
+
+                Adquisicion nvaAdq = new Adquisicion();
+                nvaAdq.setAdqFuente(adq.getAdqFuente());
+                nvaAdq.setAdqMoneda(adq.getAdqMoneda());
+                nvaAdq.setAdqNombre(adq.getAdqNombre());
+                nvaAdq.setAdqPreFk(pre);
+                nvaAdq.setAdqProcCompra(adq.getAdqProcCompra());
+                nvaAdq.setAdqProcCompraGrp(null);
+                nvaAdq.setAdqProvOrga(adq.getAdqProvOrga());
+                nvaAdq.setPagosSet(pagosBean.copiarProyPagos(adq.getPagosSet(), nvaAdq, entSet, desfasajeDias));
+                result.add(nvaAdq);
+            }
+            return result;
+        }
+        return null;
+    }
+
+    
+}

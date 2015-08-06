@@ -1,0 +1,9 @@
+package com.sofis.entities.data;
+
+/**
+ *
+ * @author Usuario
+ */
+public class TreeNodo {
+    
+}

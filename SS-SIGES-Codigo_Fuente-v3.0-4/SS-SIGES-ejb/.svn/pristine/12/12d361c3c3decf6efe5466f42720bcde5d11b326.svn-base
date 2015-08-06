@@ -1,0 +1,244 @@
+Fases de los proyectos migrados:
+ES - Inicio
+PA - Planificado
+EX - Ejecución
+CO - Finalizado
+
+-- Insertar el rol para el usuario administrador.
+INSERT INTO ss_usu_ofi_roles
+(`usu_ofi_roles_origen`, `usu_ofi_roles_user_code`, `usu_ofi_roles_oficina`, `usu_ofi_roles_rol`, `usu_ofi_roles_usuario`, `usu_ofi_roles_usu_area`, `usu_ofi_roles_activo`)
+VALUES
+('SIGES_WEB', (SELECT usu_id FROM ss_usuario where usu_correo_electronico ='admin'), null, (SELECT rol_id FROM ss_rol where rol_cod='ADMINISTRADOR'), (SELECT usu_id FROM ss_usuario where usu_correo_electronico ='admin'), null, 1);
+
+## Versión 2.1-20150323 --------------------------------------------------------
+
+-En producción el 23/03/2015
+
+## Versión 2.2-1 ---------------------------------------------------------------
+Modulo de calidad para CND y correcciones.
+
+-Ejecutar sqlScritp desde "-- Hasta acá en Siges v2.1-20150323".
+
+Desarrollo:
+
+-Mantenimiento de Temas Generales de Calidad.
+-Módulo en la ficha de Gestión de Calidad.
+-Pantalla inicial con columna de Calidad.
+-Pantalla inicial se agrega el filtro Calidad.
+-Carga de valores de calidad por parte de los colaboradores.
+-Coordinador del entregable cargue el estado de los productos desde el registro de horas.
+-Usuarios que pueden aprobar facturas en el presupuesto.
+
+Incidentes Internos:
+-4657-Gerente no puede modificar items de calidad 
+-4660-Error 500 en Horas/Gastos/Calidad
+-4665-Se puede registrar 25 horas en el avance.
+-4666-Registro de horas con fecha superior a la actual 
+-4667-Avance deja de estar editable
+-4668-Valor inválido para registro de horas
+-4670-Cambio de texto
+-4671-Al cambiar estado a un proyecto se pierde la conexión
+
+Incidentes Cliente:
+-4661-Asignación de programa en nuevo proyecto. 
+-4662-Área por defecto de usuario.
+-4663-Acceso al botón "Lectura" en la ficha.
+-4664-Números en rojo en el reporte.
+-4681-Fecha actualización Programa.
+
+## Versión 2.2-2 ---------------------------------------------------------------
+
+-Se corrigen errores con el usuario Administrador.
+-Se mostraba la Sit. Act. e Hist. en Prog.. Se quita de Prog.
+-Error al calcular el % de peso de cada proyecto en el programa. Faltaba actualizar los otros proyectos.
+-Cuando la DB está en blanco y se crea el primer organismo, se crea un área por defecto para poder ingresar usuarios.
+
+## Versión 2.5-1 ---------------------------------------------------------------
+Se une la v2.2 con la v3.0.
+Del documento de evolución realizado en la v3.0 se trae:
+2 - Pantalla inicial.
+4 - Configuración de un Proyecto.
+5 - Gestión de Riesgos.
+6 - Gestión de Interesados.
+8 - Gestión de Presupuesto.
+8.1-Link con documentos del proyecto
+8.2-Nuevos campos. Ya fue entregado en versiones anteriores.
+8.3-Proyección. Ya fue entregado en versiones anteriores.
+8.4-Devengamiento. Ya fue entregado en versiones anteriores.
+9 - Carga de horas. Ya fue entregado en versiones anteriores.
+11 - Ajustes de diseño a la Ficha del Proyecto
+12 - Roles.
+13 - Cronograma.
+
+-Al dar de alta un producto ordenar el combo entregables.
+-Poner el formulario de productos en una línea sola.
+-El peso del Prod. se valida que sea mayor a 0. Esto ya estaba.
+-Mal calculada la fecha de actualización del programa. Fue corregido en v2.2
+-Reporte cronograma, línea base no se muestra.
+-Reporte Presupuesto, error cuando el presupuesto es vacío.
+-al querer copiar un proyecto pierde la conexión.
+-Recuperar la contraseña, falla en envío de mail.
+-Cuando se modifica un documento en un proyecto, no se actualiza la fecha de subida del documento (sigue tomando la vieja)
+
+Incidentes Cliente:
+-4752 - Nombre de proyectos largos
+-4753 - Filtro proyectos dentro de un programa
+-4755 - Borrar productos en Ejecución.
+
+Pendiente probar con DB original:
+-En producción, en la pantalla inicial, cuando un proyecto está en inicio (y solo en inicio), 
+si desde ahí como PMOT lo quiero pasar a planificación, se pierde la conexión.
+
+## Versión 2.5-2 ---------------------------------------------------------------
+Basicamente correcciones.
+Modificar la conf de calidad amarilla y roja. Amarilla debe ser mayor a roja.
+En testing en la configuración del datasource (standalone.xml) faltaba el atributo jta="true" y jta="false", el cual no permitía que las notificaciones se realizaran con transacciones manejadas. Verificar esto en produción.
+
+Mejoras:
+-Cuando se modifica el colaborador de una etapa “Madre” no modifica las etapas “Hijos”. (1,5hs.)
+
+Incidentes Cliente:
+-Se pierde el presupuesto cuando se cambia de fase. 
+-No se han migrado los productos de la versión vieja. Cambios en el Migrador(8hs.)
+-4900 - Calidad agregar Entregable. (1h.)(Incidente 5)
+-4901 - Resumen Calidad indice.(1h.) Ejecutar el recalcular migracion. (Incidente 6)
+-4902 - Gerente modifica calidad.(2hs.)(Incidente 9)
+-4903 - Se pierde indice de color en calidad(1hs.)(Incidente 14)
+-4904 - Indices de calidad en inicio.(2hs.)(Incidente 17)
+-4905 - Usuario aprobar pagos. Funciona. No se corrige.(Incidente 25)
+-4906 - Usuario aprobar pagos? Funciona. No se corrige.(Incidente 28)
+-4907 - Icono extraño en pagos.(0.5hs.)(Incidente 29)
+-4911 - Unificar texto en combos entregables (2hs.)(Incidente 43)
+-4913 - Calculo indice riesgo en Programas. (1hs.)(Incidente 45)
+-4914 - Calculo de horas y gastos en resumen Participantes. (0.5hs.)(Incidente 10)
+-4915 - filtro inicio Calidad(Incidente 18)
+-4916 - Pantalla inicio ancho columnas. (Incidente 20)
+-4917 - Alineación columna fecha. (Incidente 21)
+
+(Incidente 3)Productos - Está quedando mal la tabla de productos al cargarlos. No se puede reproducir. Verlo con JP.
+(Incidente 8)Colaboradores - Cuando no hay colaboradores cargados, en la ficha del proyecto dice "Pendientes. Sin participantes pendientes". Debería decir "Sin colaboradores" (10min.)
+(Incidente 12)Calidad - Ordenar el listado por actualización de más viejo a más nuevo. (0.5hs.)
+(Incidente 15)Carga de valores de calidad - Alinear peso a la derecha y el título también. (15min.)
+(Incidente 16)Calidad - Alinear peso a la derecha y el título también. (15min.)
+(Incidente 22)Productos - Cuando voy a editar un producto en ejecución me borra la cifra del útlimo mes. Esto pasa en el módulo de productos o desde el menú "horas / gastos / calidad". Ver imagen.
+No se puede reproducir. Probado en desarrollo y testing con el 393.
+(Incidente 23)Productos - En ejecución, voy al módulo para cargar lo real y no me habilita el último mes (puede ser vinculado al anterior). Ver imagen.
+No se puede reproducir. Probado en desarrollo y testing con el 393.
+(Incidente 24)Presupuesto - Cuando paso a ejecución desaparece todo lo que hay en el presupuesto.
+Ya se había corregido.
+(Incidente 26)Presupuesto - Cuando un pago no está aprobado, para un usuario cualquiera que no es gerente tiene que aparecer algún ícono o algo indicándolo. Hoy en día, si no es gerente o pmo no tenemos como darnos cuenta si la factura está o no aprobada (1.5hs.)
+(Incidente 30)Prespuesto - Cuando un usuario cualquiera ingresa al presupuesto no tiene como ver si la factura está aprobada o no. Si es PMO F o gerente lo puede ver, en caso que no sea uno de estos que muestre el mensaje "[ejecutado]" o "[proyectado]" según sea el caso en lugar del ícono para aprobar (no ocupar más espacio)
+Es lo mismo que el 26.
+(Incidente 38)Ficha del proyecto - Un usuario común no debe poder editar el formulario para el presupuesto aprobado en la zona de configuración. Al solicitar un nuevo proyecto tampoco.
+(Incidente 39)Ficha del proyecto - si edito el prespuesto base desde adentro del módulo de presupusto, borra lo que estaba en la zona de configuración sobre el prespuesto base. Si hago un reload, lo carga
+(Incidente 44)Riesgos - No está dejando crear riesgos, no dice el error.
+No se puede reproducir. Volver a probarlo en testing.
+
+--- Despues de entregado el 5/5
+(Incidente 2)Productos - Al cargar un producto, el valor por defecto del peso debe ser 1 (15min.)
+(Incidente 4)Calidad - El peso predeterminado de cada ítem de calidad debe ser 1 (15min.)
+(Incidente 19)Pantalla Inicial-Filtros - El check de "agrupar por áreas" no está alineado con los demás.
+(Incidente 32)Prespuesto - No está claro la división entre planificado, real o proyectado. Sería bueno a nivel de diseño buscar la forma de que queden claras las columnas Fecha P e Importe P por un lado y Fecha R e Importe R por otro. Por ahí se puede poner un separador de columna solo a nivel de pagos. A la derecha del $ agregar en pequeño los textos aclarando si está ejecutado o proyectado ver caso 30. (0.5hs.)
+(Incidente 34)Cronograma - Cuando no soy gerente o adjunto está visible el botón de guardar y si le doy me dice que "el cronograma se guardó correctamente". Como no le puedo hacer cambios en realidad no tengo chance de modificarlo, pero el botón no debería estar visible (1hs.)
+(Incidente 35)Lecciones Aprendidas - si editamos una lección y no seleccionamos el tipo, el mansaje aparece 2 veces
+(Incidente 36)Lecciones Aprendidas - en el área de conocimiento poner el botón guardar al igual que está en la ficha del proyecto. (0.5hs.)
+(Incidente 41)Ficha del proyecto - cuando un usuario no puede modificar los datos de área temática, el sistema igualmente le debe dejar ver la zona de la izquierda para que vea todos los valores que hay
+
+--- Despues de entregado el 6/5
+(Incidente 1)Admin-Calidad - el botón limpiar borra la tabla.
+Es igual a todos los mantenimientos. No se modifica.
+(Incidente 48)Ficha del proyecto - La parte de reportes se rompe y se va debajo de la parte de info del proyecto. Además, compactar este recuadro.
+(Incidente 49)Ficha del proyecto - El usuario sponsor no debe poder modificar nada, el sistema lo está dejando modificar el programa y alguna cosa más en la zona de configuración.
+(Incidente 46)Productos - No soy gerente ni adjunto, me está mostrando el botón para elimiar y me está dejando eliminar productos.
+La lógica solo deja eliminar a Gerente o adjunto, o si es coordinador del entregable.
+(Incidente 47)Productos - Están quedando mal las líneas de los proyectos, este error fue reportado hace un tiempo.
+(Incidente 37)Lecciones Aprendidas - al seleccionar un valor en el área de conocimiento que en la lista de valores seleccionados, para cada valor aparezca su padre, no se tiene como saber de dónde son los valores seleccionados
+(Incidente 7)Calidad - En el rectángulo y adentro del módulo el índice de calidad debe ser expresado en % sin decimales.
+(Incidente 11)Documentos - Al igual que en calidad, el índice de la metodología debe estar en % sin decimales.
+(Incidente 40)Ficha del proyecto - al elegir un área temática, que en la zona de seleccionadas se muestre el padre y no solo la hoja (Ejemplo: padre 1/padre 2/área temática seleccionada)
+
+Pendiente:
+(Incidente 31)Cronograma - Cualquier usuario podría abrir aunque sea como solo lectura el popup de una línea del crono, sino no puede ver toda su informaicón
+(Incidente 33)Prespuesto - Solamente para la fecha R, en caso que no esté ejecutado pintarla de amarillo oscuro si está por vencerse (5 días) o de rojo si está vencida (día actual o menos). Similar a la fecha en el módulo de riesgos
+(Incidente 42)Cronograma - no está desarrollado el check de "entregable clave" que solo la PMO F o PMO T pueden editar. Queda para versiones futuras.
+
+SVN tag/2_5_build_2 el 8/5/2015
+
+Fecha de entrega: 8/5/2015
+
+## Versión 2.5-3 ---------------------------------------------------------------
+Basicamente es lo mismo que la versión 2.5-2. Se cambia la versión de build porque ya se había hecho un tag en el svn.
+
+(Incidente 50)Prespuesto - Cuando estoy en planificación, en un proyecto que no tiene prespuesto entro al módulo de prespuesto y me muestra dos veces el botón "agregar adquisción" ya me abre el formulario para agregar adquisición. No debería abrirlo al formulario. Este proyecto, además no tiene prespuesto base, al cerrar el formulario para agregar adquisición no me aparece el botón para agregar el presupuesto base (estoy como gerente y pmo f)
+(Incidente 51)Prespuesto - Está mal el combo de entregables al agregar un pago. Para este caso, habíamos dicho que se debían mantener las fechas de inicio y fin del entregable, tal como estaba antes. No están apareciendo esteas fechas, para el gerente de proyecto es importante saber la fecha del entregable para saber qué fecha se le carga al pago en lo planificado. El cambio que había que hacer es agregar la posiblidad de asociar un pago a un padre, pero siempre manteniendo las fechas. 
+(Incidente 52)Prespuesto - Cuando agrego devengamiento el sistema se para en 2014. Debería pararse en el año actual. 
+(Incidente 53)Prespuesto - En ejecución no me muestra el botón para editar el devengamiento
+
+Fecha de entrega: 11/5/2015
+
+## Versión 2.5-4 ---------------------------------------------------------------
+
+(Incidente 56)Usuario externo - Cuando un usurio externo se loguea (que está como colaborador en un proyecto) el menú está en blanco y dice que no tiene permisos, etc. Además debería ir directo a la pantalla para cargar horas (pero no está la opción en el menú). En este caso, además, luego de darle un clic en salir, me muestra el combo de organismos (sigue sin aparecer la opción del menú), luego de darle varias veces sale...
+Se corrige ejecutando Script.
+(Incidente 57)Colaboradores - Tengo un cronograma con 2 tareas sin peso. Cuando voy a agregar colaboradores está vacío el combo de entregables. 
+(Incidente 58)Colaboradores - Con el caso anterior, igualmente me deja agregar un colaborador. No debería dejar agregar colaboradores que no estén asociados a entregables
+(Incidente 59)Colaboradores - Un usuario común que no tiene nada en el proyecto no debería poder agregar colaboradores. Le está apareciendo el botón.
+(Incidente 60)Calidad - Está muy fea la tabla de calidad, queron amontonados los títulos y valores. Ver la imagen (cuando es un usuario común). Cuando es un gerente de proyecto el título peso queda mal centrado, ponerlo arriba del dato
+(Incidente 61)Colaboradores - Está dejando al sponsor agregar colaboradores
+(Incidente 62)Ficha del proyecto - El adjunto no está podiendo: modificar notificaciones, modificar metodología, modificar lectura, modificar área temática y cargar el prespuesto aprobado.
+Quedamos en que estos datos solo lo modifican las PMO.
+(Incidente 63)Calidad - El adjunto no está podiendo agregar ítems de calidad
+(Incidente 64)Parámetros generales - Cómo funciona esto? Si el único valor que se puede cambiar es el true o false solo ese campo debe estar editable. Qué pasa si cambio el nombre de un parámetro?
+(Incidente 65)Prespuesto - El adjunto no está podiendo gestionar el prespuesto a pesar que el parámetro ADJUNTO_MODIFICA_PRESUPUESTO está en true
+
+Reportado por CND:
+-Error al guardar el cronograma.
+
+Fecha de entrega: 15/05/2015
+
+## Versión 2.5-5 ---------------------------------------------------------------
+Se agrega la creación de áreas cuando se crea un organismo. Esto se había hecho y posiblemente se pisó cuando se junto la v2 con la v3.0.
+
+-19/5-1.5hs. Correcciones y controlar si falta algo mas.
+
+Fecha de entrega: 19/05/2015
+
+## Versión 2.6-1 ---------------------------------------------------------------
+Cambios para esta versión:
+*Ejecutar script para actualizar la base!!
+-Pasar el JS de google a local. jquery-1.11.3.min.js y jquery-ui-1.11.4.min.js se dejan en el proyecto para no ir a buscarlo a Google.
+-Cuando el cronograma daba un error se perdían los cambios realizados. Ahora se mantienen, se pueden corregir y vovler a guardar.
+Solicitado en v2.5-2:
+-18/5-2hs. Prespuesto - Solamente para la fecha R, en caso que no esté ejecutado pintarla de amarillo oscuro si está por vencerse (5 días) o de rojo si está vencida (día actual o menos). Similar a la fecha en el módulo de riesgos
+-19/5-2hs. Cronograma - Cualquier usuario podría abrir aunque sea como solo lectura el popup de una línea del crono, sino no puede ver toda su informaicón.
+-19/5-5hs. Cronograma - no está desarrollado el check de "entregable clave" que solo la PMO F o PMO T pueden editar.
+-Cronograma/Alcance en Reporte Proy.
+
+
+Exportación a Excel de reportes.
+-Presupuesto por Moneda
+-Presupuesto por Adquisición
+-Alcance
+Horas: 34hs. hasta el 29/04 a las 12hs. Dejo pendiente esta versión para corregir bugs de la 2.5
+8/5-5hs. - Reporte Presupuesto por Moneda/Adquisición
+11/5-6hs. - Reporte Presupuesto por Moneda/Adquisición
+12/5-8hs. - Reporte Cronograma/Alcance
+13/5-7hs. - Reporte Cronograma/Alcance
+13/5-1hs. - Cronograma/Alcance en Reporte Proy.
+14/5-1hs. - Cronograma/Alcance en Reporte Proy.
+15/5-3hs. - Cronograma/Alcance en Reporte Proy.
+18/5-1hs. - Cronograma/Alcance en Reporte Proy.
+18/5-2hs. - Reporte Presupuesto y Cronograma/Alcance(Estilos en la planilla)
+18/5-4hs. - Reporte Presupuesto, detalle de totales.
+Total: 72hs.
+
+Pendiente:
+-Reporte: Mis Tareas
+
+## -----------------------------------------------------------------------------
+Pendiente:
+-Mejorar performance y uso de memoria.
+-Areas de conocimiento mant.. Corregir el filtro por padre.
+-Testing en DB PostgreSql.
+-Validar el largo de los campos como en ProgramaValidacion linea 38.
+-Modificar Estados como SsRol

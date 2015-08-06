@@ -1,0 +1,20 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.data.RegistrosHoras;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import javax.persistence.EntityManager;
+
+/**
+ *
+ * @author Usuario
+ */
+public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public RegistrosHorasDao(EntityManager em) {
+        super(em);
+    }
+
+}

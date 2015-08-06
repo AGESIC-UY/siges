@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="copiaProyPopup">
+        <ice:panelPopup draggable="false" 
+                        autoCentre="true" 
+                        modal="true" 
+                        rendered="#{fichaMB.renderPopupCopiaProy}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.ficha_copia_proy_titulo}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       title ="#{labels.cerrar}"
+                                       action="#{fichaMB.cerrarRenderPopupCopiaProy()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formUsuario">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.ficha_copia_proy_nombre}:" />
+                        <ice:inputText value="#{fichaMB.nombreProyCopia}" 
+                                       styleClass="textoMedioLargo" />
+
+                        <ice:outputLabel value="#{labels.ficha_copia_proy_fecha}:"/>
+                        <ace:dateTimeEntry value="#{fichaMB.fechaComienzoProyCopia}"
+                                           pattern="#{inicioMB.calendarPattern}" 
+                                           renderAsPopup="true" 
+                                           timeZone="#{inicioMB.calendarTimeZone}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="usuarioPopupMsg"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{fichaMB.copiarProyecto()}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cerrar}" 
+                                        action="#{fichaMB.cerrarRenderPopupCopiaProy()}"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </ice:form>
+</ui:composition>

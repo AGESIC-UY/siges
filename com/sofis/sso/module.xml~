@@ -1,0 +1,17 @@
+<module xmlns="urn:jboss:module:1.1" name="com.sofis.sso-valve">
+ 
+    <properties>
+        <property name="jboss.api" value="private"/>
+    </properties>
+ 
+    <resources>
+        <resource-root path="SofisServiceProviderValve.jar"/>
+    </resources>
+ 
+    <dependencies>
+        <module name="sun.jdk"/>
+        <module name="javax.servlet.api"/>
+        <module name="org.jboss.as.web"/>
+    </dependencies>
+ 
+</module>

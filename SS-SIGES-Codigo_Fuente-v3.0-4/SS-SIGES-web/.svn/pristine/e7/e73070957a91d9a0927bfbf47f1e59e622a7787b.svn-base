@@ -1,0 +1,191 @@
+package com.sofis.web.mb;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Organismos;
+import com.sofis.entities.validations.InicioOrganismoValidacion;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.web.delegates.OrganismoDelegate;
+import com.sofis.web.delegates.SsUsuarioDelegate;
+import com.sofis.web.genericos.constantes.ConstantesNavegacion;
+import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.JSFUtils;
+import com.sofis.web.utils.SofisCombo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.icefaces.ace.component.fileentry.FileEntry;
+import org.icefaces.ace.component.fileentry.FileEntryEvent;
+import org.icefaces.ace.component.fileentry.FileEntryResults;
+import org.icefaces.apache.commons.io.IOUtils;
+
+/**
+ *
+ * @author Usuario
+ */
+@ManagedBean(name = "organismoMB")
+@ViewScoped
+public class OrganismoMB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final String FORM_ORGANISMO_MSG = "formOrganismoMsg";
+    @ManagedProperty("#{inicioMB}")
+    InicioMB inicioMB;
+    @Inject
+    private SsUsuarioDelegate ssUsuarioDelegate;
+    @Inject
+    OrganismoDelegate organismoDelegate;
+    /**
+     * Organismo ABM.
+     */
+    private Organismos organismoForm = new Organismos();
+//    private List<SsUsuario> listUsuariosOrganismo = new ArrayList<>();
+
+    public OrganismoMB() {
+        logger.finest("-- CREA OrganismoMB");
+    }
+
+    public InicioMB getInicioMB() {
+        return inicioMB;
+    }
+
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
+
+    public Organismos getOrganismoForm() {
+        return organismoForm;
+    }
+
+    public void setOrganismoForm(Organismos organismoForm) {
+        this.organismoForm = organismoForm;
+    }
+
+    @PostConstruct
+    public void init() {
+        cargarFormOrganismo();
+    }
+
+    public void cargarFormOrganismo() {
+        if (inicioMB.getOrganismosUsuario() != null
+                && inicioMB.getOrganismosUsuario().getSelectedObject() != null) {
+            organismoForm = ((Organismos) inicioMB.getOrganismosUsuario().getSelectedObject()).newCopy();
+        } else {
+            organismoForm = new Organismos();
+        }
+    }
+
+    public String guardarOrganismoAction() {
+        JSFUtils.removerMensages();
+        try {
+            InicioOrganismoValidacion.validar(organismoForm);
+
+            organismoForm = organismoDelegate.guardarOrgnanismo(organismoForm);
+            organismoDelegate.controlarDatosFaltantes();
+            
+            if (organismoForm != null && organismoForm.getOrgPk() != null) {
+                JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "info_organismo_guardado", null);
+                inicioMB.setOrganismo(organismoForm);
+                inicioMB.setOrganismosUsuario(new SofisCombo(new ArrayList(organismoDelegate.obtenerTodos()), "orgNombre"));
+                inicioMB.getOrganismosUsuario().setSelected(organismoForm.getOrgPk());
+                cargarFormOrganismo();
+            } else {
+                JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "error_organismo_guardar", null);
+            }
+        } catch (BusinessException be) {
+            JSFUtils.agregarMsgs(FORM_ORGANISMO_MSG, be.getErrores());
+        }
+        return null;
+    }
+
+    public void nuevoOrganismoAction() {
+        JSFUtils.removerMensages();
+        organismoForm = new Organismos();
+    }
+
+    public String adminUsuariosAction() {
+        return ConstantesNavegacion.IR_ABM_USUARIOS;
+    }
+
+    public void subirLogoOrgAction(FileEntryEvent e) {
+        JSFUtils.removerMensages();
+        logger.info("[subirArchivoAction] Subiendo archivo...");
+        if (e != null && e.getComponent() != null) {
+            FileEntry fe = (FileEntry) e.getComponent();
+            FileEntryResults results = fe.getResults();
+            File archivo = results.getFiles().get(0).getFile();
+            if (archivo == null) {
+                JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "error_archivo_subido_fail", null);
+            }
+            try {
+                String mimeType = new MimetypesFileTypeMap().getContentType(archivo);
+                logger.log(Level.FINEST, "Mime Type:", mimeType);
+                if (mimeType != null) {
+                    //FIXME FD boolean esValido = archivoHechos.isAValidMimeType(mimeType);
+                    boolean esValido = true;
+                    if (!esValido) {
+                        JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "error_archivo_no_permitido", null);
+                        return;
+                    }
+                } else {
+                    JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "error_archivo_no_permitido", null);
+                    return;
+                }
+                logger.info("[subirArchivoAction] Subiendo archivo finalizado");
+                FileInputStream fileInputStream = new FileInputStream(archivo);
+                byte[] bFile = IOUtils.toByteArray(fileInputStream);
+                organismoForm.setOrgLogo(bFile);
+                organismoForm.setOrgLogoNombre(archivo.getName());
+            } catch (Exception e2) {
+                JSFUtils.agregarMsg(FORM_ORGANISMO_MSG, "error_subir_archivo", null);
+                throw new BusinessException(Labels.getValue("error_subir_archivo"));
+            }
+        }
+    }
+
+    public void limpiarForm() {
+        JSFUtils.removerMensages();
+        organismoForm = new Organismos();
+    }
+
+    public void eliminarLogo() {
+        organismoForm.setOrgLogo(null);
+        organismoForm.setOrgLogoNombre(null);
+    }
+
+    public void organismoChange(ValueChangeEvent event) {
+        PhaseId phaseId = event.getPhaseId();
+        if (phaseId.equals(PhaseId.ANY_PHASE)) {
+            event.setPhaseId(PhaseId.UPDATE_MODEL_VALUES);
+            event.queue();
+        } else if (phaseId.equals(PhaseId.UPDATE_MODEL_VALUES)) {
+            Organismos orgSelected = (Organismos) inicioMB.getOrganismosUsuario().getSelectedObject();
+            if (orgSelected != null) {
+                organismoForm = orgSelected.newCopy();
+            }
+            inicioMB.organismoChange(event);
+
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+            } catch (IOException ex) {
+                Logger.getLogger(OrganismoMB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+}

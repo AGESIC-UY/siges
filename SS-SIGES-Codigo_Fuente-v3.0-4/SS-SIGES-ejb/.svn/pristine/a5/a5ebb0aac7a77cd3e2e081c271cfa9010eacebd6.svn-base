@@ -1,0 +1,150 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.properties.LabelsEJB;
+import com.sofis.data.daos.EstadosDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.ConstantesEstandares;
+import com.sofis.entities.data.Estados;
+import com.sofis.entities.data.Proyectos;
+import com.sofis.exceptions.GeneralException;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "EstadosBean")
+@LocalBean
+public class EstadosBean {
+
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @EJB
+    ProyectosBean proyectosBean;
+
+    public Estados obtenerEstadosPorId(Integer estPk) throws GeneralException {
+        if (estPk != null) {
+            EstadosDAO estadosDao = new EstadosDAO(em);
+            try {
+                Estados resultado = estadosDao.findById(Estados.class, estPk);
+                return resultado;
+
+            } catch (DAOGeneralException ex) {
+                logger.logp(Level.SEVERE, EstadosBean.class.getName(), "obtenerEstadosPorId", ex.getMessage(), ex);
+                TechnicalException te = new TechnicalException();
+                te.addError(ex.getMessage());
+                throw te;
+            }
+        }
+
+        return null;
+
+    }
+
+    public List<Estados> obtenerEstadosRequridosDoc(List<Integer> listEstPk) throws GeneralException {
+        try {
+            List<Estados> resultado = new ArrayList<>();
+
+            for (Integer estPk : listEstPk) {
+                Estados est = this.obtenerEstadosPorId(estPk);
+                if (est != null) {
+                    resultado.add(est);
+                }
+            }
+
+            return resultado;
+
+        } catch (TechnicalException ex) {
+            logger.logp(Level.SEVERE, EstadosBean.class.getName(), "obtenerEstadosRequridosDoc", ex.getMessage(), ex);
+            TechnicalException te = new TechnicalException();
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
+
+    /**
+     * Retorna true si e1 es menor que e2 en cuanto al Orde de Proceso. Si el
+     * Orden de uno de ellos es null, retorna false.
+     *
+     * @param e1
+     * @param e2
+     * @return
+     */
+    public boolean isOrdenProcesoMenor(Estados e1, Estados e2) {
+        if (e1 != null && e2 != null
+                && e1.getEstOrdenProceso() != null
+                && e2.getEstOrdenProceso() != null) {
+            return e1.getEstOrdenProceso() < e2.getEstOrdenProceso();
+        } else {
+            return false;
+        }
+    }
+
+    public String obtenerEstadoColor(Integer fichaFk) {
+        Proyectos p = proyectosBean.obtenerProyPorId(fichaFk);
+        return obtenerEstadoColor(p.getProyEstFk(), p.getProyFechaEstadoAct(), p.getProySemaforoAmarillo(), p.getProySemaforoRojo());
+    }
+
+    public String obtenerEstadoColor(Estados est, Date fechaEstAct, Integer semaforoAmarillo, Integer semaforoRojo) {
+        if ((est.isEstado(Estados.ESTADOS.INICIO.estado_id) || est.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id))
+                && semaforoAmarillo != null && semaforoRojo != null) {
+
+            if (fechaEstAct == null) {
+                return ConstantesEstandares.SEMAFORO_ROJO;
+            }
+
+            Calendar calFechaAct = Calendar.getInstance();
+            calFechaAct.setTime(fechaEstAct);
+
+            Calendar calAmarillo = Calendar.getInstance();
+            calAmarillo.setTimeInMillis(calFechaAct.getTimeInMillis());
+            calAmarillo.add(Calendar.DATE, semaforoAmarillo);
+
+            Calendar calRojo = Calendar.getInstance();
+            calRojo.setTimeInMillis(calFechaAct.getTimeInMillis());
+            calRojo.add(Calendar.DATE, semaforoRojo);
+
+            Calendar calNow = Calendar.getInstance();
+            if (calNow.equals(calAmarillo) || (calNow.after(calAmarillo) && calNow.before(calRojo))) {
+                return ConstantesEstandares.SEMAFORO_AMARILLO;
+            } else if (calNow.equals(calRojo) || calNow.after(calRojo)) {
+                return ConstantesEstandares.SEMAFORO_ROJO;
+            }
+        }
+        return ConstantesEstandares.COLOR_TRANSPARENT;
+    }
+
+    public List<Estados> obtenerEstadosCombo() {
+        List<Estados> list = new ArrayList<>();
+        int[] estadosId = new int[]{0, 2, 3, 4, 5};
+        for (int i = 0; i < estadosId.length; i++) {
+            Estados est = obtenerEstadosPorId(estadosId[i]);
+            if (est != null) {
+                list.add(est);
+            }
+        }
+        return list;
+    }
+
+    public String estadoStr(Integer estPk) {
+        if (estPk != null) {
+            return LabelsEJB.getValue("estado_" + estPk);
+        }
+        return "";
+    }
+}

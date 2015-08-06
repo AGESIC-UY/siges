@@ -1,0 +1,24 @@
+/*
+ * 
+ * 
+ */
+package com.sofis.data.daos;
+
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import javax.persistence.EntityManager;
+
+/**
+ *
+ * @author Usuario
+ */
+public class UsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public UsuarioDAO(EntityManager em) {
+        super(em);
+    }
+    
+}

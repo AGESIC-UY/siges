@@ -1,0 +1,35 @@
+package com.sofis.web.converter;
+
+import com.sofis.generico.utils.generalutils.StringsUtils;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+
+/**
+ *
+ * @author Usuario
+ */
+public class SiNoConverter implements Converter {
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (StringsUtils.isEmpty(value)) {
+            return null;
+        }
+        value = value.trim();
+        if ("si".equalsIgnoreCase(value) || "sí".equalsIgnoreCase(value)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        if (value == null || !(value instanceof Boolean)) {
+            return "";
+        }
+        Boolean bValue = (Boolean) value;
+        return bValue.booleanValue() ? "Sí" : "No";
+    }
+}

@@ -1,0 +1,34 @@
+## Versión 2.1-20150323 --------------------------------------------------------
+
+-En producción el 23/03/2015
+
+## Versión 2.2-1 ---------------------------------------------------------------
+-Ejecutar sqlScritp desde "-- Hasta acá en Siges v2.1-20150323".
+
+Desarrollo:
+
+-Mantenimiento de Temas Generales de Calidad.
+-Módulo en la ficha de Gestión de Calidad.
+-Pantalla inicial con columna de Calidad.
+-Pantalla inicial se agrega el filtro Calidad.
+-Carga de valores de calidad por parte de los colaboradores.
+-Coordinador del entregable cargue el estado de los productos desde el registro de horas.
+-Usuarios que pueden aprobar facturas en el presupuesto.
+
+Incidentes Internos:
+-4657-Gerente no puede modificar items de calidad 
+-4660-Error 500 en Horas/Gastos/Calidad
+-4665-Se puede registrar 25 horas en el avance.
+-4666-Registro de horas con fecha superior a la actual 
+-4667-Avance deja de estar editable
+-4668-Valor inválido para registro de horas
+-4670-Cambio de texto
+-4671-Al cambiar estado a un proyecto se pierde la conexión
+
+Incidentes Cliente:
+-4661-Asignación de programa en nuevo proyecto. 
+-4662-Área por defecto de usuario.
+-4663-Acceso al botón "Lectura" en la ficha.
+-4664-Números en rojo en el reporte.
+-4681-Fecha actualización Programa.
+

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelGroup id="leccAprendidaFormData">
+
+        <!-- Formulario de alta -->
+        <ice:panelGroup id="leccAprendidaForm">
+            <ice:panelCollapsible id="collapsibleLeccApr" expanded="#{PlantillaCronogramaMB.formDataExpanded}" >
+                <f:facet name="header">
+                    <h:panelGrid columns="1">
+                        <h:commandButton value="#{labels.plaCrono_form_btn_agregar}" 
+                                         rendered="#{!PlantillaCronogramaMB.formDataExpanded and PlantillaCronogramaMB.fieldRendered('agregarPlantilla')}"
+                                         styleClass="boton principal botonAgregar" />
+                    </h:panelGrid>
+                </f:facet>
+
+                <ice:panelGrid  styleClass="formulario" columns="2">
+                    <ice:outputLabel value="#{labels.plaCrono_nombre}:"/>
+                    <ace:textEntry value="#{PlantillaCronogramaMB.plantillaCronograma.pcronoNombre}" />
+                </ice:panelGrid>
+
+                <ice:panelGrid  styleClass="formulario" columns="1">
+                    <ace:pushButton  value="#{labels.plaCrono_agregarLinea}" 
+                                     styleClass="boton principal guardar" 
+                                     action="#{PlantillaCronogramaMB.agregarLinea()}" />
+                    <ace:dataTable value="#{PlantillaCronogramaMB.plantillaCronograma.plantillaEntregablesSet}" 
+                                   var="pla">
+                        <ace:column headerText="#{labels.plaCrono_numero}" >
+                            <ice:outputText value="#{pla.pentregablesNumero}" styleClass="textoExtraCorto"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.plaCrono_nombre}" >
+                            <ice:inputText value="#{pla.pentregablesNombre}" />
+                        </ace:column>
+                        <ace:column headerText="#{labels.plaCrono_nivel}" >
+                            <ice:inputText value="#{pla.pentregableNivel}" styleClass="textoExtraCorto" />
+                        </ace:column>
+                        <ace:column headerText="#{labels.plaCrono_esfuerzo}" >
+                            <ice:inputText value="#{pla.pentregableEsfuerzo}" styleClass="textoExtraCorto" />
+                        </ace:column>
+                        <ace:column headerText="#{labels.plaCrono_duracion}" >
+                            <ice:inputText value="#{pla.pentregableDuracion}" styleClass="textoExtraCorto" />
+                        </ace:column>
+                        <ace:column headerText="#{labels.plaCrono_antecesor}" >
+                            <ice:selectOneMenu id="comboEntregablesForm"
+                                               value="#{pla.pentregablesNumeroAnt}" 
+                                               styleClass="textoMedio">
+                                <f:selectItem itemValue="-1" itemLabel="-----"/>
+                                <f:selectItems var="item"  
+                                               value="#{PlantillaCronogramaMB.plantillaCronograma.plantillaEntregablesSet}" 
+                                               itemLabel="#{item.pentregablesNumero}" itemValue="#{item.pentregablesNumero}"/>
+                            </ice:selectOneMenu>
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGrid>
+                
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages id="leccAprendidasMsgForm"/>
+                    <ace:pushButton  value="#{labels.plaCrono_form_guardar}" 
+                                     styleClass="boton principal guardar" 
+                                     action="#{PlantillaCronogramaMB.guardar()}" />
+                    <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
+                                      action="#{PlantillaCronogramaMB.limpiar()}"/>
+                    <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                     action="#{PlantillaCronogramaMB.cerrarFormCollapsable()}"/>
+                </ice:panelGroup>
+
+            </ice:panelCollapsible>
+        </ice:panelGroup>
+    </ice:panelGroup>
+
+</ui:composition>

@@ -1,0 +1,10 @@
+package com.sofis.entities.data;
+
+/**
+ *
+ * @author Usuario
+ */
+public interface TreeNode {
+    
+    public Integer getPadreFk();
+}

@@ -1,0 +1,68 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.business.interceptors.LoggedInterceptor;
+import com.sofis.data.daos.ProgEditorEstadoDAO;
+import com.sofis.data.daos.ProyEditorEstadoDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.ProgEditorEstado;
+import com.sofis.entities.data.ProyEditorEstado;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "editorEstadoBean")
+@LocalBean
+@Interceptors({LoggedInterceptor.class})
+public class EditorEstadoBean {
+
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    @Inject
+    private DatosUsuario du;
+
+    public List<ProgEditorEstado> obtenerProgHistorico(Integer fichaFk) {
+        if (fichaFk != null) {
+            ProgEditorEstadoDAO dao = new ProgEditorEstadoDAO(em);
+            try {
+                return dao.findByOneProperty(ProgEditorEstado.class, "progediestProgFk.progPk", fichaFk, "progediestPk");
+            } catch (DAOGeneralException ex) {
+                logger.log(Level.SEVERE, null, ex);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_EDITOR_ESTADO_OBTENER);
+                throw be;
+            }
+        }
+        return null;
+    }
+
+    public List<ProyEditorEstado> obtenerProyHistorico(Integer fichaFk) {
+        if (fichaFk != null) {
+            ProyEditorEstadoDAO dao = new ProyEditorEstadoDAO(em);
+            try {
+                return dao.findByOneProperty(ProyEditorEstado.class, "proyediestProyFk.proyPk", fichaFk, "proyediestPk");
+            } catch (DAOGeneralException ex) {
+                logger.log(Level.SEVERE, null, ex);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_EDITOR_ESTADO_OBTENER);
+                throw be;
+            }
+        }
+        return null;
+    }
+}

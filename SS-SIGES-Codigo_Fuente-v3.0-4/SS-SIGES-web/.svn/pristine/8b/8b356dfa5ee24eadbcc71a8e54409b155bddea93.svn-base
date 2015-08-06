@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmPendientes">
+        <ace:notificationPanel id="inicioInfoPanel"
+                               widgetVar="inicioInfoBar"
+                               visible="#{ProgramasProyectosMB.buscandoPorAreas}"
+                               position="top"
+                               effect="slide" 
+                               effectSpeed="slow">
+            <ice:panelGroup>
+                <ice:outputText value="#{labels.buscando}" 
+                                styleClass="subtitulo"/>
+                <ice:commandButton styleClass="botonLoad iconoTabla" 
+                                   disabled="true"/>
+            </ice:panelGroup>
+        </ace:notificationPanel>
+
+        <ice:panelGroup id="proyPendientes" styleClass="proyPendientes margen-inf" 
+                        rendered="#{not empty ProgramasProyectosMB.pendientes 
+                                    and ProgramasProyectosMB.pendientes.size() > 0
+                                    and (inicioMB.usuarioOrgaPMOF || inicioMB.usuarioOrgaPMOT)}">
+            <ice:panelGroup>
+                <ice:outputText value="#{labels.inicio_pendientes_titulo}"/>
+            </ice:panelGroup>
+            <ace:dataTable id="tblResultadosPend" 
+                           value="#{ProgramasProyectosMB.pendientes}"
+                           var="pend" 
+                           paginator="true" pageCount="5" 
+                           rows="#{ProgramasProyectosMB.cantElementosPorPagina}">
+
+                <ace:column headerText="#{labels.inicio_col_TipoSolicitud}" >
+                    <ice:outputText value="#{labels[pend.tipoSolicitud]}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.inicio_col_Fecha}" >
+                    <ice:outputText value="#{pend.fechaCrea}" converter="fechaConverter"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.inicio_col_TipoFicha}" >
+                    <ice:outputText value="#{labels[pend.tipoFichaStr]}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.inicio_col_Area}" >
+                    <ice:outputText value="#{pend.areaFk.areaNombre}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.inicio_col_Nombre}" >
+                    <ice:outputText value="#{pend.fichaFk} - "/>
+                    <ice:outputText value="#{pend.nombre}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.inicio_col_Gerente}" >
+                    <ice:outputText value="#{pend.usrGerenteFk.usuNombreApellido}" />
+                </ace:column>
+
+                <ace:column styleClass="columnaBoton"
+                            rendered="#{inicioMB.fieldRendered('btnEditarProgProy')}">
+                    <ace:tooltip id="tooltipEditar" for="btnEditarPendiente">
+                        <ice:outputText value="#{labels.editarTooltip}" />
+                    </ace:tooltip>
+                    <ace:pushButton id="btnEditarPendiente"
+                                    styleClass="botonEditar iconoTabla" 
+                                    action="#{inicioMB.irEditarProgramaProyecto(pend.proyProgId, false)}" />
+                </ace:column>
+
+                <ace:column styleClass="columnaBoton" 
+                            rendered="#{inicioMB.fieldRendered('btnEliminarProgProy')}">
+                    <h:commandButton id="btnEliminarPendiente"
+                                     styleClass="botonEliminar iconoTabla"
+                                     title="Eliminar:&#13;#{pend.fichaPkNombre}"
+                                     onclick="confirmationEliminarPend#{pend.fichaFk}.show();" />
+                    <ace:confirmationDialog widgetVar="confirmationEliminarPend#{pend.fichaFk}" 
+                                            message="#{labels.eliminar}: #{pend.fichaPkNombre}"
+                                            header="#{labels.hConfirmacion}"
+                                            closable="true"
+                                            closeOnEscape="true"
+                                            severity="info"
+                                            modal="true"
+                                            position="center">
+                        <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                            <h:commandButton id="yesDelPend"
+                                             value="#{labels.si}"
+                                             styleClass="boton principal botonContinuar"
+                                             onclick="confirmationEliminarPend#{pend.fichaFk}.hide();" 
+                                             actionListener="#{ProgramasProyectosMB.eliminarPendienteAction(pend)}"/>
+                            <h:commandButton id="noDelPend"
+                                             value="#{labels.no}"
+                                             styleClass="boton principal botonEliminar"
+                                             onclick="confirmationEliminarPend#{pend.fichaFk}.hide();"/>
+                        </h:panelGrid>
+                    </ace:confirmationDialog>
+                </ace:column>
+
+            </ace:dataTable>
+            <ace:messages id="pendientesMsg"/>
+        </ice:panelGroup>
+    </ice:form>
+
+    <ice:form id="frmCargo">
+        <ice:panelGroup id="otrosProyectos" styleClass="proyectos">
+
+            <!-- FORMULARIO FILTRO BUSQUEDA -->
+            <ui:include src="./../fragmentos/inicioFragmentoFiltro.xhtml" />
+
+            <ice:panelGroup id="programasProyectosResultadoBusqueda">
+                <ice:panelSeries id="principalAreas" 
+                                 rows="1000" 
+                                 value="#{ProgramasProyectosMB.filtroInicioResultado}" 
+                                 var="itemArea">
+                    <ice:panelGroup styleClass="proyPendientes margen-sup">
+                        <ice:panelGroup>
+                            <ice:outputText value="#{itemArea.area.areaNombre}" />
+                        </ice:panelGroup>
+
+                        <ace:dataTable id="tblResultadosPorArea" 
+                                       value="#{itemArea.primerNivel}"  
+                                       var="item" 
+                                       rowStyleClass="lineaNivel1" 
+                                       paginator="false" 
+                                       pageCount="5" 
+                                       rows="100">
+
+                            <ace:column>
+                                <ace:expansionToggler id="expandTable" 
+                                                      changeListener="#{ProgramasProyectosMB.programaExpand}"
+                                                      rendered="#{item.tipoFicha eq 1}"/>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.inicio_col_Nombre}">
+                                <ice:panelGrid columns="1" rendered="#{item.fichaFk == null}">
+                                    <ice:outputText value="#{labels.inicio_row_vacio}" />
+                                </ice:panelGrid>
+
+                                <ice:commandLink id="linkEditarFicha1"
+                                                 action="#{inicioMB.irEditarProgramaProyecto(item.progProyId, false)}" 
+                                                 value="#{item.fichaFk} - #{item.nombre}"
+                                                 styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
+                                                 rendered="#{item.nombre != null}"
+                                                 title="#{ProgramasProyectosMB.inicioTooltipNombreFicha(item)}"/>
+                            </ace:column>
+
+                            <ace:column>
+                                <ice:commandLink id="linkEditarFicha2"
+                                                 action="#{inicioMB.irEditarProgramaProyecto(item.progProyId, true)}" 
+                                                 rendered="#{item.nombre != null}"
+                                                 title="#{labels.inicio_link_nombre}">
+                                    <ice:graphicImage value="../img/nueva_ventana.png" />
+                                </ice:commandLink>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.inicio_col_Area}" >
+                                <ice:outputText value="#{item.areaAbreviacion}"
+                                                styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}" />
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.inicio_col_Gerente}" >
+                                <ice:outputText value="#{item.responsable}" 
+                                                styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
+                                                title="#{labels.inicio_col_Adjunto}: #{item.adjunto}"/>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.inicio_col_Estado}" styleClass="colCenter">
+                                <ice:panelGroup styleClass="semaforoTexto #{item.tipoFicha eq 1 ? 'esPrograma' : ''}">
+                                    <ice:outputText value="#{item.fase}" style="#{item.solCambioFase ? 'color: red;':''}"
+                                                    styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}" />
+
+                                    <ice:panelGroup styleClass="indicadorFase">
+                                        <ice:commandLink rendered="#{inicioMB.fieldRendered('retrocederEstadoFicha', item)}"
+                                                         action="#{ProgramasProyectosMB.retrocederEstadoFichaAction(item)}">
+                                            <ice:graphicImage value="../img/atrasar-fase.png" />
+                                        </ice:commandLink>
+                                        <ice:commandButton id="semaforoFaseId"
+                                                           style="background-color: #{item.faseColor}"
+                                                           styleClass="botonSemaforo"
+                                                           rendered="#{inicioMB.fieldRendered('semaforoFase', item)}"
+                                                           disabled="true"/>
+                                        <ice:commandLink rendered="#{inicioMB.fieldRendered('AprobarFicha', item)}"
+                                                         action="#{ProgramasProyectosMB.guardarAprobarFichaAction(item)}">
+                                            <ice:graphicImage value="../img/adelantar-fase.png" />
+                                        </ice:commandLink>
+                                    </ice:panelGroup>
+                                </ice:panelGroup>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hActualizacion}" styleClass="colCenter">
+                                <ice:panelGroup styleClass="semaforoTexto" title="Amarillo: #{item.semaforoAmarillo} días, Rojo: #{item.semaforoRojo} días.">
+                                    <ice:outputText value="#{item.actualizacion}" 
+                                                    converter="fechaConverter"
+                                                    styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}" />
+
+                                    <ice:commandButton id="idActualizacionColor"
+                                                       style="background-color: #{item.actualizacionColor}"
+                                                       styleClass="botonSemaforo"
+                                                       disabled="true"/>
+                                </ice:panelGroup>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hPeriodo}" styleClass="colCenter">
+                                <ice:outputText value="#{item.periodoDesde}" 
+                                                converter="fechaConverter" 
+                                                styleClass="periodoFicha #{item.tipoFicha eq 1 ? 'esPrograma' : ''}" />
+                                <ice:outputText value="#{item.periodoHasta}" 
+                                                converter="fechaConverter"
+                                                styleClass="periodoFicha #{item.tipoFicha eq 1 ? 'esPrograma' : ''}"/>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hRiesgo}" styleClass="colCenter">
+                                <c:set var="toolTipRiesgo" value="#{labels.cantAltosRiesgo}: #{item.riesgosAltosCantidad}&#13;#{labels.tooltip_riesgo_expo}: #{item.riesgoExposicion}" />
+                                <ace:tooltip for="panelRiesgoInd">
+                                    <ice:outputText value="#{toolTipRiesgo}" />
+                                </ace:tooltip>
+                                <ice:panelGroup id="panelRiesgoInd"
+                                                styleClass="semaforoTexto #{item.tipoFicha eq 1 ? 'esPrograma' : ''}">
+
+                                    <ice:outputText value="#{item.riesgosAltosCantidad}" />
+                                    <ice:commandButton id="riesgoExpoColor" 
+                                                       style="background-color: #{item.riesgoExposicionColor}"
+                                                       styleClass="botonSemaforo" 
+                                                       title="#{labels.tooltip_riesgo_expo}: #{item.riesgoExposicion}"
+                                                       rendered="#{item.riesgoExposicionColor != null}"
+                                                       disabled="true"/>
+                                </ice:panelGroup>   
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hAvance}" styleClass="colCenter">
+                                <ice:panelGrid columns="1" rendered="#{item.fichaFk != null and item.indiceAvanceFinalizado == null and item.indiceAvanceParcial == null}">
+                                    <ice:commandButton styleClass="botonLoad iconoTabla" disabled="true"/>
+                                </ice:panelGrid>
+                                <ui:include src="./inicioFragmentoIndiceGantt.xhtml" />
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hMetodologia}" styleClass="colCenter">
+                                <ice:panelGroup styleClass="semaforoTexto">
+                                    <ice:graphicImage value="../img/alerta.png" 
+                                                      rendered="#{item.metodologiaSinAprobar and inicioMB.usuarioOrgaPMO}"
+                                                      title="#{labels.title_doc_sin_aprobar}"/>
+                                    <ice:commandButton style="background-color: #{item.metodologiaIndiceColor}"
+                                                       styleClass="botonSemaforo"
+                                                       title="#{ProgramasProyectosMB.inicioTooltipMetodologia(item)}"
+                                                       disabled="true"/>
+                                </ice:panelGroup>   
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.hPresupuesto}" styleClass="colCenter">
+                                <ice:panelSeries value="#{item.indiceMonedas}" var="mon">
+                                    <ice:panelGroup styleClass="semaforoTexto col-sm-4 no-padding">
+                                        <ice:commandButton style="background-color: #{item.indiceMonedaColor[mon.monPk]}"
+                                                           styleClass="botonSemaforo"
+                                                           disabled="true"
+                                                           title="#{ProgramasProyectosMB.inicioTooltipPresupuesto(item, mon.monPk)}"/>
+                                    </ice:panelGroup>
+                                </ice:panelSeries>
+                            </ace:column>
+                            
+                            <ace:column headerText="#{labels.hReporte}">
+                                <ice:commandLink id="linkReportePrograma"
+                                                 action="#{inicioMB.irReportePrograma(item.fichaFk, true)}" 
+                                                 rendered="#{item.tipoFicha eq 1 ? 'true' : 'false'}"
+                                                 title="#{labels.inicio_reporte_prog}">
+                                    <ice:graphicImage value="../img/reporte-v.png" />
+                                </ice:commandLink>
+                                
+                                <ice:commandLink id="linkReporteProyecto"
+                                                 action="#{inicioMB.irReporteProyecto(item.fichaFk, true)}" 
+                                                 rendered="#{item.tipoFicha eq 2 ? 'true' : 'false'}"
+                                                 title="#{labels.inicio_reporte_proy}">
+                                    <ice:graphicImage value="../img/reporte-v.png" />
+                                </ice:commandLink>
+                                <ice:commandLink id="linkReporteProyectoTablas"
+                                                 action="#{inicioMB.irReporteProyectoTablas(item.fichaFk, true)}" 
+                                                 rendered="#{item.tipoFicha eq 2 ? 'true' : 'false'}"
+                                                 title="#{labels.inicio_reporte_cro_pre}"
+                                                 style="padding-left: 5px;">
+                                    <ice:graphicImage value="../img/reporte-h.png" />
+                                </ice:commandLink>
+                            </ace:column>
+
+                            <!--
+                            <ace:column headerText="# {labels.hGRP}" styleClass="colCenter">
+                                <ice:panelGroup styleClass="semaforoTexto">
+
+                                </ice:panelGroup>
+                            </ace:column>
+                            -->
+                            <ace:rowExpansion id="rowExp"/>
+
+                        </ace:dataTable>
+                    </ice:panelGroup>
+                </ice:panelSeries>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:form>
+
+    <ui:include src="./mensajePopup.xhtml" />
+    <ui:include src="./inicioReplanificacionPopup.xhtml" />
+
+</ui:composition>

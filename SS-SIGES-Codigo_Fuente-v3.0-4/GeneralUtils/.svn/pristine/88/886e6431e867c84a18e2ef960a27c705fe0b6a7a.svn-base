@@ -1,0 +1,75 @@
+/*
+ * 
+ * 
+ */
+package com.sofis.generico.utils.generalutils;
+
+/**
+ *
+ * @author Usuario
+ */
+public class StringsUtils {
+    
+    public static boolean isEmpty(String s) {
+        return (s==null) || (s.trim().length()==0);
+    }
+    
+    
+    public static boolean sonStringIguales(String s1, String s2) {
+        if (s1!=null) {
+            if (s2!=null) {
+                return s1.equals(s2);
+            } else {
+                return false;
+            }
+        } else {
+            return s2==null;
+        }
+    }
+    
+    public static String normalizarString(String s) {
+        if (s!=null) {
+            return s.replaceAll("[ ]+", " ").trim();
+        }
+        return null;
+    }
+    
+     public static String normalizarStringMayuscula(String s) {
+        if (s!=null) {
+            return normalizarString(s).toUpperCase();
+        }
+        return null;
+    }
+     
+     public static boolean isHoras(String hora){
+         if(hora !=null){
+             
+         }
+         return false;
+     }
+     
+     public static String toString(Object o){
+         String s = o != null ? String.valueOf(o) : "";
+         return toString(s);
+     }
+     
+     public static String toString(String s){
+         return s != null ? s : "";
+     }
+     
+     public static String toCleanString(String s){
+         if (s == null){
+             return "";
+         }
+         s = s.replaceAll("\n", " ");
+         s = s.replaceAll("\t", " ");
+         s = s.replaceAll("\r", " ");
+         return s;
+     }
+     
+     public static void main(String[] args) {
+         //System.out.println(normalizarString(" un o     dos   "));
+         //System.out.println(normalizarString("uno     dos   "));
+         //System.out.println(normalizarString("     uno     dos   "));
+    }
+}

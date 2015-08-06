@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:form id="frmConfiguracionPopup">
+         
+
+        <ice:panelPopup  autoCentre="true" modal="true"  draggable="true"   rendered="#{pgeConfiguracionMB.renderPopupHistorial}">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hConfiguracion} "/>
+                    <ice:commandButton styleClass="botonCerrar"    action="#{pgeConfiguracionMB.cerrarPopupHistorial()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid width="100%">
+
+                    <ace:dataTable value="#{pgeConfiguracionMB.listaHitorial}" var="row"
+                                   paginator="true" pageCount="5" rows="#{aplicacionMB.filasHistorial}">
+                        <ace:column headerText="#{labels.hVersion}">
+                            <ice:outputText value="#{row.cnfVersion}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hCodigo}">
+                            <ice:outputText value="#{row.cnfClave}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hValor}">
+                            <ice:outputText value="#{row.cnfValor}"/>
+                        </ace:column>
+                        
+
+                        <ace:column headerText="#{labels.hUltMod}">
+                            <ice:outputText value="#{row.cnfUltmodFecha}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltUsuario}">
+                            <ice:outputText value="#{row.cnfUltmodUsu}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+
+        <ice:panelPopup rendered="#{pgeConfiguracionMB.renderPopupEdicion}" autoCentre="true" modal="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hConfiguracion}"/>
+                    <ice:commandButton styleClass="botonCerrar"     action="#{pgeConfiguracionMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid>
+                    <ace:messages />
+                    <ice:panelGrid columns="2" rowClasses="fila0,fila1">
+                        <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{pgeConfiguracionMB.cnfEnEdicion.cnfClave}"/>
+
+                        <ice:outputLabel value="#{labels.valor}"  styleClass="obligatorio"/>
+                        <ace:textAreaEntry value="#{pgeConfiguracionMB.cnfEnEdicion.cnfValor}"/>
+                        <ice:panelGrid/>
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:pushButton value="#{labels.guardar}" action="#{pgeConfiguracionMB.guardar}" styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cancelar}" action="#{pgeConfiguracionMB.cancelar()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+    </ice:form>
+
+
+
+
+</ui:composition>

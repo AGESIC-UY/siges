@@ -1,0 +1,42 @@
+package com.sofis.business.validations;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.AreasTags;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.generico.utils.generalutils.StringsUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Usuario
+ */
+public class AreaTematicaValidacion {
+
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    public static boolean validar(AreasTags at) throws BusinessException {
+        BusinessException be = new BusinessException();
+
+        if (at == null) {
+            be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NULL);
+        } else {
+            if (StringsUtils.isEmpty(at.getAreatagNombre())) {
+                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NOMBRE);
+            }
+
+            if (at.getAreatagPadreFk() != null
+                    && at.getAreatagPadreFk().getArastagPk().equals(at.getArastagPk())) {
+                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_PADRE);
+            }
+        }
+
+        if (be.getErrores().size() > 0) {
+            logger.logp(Level.WARNING, DocumentosValidacion.class.getName(), "validar", be.getErrores().toString(), be);
+            throw be;
+        }
+
+        return true;
+    }
+}

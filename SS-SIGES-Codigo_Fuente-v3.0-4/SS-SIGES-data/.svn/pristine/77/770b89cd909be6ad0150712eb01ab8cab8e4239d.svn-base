@@ -1,0 +1,43 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.Devengado;
+import com.sofis.exceptions.TechnicalException;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class DevengadoDAO extends HibernateJpaDAOImp<Devengado, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+
+    public DevengadoDAO(EntityManager em) {
+        super(em);
+    }
+
+    public void eliminarDevPorAdqPk(Integer adqPk) {
+        String queryStr = "DELETE FROM Devengado d"
+                + " WHERE d.devAdqFk.adqPk = :adqPk";
+
+        try {
+            Query query = super.getEm().createQuery(queryStr);
+            query.setParameter("adqPk", adqPk);
+
+            query.executeUpdate();
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+            TechnicalException te = new TechnicalException();
+            te.addError(MensajesNegocio.ERROR_ADQISICION_FUENTE);
+            throw te;
+        }
+    }
+}

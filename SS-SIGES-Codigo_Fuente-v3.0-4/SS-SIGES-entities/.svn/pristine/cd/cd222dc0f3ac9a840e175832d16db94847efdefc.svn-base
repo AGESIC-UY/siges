@@ -1,0 +1,43 @@
+package com.sofis.entities.tipos;
+
+/**
+ * Objeto utilizado para cargar combos con valores sencillos.
+ *
+ * @author Usuario
+ */
+public class ComboItemTO {
+
+    private Integer itemId;
+    private String itemNombre;
+
+    public ComboItemTO(Integer itemId, String itemNombre) {
+        this.itemId = itemId;
+        this.itemNombre = itemNombre;
+    }
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemNombre() {
+        return itemNombre;
+    }
+
+    public void setItemNombre(String itemNombre) {
+        this.itemNombre = itemNombre;
+    }
+
+    @Override
+    public int hashCode() {
+        if (itemId != null) {
+            return itemId.hashCode();
+        }
+
+        return 0;
+
+    }
+}

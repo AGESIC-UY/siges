@@ -1,0 +1,75 @@
+package com.sofis.business.ejbs;
+
+import com.sofis.data.daos.SsRolDAO;
+import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.ConstantesErrores;
+import com.sofis.entities.data.SsRol;
+import com.sofis.exceptions.BusinessException;
+import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author Usuario
+ */
+@Named
+@Stateless(name = "SsRolBean")
+@LocalBean
+public class SsRolBean {
+    
+    @Inject
+    private DatosUsuario du;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    
+    public List<SsRol> obtenerRolesUsuarios(){
+        SsRolDAO dao = new SsRolDAO(em);
+        try {
+            return dao.findByOneProperty(SsRol.class, "rolTipoUsuario", Boolean.TRUE, "rolNombre");
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsRolBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public List<SsRol> obtenerRoles(){
+        SsRolDAO dao = new SsRolDAO(em);
+        try {
+            return dao.findAll(SsRol.class, "rolNombre");
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsRolBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public SsRol obtenerRolesPorCod(String cod) {
+        SsRolDAO dao = new SsRolDAO(em);
+        List<SsRol> result = null;
+        try {
+            result = dao.findByOneProperty(SsRol.class, "rolCod", cod);
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsRolBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if(CollectionsUtils.isNotEmpty(result)){
+            if(result.size()==1){
+                return result.get(0);
+            }else{
+                BusinessException be = new BusinessException();
+                be.addError(ConstantesErrores.ERROR_DEMASIADOS_RESULTADOS);
+                throw be;
+            }
+        }
+        return null;
+    }
+}

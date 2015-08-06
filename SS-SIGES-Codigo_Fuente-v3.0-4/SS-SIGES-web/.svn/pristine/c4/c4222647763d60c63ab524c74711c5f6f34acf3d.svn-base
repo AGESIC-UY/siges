@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link rel="stylesheet" href="./../bootstrap-3.2.0-dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="./../css/SIGES.css"/>
+
+        <!-- Librería jQuery requerida por los plugins de JavaScript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="./../bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+
+        <!-- librerías opcionales que activan el soporte de HTML5 para IE8 -->
+        <h:outputText value="&lt;!--[if lt IE 9]&gt;&lt;SCRIPT src=&quot;https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js&quot;&gt;&lt;/SCRIPT&gt;&lt;![endif]--&gt;" escape="false" />
+        <h:outputText value="&lt;!--[if lt IE 9]&gt;&lt;SCRIPT src=&quot;https://oss.maxcdn.com/respond/1.4.2/respond.min.js&quot;&gt;&lt;/SCRIPT&gt;&lt;![endif]--&gt;" escape="false" />
+
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="./../js/ie10-viewport-bug-workaround.js"></script>
+        <script src="./../js/ie-emulation-modes-warning.js"></script>
+
+        <link rel="icon" type="image/png" href="./../img/favicon.png" /> 
+        <title>SIGES</title>
+
+        <script type="text/javascript">
+
+            function ScrollPage(location) {
+                window.location.hash = location;
+            }
+
+
+            // French initialization
+            ice.ace.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                currentText: 'Actual',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/MM/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+        </script>
+
+    </h:head>
+
+    <h:body>
+        <div class="container">
+
+            <div id="top">
+                <ui:insert name="top">
+                    <div id="top" class="row">
+                        <div class="col-sm-6 col-md-7"><img alt="SIGES" src="../img/logo-siges.png" class="logo"/></div>
+                        <div class="col-sm-6 col-md-5"><img alt="SIGES" src="../img/logo.png" class="logo" style="float:right"/></div>
+                        <div class="col-sm-12 no-padding" id="menu">
+                            <ui:include src="./../fragmentos/menuPublico.xhtml" />
+                        </div>
+                    </div>
+
+
+
+                </ui:insert>
+            </div>
+
+
+            <div id="content" class="fondo-blanco row">
+                <div class="col-sm-12 contenido"> 
+                    <ui:insert name="content">Content</ui:insert>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="popups" >
+            <ui:insert name="popups"> </ui:insert>
+        </div>
+
+
+        <div id="ayuda" >
+            <ui:insert name="ayuda">
+                <ice:form>
+
+                    <ice:panelPopup resizable="true" autoPosition="1,1" draggable="true" style="z-index:1000"   rendered="#{ayudaMB.popupAyuda}"
+                                    styleClass="popupAyuda">
+                        <f:facet name="header">
+                            <ice:panelGroup styleClass="cabezalPopup">
+                                <ice:outputText value="#{labels.ayuda}"/>
+                                <ice:commandButton styleClass="botonCerrar"   action="#{ayudaMB.cerrarAyuda()}"/>
+                            </ice:panelGroup>
+                        </f:facet>
+                        <f:facet name="body">
+                            <ice:panelGrid width="100%">
+                                <ice:outputText value="#{labels.codigo} #{ayudaMB.codigoAyuda}"/>
+                                <ice:outputText value="#{ayudaMB.contenidoAyuda}" escape="false"/>
+
+                            </ice:panelGrid>
+                        </f:facet>
+                    </ice:panelPopup> 
+                </ice:form>
+
+            </ui:insert>
+        </div>
+
+
+        <div id="bottom">
+            <ui:insert name="bottom">
+                <div class="container">
+                    <div class="texto-foot izq">
+                    </div>
+                </div>
+            </ui:insert>
+        </div>
+
+    </h:body>
+
+</html>

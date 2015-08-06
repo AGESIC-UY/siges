@@ -1,0 +1,38 @@
+package com.sofis.data.daos;
+
+import com.sofis.entities.data.AreasTags;
+import com.sofis.entities.enums.TipoFichaEnum;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
+import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Usuario
+ */
+public class AreasTagsDAO extends HibernateJpaDAOImp<AreasTags, Integer> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public AreasTagsDAO(EntityManager em) {
+        super(em);
+    }
+
+    public List<AreasTags> obtenerAreasTematicasPorFichaPk(int fichaFk, Integer tipoFicha) throws DAOGeneralException {
+        String queryStr = null;
+        if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
+            queryStr = "SELECT d FROM Programas p, IN(p.areasTematicasSet) d"
+                    + " WHERE p.progPk = :fichaFk";
+
+        } else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
+            queryStr = "SELECT d FROM Proyectos p, IN(p.areasTematicasSet) d"
+                    + " WHERE p.proyPk = :fichaFk";
+        }
+        Query query = super.getEm().createQuery(queryStr);
+        query.setParameter("fichaFk", fichaFk);
+        return query.getResultList();
+    }
+}

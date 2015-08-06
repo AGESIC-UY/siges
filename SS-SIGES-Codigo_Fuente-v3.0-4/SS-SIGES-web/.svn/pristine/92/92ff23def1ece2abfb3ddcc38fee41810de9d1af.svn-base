@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <h:head>
+        <link rel="icon" type="image/png" href="./../img/favicon.png" /> 
+        <title>#{labels.app_name}</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link rel="stylesheet" href="../robicch-jQueryGantt/platform.css" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/libs/dateField/jquery.dateField.css" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/gantt.css" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="./../bootstrap-3.2.0-dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="./../css/SIGES.css"/>
+
+        <!-- Librería jQuery requerida por los plugins de JavaScript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="./../bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+
+        <!-- librerías opcionales que activan el soporte de HTML5 para IE8 -->
+        <h:outputText value="&lt;!--[if lt IE 9]&gt;&lt;SCRIPT src=&quot;https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js&quot;&gt;&lt;/SCRIPT&gt;&lt;![endif]--&gt;" escape="false" />
+        <h:outputText value="&lt;!--[if lt IE 9]&gt;&lt;SCRIPT src=&quot;https://oss.maxcdn.com/respond/1.4.2/respond.min.js&quot;&gt;&lt;/SCRIPT&gt;&lt;![endif]--&gt;" escape="false" />
+
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="./../js/ie10-viewport-bug-workaround.js"></script>
+        <script src="./../js/ie-emulation-modes-warning.js"></script>
+    </h:head>
+
+    <h:body>
+        <div id="popups">
+            <ui:insert name="popups">
+            </ui:insert>
+        </div>
+
+        <ice:form>
+            <ice:outputConnectionStatus id="status" 
+                                        activeLabel="#{labels.conn_status_active}" 
+                                        disconnectedLabel="#{labels.conn_status_disconnected}"
+                                        displayHourglassWhenActive="false"/>
+        </ice:form>
+
+        <div class="container #{inicioMB.containerMax and inicioMB.isPath('ficha') ? 'containerMax' : ''}">
+            <ui:insert name="top">
+                <div id="top" class="row">
+                    <div class="col-xs-7 col-sm-6 col-md-7">
+                        <img alt="SIGES" src="../img/logo-siges.png" class="logo"/>
+                    </div>
+                    <div class="col-xs-5 col-sm-6 col-md-5">
+                        <ice:graphicImage value="../img/logo.png"
+                                          alt="Agesic"
+                                          rendered="#{inicioMB.organismo.orgLogo == null}"
+                                          style="float:right; opacity: 0.2; filter: alpha(opacity=20);"
+                                          styleClass="logo logoOrgXDefecto"/>
+
+                        <ice:graphicImage value="#{inicioMB.organismo.orgLogo}"
+                                          alt="#{inicioMB.organismo.orgNombre}" 
+                                          rendered="#{inicioMB.organismo.orgLogo != null}"
+                                          style="float:right;"
+                                          styleClass="logo"/>
+                    </div>
+                    <div class="clearfix"/>
+                    <div class="col-sm-12 no-padding" id="menu">
+                        <ui:include src="./../fragmentos/menuFragmento.xhtml" />
+                    </div>
+                </div>
+                <div id="infoUsuario" class="row">
+
+                    <ice:form>
+                        <ice:panelGroup rendered="#{inicioMB.organismosUsuario == null or empty inicioMB.organismosUsuario.items}" 
+                                        styleClass="organismo">
+                            <ice:outputText value="#{labels.sin_organismo}" />
+                        </ice:panelGroup>
+
+                        <ice:panelGroup rendered="#{inicioMB.organismosUsuario != null and not empty inicioMB.organismosUsuario.items}"
+                                        styleClass="organismo">
+                            <ice:outputLabel value="#{labels.organismoFicha}" for="selectOrganismo" />
+                            <ice:selectOneMenu id="selectOrganismo" value="#{inicioMB.organismosUsuario.selected}" 
+                                               valueChangeListener="#{organismoMB.organismoChange}"
+                                               partialSubmit="true">
+                                <f:selectItems value="#{inicioMB.organismosUsuario.items}"/>
+                            </ice:selectOneMenu>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="sesion">
+                            <ice:outputText value="#{labels.bienvenido} #{inicioMB.nombreUsuario}"/>
+                            <ace:linkButton value="#{labels.cambioContrasenia}" action="#{menuMB.fireAction('CAMBIAR_CONTRASENIA')}" rendered="#{not seguridadMB.conControlDeAcceso}" styleClass="pass"/>
+                            <ace:pushButton value="#{labels.salir}" id="btnSalir" action="#{inicioMB.logout()}" styleClass="salir"/>
+                        </ice:panelGroup>
+                    </ice:form>
+                </div>
+            </ui:insert>
+
+            <div id="content" class="fondo-blanco row">
+                <div class="col-sm-12 contenido">
+                    <ice:panelGroup rendered="#{seguridadMB.accesoAutorizado}" >
+                        <ui:insert name="content">Content</ui:insert>
+                    </ice:panelGroup>
+                    <ice:panelGroup rendered="#{not seguridadMB.accesoAutorizado}" >
+                        #{labels.pagina_sin_permiso}
+                    </ice:panelGroup>
+                </div>
+            </div>
+        </div>
+
+        <div id="bottom">
+            <ui:insert name="bottom">
+                <div class="container">
+                    <div class="texto-foot izq">
+                        <span id="footer_dir_name">#{labels.app_name}</span>
+                        <span>#{labels.version}:#{inicioMB.appVersion}-#{inicioMB.appFechaEntrega}</span>
+                        <span>#{labels.pie_direccion}</span>
+                        <span>#{labels.pie_correo}</span>
+                        <span>#{labels.pie_telefono}</span>
+                        <span>#{labels.pie_pais_ciudad}</span>
+                        <span>#{labels.pie_horario}</span>
+                    </div>
+                </div>
+            </ui:insert>
+        </div>
+    </h:body>
+
+</html>
