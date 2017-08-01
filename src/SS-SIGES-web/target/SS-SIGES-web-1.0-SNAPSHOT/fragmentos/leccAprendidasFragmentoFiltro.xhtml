@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup id="buscador"
+                    styleClass="buscador recuadro filtroProyecto margen-inf"
+                    rendered="#{inicioMB.organismo != null}">
+        <ace:pushButton styleClass="#{LeccAprendidasMB.filtroRender ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                        action="#{LeccAprendidasMB.renderizarFiltro()}"/>
+
+        <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/>
+
+        <ice:panelGroup rendered="#{!(LeccAprendidasMB.leccAprendidasResultado ne null and LeccAprendidasMB.leccAprendidasResultado.size() gt 0)}"
+                        styleClass="mensajeBusqueda">
+            <ice:graphicImage value="../img/mens-info-busqueda.png" />
+            <ice:outputText value=" #{labels.info_sin_resultados_busqueda}" />
+        </ice:panelGroup>
+
+        <!-- Filtro -->
+        <ice:panelGroup styleClass="col-sm-12">
+            <ice:panelGrid styleClass="formulario " columns="6" rendered="#{LeccAprendidasMB.filtroRender}">
+                <ice:outputLabel value="#{labels.leccApr_filtro_texto}:"/>
+                <ace:textEntry value="#{LeccAprendidasMB.filtro.texto}" />
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_tipo}:"/>
+                <ice:selectOneMenu id="comboTipo" 
+                                   value="#{LeccAprendidasMB.listaTipoLeccCombo.selected}" 
+                                   styleClass="textoMedio">
+                    <f:selectItems value="#{LeccAprendidasMB.listaTipoLeccCombo.items}" />
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_anio}:"/>
+                <ace:textEntry value="#{LeccAprendidasMB.filtro.anio}" 
+                               styleClass="textoCorto"
+                               converter="IntegerFormatConverter"
+                               style="margin-right: 20px;"/>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_programa}:"/>
+                <ice:selectOneMenu id="comboProgramas" 
+                                   value="#{LeccAprendidasMB.listaProgramasCombo.selected}" >
+                    <f:selectItems value="#{LeccAprendidasMB.listaProgramasCombo.items}" />
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_interesados}:"/>
+                <ice:selectOneMenu id="comboOrgaInteresados" 
+                                   value="#{LeccAprendidasMB.listaOrganizacionCombo.selected}"
+                                   styleClass="textoMedio">
+                    <f:selectItems value="#{LeccAprendidasMB.listaOrganizacionCombo.items}"/>
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_area}:"/>
+                <ace:pushButton styleClass="botonEditar iconoTabla #{LeccAprendidasMB.areasConHasValuesFiltro() ? 'valores' : ''}" 
+                                action="#{LeccAprendidasMB.areaConPopupFiltro()}"/>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_proyecto}:"/>
+                <ice:selectOneMenu id="comboProyectos"
+                                   value="#{LeccAprendidasMB.listaProyectosCombo.selected}" 
+                                   styleClass="textoMedio">
+                    <f:selectItems value="#{LeccAprendidasMB.listaProyectosCombo.items}" />
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_proveedor}:"/>
+                <ice:selectOneMenu id="comboOrgaProveedor" 
+                                   value="#{LeccAprendidasMB.listaOrgaProvCombo.selected}"
+                                   styleClass="textoMedio">
+                    <f:selectItems value="#{LeccAprendidasMB.listaOrgaProvCombo.items}"/>
+                </ice:selectOneMenu>
+
+                <ice:outputLabel value="#{labels.leccApr_filtro_area_tematica}:"/>
+                <ace:pushButton styleClass="botonEditar iconoTabla #{LeccAprendidasMB.areasTematicasHasValues() ? 'valores' : ''}" 
+                                action="#{LeccAprendidasMB.areaTematicaPopup}"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="panelAcciones" rendered="#{LeccAprendidasMB.filtroRender}">
+            <ice:panelGroup styleClass="panelBotones" >
+                <ace:messages id="filtroBusquedaMsg" />
+                <ace:pushButton value="#{labels.buscar}" 
+                                styleClass="boton principal buscar" 
+                                action="#{LeccAprendidasMB.buscarAction()}"/>
+                <ace:linkButton value="#{labels.limpiar}" 
+                                styleClass="boton secundario" style="margin-left: 10px;"
+                                action="#{LeccAprendidasMB.limpiarFiltro()}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

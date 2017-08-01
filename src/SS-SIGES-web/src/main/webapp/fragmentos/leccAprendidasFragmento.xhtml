@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmCargo">
+        <ice:panelGroup id="lecciones" styleClass="proyectos">
+
+            <!-- FORMULARIO FILTRO BUSQUEDA -->
+            <ui:include src="./leccAprendidasFragmentoFiltro.xhtml" />
+
+            <!-- FORMULARIO INGRESO -->
+            <ui:include src="./leccAprendidasFragmentoForm.xhtml" />
+
+            <ace:messages id="leccAprendidasMsg" for="frmCargo:leccAprendidasResultadoBusqueda"/>
+            
+            <ace:dataExporter target="tblResultadosLeccApre" label="#{labels.exportarPlanilla}" 
+                                  type="xls" fileName="#{labels.exportarPlantillaLeccAprendidas}"
+                                  includeHeaders="true" 
+                                  rendered="true"
+                                  excludeColumns="6,7,8"/>
+
+            <ice:panelGroup id="leccAprendidasResultadoBusqueda"
+                            styleClass="proyPendientes">
+                <ice:panelGroup>
+                    <ice:outputText value="#{labels.leccApr_head_titulo}" />
+                </ice:panelGroup>
+
+                <ace:dataTable id="tblResultadosLeccApre" 
+                               value="#{LeccAprendidasMB.leccAprendidasResultado}"
+                               var="la" 
+                               rowStyleClass="lineaNivel1" 
+                               paginator="true" 
+                               pageCount="5"
+                               rows="#{LeccAprendidasMB.cantElementosPorPagina}">
+
+                    <ace:column headerText="#{labels.leccApr_head_texto}"
+                                style="width: 600px;">
+                        <ice:outputText value="#{la.lecaprTexto(180)}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_Tipo}" >
+                        <ice:outputText value="#{LeccAprendidasMB.getLecaprTipoStr(la.lecaprTipoFk)}" rendered="false"/>
+                        <ice:outputText value="#{la.lecaprTipoStr}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_ingreso}" styleClass="colCenter">
+                        <ice:outputText value="#{la.lecaprFecha}" converter="fechaConverter" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_usuario}" >
+                        <ice:outputText value="#{la.lecaprUsuNombre}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_area_conocimiento}" style="width:200px;">
+                        <ice:outputText value="#{la.areaConocimientoStr}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_proyecto}">
+                        <ice:commandLink id="linkEditarFicha#{la.lecaprFk}"
+                                         action="#{inicioMB.irEditarProgramaProyecto(la.lecaprProyFkTipo, true)}" 
+                                         value="#{la.lecaprProyNombre} " 
+                                         rendered="#{la.lecaprProyFk != null}"
+                                         title="#{la.lecaprProyNombre}"/>
+                    </ace:column>
+
+                    <!-- Botones Editar, Eliminar -->
+                    <ace:column styleClass="columnaBoton">
+                        <ace:tooltip id="tooltipVer" for="btnVerLeccion">
+                            <ice:outputText value="#{labels.leccApre_ver}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnVerLeccion"
+                                        action="#{LeccAprendidasMB.leccionPopup(la.lecaprFk)}" 
+                                        styleClass="iconoTabla botonVer"/>
+                    </ace:column>
+
+                    <ace:column headerText=""
+                                rendered="#{LeccAprendidasMB.fieldRendered('editarLeccion')}"
+                                styleClass="columnaBoton">
+                        <ace:tooltip id="tooltipAdqEditar" for="btnEditarLeccion">
+                            <ice:outputText value="#{labels.leccApr_editar_tooltip}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnEditarLeccion" 
+                                        styleClass="botonEditar iconoTabla" 
+                                        action="#{LeccAprendidasMB.editarLeccApreAction(la.lecaprFk)}"/>
+                    </ace:column>
+
+                    <ace:column headerText=""
+                                rendered="#{LeccAprendidasMB.fieldRendered('eliminarLeccion')}"
+                                styleClass="columnaBoton">
+                        <h:commandButton id="btnEliminarLecc"
+                                         styleClass="botonEliminar iconoTabla" 
+                                         title="#{labels.leccApr_eliminar_tooltip}"
+                                         onclick="confirmationEliminarLecc#{la.lecaprFk}.show();" />
+                        <ace:confirmationDialog widgetVar="confirmationEliminarLecc#{la.lecaprFk}" 
+                                                message="#{labels.confirmacionEliminacion}"
+                                                header="#{labels.hConfirmacion}"
+                                                closable="true"
+                                                closeOnEscape="true"
+                                                severity="info"
+                                                modal="true"
+                                                position="center">
+                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                <h:commandButton id="yesDelLecc"
+                                                 value="#{labels.si}"
+                                                 styleClass="boton principal botonContinuar"
+                                                 onclick="confirmationEliminarLecc#{la.lecaprFk}.hide();" 
+                                                 actionListener="#{LeccAprendidasMB.eliminarLeccionAction(la.lecaprFk)}"/>
+                                <h:commandButton id="noDelLecc"
+                                                 value="#{labels.no}"
+                                                 styleClass="boton principal botonEliminar"
+                                                 onclick="confirmationEliminarLecc#{la.lecaprFk}.hide();"  />
+                            </h:panelGrid>
+                        </ace:confirmationDialog>
+                    </ace:column>
+
+                </ace:dataTable>
+                
+                
+                
+                
+                <ace:dataTable value="#{LeccAprendidasMB.listaResultado}"
+                               var="la" rendered="false"
+                               rowStyleClass="lineaNivel1" 
+                               paginator="true" 
+                               pageCount="5"
+                               rows="#{LeccAprendidasMB.cantElementosPorPagina}">
+
+                    <ace:column headerText="#{labels.leccApr_head_texto}"
+                                style="width: 600px;">
+                        <ice:outputText value="#{LeccAprendidasMB.recortarTexto(la.propertyMap['lecaprDesc'], 180)}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_Tipo}" >
+                        <ice:outputText value="#{la.propertyMap['lecaprTipoFk.tipolecNombre']}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_ingreso}" styleClass="colCenter">
+                        <ice:outputText value="#{la.propertyMap['lecaprFecha']}" converter="fechaConverter" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_usuario}" >
+                        <ice:outputText value="#{la.propertyMap['usuarioFk.usuPrimerNombre']} #{la.propertyMap['usuarioFk.usuPrimerApellido']}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_area_conocimiento}" style="width:200px;">
+                        <ice:outputText value="#{LeccAprendidasMB.getAreaConocimientoStr(la.propertyMap['areaConocimientosSet'])}" />
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.leccApr_head_proyecto}">
+                        <c:set var="proyFkTipo" value="2-#{la.propertyMap['lecaprProyFk.proyPk']}" />
+                        <ice:commandLink action="#{inicioMB.irEditarProgramaProyecto(proyFkTipo, true)}" 
+                                         value="#{la.propertyMap['lecaprProyFk.proyNombre']} " 
+                                         rendered="#{la.propertyMap['lecaprProyFk.proyPk'] != null}"
+                                         title="#{la.propertyMap['lecaprProyFk.proyNombre']}"/>
+                    </ace:column>
+
+                    <!-- Botones Editar, Eliminar -->
+                    <ace:column styleClass="columnaBoton">
+                        <ace:tooltip for="btnVerLeccion2">
+                            <ice:outputText value="#{labels.leccApre_ver}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnVerLeccion2"
+                                        action="#{LeccAprendidasMB.leccionPopup(la.id)}" 
+                                        styleClass="iconoTabla botonVer"/>
+                    </ace:column>
+
+                    <ace:column headerText=""
+                                rendered="#{LeccAprendidasMB.fieldRendered('editarLeccion')}"
+                                styleClass="columnaBoton">
+                        <ace:tooltip for="btnEditarLeccion2">
+                            <ice:outputText value="#{labels.leccApr_editar_tooltip}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnEditarLeccion2" 
+                                        styleClass="botonEditar iconoTabla" 
+                                        action="#{LeccAprendidasMB.editarLeccApreAction(la.id)}"/>
+                    </ace:column>
+
+                    <ace:column headerText=""
+                                rendered="#{LeccAprendidasMB.fieldRendered('eliminarLeccion')}"
+                                styleClass="columnaBoton">
+                        <h:commandButton styleClass="botonEliminar iconoTabla" 
+                                         title="#{labels.leccApr_eliminar_tooltip}"
+                                         onclick="confirmationEliminarLecc#{la.id}.show();" />
+                        <ace:confirmationDialog widgetVar="confirmationEliminarLecc#{la.id}" 
+                                                message="#{labels.confirmacionEliminacion}"
+                                                header="#{labels.hConfirmacion}"
+                                                closable="true"
+                                                closeOnEscape="true"
+                                                severity="info"
+                                                modal="true"
+                                                position="center">
+                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                <h:commandButton value="#{labels.si}"
+                                                 styleClass="boton principal botonContinuar"
+                                                 onclick="confirmationEliminarLecc#{la.id}.hide();" 
+                                                 actionListener="#{LeccAprendidasMB.eliminarLeccionAction(la.id)}"/>
+                                <h:commandButton value="#{labels.no}"
+                                                 styleClass="boton principal botonEliminar"
+                                                 onclick="confirmationEliminarLecc#{la.id}.hide();"  />
+                            </h:panelGrid>
+                        </ace:confirmationDialog>
+                    </ace:column>
+
+                </ace:dataTable>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

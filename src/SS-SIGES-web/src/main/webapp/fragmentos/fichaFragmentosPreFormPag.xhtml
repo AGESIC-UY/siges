@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup id="presupuestoPagForm" rendered="#{fichaMB.formPreRendered == 3}">
+        <ice:outputText value="#{labels.pagos_titulo}" styleClass="subtitulo"/>
+        <ice:panelGrid styleClass="formulario" columns="4">
+            <ice:outputLabel value="#{labels.pagos_entregable}"/>
+            <ace:simpleSelectOneMenu id="comboEntregablesPag"
+                                     value="#{fichaMB.listaEntregablesCombo.selected}"
+                                     disabled="#{fichaMB.fieldDisabled('prePagosEntregables')}">
+                <f:selectItems value="#{fichaMB.listaEntregablesCombo.items}"/>
+            </ace:simpleSelectOneMenu>
+
+            <ice:outputLabel value="#{labels.pagos_observaciones}"/>
+            <ace:textAreaEntry value="#{fichaMB.pagos.pagObservacion}"  
+                               rendered="#{not fichaMB.fieldDisabled('prePagosObs')}" styleClass="ancho100" cols="40" />
+
+            <ice:outputLabel value="#{fichaMB.pagos.pagObservacion}"  
+                             rendered="#{fichaMB.fieldDisabled('prePagosObs')}"  styleClass="ancho100" />
+
+            <ice:outputLabel value="#{labels.pagos_fecha_plan}"/>
+            <ace:dateTimeEntry value="#{fichaMB.pagos.pagFechaPlanificada}"
+                               disabled="#{fichaMB.fieldDisabled('prePagosFechaPlan')}"
+                               pattern="#{inicioMB.calendarPattern}" 
+                               renderAsPopup="true" navigator="true"
+                               timeZone="#{inicioMB.calendarTimeZone}"/>
+
+            <ice:outputLabel value="#{labels.pagos_importe_plan} #{fichaMB.pagos.pagAdqFk.adqMoneda.monSigno}"/>
+            <ace:textEntry id="txtImportePlanificado" 
+                           value="#{fichaMB.pagos.pagImportePlanificado}" 
+                           disabled="#{fichaMB.fieldDisabled('prePagosImpPlan')}"
+                           styleClass="alinearDerecha"
+                           converter="ImporteFormatConverter" />
+
+            <ice:outputLabel value="#{labels.pagos_fecha_real}"/>
+            <ace:dateTimeEntry value="#{fichaMB.pagos.pagFechaReal}"
+                               disabled="#{fichaMB.fieldDisabled('prePagosFechaReal')}"
+                               pattern="#{inicioMB.calendarPattern}" 
+                               renderAsPopup="true" navigator="true"
+                               timeZone="#{inicioMB.calendarTimeZone}"/>
+
+            <ice:outputLabel value="#{labels.pagos_importe_real} #{fichaMB.pagos.pagAdqFk.adqMoneda.monSigno}"/>
+            <ace:textEntry value="#{fichaMB.pagos.pagImporteReal}" 
+                           disabled="#{fichaMB.fieldDisabled('prePagosImpReal')}"
+                           styleClass="alinearDerecha"
+                           converter="ImporteFormatConverter" />
+
+            <ice:outputLabel value="#{labels.pagos_referencia}"/>
+            <ace:textEntry value="#{fichaMB.pagos.pagTxtReferencia}" disabled="#{fichaMB.fieldDisabled('prePagosReferencia')}" />
+        </ice:panelGrid>
+
+        <ice:panelGroup styleClass="panelBotones">
+            <ace:messages id="formPagoMsg"/>
+            <ace:pushButton  value="#{fichaMB.pagos ne null and fichaMB.pagos.pagPk ne null ? labels.editarPago : labels.agregarPago}" 
+                             styleClass="boton principal #{fichaMB.pagos ne null and fichaMB.pagos.pagPk ne null ? 'editar' : 'agregar'}" 
+                             action="#{fichaMB.agregarPagoAction()}" />
+            <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
+                              action="#{fichaMB.limpiarPago()}"/>
+            <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                             immediate="true"
+                             action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+        </ice:panelGroup>
+    </ice:panelGroup>
+
+</ui:composition>

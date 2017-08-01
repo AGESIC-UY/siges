@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmPopup">
+        <ice:panelPopup rendered="#{organismoMB.renderPopupCopia.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.organismo_copiar_titulo}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{organismoMB.cancelarCopiaAction()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formCopiaOrg">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.organismo_copiar_org}:"/>
+                        <ice:selectOneMenu value="#{organismoMB.organismosCombo.selected}" 
+                                           styleClass="textoMedio">
+                            <f:selectItems value="#{organismoMB.organismosCombo.items}"/>
+                        </ice:selectOneMenu>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_Ambito}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarAmbito}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_AreasConocimiento}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarAreasConocimiento}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_AreasTematicas}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarAreasTematicas}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_TiposDocumentos}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarTiposDocumentos}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_FuenteFinanciamiento}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarFuenteFinanciamiento}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_RolInteresados}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarRolInteresados}"/>
+                        
+                        <ice:outputLabel value="#{labels.organismo_copiar_Organizaciones}:"/>
+                        <ace:checkboxButton value="#{organismoMB.copiarOrganizaciones}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="popupMsg"/>
+                        <ace:pushButton value="#{labels.aceptar}" 
+                                        action="#{organismoMB.aceptarCopiaAction()}" 
+                                        styleClass="boton principal aceptar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{organismoMB.cancelarCopiaAction()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

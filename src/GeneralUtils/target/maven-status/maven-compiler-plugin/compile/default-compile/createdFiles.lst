@@ -1,0 +1,11 @@
+com/sofis/generico/utils/generalutils/EmpresasUtils.class
+com/sofis/generico/utils/generalutils/BooleanUtils.class
+com/sofis/generico/utils/generalutils/StringsUtils.class
+com/sofis/generico/utils/generalutils/EmailValidator.class
+com/sofis/generico/utils/generalutils/DatesUtils.class
+com/sofis/generico/utils/seguridad/GeneradorClaves.class
+com/sofis/generico/utils/generalutils/CollectionsUtils.class
+com/sofis/generico/utils/generalutils/MathUtils.class
+com/sofis/generico/utils/xml/XMLUtils.class
+com/sofis/generico/utils/generalutils/App.class
+com/sofis/generico/utils/generalutils/PersonasUtils.class

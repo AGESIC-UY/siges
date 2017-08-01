@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-web>
-  <security-domain>form-auth</security-domain>
-  <disable-audit>true</disable-audit>
-  <context-root>/SS-SIGES-web</context-root>
-</jboss-web>

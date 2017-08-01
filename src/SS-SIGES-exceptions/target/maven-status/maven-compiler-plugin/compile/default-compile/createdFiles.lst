@@ -1,0 +1,5 @@
+com/sofis/exceptions/BusinessException.class
+com/sofis/exceptions/TechnicalException.class
+com/sofis/exceptions/PGEProxyException.class
+com/sofis/exceptions/MailException.class
+com/sofis/exceptions/GeneralException.class

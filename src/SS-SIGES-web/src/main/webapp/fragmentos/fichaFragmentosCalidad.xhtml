@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup id="panelCalidad" 
+                    style="#{fichaMB.selectedMostrar == 7 ? 'width: 100%; padding-right:25px' : ''}" 
+                    styleClass="col-sm-6 cuadro" 
+                    rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 7) and fichaMB.fieldRendered('panelCalidad')}">
+        <ice:panelGroup id="cabezalCalidad" styleClass="cabezal">
+            <ice:outputText value="#{labels.cal_titulo}"/>
+            <ace:pushButton value="" action="#{fichaCalidadMB.mostrarFrameCalidad()}"
+                            styleClass="#{fichaMB.selectedMostrar == 7 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
+        </ice:panelGroup>
+
+        <!--El panel con el resumen de Calidad -->
+        <ice:panelGroup id="resumenCalidad" rendered="#{not fichaMB.mostrar[7]}" styleClass="cuerpo">
+            <ice:panelGroup styleClass="exposicionRiesgo" 
+                            rendered="#{fichaCalidadMB.indiceCalidad != null}">
+                <ice:outputLabel value="#{labels.cal_indice_calidad}: "/>
+                <ice:outputText value="#{fichaCalidadMB.indiceCalidad}" 
+                                converter="IntegerFormatConverter"
+                                rendered="#{fichaCalidadMB.indiceCalidad != null}"/>
+                <ice:outputText value="%" 
+                                rendered="#{fichaCalidadMB.indiceCalidad != null}"/>
+                <ice:commandButton style="background-color: #{fichaCalidadMB.indiceCalidadColor}"
+                                   styleClass="botonSemaforo"
+                                   disabled="true"/>
+            </ice:panelGroup>
+
+            <ace:dataTable id="calidadResumenTable"
+                           value="#{fichaCalidadMB.listaResumen}"
+                           styleClass="tablaFicha"
+                           var="item"
+                           rendered="#{not empty fichaCalidadMB.listaResumen}"
+                           paginator="true"
+                           paginatorPosition="bottom"
+                           rows="10">
+                <ace:column headerText="#{labels.cal_titulo_resumen_tabla}">
+                    <h:outputText value="#{fichaCalidadMB.tipoCalidadStr(item.calTipo)} - #{item.itemStr}"/>
+                </ace:column>
+            </ace:dataTable>
+
+            <ice:panelGroup rendered="#{empty fichaCalidadMB.listaResumen}">
+                <ice:outputText value="#{labels.cal_sin_reg_pend}" />
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <!--El panel de Calidad -->
+        <ice:panelGroup rendered="#{fichaMB.mostrar[7]}" styleClass="cuerpo">
+            <ice:panelGroup id="indiceYFiltrosCalidad" 
+                            styleClass="indiceYFiltrosCalidad">
+                <ice:panelGroup styleClass="col-sm-4 no-padding">
+                    <ice:outputText value="#{labels.cal_calidad_general}: " />
+                    <ice:outputText value="#{fichaCalidadMB.indiceCalidad}" 
+                                    rendered="#{fichaCalidadMB.indiceCalidad!=null}"
+                                    converter="IntegerFormatConverter"/>
+                    <ice:outputText value="%" rendered="#{fichaCalidadMB.indiceCalidad!=null}"/> 
+                    <ice:commandButton style="background-color: #{fichaCalidadMB.indiceCalidadColor}"
+                                       styleClass="botonSemaforo"
+                                       disabled="true"/>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="col-sm-8 no-padding">
+                    <ice:panelGrid styleClass="formulario" columns="5">
+                        <ice:outputLabel value="#{labels.cal_filtro_valor}:" 
+                                         styleClass="control-label"/>
+                        <ice:panelGroup>
+                            <ace:simpleSelectOneMenu value="#{fichaCalidadMB.listaValorCalidadCombo.selected}"
+                                                     styleClass="textoMedio">
+                                <f:selectItems value="#{fichaCalidadMB.listaValorCalidadCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+                        </ice:panelGroup>
+
+                        <ice:outputLabel value="#{labels.cal_filtro_tipo}:" 
+                                         styleClass="control-label"/>
+                        <ice:panelGroup>
+                            <ace:simpleSelectOneMenu value="#{fichaCalidadMB.listaTipoCalidadCombo.selected}"
+                                                     styleClass="textoMedio">
+                                <f:selectItems value="#{fichaCalidadMB.listaTipoCalidadCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+                        </ice:panelGroup>
+
+                        <ace:pushButton value="#{labels.buscar}" 
+                                        styleClass="boton principal buscar" 
+                                        action="#{fichaCalidadMB.buscarCalidadAction()}"/>
+                    </ice:panelGrid>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup id="agregarItemsCalidad" styleClass="clear recuadro margen-inf"
+                            rendered="#{fichaMB.fieldRendered('agregarCalidad')}">
+                <ice:panelGrid styleClass="formulario" columns="3">
+                    <ice:panelGroup styleClass="form-group">
+                        <ice:outputLabel value="#{labels.cal_agregar_tema_calidad}:" 
+                                         styleClass="col-sm-3 control-label"/>
+                        <ice:panelGroup styleClass="col-sm-7" >
+                            <ace:simpleSelectOneMenu value="#{fichaCalidadMB.listaAgregarTemaCalidaCombo.selected}"
+                                                     styleClass="textoMedio">
+                                <f:selectItems value="#{fichaCalidadMB.listaAgregarTemaCalidaCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+                        </ice:panelGroup>
+
+                        <ace:tooltip for="btnAgregarTca">
+                            <ice:outputText value="#{labels.agregar} #{labels.cal_agregar_tema_calidad}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnAgregarTca"
+                                        styleClass="botonAgregar iconoTabla col-sm-2" 
+                                        action="#{fichaCalidadMB.agregarTemaCalidadAction()}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="form-group">
+                        <ice:outputLabel value="#{labels.cal_agregar_entregables}:" 
+                                         styleClass="col-sm-3 control-label"/>
+                        <ice:panelGroup styleClass="col-sm-7" >
+                            <ace:simpleSelectOneMenu value="#{fichaCalidadMB.listaAgregarEntregablesCombo.selected}"
+                                                     styleClass="textoMedio">
+                                <f:selectItems value="#{fichaCalidadMB.listaAgregarEntregablesCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+                        </ice:panelGroup>
+                        <ace:tooltip for="btnAgregarEnt">
+                            <ice:outputText value="#{labels.agregar} #{labels.cal_agregar_entregables}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnAgregarEnt"
+                                        styleClass="botonAgregar iconoTabla col-sm-2" 
+                                        action="#{fichaCalidadMB.agregarEntregableAction()}"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="form-group">
+                        <ice:outputLabel value="#{labels.cal_agregar_productos}:" 
+                                         styleClass="col-sm-3 control-label"/>
+                        <ice:panelGroup styleClass="col-sm-7" >
+                            <ace:simpleSelectOneMenu value="#{fichaCalidadMB.listaAgregarProductosCombo.selected}"
+                                                     styleClass="textoMedio">
+                                <f:selectItems value="#{fichaCalidadMB.listaAgregarProductosCombo.items}"/>
+                            </ace:simpleSelectOneMenu>
+                        </ice:panelGroup>
+                        <ace:tooltip for="btnAgregarProd">
+                            <ice:outputText value="#{labels.agregar} #{labels.cal_agregar_productos}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnAgregarProd"
+                                        styleClass="botonAgregar iconoTabla col-sm-2" 
+                                        action="#{fichaCalidadMB.agregarProductosAction()}"/>
+                    </ice:panelGroup>
+                </ice:panelGrid>
+            </ice:panelGroup>
+
+            <ice:panelGroup>
+                <ace:messages id="msgCalidad" />
+            </ice:panelGroup>
+
+            <ice:panelGroup id="tablaItemsCalidad"
+                            styleClass="recuadro">
+                <ace:dataTable id="calidadResultadoTable"
+                               value="#{fichaCalidadMB.listaResultado}"
+                               styleClass="tablaFicha"
+                               var="item"
+                               rendered="#{not empty fichaCalidadMB.listaResultado}"
+                               paginator="true"
+                               paginatorPosition="bottom"
+                               rows="20">
+                    <ace:column headerText="#{labels.cal_tabla_tipo}">
+                        <h:outputText value="#{fichaCalidadMB.tipoCalidadStr(item.calTipo)}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.cal_tabla_item}" styleClass="max600">
+                        <h:outputText value="#{item.itemStr}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.cal_tabla_peso}" >
+                        <ace:textEntry value="#{item.calPeso}" 
+                                       rendered="#{fichaMB.fieldRendered('editarCalidad')}"
+                                       styleClass="textoCorto alinearDerecha"/>
+                        <h:outputText value="#{item.calPeso}" 
+                                      rendered="#{!fichaMB.fieldRendered('editarCalidad')}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.cal_tabla_valor}">
+                        <c:set var="colorCalidad" value="#{fichaCalidadMB.valorColorTabla(item.calVcaFk.vcaCodigo)}" />
+                        <ice:commandButton style="background-color: #{colorCalidad}"
+                                           styleClass="botonSemaforo"
+                                           rendered="#{colorCalidad != 'transparent' and colorCalidad != ''}"
+                                           disabled="true"/>
+                        <h:outputText value="#{item.calVcaFk.vcaNombre}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.cal_tabla_fecha}" 
+                                styleClass="colRight">
+                        <ice:outputText value="#{item.calActualizacion}" 
+                                        converter="fechaConverter" />
+                    </ace:column>
+
+                    <ace:column headerText="" styleClass="columnaBoton">
+                        <ice:panelGroup title="#{labels.cal_eliminar}">
+                            <h:commandButton onclick="confirmationEliminar#{item.calPk}.show()"
+                                             styleClass="botonEliminar iconoTabla" 
+                                             rendered="#{fichaMB.fieldRendered('eliminarCalidad')}"
+                                             type="button"/>
+
+                            <ace:confirmationDialog id="confirmDialogEliminar"
+                                                    widgetVar="confirmationEliminar#{item.calPk}"
+                                                    message="#{labels.confirmacionEliminacion}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesEliminar"
+                                                     value="#{labels.si}"
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationEliminar#{item.calPk}.hide()" 
+                                                     actionListener="#{fichaCalidadMB.eliminarAction(item.calPk)}"/>
+                                    <h:commandButton id="noEliminar"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationEliminar#{item.calPk}.hide()"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog> 
+                        </ice:panelGroup>
+                    </ace:column>
+                </ace:dataTable>
+
+                <ace:pushButton id="btnGuardarCalidad"
+                                styleClass="boton guardar" 
+                                value="#{labels.guardar}"
+                                action="#{fichaCalidadMB.guardarTablaAction()}"
+                                rendered="#{fichaMB.fieldRendered('editarCalidad')}"/>
+
+                <ice:panelGroup rendered="#{empty fichaCalidadMB.listaResultado}">
+                    <ice:outputText value="#{labels.cal_sin_registros}" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="bc43e142-0499-48de-93e4-0037770df2b5" activeEnvironment="Default" name="SIGES_ServiciosGestion_DEV" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0cc2623d-6d1e-416c-ac9b-d54cff4f1bc5" wsaVersion="NONE" name="ServiciosGestionSoapBinding" type="wsdl" bindingName="{http://gestion.ws.web.sofis.com/}ServiciosGestionSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl"><con:part><con:url>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ServiciosGestion" targetNamespace="http://gestion.ws.web.sofis.com/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://gestion.ws.web.sofis.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://gestion.ws.web.sofis.com/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="adquisicion" type="tns:adquisicionTO"/>
+      <xs:element name="attr" type="tns:attrTO"/>
+      <xs:element name="cronogramaTO" type="tns:cronogramaTO"/>
+      <xs:element name="entregableTO" type="tns:entregableTO"/>
+      <xs:element name="guardarProyecto" type="tns:guardarProyecto"/>
+      <xs:element name="guardarProyectoResponse" type="tns:guardarProyectoResponse"/>
+      <xs:element name="pago" type="tns:pagoTO"/>
+      <xs:element name="presupuesto" type="tns:presupuestoTO"/>
+      <xs:element name="proyecto" type="tns:proyectoTO"/>
+      <xs:element name="requestGuardarProyecto" type="tns:requestGuardarProyectoTO"/>
+      <xs:element name="responseGuardarProyecto" type="tns:responseGuardarProyectoTO"/>
+      <xs:complexType name="guardarProyecto">
+        <xs:sequence>
+          <xs:element name="request" type="tns:requestGuardarProyectoTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="requestGuardarProyectoTO">
+        <xs:sequence>
+          <xs:element name="token" type="xs:string"/>
+          <xs:element ref="tns:proyecto"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="proyectoTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="proyPk" type="xs:int"/>
+          <xs:element name="proyNombre" type="xs:string"/>
+          <xs:element name="proyDescripcion" type="xs:string"/>
+          <xs:element minOccurs="0" name="proyFactorImpacto" type="xs:string"/>
+          <xs:element name="proyObjetivo" type="xs:string"/>
+          <xs:element name="proyObjPublico" type="xs:string"/>
+          <xs:element name="proySituacionActual" type="xs:string"/>
+          <xs:element name="proyAreaFk" type="xs:int"/>
+          <xs:element name="proyUsrPmofedFk" type="xs:int"/>
+          <xs:element name="proyUsrGerenteFk" type="xs:int"/>
+          <xs:element name="proyUsrSponsorFk" type="xs:int"/>
+          <xs:element name="proyUsrAdjuntoFk" type="xs:int"/>
+          <xs:element minOccurs="0" ref="tns:presupuesto"/>
+          <xs:element minOccurs="0" name="cronograma" type="tns:cronogramaTO"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="presupuestoTO">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="adquisicionSet" type="tns:adquisicionTO"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="adquisicionTO">
+        <xs:sequence>
+          <xs:element name="adqNombre" type="xs:string"/>
+          <xs:element minOccurs="0" name="adqProcCompra" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="pagosSet" type="tns:pagoTO"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pagoTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pagObservacion" type="xs:string"/>
+          <xs:element name="pagFechaPlanificada" type="xs:string"/>
+          <xs:element name="pagImportePlanificado" type="xs:double"/>
+          <xs:element name="pagFechaReal" type="xs:string"/>
+          <xs:element name="pagImporteReal" type="xs:double"/>
+          <xs:element minOccurs="0" name="pagTxtReferencia" type="xs:string"/>
+          <xs:element minOccurs="0" name="pagConfirmar" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="attrTO">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="cronogramaTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="croEntSeleccionado" type="xs:int"/>
+          <xs:element minOccurs="0" name="croPermisoEscritura" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="croPermisoEscrituraPadre" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" name="entregableSet" type="tns:entregableTO"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entregableTO">
+        <xs:sequence>
+          <xs:element name="entId" type="xs:int"/>
+          <xs:element name="esHito" type="xs:boolean"/>
+          <xs:element name="entNombre" type="xs:string"/>
+          <xs:element name="entNivel" type="xs:int"/>
+          <xs:element name="entStatus" type="xs:string"/>
+          <xs:element name="entParent" type="xs:boolean"/>
+          <xs:element name="entInicio" type="xs:long"/>
+          <xs:element name="entFin" type="xs:long"/>
+          <xs:element minOccurs="0" name="entHorasEstimadas" type="xs:int"/>
+          <xs:element name="entEsfuerzo" type="xs:int"/>
+          <xs:element name="entProgreso" type="xs:int"/>
+          <xs:element minOccurs="0" name="entInicioLineaBase" type="xs:long"/>
+          <xs:element minOccurs="0" name="entFinLineaBase" type="xs:long"/>
+          <xs:element minOccurs="0" name="entParentFk" type="xs:int"/>
+          <xs:element name="inicioPeriodo" type="xs:boolean"/>
+          <xs:element name="finPeriodo" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="guardarProyectoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:responseGuardarProyectoTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="responseGuardarProyectoTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="status" type="xs:string"/>
+          <xs:element minOccurs="0" name="msg" type="xs:string"/>
+          <xs:element minOccurs="0" name="proyPk" type="xs:int"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="guardarProyectoResponse">
+    <wsdl:part element="tns:guardarProyectoResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="guardarProyecto">
+    <wsdl:part element="tns:guardarProyecto" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Servicios">
+    <wsdl:operation name="guardarProyecto">
+      <wsdl:input message="tns:guardarProyecto" name="guardarProyecto"></wsdl:input>
+      <wsdl:output message="tns:guardarProyectoResponse" name="guardarProyectoResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiciosGestionSoapBinding" type="tns:Servicios">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="guardarProyecto">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="guardarProyecto">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="guardarProyectoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ServiciosGestion">
+    <wsdl:port binding="tns:ServiciosGestionSoapBinding" name="ServiciosPort">
+      <soap:address location="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint></con:endpoints><con:operation id="2c2ccc4b-2e63-4113-8681-bf8ddaca518e" isOneWay="false" action="" name="guardarProyecto" bindingOperationName="guardarProyecto" type="Request-Response" outputName="guardarProyectoResponse" inputName="guardarProyecto" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="28b43988-de2f-43f5-8605-587ead8ae450" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>?</token>
+            <ges:proyecto>
+               <proyNombre>Prueba WS 01</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+            </ges:proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="d9abfc6d-5272-4019-bc8d-1f997b2947ff" name="TestSuite 01"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a0458a1a-4946-4fa1-8241-a6d8865b31e7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="guardarProyecto TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="ae046755-9db1-46d9-a470-f1598e2147c1" name="guardarProyecto_01"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_01" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyNombre>Prueba WS 01</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="0f717d25-40be-4211-8be4-f9008c39feab" name="guardarProyecto_02"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_02" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyNombre>Prueba WS 02</proyNombre>
+               <proyDescripcion>Prueba WS 02</proyDescripcion>
+               <proyObjetivo>Prueba WS 02</proyObjetivo>
+               <proyObjPublico>Prueba WS 02</proyObjPublico>
+               <proySituacionActual>Prueba WS 02</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="4906f8d3-de4c-4d85-9de4-2fd20a2b68a5" name="guardarProyecto_03"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_03" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyNombre>Prueba WS 12</proyNombre>
+               <proyDescripcion>Prueba WS 12</proyDescripcion>
+               <proyObjetivo>Prueba WS 12</proyObjetivo>
+               <proyObjPublico>Prueba WS 12</proyObjPublico>
+               <proySituacionActual>Prueba WS 12</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <cronograma>
+                  <croEntSeleccionado>0</croEntSeleccionado>
+                  <croPermisoEscritura>0</croPermisoEscritura>
+                  <croPermisoEscrituraPadre>1</croPermisoEscrituraPadre>
+                  <entregableSet>
+                     <entId>1</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>0</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>2</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>3</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1233540000000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1233540000000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>0</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>4</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1237604399000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1237604399000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>100</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+               </cronograma>
+               <presupuesto>
+                  <adquisicionSet>
+                     <adqNombre>A1_5</adqNombre>
+                     <adqMoneda>2</adqMoneda>
+                     <adqFuente>18</adqFuente>
+                     <adqProcCompra>A5_PROC_COMPRA_5</adqProcCompra>
+                     <adqProcCompraGrp>A5_PROC_COMPRA_GRP_5</adqProcCompraGrp>
+                     <pagosSet>
+                        <pagObservacion>P5_1</pagObservacion>
+                        <pagFechaPlanificada>31/05/2017</pagFechaPlanificada>
+                        <pagImportePlanificado>2000</pagImportePlanificado>
+                        <pagFechaReal>31/05/2017</pagFechaReal>
+                        <pagImporteReal>200</pagImporteReal>
+                        <pagTxtReferencia>REF_P5_1</pagTxtReferencia>
+                        <pagConfirmar>false</pagConfirmar>
+                     </pagosSet>
+                  </adquisicionSet>
+               </presupuesto>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="05004387-6cfe-48df-b403-23d9aa91eb3e" name="guardarProyecto_04"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_04" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+            	<proyPk>3170</proyPk>
+               <proyNombre>Prueba WS 13</proyNombre>
+               <proyDescripcion>Prueba WS 13</proyDescripcion>
+               <proyObjetivo>Prueba WS 13</proyObjetivo>
+               <proyObjPublico>Prueba WS 13</proyObjPublico>
+               <proySituacionActual>Prueba WS 13</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <cronograma>
+                  <croEntSeleccionado>0</croEntSeleccionado>
+                  <croPermisoEscritura>0</croPermisoEscritura>
+                  <croPermisoEscrituraPadre>1</croPermisoEscrituraPadre>
+                  <entregableSet>
+                     <entId>1</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>0</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1237604399000</entInicio>
+                     <entFin>1233540000000</entFin>
+                     <entInicioLineaBase>1237604399000</entInicioLineaBase>
+                     <entFinLineaBase>1233540000000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>2</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>3</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1233540000000</entFin>
+                     <entInicioLineaBase>1237604399000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>0</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>4</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1233540000000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1233540000000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>100</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+               </cronograma>
+               <presupuesto>
+                  <adquisicionSet>
+                     <adqNombre>A1_5</adqNombre>
+                     <adqMoneda>2</adqMoneda>
+                     <adqFuente>18</adqFuente>
+                     <adqProcCompra>A5_PROC_COMPRA_5</adqProcCompra>
+                     <adqProcCompraGrp>A5_PROC_COMPRA_GRP_5</adqProcCompraGrp>
+                     <pagosSet>
+                        <pagObservacion>P5_1</pagObservacion>
+                        <pagFechaPlanificada>31/05/2017</pagFechaPlanificada>
+                        <pagImportePlanificado>2000</pagImportePlanificado>
+                        <pagFechaReal>31/05/2017</pagFechaReal>
+                        <pagImporteReal>200</pagImporteReal>
+                        <pagTxtReferencia>REF_P5_1</pagTxtReferencia>
+                        <pagConfirmar>false</pagConfirmar>
+                     </pagosSet>
+                  </adquisicionSet>
+               </presupuesto>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>

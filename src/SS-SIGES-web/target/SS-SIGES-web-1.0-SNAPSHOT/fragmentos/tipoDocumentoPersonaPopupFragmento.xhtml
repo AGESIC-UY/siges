@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmCompletarPopup">
+      
+        <ice:panelPopup draggable="true"  autoCentre="true" modal="true"   rendered="#{tipoDocumentoPersonaMB.renderPopupHistorial}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hTipoDocumento}"/>
+                    <ice:commandButton styleClass="botonCerrar"  action="#{tipoDocumentoPersonaMB.cerrarPopupHistorial()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid width="100%">
+                    <ace:dataTable value="#{tipoDocumentoPersonaMB.listaHitorial}" var="row"
+                                   paginator="true" pageCount="5"  rows="#{aplicacionMB.filasHistorial}">
+                        <ace:column headerText="#{labels.hVersion}">
+                            <ice:outputText value="#{row.tipdocperVersion}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hCodigo}">
+                            <ice:outputText value="#{row.tipdocperCodigo}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hDescripcion}">
+                            <ice:outputText value="#{row.tipdocperDescripcion}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hHabilitado}" styleClass="obligatorio">
+                            <ace:checkboxButton value="#{row.tipdocperHabilitado}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltMod}">
+                            <ice:outputText value="#{row.tipdocperUltMod}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hUltUsuario}">
+                            <ice:outputText value="#{row.tipdocperUltUsuario}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+
+        <ice:panelPopup rendered="#{tipoDocumentoPersonaMB.renderPopupEdicion}" autoCentre="true" modal="true" draggable="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hTipoDocumento}"/>
+                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" action="#{tipoDocumentoPersonaMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid>
+                    <ace:messages />
+                    <ice:panelGrid columns="2" rowClasses="fila0,fila1">
+                        <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{tipoDocumentoPersonaMB.tdpEnEdicion.tipdocperCodigo}"/>
+                        <ice:outputLabel value="#{labels.descripcion}" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{tipoDocumentoPersonaMB.tdpEnEdicion.tipdocperDescripcion}"/>
+                        <ice:outputLabel value="#{labels.habilitado}"   />
+                        <ace:checkboxButton value="#{tipoDocumentoPersonaMB.tdpEnEdicion.tipdocperHabilitado}"/>
+                        <ice:panelGrid/>
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:pushButton value="#{labels.guardar}" action="#{tipoDocumentoPersonaMB.guardar}"  styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cancelar}" action="#{tipoDocumentoPersonaMB.cancelar()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+
+
+
+
+</ui:composition>

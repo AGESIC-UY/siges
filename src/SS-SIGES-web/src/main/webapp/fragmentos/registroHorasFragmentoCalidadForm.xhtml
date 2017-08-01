@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup styleClass="col-sm-12 no-padding">
+        <ice:panelGroup styleClass="recuadro">
+            <ice:panelGrid styleClass="formulario" columns="8">
+                <ice:outputLabel value="#{labels.registroHoras_proyecto}:" />
+                <ice:panelGroup styleClass="no-padding">
+                    <ice:selectOneMenu label="#{labels.registroHoras_proyecto}"
+                                       value="#{registroHorasMB.proyCalidad.proyPk}" 
+                                       valueChangeListener="#{registroHorasMB.cambiarProyectoCalidad}"
+                                       partialSubmit="true">
+                        <f:selectItems value="#{registroHorasMB.listaProyectosCalidad}" 
+                                       var="proy" 
+                                       itemLabel="#{proy.proyPkNombre}" 
+                                       itemValue="#{proy.proyPk}"/>
+                    </ice:selectOneMenu>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.cal_filtro_valor}:" 
+                                 styleClass="control-label"/>
+                <ice:panelGroup>
+                    <ace:simpleSelectOneMenu value="#{registroHorasMB.listaValorCalidadCombo.selected}"
+                                             styleClass="textoMedio">
+                        <f:selectItems value="#{registroHorasMB.listaValorCalidadCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.cal_filtro_tipo}:" 
+                                 styleClass="control-label"/>
+                <ice:panelGroup>
+                    <ace:simpleSelectOneMenu value="#{registroHorasMB.listaTipoCalidadCombo.selected}"
+                                             styleClass="textoMedio">
+                        <f:selectItems value="#{registroHorasMB.listaTipoCalidadCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+                </ice:panelGroup>
+
+                <ace:pushButton value="#{labels.buscar}" 
+                                styleClass="boton principal buscar" 
+                                action="#{registroHorasMB.buscarCalidadAction()}"/>
+                <ace:linkButton value="#{labels.limpiar}" rendered="false"
+                                styleClass="boton secundario" 
+                                style="margin-left: 10px;"
+                                action="#{registroHorasMB.limpiarCalidadAction()}"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup>
+            <ace:messages id="calidadMsg" />
+        </ice:panelGroup>
+
+        <ice:panelGroup id="tablaItemsCalidad"
+                        styleClass="recuadro margen-sup">
+            <ace:dataTable id="calidadResultadoTable"
+                           value="#{registroHorasMB.listCalidad}"
+                           styleClass="tablaFicha"
+                           var="item"
+                           rendered="#{not empty registroHorasMB.listCalidad}"
+                           paginator="true"
+                           paginatorPosition="bottom"
+                           rows="10">
+                <ace:column headerText="#{labels.cal_tabla_tipo}">
+                    <h:outputText value="#{registroHorasMB.tipoCalidadStr(item.calTipo)}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.cal_tabla_item}">
+                    <h:outputText value="#{item.itemStr}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.cal_tabla_peso}">
+                    <h:outputText value="#{item.calPeso}" />
+                </ace:column>
+
+                <ace:column headerText="#{labels.cal_tabla_valor}">
+                    <ice:selectOneMenu id="selectValor#{item.calPk}"
+                                       value="#{item.calVcaFk.vcaPk}"
+                                       valueChangeListener="#{registroHorasMB.changeValorTabla}"
+                                       partialSubmit="true"
+                                       styleClass="textoMedio">
+                        <f:attribute name="calPk" value="#{item.calPk}" />
+                        <f:selectItems value="#{registroHorasMB.listaValorTablaCalidadCombo.items}"/>
+                    </ice:selectOneMenu>
+
+                    <c:set var="colorCalidad" value="#{registroHorasMB.valorColorTabla(item.calVcaFk.vcaCodigo)}" />
+                    <ice:commandButton style="background-color: #{colorCalidad}"
+                                       styleClass="botonSemaforo"
+                                       rendered="#{colorCalidad != 'transparent' and colorCalidad != ''}"
+                                       disabled="true"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.cal_tabla_fecha}"
+                            styleClass="colRight">
+                    <ice:outputText value="#{item.calActualizacion}" 
+                                    converter="fechaConverter" />
+                </ace:column>
+            </ace:dataTable>
+
+            <ace:pushButton id="btnGuardarCalidad"
+                            styleClass="boton guardar" 
+                            value="#{labels.guardar}"
+                            rendered="#{not empty registroHorasMB.listCalidad}"
+                            action="#{registroHorasMB.guardarCalidadAction()}"/>
+
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

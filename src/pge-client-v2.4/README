@@ -1,0 +1,67 @@
+version 2.4
+-----------
+-Se crean nuevos constructores que reciben la configuracion como objeto, 
+la ruta del wsdl, y el qname del servicio.
+
+version 2.3
+-----------
+-Se agrega soporte a pasarle el archivo de configuracion.
+
+version 2.2
+-----------
+-Correccion error en el seteo de las fechas en el token SAML.
+
+version 2.1
+-----------
+-Correccion de error cuando se cargaban las keystore, se estaba usando siembre la misma tanto
+en el ssl como en el certificado para el sts
+
+Version 2.0
+-----------
+-Se elimina dependencia con Opensaml.
+-Se reporgrama la creacion del token saml para enviar al STS.
+-Invocacion asincronica al STS
+-Nueva clase PGEContext que realiza la carga del los datos necesarios
+para la invocacion de servicios.
+-Toda la informacion necesaria se toma del archivo pge-config.xml donde se definen 
+los parametros para el acceso a la plataforma, keystore, url del sts, etc.
+- Soporte para encriptar las password en la configuracion ver: https://community.jboss.org/wiki/PicketLinkConfigurationMaskPassword
+- Restructura de paquetes (uy.gub.agesic.pge)
+- Mejoras de performace.
+
+Version 1.6
+------------
+Inclusión de los Handlers para Publish and Suscribe
+
+Version 1.5
+------------
+Cambios hechos para el pasaje de credenciales de tipo usuario/password por WS-Security.
+Concretamente, el cambio realizado fue agregar la clase WSSecurityUsernamePasswordHandler
+
+Version 1.4
+------------
+Missing
+
+Version 1.3
+------------
+Cambios hechos por IdeaSoft para realizar comunicación SSL sin las Java System properties.
+Se utilizan las librerìas de Apache HTTP Components.
+
+Version 1.2
+------------
+Se eliminaron librerías innecesarias relativas a jboss
+
+Version 1.1
+-------------
+
+*  uy.gub.agesic.sts.client.PGEClient.jAVA: 
+Se agregó la firma 
+public SAMLAssertion requestSecurityToken(RSTBean bean, StoreBean keyStore, StoreBean trustStore, String urlStsSsl) throws RequestSecurityTokenException
+para poder pasarle la URL del STS al solicitar el token.
+
+* uy.gub.agesic.opensaml.AssertionManagerImpl.java:
+Se modificaron las fechas de emision de token en la función
+	generateSignedAssertion
+para que este comprendido en un rango de mas menos 15 mins. 
+        DateTime conditionTimeNotBefore = new DateTime().minusMinutes(15);
+        DateTime conditionTimeNotAfter = new DateTime().plusMinutes(15);

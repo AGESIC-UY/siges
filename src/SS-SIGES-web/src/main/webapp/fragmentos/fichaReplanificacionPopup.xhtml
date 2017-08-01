@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="replanificacionPopup">
+        <ice:panelPopup draggable="false" autoCentre="true" modal="true" 
+                        styleClass="popupMedio"
+                        rendered="#{fichaMB.renderPopupReplanificacion}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.replan_titulo_popup}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       title ="#{labels.cerrar}"
+                                       action="#{fichaMB.cerrarPopupReplanificacion()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            
+            <f:facet name="body">
+                <ice:panelGroup id="formUsuario">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.replan_generar_nueva_linea_base}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarLineaBase}"
+                                            valueChangeListener="#{fichaMB.replanificacionGenerarLineaBaseChange}">
+                            <ace:ajax/>
+                        </ace:checkboxButton>
+
+                        <ice:outputLabel value="#{labels.replan_mantener_historico_popup}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanHistorial}"
+                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}"
+                                            valueChangeListener="#{fichaMB.replanificacionProyreplanHistorialChange}">
+                            <ace:ajax/>
+                        </ace:checkboxButton>
+                    </ice:panelGrid>
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.replan_desc_popup}:" />
+                        <ice:inputTextarea value="#{fichaMB.replanificacion.proyreplanDesc}" 
+                                           styleClass="textoMedioLargo"
+                                           disabled="#{fichaMB.fieldDisabled('replanDesc') or  
+                                                       not fichaMB.replanificacion.proyreplanHistorial or
+                                                       not fichaMB.replanificacion.proyreplanGenerarLineaBase}" />
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="replanificacionPopupMsg" />
+                    </ice:panelGroup>
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ice:commandButton value="#{labels.guardar}" 
+                                           action="#{fichaMB.guardarRetrocederEstado()}" 
+                                           styleClass="boton principal guardar"/>
+                        <ice:commandButton value="#{labels.replan_cancelar}" 
+                                           action="#{fichaMB.cancelarReplanificacion()}"
+                                           styleClass="boton principal eliminar" 
+                                           rendered="#{fichaMB.replanificacion.getProyreplanPk() != null}" />
+                        <ace:linkButton value="#{labels.cerrar}" 
+                                        action="#{fichaMB.cerrarPopupReplanificacion()}"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

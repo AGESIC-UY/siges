@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup rendered="#{registroHorasMB.productosList != null and registroHorasMB.productosList.size() > 0}">
+
+        <ice:panelSeries value="#{registroHorasMB.productosList}" 
+                         var="prod" 
+                         rendered="#{registroHorasMB.productosList!=null and registroHorasMB.productosList.size() > 0}">
+
+            <ice:panelGroup>
+                <ice:panelGroup styleClass="col-sm-3 controles">
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="col-sm-9 controles">
+                    <ice:panelGroup styleClass="anioProducto">
+                        <ice:commandLink action="#{registroHorasMB.retrocederAnioProdMes(prod.prodEntregableFk.entPk)}" 
+                                         rendered="#{registroHorasMB.contieneProdMesAnioMenor()}">
+                            <ice:graphicImage value="../img/atrasar-fase.png" />
+                        </ice:commandLink>
+                        <ice:outputText value="#{registroHorasMB.anioProd}" title="#{labels.prod_tabla_anio_desplegado}"/>
+                        <ice:commandLink action="#{registroHorasMB.avanzarAnioProdMes(prod.prodEntregableFk.entPk)}"
+                                         rendered="#{registroHorasMB.contieneProdMesAnioMayor()}">
+                            <ice:graphicImage value="../img/adelantar-fase.png" />
+                        </ice:commandLink>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup>
+                <ice:panelGroup styleClass="col-sm-3">
+                    <ice:panelGrid  styleClass="formulario" columns="1">
+                        <ice:outputText value="#{prod.prodEntregableFk.entNombre}"
+                                        style="font-weight: bold"/>
+
+                        <ice:panelGroup>
+                            <ice:outputText value="#{prod.prodEntregableFk.entInicioDate}"
+                                            converter="fechaConverter"/> - 
+                            <ice:outputText value="#{prod.prodEntregableFk.entFinDate}"
+                                            converter="fechaConverter"/>
+                        </ice:panelGroup>
+
+                        <ice:outputLabel value="#{labels.prod_tabla_nombre}:"/>
+                        <ice:outputText value="#{prod.prodDesc} (#{prod.prodPeso})"
+                                        title="#{prod.prodDesc} (Peso:#{prod.prodPeso})"/>
+                        <ice:outputText value="#{prod.prodUndMedida}"/>
+                    </ice:panelGrid>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="col-sm-9 scrollProducto"
+                                >
+                    <div class="prodItem prodItemSubtitulo">
+                        <ice:outputText styleClass="prodItemTitle" >
+                        </ice:outputText>
+                        <ice:outputText value="#{labels.prod_tabla_planificado}:"/>
+                        <ice:outputText value="#{labels.prod_tabla_real}:"/>
+                        <ice:outputText value="#{labels.prod_tabla_acu_planificado}:"/>
+                        <ice:outputText value="#{labels.prod_tabla_acu_real}:"/>
+                    </div>
+
+                    <ui:repeat value="#{prod.prodMesAuxList}" var="prodMes">
+                        <div class="prodItem">
+                            <ice:outputText styleClass="prodItemTitle"
+                                            value="#{registroHorasMB.mesToStr(prodMes.prodmesMes, true)}"/>
+
+                            <ice:outputText value="#{prodMes.prodmesPlan}"
+                                            styleClass="alinearDerecha"
+                                            converter="ImporteFormatConverter" />
+
+                            <ice:outputText value="#{prodMes.prodmesReal}"
+                                            styleClass="alinearDerecha"
+                                            converter="ImporteFormatConverter"
+                                            rendered="#{!(registroHorasMB.proyHorasIsEstado(4) and registroHorasMB.editarRealProd(prodMes)) and prodMes.prodmesPk>0}"/>
+                            <ace:textEntry value="#{prodMes.prodmesReal}" 
+                                           rendered="#{registroHorasMB.proyHorasIsEstado(4) and registroHorasMB.editarRealProd(prodMes) and prodMes.prodmesPk>0}"
+                                           converter="ImporteFormatConverter"
+                                           styleClass="textoCorto alinearDerecha"/>
+
+                            <ice:outputText value="#{prodMes.prodmesAcuPlan}"
+                                            styleClass="alinearDerecha"
+                                            converter="ImporteFormatConverter"
+                                            rendered="#{prodMes.prodmesPk>0}"/>
+                            <ice:outputText value="#{prodMes.prodmesAcuReal}"
+                                            styleClass="alinearDerecha"
+                                            style="border-bottom: 6px solid #{registroHorasMB.getProdMesAcuRealColor(prodMes)}"
+                                            converter="ImporteFormatConverter"
+                                            rendered="#{prodMes.prodmesPk>0}"/>
+
+                            <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>
+                            <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>
+                            <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>
+                            <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>
+                        </div>
+                    </ui:repeat>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelSeries>
+    </ice:panelGroup>
+</ui:composition>
