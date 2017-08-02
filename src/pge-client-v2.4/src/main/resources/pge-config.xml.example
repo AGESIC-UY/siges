@@ -1,0 +1,53 @@
+<PGEConfig xmlns="urn:agesic:pge:config:1.0" >
+	<STSConfig url="https://testservicios.pge.red.uy:6051/TrustServer/SecurityTokenServiceProtected">
+		<Property Key="SSLContextInitializer" Value="uy.gub.agesic.pge.core.ssl.SSLContextInitializerCXF"/>
+		<Property Key="Role" Value="ou=rupe,o=acce"/>
+	    <Property Key="Policy" Value="urn:tokensimple"/>
+		<Property Key="Issuer" Value="Agesic"/>
+		<Property Key="Username" Value="prueba"/>
+		<!-- Timeout de la invocacion al STS en milisegudos-->
+		<Property Key="STSTimeOut" Value="5000"/>
+		<!-- Timeout del token SAML que se envia al STS en milisegundos -->
+		<Property Key="TokenTimeOut" Value="950000"/>
+	</STSConfig>
+	<KeyStore>
+		<!-- 
+			Los path soportan tanto la ruta absoluta o el formato URL
+			Ej.
+				file:///path_to_keystore
+				jar:///path_to_keystore
+			o un resource
+			Ej.
+				uy/gub/agesic/keystore.jks
+		 -->
+		<!-- Ruta a la keysore del Organismo  -->
+		<Auth Key="KeyStoreURL" Value="keystore/agesictesting_v4.keystore"/>
+		<!-- 
+			Password encritada (ver: https://community.jboss.org/wiki/PicketLinkConfigurationMaskPassword) 
+			de la keystore, puede ser en texto plano tambien  
+		-->
+		<Auth Key="KeyStorePass" Value="MASK-Vw6Vao6Mc/E="/>
+		<!-- Alias del certificado del organismo en la keystore -->
+		<Auth Key="KeyStoreAlias" Value="0f026f823ca3597ced3953188b1628de_be45dff3-4f56-4728-8332-77080b0c1c08"/>
+		<!-- Keystore para la conexion SSL -->
+  		<Auth Key="SSLKeyStoreURL" Value="keystore/agesictesting_v4.keystore"/>
+  		<!-- 
+			Password encritada (ver: https://community.jboss.org/wiki/PicketLinkConfigurationMaskPassword) 
+			de la keystore, puede ser en texto plano tambien  
+		-->
+  		<Auth Key="SSLKeyStorePass" Value="MASK-Vw6Vao6Mc/E="/>
+  		<!-- truststore para los certificados de confianza -->
+		<Auth Key="TrustStoreURL" Value="keystore/agesictesting_v2.0.truststore"/>
+		<!-- 
+			Password encritada (ver: https://community.jboss.org/wiki/PicketLinkConfigurationMaskPassword) 
+			de la keystore, puede ser en texto plano tambien  
+		-->
+  		<Auth Key="TrustStorePass" Value="MASK-Vw6Vao6Mc/E="/>
+  		<!-- 
+  			Valores utilizados para la encriptacion de las claves, debe ser el mismo para todas
+  			las claves. 
+  		 -->
+  		<Auth Key="salt" Value="saltword"/>
+        <Auth Key="iterationCount" Value="117"/>
+  	</KeyStore>
+</PGEConfig>

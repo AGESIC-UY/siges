@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.sofis.siges</groupId>
+    <artifactId>SS-SIGES-base</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>SS-SIGES-base</name>
+
+    <build>
+        <plugins>
+	    <!-- JREBEL -->
+<!--	    <plugin>
+		<groupId>org.zeroturnaround</groupId>
+		<artifactId>jrebel-maven-plugin</artifactId>
+		<version>1.1.6</version>
+		<configuration>
+		    <addResourcesDirToRebelXml>true</addResourcesDirToRebelXml>
+		    <alwaysGenerate>true</alwaysGenerate>
+		    <showGenerated>true</showGenerated>
+		</configuration>
+		<executions>
+		    <execution>
+			<id>generate-rebel-xml</id>
+			<phase>process-resources</phase>
+			<goals>
+			    <goal>generate</goal>
+			</goals>
+		    </execution>
+		</executions>
+	    </plugin>-->
+	    <!-- JREBEL -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <modules>
+        <module>SS-SIGES-ear</module>
+        <module>SS-SIGES-ejb</module>
+        <module>SS-SIGES-web</module>
+        <module>SS-SIGES-remotes</module>
+        <module>SS-SIGES-data</module>
+        <module>SS-SIGES-entities</module>
+        <module>SS-SIGES-exceptions</module>
+        <module>GeneralUtils</module>
+        <module>SS-SIGES-documentacion</module>
+        <module>pge-client-v2.4</module>
+        <module>SS-GENERIDAO-TO-JPA2</module>
+        <module>SS-GENERICDAO-BUSINESS-JPA2</module>
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+</project>

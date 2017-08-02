@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="configuracionDocumentos">
+
+        <!-- Titulo -->
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloConfiguracionDocumentos}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="limiteRiesgos">
+            <ace:messages />
+            <ice:panelGrid  styleClass="formulario " columns="3">
+                <h:outputText value="#{labels.limiteCnfDocAmarillo}"/>
+                <ace:textEntry value="#{configuracionMB.confDocLimiteAmarillo.cnfValor}"
+                               converter="IntegerFormatConverter"/> %
+
+                <h:outputText value="#{labels.tituloCnfDocRojo}"/>
+                <ace:textEntry value="#{configuracionMB.confDocLimiteRojo.cnfValor}"
+                               converter="IntegerFormatConverter"/> %
+            </ice:panelGrid>
+
+            <ice:panelGrid styleClass="panelBotonAgregar" >
+                <ace:pushButton value="Guardar" 
+                                action="#{configuracionMB.guardarDocLimite}" 
+                                styleClass="guardar" /> 
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+    </o:form>
+</ui:composition>

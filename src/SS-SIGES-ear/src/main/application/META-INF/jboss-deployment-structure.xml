@@ -1,0 +1,24 @@
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">
+    <deployment>
+        <exclusions>
+            <module name="org.apache.santuario.xmlsec" />
+        </exclusions>
+        <dependencies>
+            <!--<module name="org.apache.commons.collections" />-->
+            <module name="org.picketlink" />
+            <module name="org.jboss.ws.jaxws-client" />
+            <module name="org.apache.cxf" />
+            <system export="true">
+                <paths>
+                    <path name="javax/xml/crypto"/>
+                    <path name="javax/xml/crypto/dom"/>
+                    <path name="javax/xml/crypto/dsig"/>
+                    <path name="javax/xml/crypto/dsig/dom"/>
+                    <path name="javax/xml/crypto/dsig/keyinfo"/>
+                    <path name="javax/xml/crypto/dsig/spec"/>
+                    <path name="com/sun/org/apache/xml/internal/security/transforms/implementations"/>
+                </paths>
+            </system>    
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>  

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    
+    <!--    <context-param>
+        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name> 
+        <param-value>true</param-value>
+    </context-param>-->
+    
+    <context-param>
+        <param-name>facelets.SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>  
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>  
+        <param-value>5</param-value>  
+    </context-param>  
+    <context-param>  
+        <param-name>com.sun.faces.numberOfLogicalViews</param-name>  
+        <param-value>5</param-value>  
+    </context-param>  
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+        <!--<param-value>client</param-value>-->
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!--    <context-param>
+        <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
+        <param-value>false</param-value>
+    </context-param>-->
+        
+    <!--<context-param>
+        <param-name>com.icesoft.faces.connectionLostRedirectURI</param-name>
+        <param-value>http://www.sofis-solutions.com</param-value>
+    </context-param>-->
+    
+    <!-- BRUNO 03-04-17: Para corregir timeout de sesión -->
+    <!--    <context-param>
+        <param-name>com.icesoft.faces.synchronousUpdate</param-name>
+        <param-value>true</param-value>
+    </context-param>-->
+    
+    <context-param>
+        <description>
+            The default value of false for org.icefaces.strictSessionTimeout indicates that ICEfaces should
+            not interfere with container-managed control of session timeout. In this case, each user request
+            and each Ajax Push request will extend the session. Setting org.icefaces.strictSessionTimeout to
+            true indicates that ICEfaces should attempt to enforce the configured session timeout by 
+            ignoring any Ajax Push activity so that only user-triggered requests will extend the session.
+        </description>
+        <param-name>org.icefaces.strictSessionTimeout</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>org.icesoft.faces.sessionExpiredRedirectURI</param-name>
+        <param-value>/paginasPrivadas/paginaInicioCliente.jsf</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>org.icefaces.connectionLostRedirectURI</param-name>
+        <param-value>/paginasPrivadas/paginaInicioCliente.jsf</param-value>
+    </context-param>
+    
+    <session-config>
+        <session-timeout>120</session-timeout>
+    </session-config>
+    <!-- BRUNO 03-04-17: Para corregir timeout de sesión -->
+    
+    
+    
+    <!-- Multimedia WS -->
+    <context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>com.sofis.web.ws.MultimediaUpload</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>resteasy-servlet</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resteasy-servlet</servlet-name>
+        <url-pattern>/WS/*</url-pattern>
+    </servlet-mapping>
+
+    <mime-mapping>
+        <extension>map</extension>
+        <mime-type>application/json</mime-type>
+    </mime-mapping>
+    <!-- Multimedia WS Fin-->
+    
+    <listener>
+        <listener-class>com.sofis.web.listener.SessionCounterListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jsf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/icefaces/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Resource Servlet</servlet-name>
+        <servlet-class>com.icesoft.faces.webapp.CompatResourceServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Resource Servlet</servlet-name>
+        <url-pattern>/xmlhttp/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>descargar</servlet-name>
+        <servlet-class>com.sofis.web.servlet.DescargarPlantilla</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>descargar</servlet-name>
+        <url-pattern>/servlet/descargar</url-pattern>
+    </servlet-mapping>
+    
+    
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    <!-- SEGURIDAD -->
+    <security-constraint>
+        <display-name>Recursos privados</display-name>
+        <web-resource-collection>
+            <web-resource-name>privados_resources</web-resource-name>
+            <url-pattern>/paginasPrivadas/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Para usuarios autenticados solamente</description>
+            <role-name>usuario_autenticado</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/paginasPublicas/login.jsf</form-login-page>
+            <form-error-page>/paginasPublicas/error.jsf</form-error-page>
+        </form-login-config>
+    </login-config>
+    <!-- PAGINAS DE ERROR -->
+     
+    <!--BRUNO 03-04-17 -->
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/index.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
+        <location>/general-error.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/paginasPublicas/login.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>408</error-code>
+        <location>/paginasPublicas/logout.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/general-error.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/general-error.xhtml</location>
+    </error-page>
+    <error-page>
+        <location>/general-error.xhtml</location>
+    </error-page>
+    
+    
+    <!-- omnifaces -->
+    
+<!--    <filter>
+        <filter-name>gzipResponseFilter</filter-name>
+        <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipResponseFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>-->
+    
+    
+    <!--<distributable/>-->
+    
+    <!-- Consumo de memoria -->
+    <!--    <context-param>
+        <param-name>com.icesoft.faces.compressDOM</param-name>
+        <param-value>true</param-value>
+    </context-param>-->
+    
+    
+    <filter>
+        <filter-name>noCache</filter-name>
+        <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>cache10seconds</filter-name>
+        <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+        <init-param>
+            <param-name>expires</param-name>
+            <param-value>10s</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>cache10hours</filter-name>
+        <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+        <init-param>
+            <param-name>expires</param-name>
+            <param-value>10h</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>cache1day</filter-name>
+        <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+        <init-param>
+            <param-name>expires</param-name>
+            <param-value>2d</param-value>
+        </init-param>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>noCache</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>cache10hours</filter-name>
+        <url-pattern>*.js</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>cache10hours</filter-name>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+    
+    
+<!--    <context-param>
+        <description>http://www.icesoft.org/wiki/display/ICE/blockUIOnSubmit</description>
+        <param-name>org.icefaces.blockUIOnSubmit</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <context-param>
+        <description>http://www.icesoft.org/wiki/display/ICE/disableDefaultErrorPopups</description>
+        <param-name>org.icefaces.disableDefaultErrorPopups</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    
+    <context-param>
+        <description>http://www.icesoft.org/wiki/display/ICE/deltaSubmit</description>
+        <param-name>org.icefaces.deltaSubmit</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <context-param>
+        <description>http://www.icesoft.org/wiki/display/ICE/render.auto</description>
+        <param-name>org.icefaces.render.auto</param-name>
+        <param-value>true</param-value>
+    </context-param>-->
+    
+    
+</web-app>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmExportar">
+        <!-- Filtro -->
+        <ice:panelGroup id="filtroExpVisuaPanel" styleClass="buscador recuadro">
+            <ice:outputText value="#{labels.exp_visua_filtro}" styleClass="subtitulo"/>
+
+            <h:panelGroup layout="block" id="filtroPanel" styleClass="formulario formulario-resp">
+                <c:set var="colFiltro" value="col-sm-6" />
+                <c:set var="colNombre" value="col-sm-3" />
+                <c:set var="colInput" value="col-sm-9" />
+
+                <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.exp_visua_filtro_nombre}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <ace:textEntry value="#{exportarVisualizadorMB.filtro.nombre}" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.exp_visua_filtro_est_publica}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <ice:selectOneMenu id="comboEstPublicacion" 
+                                           value="#{exportarVisualizadorMB.listaEstPublicacionCombo.selected}">
+                            <f:selectItems value="#{exportarVisualizadorMB.listaEstPublicacionCombo.items}" />
+                        </ice:selectOneMenu>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.fechaDesde}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaDesde}"
+                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
+                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.fechaHasta}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaHasta}"
+                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true" 
+                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.exp_visua_filtro_area}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <ice:selectOneMenu value="#{exportarVisualizadorMB.listaAreasCombo.selected}" 
+                                           styleClass="textoMedio">
+                            <f:selectItems value="#{exportarVisualizadorMB.listaAreasCombo.items}" />
+                        </ice:selectOneMenu>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                    <ice:outputLabel value="#{labels.exp_visua_filtro_actualizados}:"
+                                     styleClass="#{colNombre} control-label"/>
+                    <ice:panelGroup styleClass="#{colInput}" >
+                        <h:selectBooleanCheckbox value="#{exportarVisualizadorMB.filtro.actualizados}" 
+                                                 styleClass="formulario"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+            </h:panelGroup>
+
+            <h:panelGroup id="filtroBotonesPanel" styleClass="panelAcciones">
+                <ice:panelGroup styleClass="panelBotones" >
+                    <ace:messages id="filtroBusquedaMsg" />
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{exportarVisualizadorMB.buscar()}"/>
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" style="margin-left: 10px;"
+                                    action="#{exportarVisualizadorMB.limpiarFiltro()}"/>
+                </ice:panelGroup>
+            </h:panelGroup>
+        </ice:panelGroup>
+
+        <!-- Listado -->
+        <ice:panelGroup rendered="#{exportarVisualizadorMB.listFichaTO != null}" styleClass="margen-sup">
+            <ice:panelGroup styleClass="recuadro resultadoExportacion"
+                            rendered="#{exportarVisualizadorMB.totalProy != null}">
+
+                <ice:panelGroup >
+                    <ice:outputText value="Seleccionados: #{exportarVisualizadorMB.totalProy}" 
+                                    rendered="#{exportarVisualizadorMB.totalProy != null}"/>
+                </ice:panelGroup>
+                <ice:panelGroup >
+                    <ice:outputText value="Procesados: #{exportarVisualizadorMB.countProy} (Exportados: #{exportarVisualizadorMB.totalProySucces}, Con error: #{exportarVisualizadorMB.totalProyError})"
+                                    rendered="#{exportarVisualizadorMB.countProy != null}"/>
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="avance">
+                    <ice:outputText value="Avance: #{exportarVisualizadorMB.progressProy}%" 
+                                    rendered="#{exportarVisualizadorMB.progressProy != null}"/>
+                    <ace:progressBar id="progressBarExp" value="#{exportarVisualizadorMB.progressProy}" 
+                                     rendered="#{exportarVisualizadorMB.progressProy != null}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="panelBotones">
+                <ace:pushButton value="#{labels.exportar}" 
+                                styleClass="boton principal exportar" 
+                                rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
+                                action="#{exportarVisualizadorMB.exportar()}"/>
+                <ace:linkButton value="#{labels.cancelar}" 
+                                styleClass="boton secundario" style="margin-left: 10px;"
+                                rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
+                                action="#{exportarVisualizadorMB.cancelarExportar()}"/>
+            </ice:panelGroup>
+
+
+            <ice:panelGroup >
+                <ice:outputText styleClass="resultadoBusqueda" value="#{labels.resultadoBusqueda}: #{exportarVisualizadorMB.listFichaTO.size()}"/>
+            </ice:panelGroup>
+
+            <ace:dataTable id="tblResultados" 
+                           value="#{exportarVisualizadorMB.listFichaTO}"  
+                           var="item"
+                           paginator="false" 
+                           pageCount="5">
+
+                <ace:column headerText="#{labels.hId}" sortBy="#{item.fichaFk}">
+                    <ice:outputText value="#{item.fichaFk}"/>
+                </ace:column>
+
+                <ace:column>
+                    <ice:commandLink id="linkEditarFicha2"
+                                     action="#{inicioMB.irEditarProgramaProyecto(item.proyProgId, true)}" 
+                                     rendered="#{item.proyProgId != null}"
+                                     title="#{labels.inicio_link_nombre}">
+                        <ice:graphicImage value="../img/nueva_ventana.png" />
+                    </ice:commandLink>
+                </ace:column>
+
+                <ace:column headerText="#{labels.proyecto}" sortBy="#{item.nombre}"
+                            styleClass="ajusteWordColumna">
+                    <ice:outputText value="#{item.nombre}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.programa}" sortBy="#{item.progFk.progNombre}">
+                    <ice:outputText value="#{item.progFk.progNombre}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.areaOrganizacionFicha}" sortBy="#{item.areaFk.areaNombre}">
+                    <ice:outputText value="#{item.areaFk.areaNombre}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.estado}" sortBy="#{inicioMB.estadoLabel(item.estado.estCodigo)}">
+                    <ice:outputText value="#{inicioMB.estadoLabel(item.estado.estCodigo)}"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.actualizacionFicha}" sortBy="#{item.fechaAct}">
+                    <ice:outputText value="#{item.fechaAct}"
+                                    converter="fechaConverter"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.ultPubFicha}" sortBy="#{item.fechaPublicacion}">
+                    <ice:outputText value="#{item.fechaPublicacion}"
+                                    converter="fechaConverter"/>
+                </ace:column>
+
+                <ace:column headerText="#{labels.exp_visua_sel}" sortBy="#{item.seleccionado}" 
+                            rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}">
+                    <h:selectBooleanCheckbox value="#{item.seleccionado}" 
+                                             styleClass="formulario"
+                                             title="#{item.publicable ? labels.exp_visua_check_pub : labels.exp_visua_no_pub}"
+					     rendered="#{item.publicable}"/>
+                </ace:column>
+
+                <ace:column >
+                    <ice:graphicImage value="../img/mens-ok.png" rendered="#{item.exportado eq true}" />
+                    <ice:graphicImage value="../img/mens-error.png" rendered="#{item.exportado eq false}" 
+                                      alt="#{item.errorDesc}"
+                                      title="#{item.errorDesc}"/>
+                </ace:column>
+
+            </ace:dataTable>
+
+            <ice:panelGroup styleClass="panelBotones margen-sup">
+                <ace:pushButton value="#{labels.exportar}" 
+                                styleClass="boton principal exportar" 
+                                rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
+                                action="#{exportarVisualizadorMB.exportar()}"/>
+                <ace:linkButton value="#{labels.cancelar}" 
+                                rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
+                                styleClass="boton secundario" style="margin-left: 10px;"
+                                action="#{exportarVisualizadorMB.cancelarExportar()}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+    </o:form>
+</ui:composition>

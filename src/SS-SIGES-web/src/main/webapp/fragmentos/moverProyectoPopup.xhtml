@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="moverProyPopup">
+        <ice:panelPopup draggable="true" autoCentre="true" modal="true" rendered="#{moverProyectoMB.renderPopupMoverProy}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.ficha_mover_proy_titulo}: #{fichaMB.fichaTO.nombre}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       title ="#{labels.cerrar}"
+                                       action="#{moverProyectoMB.cerrarRenderPopupMoverProy()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+
+                <!--                <ice:panelGroup scrollHeight="# {!moverProyectoMB.mapearCatalogoVisible ? '50px' : '450px'}">-->
+                <ice:panelGroup styleClass="popupScroll">
+                    <ice:panelGrid styleClass="formulario" columns="4" rendered="#{!moverProyectoMB.mapearCatalogoVisible}">
+                        <ice:outputLabel value="#{labels.ficha_mover_org_destino}" for="selectOrganismoDest" />
+                        <ice:selectOneMenu id="selectOrganismoDest" value="#{moverProyectoMB.fichaDestinoTO.proyOrgFk.orgPk}"
+                                           disabled="#{moverProyectoMB.mapearCatalogoVisible}">
+                            <f:selectItems value="#{inicioMB.organismosUsuario.items}"/>
+                        </ice:selectOneMenu>
+
+                        <ice:commandButton  styleClass="boton principal" 
+                                            value="#{labels.ficha_mover_mapearCatalogos}"
+                                            label="#{labels.ficha_mover_mapearCatalogos}"
+                                            title ="#{labels.ficha_mover_mapearCatalogos}"
+                                            action="#{moverProyectoMB.mapearCatalogos()}"
+                                            rendered="#{!moverProyectoMB.mapearCatalogoVisible}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="formulario rowHover"
+                                    rendered="#{moverProyectoMB.mapearCatalogoVisible}">
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.origen}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.orgFk.orgNombre}" styleClass="subtitulo"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.destino}"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{moverProyectoMB.fichaDestinoTO.proyOrgFk.orgNombre}" styleClass="subtitulo"/>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.nombre}"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.nombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.ficha_mover_proy_nombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:inputText value="#{moverProyectoMB.fichaDestinoTO.proyNombre}"  />
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.areaOrganizacionFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.areaFk.areaNombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.areaOrganizacionFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyAreaFk.areaPk}">
+                                    <f:selectItems value="#{moverProyectoMB.listaAreasOrganismoCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.programaFicha}:" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.progFk.progNombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.programaFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.listaProgramasCombo.selected}" >
+                                    <f:selectItems value="#{moverProyectoMB.listaProgramasCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.gerenteFicha}:" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.usrGerenteFk.nombreApellido}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.gerenteFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyUsrGerenteFk.usuId}">
+                                    <f:selectItems value="#{moverProyectoMB.listaGerenteCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.adjuntoFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.usrAdjuntoFk.nombreApellido}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.adjuntoFicha}:" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyUsrAdjuntoFk.usuId}">
+                                    <f:selectItems value="#{moverProyectoMB.listaAdjuntoCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.pmoFederadaFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.usrPmofedFk.nombreApellido}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.pmoFederadaFicha}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyUsrPmofedFk.usuId}">
+                                    <f:selectItems value="#{moverProyectoMB.listaPmoFederadaCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.moneda}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.preFk.preMoneda.monNombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.moneda}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyPreFk.preMoneda.monPk}">
+                                    <f:selectItems value="#{moverProyectoMB.listaMonedaPreCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="row">
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.fuente_fin_titulo}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:outputText value="#{fichaMB.fichaTO.preFk.fuenteFinanciamiento.fueNombre}" />
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-2">
+                                <ice:outputLabel value="#{labels.fuente_fin_titulo}:"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup styleClass="col-sm-4">
+                                <ice:selectOneMenu value="#{moverProyectoMB.fichaDestinoTO.proyPreFk.fuenteFinanciamiento.fuePk}">
+                                    <f:selectItems value="#{moverProyectoMB.listaFuentesPreCombo.items}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="subtituloSeccion">
+                            <ice:outputText value="#{labels.presupuesto_titulo}" styleClass="subtitulo"/>
+                        </ice:panelGroup>
+
+                        <c:forEach items="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet}" var="adq">
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_nombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_nombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqNombre}" />
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqProvOrga.orgaNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu  value="#{adq.adqProvOrga.orgaPk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaOrganizacionCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_fuente}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqFuente.fueNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.adquisicion_fuente}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu  value="#{adq.adqFuente.fuePk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaFuentesPreCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.moneda}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqMoneda.monNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.moneda}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu value="#{adq.adqMoneda.monPk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaMonedaPreCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="separador" rendered="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet.size() > 1}"/>
+                        </c:forEach>
+
+                        <ice:panelGroup styleClass="subtituloSeccion">
+                            <ice:outputText value="#{labels.documentos}" styleClass="subtitulo"/>
+                        </ice:panelGroup>
+
+                        <c:forEach items="#{moverProyectoMB.fichaDestinoTO.documentosSet}" var="doc">
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.nombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{doc.docsNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.nombre}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{doc.docsNombre}" />
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.tipo_doc_titulo}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{doc.docsTipo.tipodocInstTipoDocFk.tipodocNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.tipo_doc_titulo}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu value="#{doc.docsTipo.tipodocInstTipoDocFk.tipdocPk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaTipoDocCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+                            <ice:panelGroup styleClass="separador" rendered="#{moverProyectoMB.fichaDestinoTO.documentosSet.size() > 1}"/>
+                        </c:forEach>
+                    </ice:panelGroup>
+
+
+                    <div class="panelBotones">
+                        <ace:messages id="formMoverProyNompMsg"/>
+                        <ice:commandButton  styleClass="boton principal guardar" 
+                                            value="#{labels.guardar}"
+                                            label="#{labels.guardar}"
+                                            title ="#{labels.guardar}"
+                                            onclick="confirmationMoverProy.show()"
+                                            rendered="#{moverProyectoMB.mapearCatalogoVisible}"
+                                            type="button"/>
+                        <ace:linkButton value="#{labels.cerrar}" 
+                                        action="#{moverProyectoMB.cerrarRenderPopupMoverProy()}"/>
+
+                        <ace:confirmationDialog id="confirmDialogEliminar"
+                                                widgetVar="confirmationMoverProy"
+                                                message="#{labels.confirmacionMoverProy}"
+                                                header="#{labels.hConfirmacion}"
+                                                closable="true"
+                                                closeOnEscape="true"
+                                                severity="info"
+                                                modal="true"
+                                                position="center">
+                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                <h:commandButton value="#{labels.si}"
+                                                 styleClass="boton principal botonContinuar"
+                                                 onclick="confirmationMoverProy.hide()" 
+                                                 action="#{moverProyectoMB.moverProyecto()}" />
+                                <h:commandButton value="#{labels.no}"
+                                                 styleClass="boton principal botonEliminar"
+                                                 onclick="confirmationMoverProy.hide()"  />
+                            </h:panelGrid>
+                        </ace:confirmationDialog> 
+                    </div>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmAreaPopup">
+        <ice:panelPopup rendered="#{areaConocimientoMB.renderPopupEdicion.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.tituloAreaCon}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{areaConocimientoMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formArea">
+                    <ice:panelGrid styleClass="formulario" columns="4">
+                        <ice:outputLabel value="#{labels.area_con_head_nombre}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{areaConocimientoMB.areaEnEdicion.conNombre}" />
+                        
+                        <ice:outputLabel value="#{labels.area_con_head_padre}:" />
+                        <ice:selectOneMenu value="#{areaConocimientoMB.listaAreasPopupCombo.selected}" 
+                                           styleClass="textoMedio">
+                            <f:selectItems value="#{areaConocimientoMB.listaAreasPopupCombo.items}"/>
+                        </ice:selectOneMenu>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="popupMsg"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{areaConocimientoMB.guardar}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{areaConocimientoMB.cancelar()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

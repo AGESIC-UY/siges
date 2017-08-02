@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup styleClass="indicadoresCronograma">
+
+        <c:if test="#{(fichaMB.indiceAvanceFinalizado[0] == 0 and fichaMB.indiceAvanceFinalizado[1] == 0 and fichaMB.indiceAvanceFinalizado[2] == 0) or (fichaMB.indiceAvanceParcial[0] == 0 and fichaMB.indiceAvanceParcial[1] == 0 and fichaMB.indiceAvanceParcial[2] == 0)}">
+            <ice:outputText value="#{labels.crono_ind_falta_esfuerzo}" />
+        </c:if>
+        
+        <c:if test="#{!(fichaMB.indiceAvanceFinalizado[0] == 0 and fichaMB.indiceAvanceFinalizado[1] == 0 and fichaMB.indiceAvanceFinalizado[2] == 0)}">
+            <ace:tooltip id="tooltipAvanceFinalizado#{ganttIndice}" for="indiceAvanceFinalizado#{ganttIndice}">
+                <ice:outputLabel value="#{labels.crono_ind_avance_finalizado}"/>
+                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[0]}%" style="font-weight: bold; color: blue; "/> -
+                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[1]}%" style="font-weight: bold; color: green"/> -
+                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[2]}%" style="font-weight: bold; color: red"/>
+            </ace:tooltip>
+            <c:set var="porc" value="%"/>
+            <ice:panelGroup id="indiceAvanceFinalizado#{ganttIndice}" styleClass="indice3color">
+                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[0]}#{porc}"
+                                styleClass="indice3colorBlue">
+                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[0]}%" rendered="#{fichaMB.indiceAvanceFinalizado[0] gt 10}" />
+                </ice:panelGroup>
+                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[1]}#{porc}"
+                                styleClass="indice3colorGreen">
+                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[1]}%" rendered="#{fichaMB.indiceAvanceFinalizado[1] gt 10}" />
+                </ice:panelGroup>
+                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[2]}#{porc}"
+                                styleClass="indice3colorRed">
+                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[2]}%" rendered="#{fichaMB.indiceAvanceFinalizado[2] gt 10}" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </c:if>
+
+        <c:if test="#{!(fichaMB.indiceAvanceParcial[0] == 0 and fichaMB.indiceAvanceParcial[1] == 0 and fichaMB.indiceAvanceParcial[2] == 0)}">
+            <ace:tooltip id="tooltipAvanceParcial#{ganttIndice}" for="indiceAvanceParcial#{ganttIndice}">
+                <ice:outputLabel value="#{labels.crono_ind_avance_parcial}"/>
+                <ice:outputText value="#{fichaMB.indiceAvanceParcial[0]}%" style="font-weight: bold; color: blue; "/> -
+                <ice:outputText value="#{fichaMB.indiceAvanceParcial[1]}%" style="font-weight: bold; color: green"/> -
+                <ice:outputText value="#{fichaMB.indiceAvanceParcial[2]}%" style="font-weight: bold; color: red"/>
+            </ace:tooltip>
+            <ice:panelGroup id="indiceAvanceParcial#{ganttIndice}" styleClass="indice3color">
+                <ice:panelGroup style="width:#{fichaMB.indiceAvanceParcial[0]}#{porc}"
+                                styleClass="indice3colorBlue">
+                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[0]}%" rendered="#{fichaMB.indiceAvanceParcial[0] gt 10}" />
+                </ice:panelGroup>
+                <ice:panelGroup style="width: #{fichaMB.indiceAvanceParcial[1]}#{porc}"
+                                styleClass="indice3colorGreen">
+                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[1]}%" rendered="#{fichaMB.indiceAvanceParcial[1] gt 10}" />
+                </ice:panelGroup>
+                <ice:panelGroup style="width: #{fichaMB.indiceAvanceParcial[2]}#{porc}"
+                                styleClass="indice3colorRed">
+                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[2]}%" rendered="#{fichaMB.indiceAvanceParcial[2] gt 10}" />
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </c:if>
+    </ice:panelGroup>
+</ui:composition>

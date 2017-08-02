@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmFichaSitActHistoricoPopup">
+        <ice:panelPopup draggable="true" 
+                        autoCentre="true" 
+                        modal="true" 
+                        style="width: 90%;"
+                        rendered="#{fichaMB.renderPopupHistoricoSitAct}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hSitActHistoricoPopup}"/>
+                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
+                                       action="#{fichaMB.cerrarPopupSitActHistorico()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup scrollHeight="450px">
+                    <ace:dataTable emptyMessage="#{labels.sitact_vacio}"
+                                   value="#{fichaMB.historicoSitAct}"
+                                   var="sitAct">
+                        <ace:column headerText="#{labels.sitact_fecha}">
+                            <ice:outputText value="#{sitAct.proySitactFecha}" converter="fechaConverter"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.sitact_desc}">
+                            <ice:outputText value="#{sitAct.proySitactDesc}" escape="false"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.sitact_usuario}">
+                            <ice:outputText value="#{sitAct.proySitactUsuario.usuNombreApellido}" escape="false"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

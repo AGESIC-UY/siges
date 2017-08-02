@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="formOrganismo">
+        <ice:panelGroup id="panelFormOrganismo" styleClass="margen-inf" >
+            <ice:panelGroup styleClass="tituloPagina">
+                <ice:outputText value="#{labels.organismo_titulo_form}"/>
+            </ice:panelGroup>
+
+            <ice:panelGrid styleClass="formulario formOrganismo" columns="2">
+
+                <ice:outputLabel value="#{labels.organismo_form_nombre}"/>
+                <ace:textEntry value="#{organismoMB.organismoForm.orgNombre}" />
+
+                <ice:outputLabel value="#{labels.organismo_form_direccion}"/>
+                <ace:textEntry value="#{organismoMB.organismoForm.orgDireccion}" />
+                
+                <ice:outputLabel value="#{labels.organismo_form_token}"/>
+                <ace:textEntry value="#{organismoMB.organismoForm.orgToken}" />
+
+                <ice:outputLabel value="#{labels.organismo_form_logo}"/>
+                <ice:panelGroup>
+                    <ace:fileEntry id="fileEntryLogo"
+                                   label="#{labels.organismo_form_logo}"
+                                   callback=""
+                                   relativePath="/files/"
+                                   maxFileCount="1" 
+                                   maxFileCountMessage="#{labels.organismo_form_fileMaxFileCount}" 
+                                   fileEntryListener="#{organismoMB.subirLogoOrgAction}" 
+                                   maxFileSize="#{organismoMB.obtenerCnfValorPorCodigo('TAMANIO_MAX_LOGO_ORGANISMO')}"
+                                   maxFileSizeMessage="#{labels.organismo_form_tamanioMaxArchivo}" 
+                                   useOriginalFilename="true" 
+                                   useSessionSubdir="true"
+                                   style="width: 280px;"/>
+                    <h:commandButton id="btnSubmitLogo" type="submit"
+                                     styleClass="iconoTabla subir" />
+                </ice:panelGroup>
+
+                <ice:outputLabel value="#{labels.organismo_form_activo}"/>
+                <ace:checkboxButton value="#{organismoMB.organismoForm.orgActivo}" />
+
+                <ace:linkButton value="#{labels.organismo_form_copiar}" 
+                                styleClass="boton secundario" 
+                                rendered="#{organismoMB.organismoForm.orgPk == null}"
+                                action="#{organismoMB.copiarOrganismoAction()}"/>
+                <ice:outputLabel value=""/>
+
+                <ice:outputLabel value="#{labels.organismo_copiar_org}"
+                                 rendered="#{organismoMB.organismoSeleccionado != null}"/>
+                <ice:outputText value="#{organismoMB.organismoSeleccionado.orgNombre}"
+                                rendered="#{organismoMB.organismoSeleccionado != null}"/>
+
+                <ice:outputLabel value="#{labels.organismo_copiar_info}"
+                                 rendered="#{organismoMB.copiarDeOrgSelecionado !=null}"/>
+                <ice:outputText value="#{organismoMB.copiarDeOrgSelecionado}"
+                                rendered="#{organismoMB.copiarDeOrgSelecionado !=null}"/>
+            </ice:panelGrid>
+
+            <ice:panelGroup styleClass="formOrganismoLogo"
+                            rendered="#{organismoMB.organismoForm.orgLogo != null}">
+                <ice:graphicImage value="#{organismoMB.organismoForm.orgLogo}" />
+                <ace:linkButton value="#{labels.organismo_form_borrar_logo}" 
+                                styleClass="boton secundario" 
+                                action="#{organismoMB.eliminarLogo()}"/>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="panelBotones margen-sup">
+                <ace:messages id="formOrganismoMsg"/>
+                <ace:pushButton value="#{labels.guardar}" 
+                                styleClass="boton principal guardar"
+                                action="#{organismoMB.guardarOrganismoAction()}" />
+                <ace:pushButton value="#{labels.organismo_form_btn_nuevo}" 
+                                styleClass="boton principal agregar" 
+                                action="#{organismoMB.nuevoOrganismoAction()}" />
+                <ace:pushButton value="#{labels.organismo_form_btn_usuarios}" 
+                                styleClass="boton principal usuario" 
+                                action="#{organismoMB.adminUsuariosAction()}" />
+                <ace:linkButton value="#{labels.limpiar}" 
+                                styleClass="boton secundario" 
+                                action="#{organismoMB.limpiarForm()}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>
