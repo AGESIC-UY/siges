@@ -9,8 +9,6 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-
-
 --
 -- TOC entry 1 (class 3079 OID 11756)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
