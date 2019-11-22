@@ -1,5 +1,7 @@
 package com.sofis.entities.constantes;
 
+import java.util.TimeZone;
+
 /**
  *
  * @author Usuario
@@ -16,14 +18,19 @@ public class ConstantesEstandares {
     public static final String CODIGO_PENDIENTE_CON_ERRORES="PDC";
     public static final String CODIGO_APROBADO ="APR";
     
-    public static final String LOGGER= "com.sofis";
+//    public static final String LOGGER= "com.sofis";
     
     public static final String CON_CORREO="CON_CORREO";
     public static final String MAIL_FROM="MAIL_FROM";
     public static final String MAIL_ENCODING="MAIL_FROM";
     
     public static final String CALENDAR_PATTERN = "dd/MM/yyyy";
-    public static final String CALENDAR_TIME_ZONE = "America/Montevideo";
+    
+    /*
+    *   15-06-2018  ---> Se cambia el valor de CALENDAR_TIME_ZONE para que tome el "TimeZone" desde el sistema.
+    */
+    
+    public static final String CALENDAR_TIME_ZONE = TimeZone.getDefault().getID();
 
     public static final String CURRENT_LOCALE = "es_ES";
     public static final String CURRENT_LOCALE_LANGUAGE = "es";

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class NotificacionValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(NotificacionValidacion.class.getName());   
 
     public static boolean validar(Notificacion notif) throws BusinessException {
         BusinessException be = new BusinessException();

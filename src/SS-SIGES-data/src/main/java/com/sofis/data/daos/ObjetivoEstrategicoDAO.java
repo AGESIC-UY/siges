@@ -27,51 +27,54 @@ import javax.persistence.EntityManager;
  */
 public class ObjetivoEstrategicoDAO extends HibernateJpaDAOImp<ObjetivoEstrategico, Integer> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private final Logger logger = Logger.getLogger(ObjetivoEstrategicoDAO.class.getName());
+	private static final long serialVersionUID = 1L;
+	private final Logger logger = Logger.getLogger(ObjetivoEstrategicoDAO.class.getName());
 
-    public ObjetivoEstrategicoDAO(EntityManager em) {
-	super(em);
-    }
-
-    public List<ObjetivoEstrategico> obtenerPorOrganismo(Organismos org) throws DAOGeneralException {
-	try {
-	    return this.findByOneProperty(ObjetivoEstrategico.class, "objEstOrgFk", org, "objEstNombre");
-	} catch (DAOGeneralException ex) {
-	    throw ex;
+	public ObjetivoEstrategicoDAO(EntityManager em) {
+		super(em);
 	}
-    }
 
-    public List<ObjetivoEstrategico> obtenerPorFiltro(FiltroObjectivoEstategicoTO filtro) throws DAOGeneralException {
-	try {
+	public List<ObjetivoEstrategico> obtenerPorOrganismo(Organismos org) throws DAOGeneralException {
+		try {
+			return this.findByOneProperty(ObjetivoEstrategico.class, "objEstOrgFk", org, "objEstNombre");
+		} catch (DAOGeneralException ex) {
+			throw ex;
+		}
+	}
 
-	    List<CriteriaTO> criterias = new ArrayList<CriteriaTO>();
-	    if (!StringsUtils.isEmpty(filtro.getNombre())) {
+	public List<ObjetivoEstrategico> obtenerPorFiltro(FiltroObjectivoEstategicoTO filtro) throws DAOGeneralException {
+		try {
+
+			List<CriteriaTO> criterias = new ArrayList<CriteriaTO>();
+			if (!StringsUtils.isEmpty(filtro.getNombre())) {
 //                criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "objEstNombre", filtro.getNombre()));
-		CriteriaTO crit = DAOUtils.createMatchCriteriaTOString("objEstNombre", filtro.getNombre());
-		criterias.add(crit);
-	    }
-	    if (filtro.getOrgPk() != null) {
-		criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objEstOrgFk.orgPk", filtro.getOrgPk()));
-	    }
-	    if (filtro.getOrganismo() != null) {
-		criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objEstOrgFk", filtro.getOrganismo()));
-	    }
+				CriteriaTO crit = DAOUtils.createMatchCriteriaTOString("objEstNombre", filtro.getNombre());
+				criterias.add(crit);
+			}
+			if (filtro.getOrgPk() != null) {
+				criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objEstOrgFk.orgPk", filtro.getOrgPk()));
+			}
+			if (filtro.getOrganismo() != null) {
+				criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objEstOrgFk", filtro.getOrganismo()));
+			}
+			if (filtro.getHabilitado() != null) {
+				criterias.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objEstHabilitado", filtro.getHabilitado()));
+			}
 
-	    CriteriaTO criteriaTO;
-	    if (criterias.size() > 1) {
-		criteriaTO = CriteriaTOUtils.createANDTO(criterias.toArray(new CriteriaTO[criterias.size()]));
-	    } else {
-		criteriaTO = criterias.get(0);
-	    }
+			CriteriaTO criteriaTO;
+			if (criterias.size() > 1) {
+				criteriaTO = CriteriaTOUtils.createANDTO(criterias.toArray(new CriteriaTO[criterias.size()]));
+			} else {
+				criteriaTO = criterias.get(0);
+			}
 
-	    String[] orderBy = {"objEstNombre"};
-	    boolean[] ascending = {true};
-	    return this.findEntityByCriteria(ObjetivoEstrategico.class, criteriaTO, orderBy, ascending, null, null);
+			String[] orderBy = {"objEstNombre"};
+			boolean[] ascending = {true};
+			return this.findEntityByCriteria(ObjetivoEstrategico.class, criteriaTO, orderBy, ascending, null, null);
 
-	} catch (DAOGeneralException ex) {
-	    throw ex;
+		} catch (DAOGeneralException ex) {
+			throw ex;
+		}
 	}
-    }
 
 }

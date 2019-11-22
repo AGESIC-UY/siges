@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmCenCos">
+        <ice:panelGroup id="tituloPaginaCenCos" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloCentroCosto}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="btnAgregarABM">
+            <ace:pushButton value="#{labels.agregarCenCos}" 
+                            styleClass="boton principal agregar"
+                            action="#{centroCostoMB.agregar()}" />
+        </ice:panelGroup>
+
+        <ice:panelGroup id="espacioTrabajo" styleClass="buscador recuadro margen-inf">
+            <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
+            <ice:panelGroup styleClass="panelAcciones" style="margin-top: 40px">
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.cen_cos_form_nombre}" />
+                    <ace:textEntry value="#{centroCostoMB.filtro.nombre}" />
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.cen_cos_form_desc}" />
+                    <ace:textEntry value="#{centroCostoMB.filtro.descripcion}" />
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.habilitado}"/>
+                    <ace:checkboxButton value="#{centroCostoMB.filtro.habilitado}"
+                                        valueChangeListener="#{centroCostoMB.centroCostoFiltroValueChange}">
+                        <ace:ajax execute="@this" render="@form"/>
+                    </ace:checkboxButton>
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none; margin-top: -4px;">
+
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{centroCostoMB.buscar()}"/>
+
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{centroCostoMB.limpiar()}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <!--        <ace:messages for="resultado" />-->
+
+        <ice:panelGroup id="resultado" styleClass="resultado recuadro margen-sup" 
+                        rendered="#{centroCostoMB.renderResultado}">
+            <ice:outputText value="#{labels.resultadoBusqueda}: #{centroCostoMB.centrosCosto.size()} elemento(s)" 
+                            styleClass="resultadoBusqueda"/>
+            <ice:panelGroup rendered="#{not empty centroCostoMB.centrosCosto}" styleClass="resultadoCompleto">
+
+                <ice:panelGroup rendered="#{centroCostoMB.centrosCosto != null and not empty centroCostoMB.centrosCosto}" 
+                                styleClass="cuerpo">
+                    <ace:dataTable id="tblResultados" 
+                                   value="#{centroCostoMB.centrosCosto}" 
+                                   var="obj" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true">
+                        <ace:column headerText="#{labels.hId}" >
+                            <h:outputText value="#{obj.cenCosPk}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hNombre}">
+                            <h:outputText value="#{obj.cenCosNombre}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hDescripcion}"  >
+                            <ice:outputText value="#{obj.cenCosDescripcion}" escape="false"/>
+                        </ace:column>
+
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.editar}">
+                                <ace:pushButton styleClass="botonEditar iconoTabla"
+                                                action="#{centroCostoMB.editar(obj.cenCosPk)}"/>
+                            </ice:panelGroup>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton">
+                            <h:commandButton onclick="confirmationEliminar#{obj.cenCosPk}.show()" 
+                                             styleClass="botonEliminar iconoTabla" 
+                                             type="button"/>
+                            <ace:confirmationDialog id="confirmDialogAprobar"
+                                                    widgetVar="confirmationEliminar#{obj.cenCosPk}"
+                                                    message="#{labels.confirmacionEliminacion}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesAprobar"
+                                                     value="#{labels.si}"
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationEliminar#{obj.cenCosPk}.hide()" 
+                                                     actionListener="#{centroCostoMB.eliminar(obj.cenCosPk)}"/>
+                                    <h:commandButton id="noAprobar"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationEliminar#{obj.cenCosPk}.hide()"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog> 
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </ice:panelGroup>
+            <ice:panelGroup styleClass="noResultados" rendered="#{empty centroCostoMB.centrosCosto}">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

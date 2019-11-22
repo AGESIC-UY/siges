@@ -13,7 +13,10 @@
                 xmlns:of="http://omnifaces.org/functions">
 
     <o:form id="mensajesPopup">
-        <ice:panelPopup draggable="false" autoCentre="true" modal="true" 
+        
+<!--        Se saca el autoCenter="true" porque no dejaba el popup en el centro de la página-->
+        
+        <ice:panelPopup styleClass="posicionMsgPopUp" draggable="false" modal="true"
                         rendered="#{inicioMB.renderPopupMensajes}">
 
             <f:facet name="header">

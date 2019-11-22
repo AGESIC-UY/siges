@@ -84,7 +84,7 @@
                         <ice:outputText value="#{noti.propertyMap['notContenido']}" escape="true"/>
                     </ace:column>
                     
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ice:panelGrid title="#{labels.editar}">
                             <ace:pushButton styleClass="botonEditar  iconoTabla"   action="#{noticiaMB.editar(noti.propertyMap['notId'])}"
                                                rendered="#{menuMB.permisos['NOT_EDIT']}"/>

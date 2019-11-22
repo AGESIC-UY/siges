@@ -16,8 +16,8 @@ import javax.persistence.Query;
  */
 public class ProgIndicesDAO extends HibernateJpaDAOImp<ProgIndices, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ProgIndicesDAO.class.getName());        
 
     public ProgIndicesDAO(EntityManager em) {
         super(em);

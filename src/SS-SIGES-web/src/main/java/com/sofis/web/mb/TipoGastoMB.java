@@ -5,6 +5,7 @@ import com.sofis.entities.data.TipoGasto;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.TipoGastoDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.List;
@@ -26,8 +27,8 @@ import javax.inject.Inject;
 public class TipoGastoMB implements Serializable{
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(TipoGastoMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String TIPO_GASTO_NOMBRE = "tipogasNombre";
     @ManagedProperty("#{inicioMB}")
@@ -144,7 +145,15 @@ public class TipoGastoMB implements Serializable{
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -167,7 +176,15 @@ public class TipoGastoMB implements Serializable{
             tipoGastoEnEdicion = tipoGastoDelegate.obtenerTipoGastoPorPk(tgPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }              
         }
 
         renderPopupEdicion.abrir();
@@ -186,7 +203,15 @@ public class TipoGastoMB implements Serializable{
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }            
         }
         return null;
     }

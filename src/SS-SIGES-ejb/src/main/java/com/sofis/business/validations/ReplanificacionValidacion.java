@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class ReplanificacionValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ReplanificacionValidacion.class.getName());
 
     public static boolean validar(ProyReplanificacion replan) throws BusinessException {
         BusinessException be = new BusinessException();

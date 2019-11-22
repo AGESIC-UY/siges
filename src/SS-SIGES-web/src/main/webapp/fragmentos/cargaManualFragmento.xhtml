@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmFicha">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloCargaManual}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="formularioManual" styleClass="panelFileEntry">
+            <ace:fileEntry id="fileEntryDoc"
+                           label="#{labels.fileDocumento}"
+                           callback=""
+                           relativePath="/files/"
+                           maxFileCount="1" 
+                           maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                           fileEntryListener="#{cargaManualMB.subirArchivoDocAction}" 
+                           maxFileSize="#{configuracionMB.tamanioMaxArchivoManualUsuario.cnfValor}"
+                           maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
+                           useOriginalFilename="true" 
+                           useSessionSubdir="true"
+                           immediate="true"
+                           style="width: 280px;"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="panelBotones">
+            <ace:messages for="formularioManual"/>
+            <h:commandButton id="btnAgregar" value="#{labels.agregarDocumento}" 
+                             styleClass="boton principal botonAgregar" 
+                             action="#{cargaManualMB.agregarDocumentoAction()}" />
+            
+            <h:commandButton id="btnEliminar" value="#{labels.eliminar}" 
+                             styleClass="boton principal botonEliminar" 
+                             action="#{cargaManualMB.eliminarDocumentoAction()}" />
+
+        </ice:panelGroup>
+
+    </o:form>
+</ui:composition>

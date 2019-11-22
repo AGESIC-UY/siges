@@ -29,7 +29,7 @@ import javax.inject.Inject;
 public class NotificacionMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(NotificacionMB.class.getName());
     private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String NOTIF_COD = "notCod";
@@ -55,11 +55,6 @@ public class NotificacionMB implements Serializable {
     private Notificacion notifEnEdicion;
 
     public NotificacionMB() {
-        filtroCodigo = "";
-        filtroDesc = "";
-        filtroMsg = "";
-        listaResultado = new ArrayList<>();
-        notifEnEdicion = new Notificacion();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -140,6 +135,20 @@ public class NotificacionMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */        
+        
+        filtroCodigo = "";
+        filtroDesc = "";
+        filtroMsg = "";
+        listaResultado = new ArrayList<Notificacion>();
+        notifEnEdicion = new Notificacion();        
+        //Validación de campos
+        if(notifEnEdicion.getNotMsg()== null || notifEnEdicion.getNotMsg().equals("")){
+            notifEnEdicion.setNotMsg("<p></p>");
+        }
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -187,8 +196,12 @@ public class NotificacionMB implements Serializable {
      * @return
      */
     public String buscar() {
+
         Map<String, Object> mapFiltro = new HashMap<>();
-        mapFiltro.put("nombre", filtroCodigo);
+        mapFiltro.put(NOTIF_COD, filtroCodigo);
+        mapFiltro.put(NOTIF_DESC, filtroDesc);
+        mapFiltro.put(NOTIF_MSG, filtroMsg);
+
         listaResultado = notificacionDelegate.busquedaNotifFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
 
         return null;

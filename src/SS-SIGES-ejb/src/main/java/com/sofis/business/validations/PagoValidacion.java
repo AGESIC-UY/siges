@@ -15,10 +15,9 @@ import java.util.logging.Logger;
  */
 public class PagoValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PagoValidacion.class.getName());
 
-    public static boolean validar(Pagos pago) throws BusinessException {
-        logger.finest("Validar Pagos.");
+    public static boolean validar(Pagos pago, boolean exigeProveedorEnPago, boolean exigeClienteEnPago) throws BusinessException {
         BusinessException be = new BusinessException();
 
         if (pago == null) {
@@ -27,25 +26,33 @@ public class PagoValidacion {
             if (pago.getEntregables() == null) {
                 be.addError(MensajesNegocio.ERROR_PAGO_ENTREGABLE);
             }
+
             if (pago.getPagFechaPlanificada() == null) {
                 be.addError(MensajesNegocio.ERROR_PAGO_FECHA_PLANIFICADA);
             }
+
             if (pago.getPagImportePlanificado() == null) {
                 be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_PLANIFICADO);
             }
 
             if (pago.isPagConfirmado()
-                    && (
-                    (pago.getPagFechaReal() == null || DatesUtils.esMayor(pago.getPagFechaReal(), new Date())) 
-//                    ||
-//                    (pago.getPagImporteReal() == null || pago.getPagImporteReal() < 0)
+                    && ((pago.getPagFechaReal() == null || DatesUtils.esMayor(pago.getPagFechaReal(), new Date())) //                    ||
+                    //                    (pago.getPagImporteReal() == null || pago.getPagImporteReal() < 0)
                     )) {
                 be.addError(MensajesNegocio.ERROR_PAGO_CONFIRMAR_REAL);
             }
+
             if (pago.getPagTxtReferencia() != null
-                    && pago.getPagTxtReferencia().length() > 20) {
+                    && pago.getPagTxtReferencia().length() > 50) {
                 be.addError(MensajesNegocio.ERROR_PAGO_REFERENCIA_LARGO);
             }
+
+            if (exigeProveedorEnPago && Boolean.TRUE.equals(pago.getPagConfirmar()) && pago.getPagProveedorFk() == null) {
+                be.addError(MensajesNegocio.ERROR_PAGO_SIN_PROVEEDOR);
+            }
+            if (exigeClienteEnPago && Boolean.TRUE.equals(pago.getPagConfirmar()) && pago.getPagContrOrganizacionFk() == null) {
+                be.addError(MensajesNegocio.ERROR_PAGO_APROB_SIN_CLIENTE);
+            }            
         }
 
         if (be.getErrores().size() > 0) {

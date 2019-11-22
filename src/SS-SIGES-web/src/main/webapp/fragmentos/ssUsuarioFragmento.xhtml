@@ -37,7 +37,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaUsuarioMsg" />
+<!--                    <ace:messages id="busquedaUsuarioMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{ssUsuarioMB.buscar()}"/>
@@ -81,7 +81,7 @@
 
                     <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
                                       type="xls" fileName="#{labels.exportarPlanillaUsuarios}"
-                                      includeHeaders="true" excludeColumns="5,6,7"  />
+                                      includeHeaders="true" excludeColumns="5,6,7,8"  />
                 </ice:panelGroup>
 
                 <ice:panelGroup rendered="#{ssUsuarioMB.listaResultado != null and not empty ssUsuarioMB.listaResultado}" 
@@ -112,7 +112,7 @@
                             <ice:outputText value="#{usu.organismosStr}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla"
                                                 action="#{ssUsuarioMB.editar(usu.usuId)}" 

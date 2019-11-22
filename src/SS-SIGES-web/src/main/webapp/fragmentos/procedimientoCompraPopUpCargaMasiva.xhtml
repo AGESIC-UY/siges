@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <o:form id="frmPopupCargaMasiva">
+        <ice:panelPopup rendered="#{procedimientoCompraMB.renderPopupCargaArchivo.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.procedimiento_compra_titulo_carga_masiva}"/>
+                    <ice:commandButton styleClass="botonCerrar"
+                                       action="#{procedimientoCompraMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formFuenteMasiva">
+
+                    <ice:panelGroup id="popupMsgMasiva">
+
+                        <ace:fileEntry id="fileEntryDoc"
+                                       label="#{labels.fileDocumento}"
+                                       callback=""
+                                       relativePath="/files/"
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                                       fileEntryListener="#{procedimientoCompraMB.subirArchivo}" 
+                                       maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
+                                       maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}"
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"
+                                       immediate="false"
+                                       style="width: 400px;"/>
+                        <h:commandButton id="uploadFile" type="submit" styleClass="iconoTabla subir"/>
+                    </ice:panelGroup>
+                    
+                    <ice:panelGroup style="margin-bottom: 25px">
+                        <ace:messages for="popupMsgMasiva" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="panelBotones" style="display: initial">                        
+
+                        <ace:pushButton id="btnAgregarExel" value="#{labels.aceptar}"
+                                        action="#{procedimientoCompraMB.cargaMasiva()}"
+                                        styleClass="boton principal guardar"/>
+                        
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{procedimientoCompraMB.cancelar()}"
+                                        styleClass="boton secundario" />
+ 
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

@@ -41,7 +41,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaMsg" />
+<!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{areasMB.buscar()}"/>
@@ -110,15 +110,15 @@
                         <ace:column headerText="#{labels.area_head_director}">
                             <h:outputText value="#{area.areaDirectorPk.nombreApellido}"/>
                         </ace:column>
-                        
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+<!--                        
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{areasMB.editar(area.areaPk)}" />
                             </ice:panelGroup>
-                        </ace:column>
+                        </ace:column>-->
                         
-                        <ace:column headerText="#{labels.hHabilitar}" styleClass="columnaBoton">
+                        <ace:column headerText="#{labels.hHabilitar}">
                             <ice:panelGroup title="#{labels.habilitar}">
                                 <ace:checkboxButton value="#{area.areaHabilitada}" 
                                                     valueChangeListener="#{areasMB.areaHabilitadaChange(area)}">
@@ -128,7 +128,7 @@
                             </ice:panelGroup>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{areasMB.editar(area.areaPk)}" />

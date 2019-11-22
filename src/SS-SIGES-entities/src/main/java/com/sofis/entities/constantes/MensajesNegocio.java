@@ -39,6 +39,7 @@ public class MensajesNegocio {
     public final static String ERROR_FICHA_SEMAFORO_AMARILLO = "error_ficha_semaforo_amarillo";
     public final static String ERROR_FICHA_SEMAFORO_ROJO = "error_ficha_semaforo_rojo";
     public final static String ERROR_FICHA_HIST_SIT_ACT_GUARDAR = "error_hist_sit_actual_guardar";
+    public final static String ERROR_PMOF_DESHABILITAR_PROGRAMA = "error_pmof_deshabilitar_programa";
     // VALIDACIONES Documentos
     public final static String ERROR_DOCS = "warn_documentos";
     public final static String ERROR_DOCS_NULL = "error_docs_null";
@@ -78,12 +79,10 @@ public class MensajesNegocio {
     public final static String ERROR_RIESGOS_ESTRATEGIA = "error_riesgos_estrategia";
     public final static String ERROR_RIESGOS_DISPARADOR = "error_riesgos_disparador";
     public final static String ERROR_RIESGOS_CONTINGENCIA = "error_riesgos_contingencia";
+    public final static String ERROR_RIESGOS_OBSERVACIONES = "error_riesgos_observaciones";
     public final static String ERROR_RIESGOS_QUITAR_ENT = "error_riesgos_quitar_ent";
     public final static String ERROR_ENTREGABLE_BORRAR_RIESGO = "error_entregable_borrar_riesgo";
-    
-    
 
-    
     //VALIDACIONES Presupuesto
     public final static String ERROR_PRESUPUESTO_NULL = "error_presupuesto_null";
     public final static String ERROR_PRESUPUESTO_FUENTE_FINANC = "error_presupuesto_fuente_financ";
@@ -99,6 +98,16 @@ public class MensajesNegocio {
     public final static String ERROR_ADQISICION_GUARDAR = "error_adquisicion_guardar";
     public final static String ERROR_ADQISICION_ELIMINAR = "error_adquisicion_eliminar";
     public final static String ERROR_ADQISICION_ELIMINAR_PAGO_CONF = "error_adquisicion_eliminar_pago_conf";
+    public final static String ERROR_ADQISICION_USUARIO_COMPARTIDA_REQUERIDO = "error_adquiscion_usuario_compartida_requerido";
+    public final static String ERROR_ADQUISICION_TIPO_COMPRA_VACIO = "error_adquisicion_tipo_compra_vacio";
+    public final static String ERROR_ADQUISICION_FECHA_INICIO_MAYOR_FECHA_EJECUCION = "error_adquisicion_fecha_inicio_mayor_ejecucion";
+    public final static String ERROR_ADQUISICION_TIPO_ADQUISICION_VACIO = "error_adquisicion_tipo_adquisicion_vacio";
+    public final static String ERROR_ADQUISICION_ID_ADQUISICION_VACIO = "error_adquisicion_id_adquisicion_vacio";
+    public final static String ERROR_ADQUISICION_ID_ADQUISICION_SUPERA_LARGO_MAXIMO = "error_adquisicion_id_adquisicion_supera_largo_maximo";
+    public final static String ERROR_ADQUISICION_CENTRO_COSTO_VACIO = "error_adquisicion_centro_costo_vacio";
+    public final static String ERROR_ADQUISICION_SIN_PROVEEDOR = "error_adquisicion_sin_proveedor";
+    public final static String ERROR_ADQUISICION_SIN_CAUSAL = "error_adquisicion_sin_causal";
+
     // DEVENGADO
     public final static String ERROR_DEVENGADO_ELIMINAR = "error_devengado_eliminar";
     public final static String ERROR_DEVENGADO_OBTENER = "error_devengado_obtener";
@@ -116,9 +125,14 @@ public class MensajesNegocio {
     public final static String ERROR_PAGO_CONFIRMAR_REAL = "error_pago_confirmar_real";
     public final static String ERROR_PAGO_REFERENCIA_LARGO = "error_pago_referencia_largo";
     public final static String ERROR_PAGO_CONST_VIOLATION = "error_pago_const_violation";
+    public final static String ERROR_PAGO_CONTR_PORCENTAJE = "error_pago_contr_porcentaje";
+    public final static String ERROR_PAGO_SIN_PROVEEDOR = "error_pago_sin_proveedor";
+    public final static String ERROR_PAGO_SIN_CLIENTE = "error_pago_sin_cliente";
+    public final static String ERROR_PAGO_APROB_SIN_CLIENTE = "error_pago_aprob_sin_cliente";
     //VALIDACIONES Cronogramas
     public final static String ERROR_CRONOGRAMAS_NULL = "error_crono_null";
     public final static String ERROR_CRO_OBTENER = "error_cro_obtener";
+    public final static String ERROR_CRO_PLANTILLA_OBTENER = "error_cro_plantilla_obtener";
     public final static String ERROR_CRO_GUARDAR = "error_cro_guardar";
     public final static String ERROR_CRO_GUARDAR_MULTIPLE_INI_PERIODO = "error_cro_guardar_mult_ini_per";
     public final static String ERROR_CRO_GUARDAR_MULTIPLE_FIN_PERIODO = "error_cro_guardar_mult_fin_per";
@@ -165,11 +179,10 @@ public class MensajesNegocio {
     public final static String ERROR_ENTREGABLES_DEPENDENCIA_CICLICA = "error_entregables_dependencia_ciclica";
     public final static String ERROR_ENTREGABLES_NIVEL_REQUERIDO = "error_entregables_nivel_requerido";
     public final static String ERROR_ENTREGABLES_DEPENDENCIA_PADRE = "error_entregables_dependencia_padre";
-    
-    
+
     //VALIDACIONES Personas
     public final static String ERROR_PERSONA_NULL = "error_persona_null";
-    public final static String ERROR_PERSONA_ORGA = "error_persona_organismo";
+    public final static String ERROR_PERSONA_ORGA = "error_persona_organizacion";
     public final static String ERROR_PERSONA_NOMBRE = "error_persona_nombre";
     public final static String ERROR_PERSONA_ROL = "error_persona_rol";
     public final static String ERROR_PERSONA_ELIMINAR_ASOCIADO = "error_persona_eliminar_asociada";
@@ -219,7 +232,7 @@ public class MensajesNegocio {
     public final static String ERROR_PRODUCTO_GUARDAR = "error_producto_guardar";
     public final static String ERROR_PRODUCTO_NULL = "error_producto_null";
     public final static String ERROR_PRODUCTO_ENTREGABLE = "error_producto_entregable";
-    public final static String ERROR_PRODUCTO_DESC = "error_producto_desc";
+    public final static String ERROR_PRODUCTO_NOM = "error_producto_nom";
     public final static String ERROR_PRODUCTO_FECHA = "error_producto_fecha";
     public final static String ERROR_PRODUCTO_PESO = "error_producto_peso";
     public final static String ERROR_PRODUCTO_MEDIDA = "error_producto_medida";
@@ -374,6 +387,19 @@ public class MensajesNegocio {
     public final static String ERROR_FUENTE_FINANC_ELIMINAR = "error_fuente_financ_eliminar";
     public final static String ERROR_FUENTE_FINANC_NOMBRE_DUPLICADO = "error_fuente_financ_nombre_duplicado";
     public final static String ERROR_FUENTE_FINANC_CONST_VIOLATION = "error_fuente_financ_const_violation";
+
+    // Componente Producto
+    public final static String ERROR_COMPONENTE_PRODUCTO_NULL = "error_componente_producto_null";
+    public final static String ERROR_COMPONENTE_PRODUCTO_NOMBRE = "error_componente_producto_nombre";
+    public final static String ERROR_COMPONENTE_PRODUCTO_PADRE = "error_componente_producto_padre";
+    public final static String ERROR_COMPONENTE_PRODUCTO_ORG = "error_componente_producto_org";
+    public final static String ERROR_COMPONENTE_PRODUCTO_OBTENER = "error_componente_producto_obtener";
+    public final static String ERROR_COMPONENTE_PRODUCTO_GUARDAR = "error_componente_producto_guardar";
+    public final static String ERROR_COMPONENTE_PRODUCTO_BUSCAR = "error_componente_producto_buscar";
+    public final static String ERROR_COMPONENTE_PRODUCTO_ELIMINAR = "error_componente_producto_eliminar";
+    public final static String ERROR_COMPONENTE_PRODUCTO_NOMBRE_DUPLICADO = "error_componente_producto_nombre_duplicado";
+    public final static String ERROR_COMPONENTE_PRODUCTO_CONST_VIOLATION = "error_componente_producto_const_violation";
+
     // Tipo Documento
     public final static String ERROR_TIPO_DOC_NULL = "error_tipo_doc_null";
     public final static String ERROR_TIPO_DOC_NOMBRE = "error_tipo_doc_nombre";
@@ -397,7 +423,7 @@ public class MensajesNegocio {
     //Tipo Gasto
     public final static String ERROR_TIPO_GASTO_NULL = "error_tipo_gasto_null";
     public final static String ERROR_TIPO_GASTO_ORG = "error_tipo_gasto_org";
-    public final static String ERROR_TIPO_GASTO_DESC = "error_tipo_gasto_desc";
+    public final static String ERROR_TIPO_GASTO_NOM = "error_tipo_gasto_nombre";
     public final static String ERROR_TIPO_GASTO_ELIMINAR = "error_tipo_gasto_eliminar";
     public final static String ERROR_TIPO_GASTO_OBTENER = "error_tipo_gasto_obtener";
     public final static String ERROR_TIPO_GASTO_CONST_VIOLATION = "error_tipo_gasto_const_violation";
@@ -516,7 +542,7 @@ public class MensajesNegocio {
 
     //Proyecto Indicadores
     public final static String ERROR_PROY_IND_GUARDAR = "error_proy_ind_guardar";
-    
+
     //Exportacion Visualizador
     public final static String WARN_EXP_VISUA_PUBLICABLE = "warn_exp_visua_publicable";
     public final static String WARN_EXP_VISUA_EST_PUBLICA = "warn_exp_visua_est_publica";
@@ -525,4 +551,53 @@ public class MensajesNegocio {
     public final static String ERROR_EXP_VISUA_DATOS = "error_exp_visua_datos";
     public final static String ERROR_EXP_VISUA_PGE_PROXY = "error_exp_visua_pge_proxy";
     public final static String ERROR_EXP_VISUA_WS_PROXY = "error_exp_visua_ws_proxy";
+
+    //Procedimiento Compra
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_NULL = "error_procedimiento_compra_null";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_NOMBRE = "error_procedimiento_compra_nombre";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_ORG = "error_procedimiento_compra_org";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_OBTENER = "error_procedimiento_compra_obtener";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_GUARDAR = "error_procedimiento_compra_guardar";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_BUSCAR = "error_procedimiento_compra_buscar";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_ELIMINAR = "error_procedimiento_compra_eliminar";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_NOMBRE_DUPLICADO = "error_procedimiento_compra_nombre_duplicado";
+    public final static String ERROR_PROCEDIMIENTO_COMPRA_CONST_VIOLATION = "error_procedimiento_compra_const_violation";
+
+    //Mover Proyecto
+    public final static String ERROR_MOVER_PROY_CAMBIAR_PATH = "error_mover_proy_cambiar_path";
+    public final static String ERROR_ADQISICION_PROC_COMPRA = "error_mover_proy_adq_proc_compra";
+    public final static String ERROR_ADQISICION_COMP_PROD = "error_mover_proy_adq_com_prod";
+    public final static String ERROR_ADQISICION_USU_COMPARTIDA = "error_mover_proy_adq_usu_compartida";
+    public final static String ERROR_PAGO_CONTR_ORGA = "error_mover_proy_pago_contr_orga";
+
+    //VALIDACIONES Tipo Adquisicion
+    public final static String ERROR_TIPO_ADQUISICION_NULL = "error_tipo_adquisicion_null";
+    public final static String ERROR_TIPO_ADQUISICION_NOMBRE = "error_tipo_adquisicion_nombre";
+    public final static String ERROR_TIPO_ADQUISICION_DESCRIPCION = "error_tipo_adquisicion_descripcion";
+    public final static String ERROR_TIPO_ADQUISICION_NOMBRE_LARGO = "error_tipo_adquisicion_nombre_largo";
+    public final static String ERROR_TIPO_ADQUISICION_DESCRIPCION_LARGO = "error_tipo_adquisicion_descripcion_largo";
+
+    //VALIDACIONES Centro Costo
+    public final static String ERROR_CENTRO_COSTO_NULL = "error_centro_costo_null";
+    public final static String ERROR_CENTRO_COSTO_NOMBRE = "error_centro_costo_nombre";
+    public final static String ERROR_CENTRO_COSTO_DESCRIPCION = "error_centro_costo_descripcion";
+    public final static String ERROR_CENTRO_COSTO_NOMBRE_LARGO = "error_centro_costo_nombre_largo";
+    public final static String ERROR_CENTRO_COSTO_DESCRIPCION_LARGO = "error_centro_costo_descripcion_largo";
+
+    //VALIDACIONES Fuente Procedimiento Compra
+    public final static String ERROR_FUENTE_PROCEDIMIENTO_COMPRA_NULL = "error_fue_proc_comp_null";
+    public final static String ERROR_FUENTE_PROCEDIMIENTO_COMPRA_FUENTE = "error_fue_proc_comp_fuente";
+    public final static String ERROR_FUENTE_PROCEDIMIENTO_COMPRA_PROC_COMP = "error_fue_proc_comp_proc_comp";
+    public final static String ERROR_FUENTE_PROCEDIMIENTO_COMPRA_CAUSAL_REPETIDO = "error_fue_proc_comp_causal_repetido";
+    public final static String ERROR_FUENTE_PROCEDIMIENTO_COMPRA_CAUSAL_VACIO = "error_fue_proc_comp_causal_vacio";
+
+    //VALIDACIONES Causal Compra
+    public final static String ERROR_CAUSAL_COMPRA_NULL = "error_cau_com_null";
+    public final static String ERROR_CAUSAL_COMPRA_NOMBRE = "error_cau_com_nombre";
+    public final static String ERROR_CAUSAL_COMPRA_DESCRIPCION = "error_cau_com_descripcion";
+    
+    //VALIDACIONES Identificador GRP/ERP
+    public final static String ERROR_IDENTIFICADOR_GRP_ERP_NULL = "error_id_grp_erp_null";
+    public final static String ERROR_IDENTIFICADOR_GRP_ERP_NOMBRE = "error_id_grp_erp_nombre";
+    public final static String ERROR_IDENTIFICADOR_GRP_ERP_DESCRIPCION = "error_id_grp_erp_descripcion";   
 }

@@ -1,18 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="bc43e142-0499-48de-93e4-0037770df2b5" activeEnvironment="Default" name="SIGES_ServiciosGestion_DEV" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0cc2623d-6d1e-416c-ac9b-d54cff4f1bc5" wsaVersion="NONE" name="ServiciosGestionSoapBinding" type="wsdl" bindingName="{http://gestion.ws.web.sofis.com/}ServiciosGestionSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl"><con:part><con:url>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ServiciosGestion" targetNamespace="http://gestion.ws.web.sofis.com/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://gestion.ws.web.sofis.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<con:soapui-project id="bc43e142-0499-48de-93e4-0037770df2b5" activeEnvironment="Default" name="SIGES_ServiciosGestion_DEV" resourceRoot="" soapui-version="5.8.7" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0cc2623d-6d1e-416c-ac9b-d54cff4f1bc5" wsaVersion="NONE" name="ServiciosGestionSoapBinding" type="wsdl" bindingName="{http://gestion.ws.web.sofis.com/}ServiciosGestionSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios?wsdl"><con:part><con:url>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ServiciosGestion" targetNamespace="http://gestion.ws.web.sofis.com/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://gestion.ws.web.sofis.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://gestion.ws.web.sofis.com/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
       <xs:element name="adquisicion" type="tns:adquisicionTO"/>
       <xs:element name="attr" type="tns:attrTO"/>
+      <xs:element name="categoriasProyecto" type="tns:categoriaProyectoTO"/>
       <xs:element name="cronogramaTO" type="tns:cronogramaTO"/>
       <xs:element name="entregableTO" type="tns:entregableTO"/>
       <xs:element name="guardarProyecto" type="tns:guardarProyecto"/>
       <xs:element name="guardarProyectoResponse" type="tns:guardarProyectoResponse"/>
+      <xs:element name="image" type="tns:image"/>
+      <xs:element name="listarCategorias" type="tns:listarCategorias"/>
+      <xs:element name="listarCategoriasResponse" type="tns:listarCategoriasResponse"/>
+      <xs:element name="localizacion" type="tns:localizacionTO"/>
+      <xs:element name="organismos" type="tns:organismos"/>
       <xs:element name="pago" type="tns:pagoTO"/>
       <xs:element name="presupuesto" type="tns:presupuestoTO"/>
       <xs:element name="proyecto" type="tns:proyectoTO"/>
       <xs:element name="requestGuardarProyecto" type="tns:requestGuardarProyectoTO"/>
+      <xs:element name="requestListarCategorias" type="tns:requestListarCategorias"/>
       <xs:element name="responseGuardarProyecto" type="tns:responseGuardarProyectoTO"/>
+      <xs:element name="responseListarCategorias" type="tns:responseListarCategorias"/>
+      <xs:element name="royReplanificacion" type="tns:proyReplanificacionTO"/>
+      <xs:complexType name="listarCategorias">
+        <xs:sequence>
+          <xs:element name="request" type="tns:requestListarCategorias"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="requestListarCategorias">
+        <xs:sequence>
+          <xs:element name="token" type="xs:string"/>
+          <xs:element name="idOrg" type="xs:int"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="attrTO">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="listarCategoriasResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:responseListarCategorias"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="responseListarCategorias">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="status" type="xs:string"/>
+          <xs:element minOccurs="0" name="msg" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="categorias" type="tns:categoriaProyectoTO"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="categoriaProyectoTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="catProyPk" type="xs:int"/>
+          <xs:element minOccurs="0" name="catProyCodigo" type="xs:string"/>
+          <xs:element minOccurs="0" name="catProyNombre" type="xs:string"/>
+          <xs:element name="catProyActivo" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="catTipo" type="xs:int"/>
+          <xs:element minOccurs="0" name="catIcono" type="tns:image"/>
+          <xs:element minOccurs="0" name="catIconoMarker" type="tns:image"/>
+          <xs:element minOccurs="0" name="catOrgFk" type="tns:organismos"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="image">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="imageDesc" type="xs:string"/>
+          <xs:element minOccurs="0" name="imageExt" type="xs:string"/>
+          <xs:element minOccurs="0" name="imageName" type="xs:string"/>
+          <xs:element minOccurs="0" name="imagePk" type="xs:int"/>
+          <xs:element minOccurs="0" name="imagen" type="xs:base64Binary"/>
+          <xs:element minOccurs="0" name="orden" type="xs:int"/>
+          <xs:element minOccurs="0" name="tipo" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="organismos">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="orgPk" type="xs:int"/>
+          <xs:element minOccurs="0" name="orgNombre" type="xs:string"/>
+          <xs:element minOccurs="0" name="orgLogoNombre" type="xs:string"/>
+          <xs:element minOccurs="0" name="orgDireccion" type="xs:string"/>
+          <xs:element minOccurs="0" name="orgActivo" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="orgLogo" type="xs:base64Binary"/>
+          <xs:element minOccurs="0" name="orgToken" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="guardarProyecto">
         <xs:sequence>
           <xs:element name="request" type="tns:requestGuardarProyectoTO"/>
@@ -41,19 +114,37 @@
           <xs:element name="proyUsrAdjuntoFk" type="xs:int"/>
           <xs:element minOccurs="0" ref="tns:presupuesto"/>
           <xs:element minOccurs="0" name="cronograma" type="tns:cronogramaTO"/>
+          <xs:element minOccurs="0" name="semaforoRojo" type="xs:int"/>
+          <xs:element minOccurs="0" name="semaforoAmarillo" type="xs:int"/>
+          <xs:element minOccurs="0" name="objetivoEstrategico" type="xs:int"/>
+          <xs:element minOccurs="0" name="proyOtrInsEjeFk" type="xs:int"/>
+          <xs:element minOccurs="0" name="proyOtrContFk" type="xs:int"/>
+          <xs:element minOccurs="0" name="proyOtrEtaFk" type="xs:int"/>
+          <xs:element minOccurs="0" name="proyProgFk" type="xs:int"/>
+          <xs:element minOccurs="0" name="publicable" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="proyOtrCatFk" type="xs:int"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="latLngProyList" type="tns:localizacionTO"/>
+          <xs:element minOccurs="0" name="faseDestinoProy" type="xs:string"/>
+          <xs:element minOccurs="0" name="replanifProy" type="tns:proyReplanificacionTO"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="presupuestoTO">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="adquisicionSet" type="tns:adquisicionTO"/>
+          <xs:element minOccurs="0" name="preMoneda" type="xs:int"/>
+          <xs:element minOccurs="0" name="preBase" type="xs:double"/>
+          <xs:element minOccurs="0" name="fuenteFinanciamiento" type="xs:int"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="adquisicionTO">
         <xs:sequence>
           <xs:element name="adqNombre" type="xs:string"/>
+          <xs:element name="adqMoneda" type="xs:int"/>
+          <xs:element name="adqFuente" type="xs:int"/>
           <xs:element minOccurs="0" name="adqProcCompra" type="xs:string"/>
+          <xs:element minOccurs="0" name="adqProcCompraGrp" type="xs:string"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="pagosSet" type="tns:pagoTO"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
         </xs:sequence>
@@ -69,11 +160,6 @@
           <xs:element minOccurs="0" name="pagConfirmar" type="xs:boolean"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="attrTO">
-        <xs:sequence/>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="value" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="cronogramaTO">
         <xs:sequence>
@@ -102,7 +188,25 @@
           <xs:element minOccurs="0" name="entParentFk" type="xs:int"/>
           <xs:element name="inicioPeriodo" type="xs:boolean"/>
           <xs:element name="finPeriodo" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="entPredecesorFk" type="xs:string"/>
+          <xs:element minOccurs="0" name="entPredecesorDias" type="xs:int"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="attrs" type="tns:attrTO"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="localizacionTO">
+        <xs:sequence>
+          <xs:element name="latlngLat" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="latlngLng" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="latlangLoc" type="xs:string"/>
+          <xs:element minOccurs="0" name="latlangBarrio" type="xs:string"/>
+          <xs:element minOccurs="0" name="latlangDepFk" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="proyReplanificacionTO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="proyreplanGenerarLineaBase" type="xs:boolean"/>
+          <xs:element name="proyreplanHistorial" type="xs:boolean"/>
+          <xs:element name="proyDescripcion" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="guardarProyectoResponse">
@@ -123,10 +227,20 @@
   <wsdl:message name="guardarProyectoResponse">
     <wsdl:part element="tns:guardarProyectoResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listarCategoriasResponse">
+    <wsdl:part element="tns:listarCategoriasResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="guardarProyecto">
     <wsdl:part element="tns:guardarProyecto" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listarCategorias">
+    <wsdl:part element="tns:listarCategorias" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="Servicios">
+    <wsdl:operation name="listarCategorias">
+      <wsdl:input message="tns:listarCategorias" name="listarCategorias"></wsdl:input>
+      <wsdl:output message="tns:listarCategoriasResponse" name="listarCategoriasResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="guardarProyecto">
       <wsdl:input message="tns:guardarProyecto" name="guardarProyecto"></wsdl:input>
       <wsdl:output message="tns:guardarProyectoResponse" name="guardarProyectoResponse"></wsdl:output>
@@ -134,6 +248,15 @@
   </wsdl:portType>
   <wsdl:binding name="ServiciosGestionSoapBinding" type="tns:Servicios">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="listarCategorias">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listarCategorias">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listarCategoriasResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="guardarProyecto">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="guardarProyecto">
@@ -149,12 +272,12 @@
       <soap:address location="http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint></con:endpoints><con:operation id="2c2ccc4b-2e63-4113-8681-bf8ddaca518e" isOneWay="false" action="" name="guardarProyecto" bindingOperationName="guardarProyecto" type="Request-Response" outputName="guardarProyectoResponse" inputName="guardarProyecto" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="28b43988-de2f-43f5-8605-587ead8ae450" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint></con:endpoints><con:operation id="2c2ccc4b-2e63-4113-8681-bf8ddaca518e" isOneWay="false" action="" name="guardarProyecto" bindingOperationName="guardarProyecto" type="Request-Response" outputName="guardarProyectoResponse" inputName="guardarProyecto" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="28b43988-de2f-43f5-8605-587ead8ae450" name="pruebas_antes_cambios"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
    <soapenv:Header/>
    <soapenv:Body>
       <ges:guardarProyecto>
          <request>
-            <token>?</token>
+            <token>agesic_)12</token>
             <ges:proyecto>
                <proyNombre>Prueba WS 01</proyNombre>
                <proyDescripcion>Prueba WS 01</proyDescripcion>
@@ -166,18 +289,56 @@
                <proyUsrGerenteFk>281</proyUsrGerenteFk>
                <proyUsrSponsorFk>328</proyUsrSponsorFk>
                <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+            	<!--Zero or more repetitions:-->
+               <attrs name="?" value="?"/>
             </ges:proyecto>
          </request>
       </ges:guardarProyecto>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="d9abfc6d-5272-4019-bc8d-1f997b2947ff" name="TestSuite 01"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a0458a1a-4946-4fa1-8241-a6d8865b31e7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="guardarProyecto TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="ae046755-9db1-46d9-a470-f1598e2147c1" name="guardarProyecto_01"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_01" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="838cae60-13e8-43ca-a500-6e209277f876" isOneWay="false" action="" name="listarCategorias" bindingOperationName="listarCategorias" type="Request-Response" outputName="listarCategoriasResponse" inputName="listarCategorias" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5bf48cc1-a311-4896-8de4-9c86e9942369" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:listarCategorias>
+         <request>
+            <token>?</token>
+            <idOrg>?</idOrg>
+            <!--Zero or more repetitions:-->
+            <attrs name="?" value="?"/>
+         </request>
+      </ges:listarCategorias>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/listarCategorias"/><con:wsrmConfig version="1.2"/></con:call><con:call id="921f1bf6-085e-4125-a4d0-ef8de4f2e996" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:listarCategorias>
+         <request>
+            <token>?</token>
+            <idOrg>?</idOrg>
+            <!--Zero or more repetitions:-->
+            <attrs name="?" value="?"/>
+         </request>
+      </ges:listarCategorias>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/listarCategorias"/><con:wsrmConfig version="1.2"/></con:call><con:call id="f35c58c5-2132-4e41-afd9-f4d55d307784" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:listarCategorias>
+         <request>
+            <token>?</token>
+            <idOrg>?</idOrg>
+            <!--Zero or more repetitions:-->
+            <attrs name="?" value="?"/>
+         </request>
+      </ges:listarCategorias>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://gestion.ws.web.sofis.com/Servicios/listarCategorias"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="d9abfc6d-5272-4019-bc8d-1f997b2947ff" name="TestSuite 01"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a0458a1a-4946-4fa1-8241-a6d8865b31e7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="guardarProyecto TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="ae046755-9db1-46d9-a470-f1598e2147c1" name="guardarProyecto_01"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_01" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
    <soapenv:Header/>
    <soapenv:Body>
       <ges:guardarProyecto>
          <request>
             <token>Descentr</token>
             <proyecto>
-               <proyNombre>Prueba WS 01</proyNombre>
+               <proyNombre>Prueba WS 01 Lalala</proyNombre>
                <proyDescripcion>Prueba WS 01</proyDescripcion>
                <proyObjetivo>Prueba WS 01</proyObjetivo>
                <proyObjPublico>Prueba WS 01</proyObjPublico>
@@ -187,11 +348,19 @@
                <proyUsrGerenteFk>281</proyUsrGerenteFk>
                <proyUsrSponsorFk>328</proyUsrSponsorFk>
                <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
             </proyecto>
          </request>
       </ges:guardarProyecto>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="0f717d25-40be-4211-8be4-f9008c39feab" name="guardarProyecto_02"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_02" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="0f717d25-40be-4211-8be4-f9008c39feab" name="guardarProyecto_02"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_02" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
    <soapenv:Header/>
    <soapenv:Body>
       <ges:guardarProyecto>
@@ -212,7 +381,7 @@
          </request>
       </ges:guardarProyecto>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="4906f8d3-de4c-4d85-9de4-2fd20a2b68a5" name="guardarProyecto_03"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_03" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="4906f8d3-de4c-4d85-9de4-2fd20a2b68a5" name="guardarProyecto_03"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_03" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
    <soapenv:Header/>
    <soapenv:Body>
       <ges:guardarProyecto>
@@ -307,6 +476,9 @@
                   </entregableSet>
                </cronograma>
                <presupuesto>
+              	   <preMoneda>2</preMoneda>
+                  <fuenteFinanciamiento>18</fuenteFinanciamiento>
+                  <preBase>100000</preBase>
                   <adquisicionSet>
                      <adqNombre>A1_5</adqNombre>
                      <adqMoneda>2</adqMoneda>
@@ -328,19 +500,18 @@
          </request>
       </ges:guardarProyecto>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="05004387-6cfe-48df-b403-23d9aa91eb3e" name="guardarProyecto_04"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_04" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="05004387-6cfe-48df-b403-23d9aa91eb3e" name="guardarProyecto_04"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_04" id="fd7a96cb-048c-48f6-ad5b-cc6c5ac03fd7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
    <soapenv:Header/>
    <soapenv:Body>
       <ges:guardarProyecto>
          <request>
             <token>Descentr</token>
             <proyecto>
-            	<proyPk>3170</proyPk>
-               <proyNombre>Prueba WS 13</proyNombre>
-               <proyDescripcion>Prueba WS 13</proyDescripcion>
-               <proyObjetivo>Prueba WS 13</proyObjetivo>
-               <proyObjPublico>Prueba WS 13</proyObjPublico>
-               <proySituacionActual>Prueba WS 13</proySituacionActual>
+               <proyNombre>Prueba WS Nuevo1</proyNombre>
+               <proyDescripcion>Prueba WS Nuevo1</proyDescripcion>
+               <proyObjetivo>Prueba WS Nuevo1</proyObjetivo>
+               <proyObjPublico>Prueba WS Nuevo1</proyObjPublico>
+               <proySituacionActual>Prueba WS Nuevo1</proySituacionActual>
                <proyAreaFk>126</proyAreaFk>
                <proyUsrPmofedFk>281</proyUsrPmofedFk>
                <proyUsrGerenteFk>281</proyUsrGerenteFk>
@@ -445,4 +616,470 @@
          </request>
       </ges:guardarProyecto>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://gestion.ws.web.sofis.com/Servicios/guardarProyecto" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_05" id="006b6b03-f2c3-43fd-bab5-5d69dd86446f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_05" id="433c58e5-2f42-4edb-a34a-3927c7acbd11"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyPk>2555</proyPk>
+               <proyNombre>Prueba WS 01 A EJECUTANDO</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
+               <faseDestinoProy>EJECUCION</faseDestinoProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11e7d1b8-8858-4b51-88ce-b3325324d3db"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_05.1" id="4b1bbd1e-d938-4393-8fcc-26fb095a7f26"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_05.1" id="88fc632e-5eb7-40ee-8e53-bf178b2ac440"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyPk>2555</proyPk>
+               <proyNombre>Prueba WS 01 A EJECUTANDO OTRA VEZ</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
+               <faseDestinoProy>EJECUCION</faseDestinoProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bd901634-7308-45a5-8036-267e8903bcf3"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_06" id="d21efb80-bd92-4db4-a267-3d024c616bcd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_06" id="65108278-f7c3-46b8-9705-b5aa30390b52"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyPk>2555</proyPk>
+               <proyNombre>Prueba WS 01 A INICIO</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
+               <faseDestinoProy>INICIO</faseDestinoProy>
+               <replanifProy>
+               	<proyreplanGenerarLineaBase>false</proyreplanGenerarLineaBase>
+               	<proyreplanHistorial>false</proyreplanHistorial>
+               	<proyDescripcion>lalala</proyDescripcion>
+               </replanifProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70f9d0c6-0f7e-4b90-af0c-aa813fb58f75"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_06.1" id="33a4640b-5edd-4211-924d-61d0bc7c276e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_06.1" id="f3133def-c7e8-474a-9f2a-8af117d3d9d7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyPk>2555</proyPk>
+               <proyNombre>Prueba WS 01 DE INICIO A CIERRE</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
+               <faseDestinoProy>FINALIZADO</faseDestinoProy>
+               <replanifProy>
+               	<proyreplanGenerarLineaBase>false</proyreplanGenerarLineaBase>
+               	<proyreplanHistorial>false</proyreplanHistorial>
+               	<proyDescripcion>lalala</proyDescripcion>
+               </replanifProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4052101e-9328-474f-94fc-deb633c79e16"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_06.2" id="e66a3ee9-c489-4b5d-94a4-513d6565b3b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_06.2" id="012e5478-4459-40a9-a781-bae996821c2d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+               <proyPk>2555</proyPk>
+               <proyNombre>QUIERO VOLVER A INICIO Y NO TENGO QUE PODER</proyNombre>
+               <proyDescripcion>Prueba WS 01</proyDescripcion>
+               <proyObjetivo>Prueba WS 01</proyObjetivo>
+               <proyObjPublico>Prueba WS 01</proyObjPublico>
+               <proySituacionActual>Prueba WS 01</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <semaforoRojo>21</semaforoRojo>
+               <semaforoAmarillo>21</semaforoAmarillo>
+               <objetivoEstrategico>67</objetivoEstrategico>
+               <proyOtrInsEjeFk>915</proyOtrInsEjeFk>
+               <proyOtrContFk>915</proyOtrContFk>
+               <proyOtrEtaFk>9</proyOtrEtaFk>
+               <proyProgFk>175</proyProgFk>
+               <publicable>true</publicable>
+               <faseDestinoProy>INICIO</faseDestinoProy>
+               <replanifProy>
+               	<proyreplanGenerarLineaBase>false</proyreplanGenerarLineaBase>
+               	<proyreplanHistorial>false</proyreplanHistorial>
+               	<proyDescripcion>lalala</proyDescripcion>
+               </replanifProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7457fa5b-767d-4e8a-8796-010a6fb67926"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_07" id="36909433-c059-4c3d-978f-361e1c4b98aa"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_07" id="d37e083a-6487-4af2-a668-cd52838b98e8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+            	<proyPk>2554</proyPk>
+               <proyNombre>Prueba WS 12</proyNombre>
+               <proyDescripcion>Prueba WS 12</proyDescripcion>
+               <proyObjetivo>Prueba WS 12</proyObjetivo>
+               <proyObjPublico>Prueba WS 12</proyObjPublico>
+               <proySituacionActual>Prueba WS 12</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+               <cronograma>
+                  <croEntSeleccionado>0</croEntSeleccionado>
+                  <croPermisoEscritura>0</croPermisoEscritura>
+                  <croPermisoEscrituraPadre>1</croPermisoEscrituraPadre>
+                  <entregableSet>
+                     <entId>1</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>0</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>2</entId>
+                     <esHito>false</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>20</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>3</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1233540000000</entInicio>
+                     <entFin>1233540000000</entFin>
+                     <entInicioLineaBase>1233540000000</entInicioLineaBase>
+                     <entFinLineaBase>1233540000000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>0</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+                  <entregableSet>
+                     <entId>4</entId>
+                     <esHito>true</esHito>
+                     <entNombre>Entregable 1_1</entNombre>
+                     <entNivel>1</entNivel>
+                     <entStatus>STATUS_ACTIVE</entStatus>
+                     <entParent>0</entParent>
+                     <entInicio>1237604399000</entInicio>
+                     <entFin>1237604399000</entFin>
+                     <entInicioLineaBase>1237604399000</entInicioLineaBase>
+                     <entFinLineaBase>1237604399000</entFinLineaBase>
+                     <entHorasEstimadas>40</entHorasEstimadas>
+                     <entEsfuerzo>20</entEsfuerzo>
+                     <entProgreso>100</entProgreso>
+                     <entParentFk>0</entParentFk>
+                     <inicioPeriodo>false</inicioPeriodo>
+                     <finPeriodo>false</finPeriodo>
+                  </entregableSet>
+               </cronograma>
+               <presupuesto>
+              	   <preMoneda>2</preMoneda>
+                  <fuenteFinanciamiento>18</fuenteFinanciamiento>
+                  <preBase>100000</preBase>
+                  <adquisicionSet>
+                     <adqNombre>A1_5</adqNombre>
+                     <adqMoneda>2</adqMoneda>
+                     <adqFuente>18</adqFuente>
+                     <adqProcCompra>A5_PROC_COMPRA_5</adqProcCompra>
+                     <adqProcCompraGrp>A5_PROC_COMPRA_GRP_5</adqProcCompraGrp>
+                     <pagosSet>
+                        <pagObservacion>P5_1</pagObservacion>
+                        <pagFechaPlanificada>31/05/2017</pagFechaPlanificada>
+                        <pagImportePlanificado>2000</pagImportePlanificado>
+                        <pagFechaReal>31/05/2017</pagFechaReal>
+                        <pagImporteReal>50000</pagImporteReal>
+                        <pagTxtReferencia>REF_P5_1</pagTxtReferencia>
+                        <pagConfirmar>false</pagConfirmar>
+                     </pagosSet>
+                  </adquisicionSet>
+               </presupuesto>
+               <faseDestinoProy>INICIO</faseDestinoProy>
+               <replanifProy>
+               	<proyreplanGenerarLineaBase>true</proyreplanGenerarLineaBase>
+               	<proyreplanHistorial>true</proyreplanHistorial>
+               	<proyDescripcion>No me gusto como planifique</proyDescripcion>
+               </replanifProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f6671e00-0b6c-4750-8279-4563d0ba7707"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="guardarProyecto_08" id="c2857bc1-2514-4c76-b568-48f177da8260"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="guardarProyecto_08" id="32c7e0bf-bfc0-42a6-a7ef-4700ffb225af"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>Descentr</token>
+            <proyecto>
+            	<proyPk>2554</proyPk>
+               <proyNombre>Prueba WS 12</proyNombre>
+               <proyDescripcion>Prueba WS 12</proyDescripcion>
+               <proyObjetivo>Prueba WS 12</proyObjetivo>
+               <proyObjPublico>Prueba WS 12</proyObjPublico>
+               <proySituacionActual>Prueba WS 12</proySituacionActual>
+               <proyAreaFk>126</proyAreaFk>
+               <proyUsrPmofedFk>281</proyUsrPmofedFk>
+               <proyUsrGerenteFk>281</proyUsrGerenteFk>
+               <proyUsrSponsorFk>328</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>547</proyUsrAdjuntoFk>
+
+               <faseDestinoProy>EJECUCION</faseDestinoProy>
+            </proyecto>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0cfab810-7957-425f-b613-fc72baf1b677"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="ASD" id="f28a8137-c6e3-4e52-bb7f-426b328d94c7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ServiciosGestionSoapBinding</con:interface><con:operation>guardarProyecto</con:operation><con:request name="ASD" id="badc4bc3-a54c-4794-bd39-6e463179a758"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/SS-SIGES-web/ServiciosGestion/Servicios</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ges="http://gestion.ws.web.sofis.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ges:guardarProyecto>
+         <request>
+            <token>?</token>
+            <ges:proyecto>
+               <!--Optional:-->
+               <proyPk>?</proyPk>
+               <proyNombre>?</proyNombre>
+               <proyDescripcion>?</proyDescripcion>
+               <!--Optional:-->
+               <proyFactorImpacto>?</proyFactorImpacto>
+               <proyObjetivo>?</proyObjetivo>
+               <proyObjPublico>?</proyObjPublico>
+               <proySituacionActual>?</proySituacionActual>
+               <proyAreaFk>?</proyAreaFk>
+               <proyUsrPmofedFk>?</proyUsrPmofedFk>
+               <proyUsrGerenteFk>?</proyUsrGerenteFk>
+               <proyUsrSponsorFk>?</proyUsrSponsorFk>
+               <proyUsrAdjuntoFk>?</proyUsrAdjuntoFk>
+               <!--Optional:-->
+               <ges:presupuesto>
+                  <!--Zero or more repetitions:-->
+                  <adquisicionSet>
+                     <adqNombre>?</adqNombre>
+                     <adqMoneda>?</adqMoneda>
+                     <adqFuente>?</adqFuente>
+                     <!--Optional:-->
+                     <adqProcCompra>?</adqProcCompra>
+                     <!--Optional:-->
+                     <adqProcCompraGrp>?</adqProcCompraGrp>
+                     <!--Zero or more repetitions:-->
+                     <pagosSet>
+                        <!--Optional:-->
+                        <pagObservacion>?</pagObservacion>
+                        <pagFechaPlanificada>?</pagFechaPlanificada>
+                        <pagImportePlanificado>?</pagImportePlanificado>
+                        <pagFechaReal>?</pagFechaReal>
+                        <pagImporteReal>?</pagImporteReal>
+                        <!--Optional:-->
+                        <pagTxtReferencia>?</pagTxtReferencia>
+                        <!--Optional:-->
+                        <pagConfirmar>?</pagConfirmar>
+                        <!--Zero or more repetitions:-->
+                        <attrs name="?" value="?"/>
+                     </pagosSet>
+                     <!--Zero or more repetitions:-->
+                     <attrs name="?" value="?"/>
+                  </adquisicionSet>
+                  <!--Optional:-->
+                  <preMoneda>?</preMoneda>
+                  <!--Optional:-->
+                  <preBase>?</preBase>
+                  <!--Optional:-->
+                  <fuenteFinanciamiento>?</fuenteFinanciamiento>
+                  <!--Zero or more repetitions:-->
+                  <attrs name="?" value="?"/>
+               </ges:presupuesto>
+               <!--Optional:-->
+               <cronograma>
+                  <!--Optional:-->
+                  <croEntSeleccionado>?</croEntSeleccionado>
+                  <!--Optional:-->
+                  <croPermisoEscritura>?</croPermisoEscritura>
+                  <!--Optional:-->
+                  <croPermisoEscrituraPadre>?</croPermisoEscrituraPadre>
+                  <!--1 or more repetitions:-->
+                  <entregableSet>
+                     <entId>?</entId>
+                     <esHito>?</esHito>
+                     <entNombre>?</entNombre>
+                     <entNivel>?</entNivel>
+                     <entStatus>?</entStatus>
+                     <entParent>?</entParent>
+                     <entInicio>?</entInicio>
+                     <entFin>?</entFin>
+                     <!--Optional:-->
+                     <entHorasEstimadas>?</entHorasEstimadas>
+                     <entEsfuerzo>?</entEsfuerzo>
+                     <entProgreso>?</entProgreso>
+                     <!--Optional:-->
+                     <entInicioLineaBase>?</entInicioLineaBase>
+                     <!--Optional:-->
+                     <entFinLineaBase>?</entFinLineaBase>
+                     <!--Optional:-->
+                     <entParentFk>?</entParentFk>
+                     <inicioPeriodo>?</inicioPeriodo>
+                     <finPeriodo>?</finPeriodo>
+                     <!--Optional:-->
+                     <entPredecesorFk>?</entPredecesorFk>
+                     <!--Optional:-->
+                     <entPredecesorDias>?</entPredecesorDias>
+                     <!--Zero or more repetitions:-->
+                     <attrs name="?" value="?"/>
+                  </entregableSet>
+                  <!--Zero or more repetitions:-->
+                  <attrs name="?" value="?"/>
+               </cronograma>
+               <!--Optional:-->
+               <semaforoRojo>?</semaforoRojo>
+               <!--Optional:-->
+               <semaforoAmarillo>?</semaforoAmarillo>
+               <!--Optional:-->
+               <objetivoEstrategico>?</objetivoEstrategico>
+               <!--Optional:-->
+               <proyOtrInsEjeFk>?</proyOtrInsEjeFk>
+               <!--Optional:-->
+               <proyOtrContFk>?</proyOtrContFk>
+               <!--Optional:-->
+               <proyOtrEtaFk>?</proyOtrEtaFk>
+               <!--Optional:-->
+               <proyProgFk>?</proyProgFk>
+               <!--Optional:-->
+               <publicable>?</publicable>
+               <!--Optional:-->
+               <proyOtrCatFk>?</proyOtrCatFk>
+               <!--Zero or more repetitions:-->
+               <latLngProyList>
+                  <latlngLat>?</latlngLat>
+                  <!--Optional:-->
+                  <latlngLng>?</latlngLng>
+                  <!--Optional:-->
+                  <latlangLoc>?</latlangLoc>
+                  <!--Optional:-->
+                  <latlangBarrio>?</latlangBarrio>
+                  <!--Optional:-->
+                  <latlangDepFk>?</latlangDepFk>
+               </latLngProyList>
+               <!--Optional:-->
+               <faseDestinoProy>?</faseDestinoProy>
+               <!--Optional:-->
+               <replanifProy>
+                  <!--Optional:-->
+                  <proyreplanGenerarLineaBase>?</proyreplanGenerarLineaBase>
+                  <proyreplanHistorial>?</proyreplanHistorial>
+                  <proyDescripcion>?</proyDescripcion>
+               </replanifProy>
+               <!--Zero or more repetitions:-->
+               <attrs name="?" value="?"/>
+            </ges:proyecto>
+            <!--Zero or more repetitions:-->
+            <attrs name="?" value="?"/>
+         </request>
+      </ges:guardarProyecto>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="331164f1-3398-4cad-a22a-86a7a3ed847e"/><con:assertion type="Schema Compliance" id="43be233c-03b6-4761-9cc1-d11b0e0b7a0e"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

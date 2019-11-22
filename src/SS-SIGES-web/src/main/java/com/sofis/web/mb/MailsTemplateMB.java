@@ -5,6 +5,7 @@ import com.sofis.entities.data.MailsTemplate;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.MailsTemplateDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ import javax.inject.Inject;
 public class MailsTemplateMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(MailsTemplateMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String MAIL_CODIGO = "mailTmpCod";
     private static final String MAIL_ASUNTO = "mailTmpAsunto";
@@ -53,10 +54,6 @@ public class MailsTemplateMB implements Serializable {
     private MailsTemplate mailEnEdicion;
 
     public MailsTemplateMB() {
-//        filtroNombre = "";
-        filtroCodigo = "";
-        listaResultado = new ArrayList<>();
-        mailEnEdicion = new MailsTemplate();
     }
 
     public SofisPopupUI getRenderPopupEdicion() {
@@ -121,6 +118,17 @@ public class MailsTemplateMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */        
+        
+//        filtroNombre = "";
+        filtroCodigo = "";
+        listaResultado = new ArrayList<MailsTemplate>();
+        mailEnEdicion = new MailsTemplate();        
+        if(mailEnEdicion.getMailTmpMensaje() == null || mailEnEdicion.getMailTmpMensaje().equals("")){
+            mailEnEdicion.setMailTmpMensaje("<p></p>");
+        }
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -155,7 +163,7 @@ public class MailsTemplateMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                JSFUtils.agregarMsgs("", e.getErrores());
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -168,7 +176,7 @@ public class MailsTemplateMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
 //        mapFiltro.put("nombre", filtroNombre);
         mapFiltro.put("cod", filtroCodigo);
         listaResultado = mailsTemplateDelegate.busquedaMailFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
@@ -200,7 +208,16 @@ public class MailsTemplateMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }              
+            
         }
         return null;
     }

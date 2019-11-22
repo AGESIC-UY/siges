@@ -24,7 +24,7 @@ import javax.persistence.EntityManager;
 public class PlantillaCronogramaDAO extends HibernateJpaDAOImp<PlantillaCronograma, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PlantillaCronogramaDAO.class.getName()); 
 
     public PlantillaCronogramaDAO(EntityManager em) {
 	super(em);

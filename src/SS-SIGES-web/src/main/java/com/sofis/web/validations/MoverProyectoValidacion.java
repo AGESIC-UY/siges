@@ -2,11 +2,11 @@ package com.sofis.web.validations;
 
 import com.sofis.business.utils.Utils;
 import com.sofis.business.validations.ProyectosValidacion;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.ConstantesErrores;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Documentos;
+import com.sofis.entities.data.Pagos;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.exceptions.BusinessException;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class MoverProyectoValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MoverProyectoValidacion.class.getName());
 
     public static boolean validar(Proyectos proy, FichaTO fichaTo) throws BusinessException {
 
@@ -74,6 +74,40 @@ public class MoverProyectoValidacion {
                         be.addError(MensajesNegocio.ERROR_ADQISICION_MONEDAS);
                         break;
                     }
+                    
+                    /*
+                    *   27-04-2018 Nico: Se agregan para el cambio en mover proyecto.
+                    */
+                    if (adq.getAdqProcedimientoCompra() == null || adq.getAdqProcedimientoCompra().getProcCompPk() == null || adq.getAdqProcedimientoCompra().getProcCompPk() == -1) {
+                        be.addError(MensajesNegocio.ERROR_ADQISICION_PROC_COMPRA);
+                        break;
+                    }
+                    
+                    if (adq.getAdqComponenteProducto() == null || adq.getAdqComponenteProducto().getComPk() == null || adq.getAdqComponenteProducto().getComPk() == -1) {
+                        be.addError(MensajesNegocio.ERROR_ADQISICION_COMP_PROD);
+                        break;
+                    }
+                    
+                    if((adq.getAdqCompartida() != null) && (adq.getAdqCompartida())){
+                        if (adq.getSsUsuarioCompartida() == null || adq.getSsUsuarioCompartida().getUsuId() == null || adq.getSsUsuarioCompartida().getUsuId() == -1) {
+                            be.addError(MensajesNegocio.ERROR_ADQISICION_USU_COMPARTIDA);
+                            break;
+                        }
+                    }
+                    
+                    /*
+                    *       2018-09-18 RQ-7 Release 5.3.6 : Se comentan las líneas abajo que son para el chequeo si se ingreso un "Cliente/Organización" al Pago.
+                    */
+                    
+//                    for(Pagos iterPago : adq.getPagosSet()){
+//                        
+//                        if (iterPago.getPagContrOrganizacionFk() == null || iterPago.getPagContrOrganizacionFk().getOrgaPk() == null || iterPago.getPagContrOrganizacionFk().getOrgaPk() == -1) {
+//                            be.addError(MensajesNegocio.ERROR_PAGO_CONTR_ORGA);
+//                            break;
+//                        }                        
+//                    
+//                    }
+                    
                 }
             }
 
@@ -81,8 +115,8 @@ public class MoverProyectoValidacion {
                 for (Documentos doc : proy.getDocumentosSet()) {
                     if (doc.getDocsTipo() != null
                             && doc.getDocsTipo().getTipodocInstTipoDocFk() != null
-                            && doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == null
-                            || doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == -1) {
+                            && (doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == null
+                            || doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == -1)) {
                         be.addError(MensajesNegocio.ERROR_DOCS_TIPO);
                         break;
                     }

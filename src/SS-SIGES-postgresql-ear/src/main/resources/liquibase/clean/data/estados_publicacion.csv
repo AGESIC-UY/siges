@@ -1,0 +1,5 @@
+est_pub_pk|est_pub_codigo|est_pub_nombre
+1|NO_ES_PARA_PUBLICAR|No es para publicar
+2|PENDIENTE_CARGAR|Pendiente de cargar datos
+3|PENDIENTE_PUBLICAR|Pendiente de publicar
+4|PUBLICADO|Publicado

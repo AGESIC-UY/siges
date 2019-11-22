@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class CronogramaValidaciones {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(CronogramaValidaciones.class.getName());
 
     public static boolean validar(Cronogramas cro) throws BusinessException {
         logger.finest("Validar Cronogramas.");

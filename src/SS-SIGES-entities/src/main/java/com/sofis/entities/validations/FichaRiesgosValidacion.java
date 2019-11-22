@@ -14,11 +14,9 @@ import java.util.logging.Logger;
  */
 public class FichaRiesgosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaRiesgosValidacion.class.getName());
 
-    public static boolean validar(Riesgos riesgo) throws BusinessException{
-        logger.finest("Validar Ficha Riesgos.");
-        
+    public static boolean validar(Riesgos riesgo) throws BusinessException {
         BusinessException be = new BusinessException();
 
         if (riesgo == null) {
@@ -36,20 +34,11 @@ public class FichaRiesgosValidacion {
             if (riesgo.getRiskFechaLimite() == null) {
                 be.addError(MensajesNegocio.ERROR_RIESGOS_FECHA_LIMITE);
             }
-//            if (riesgo.getRiskEfecto() == null) {
-//                be.addError(MensajesNegocio.ERROR_RIESGOS_EFECTO);
-//            }
-//            if (riesgo.getRiskEstrategia() == null) {
-//                be.addError(MensajesNegocio.ERROR_RIESGOS_ESTRATEGIA);
-//            }
-//            if (riesgo.getRiskDisparador() == null) {
-//                be.addError(MensajesNegocio.ERROR_RIESGOS_DISPARADOR);
-//            }
-//            if (riesgo.getRiskContingencia() == null) {
-//                be.addError(MensajesNegocio.ERROR_RIESGOS_CONTINGENCIA);
-//            }
+            if (riesgo.getRiskObservaciones() != null && riesgo.getRiskObservaciones().length() > 400) {
+                be.addError(MensajesNegocio.ERROR_RIESGOS_OBSERVACIONES);
+            }
         }
-        
+
         if (be.getErrores().size() > 0) {
             logger.log(Level.WARNING, null, be);
             throw be;

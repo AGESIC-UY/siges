@@ -5,6 +5,7 @@ import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.exceptions.PGEProxyException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
@@ -28,7 +29,7 @@ import uy.gub.agesic.pge.core.config.PGEConfiguration;
 
 public class PGEProxyBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PGEProxyBean.class.getName());
 
     @EJB
     private ConfiguracionBean conf;
@@ -48,12 +49,12 @@ public class PGEProxyBean {
         String mtomStr = conf.obtenerCnfValorPorCodigo(ConfiguracionCodigos.VISUALIZADOR_PUBLICARSERVICIO_MTOM, orgPk);
         boolean mtom = mtomStr == null || mtomStr.isEmpty() || mtomStr.equalsIgnoreCase("true");
 
+		InputStream is = null;
         try {
             QName qname = new QName(paramNamespace, paramServiceName);
             URL url = new URL(paramURL);
-            InputStream is = new ByteArrayInputStream(armoXMLConfiguracion(usuario, rol, orgPk).getBytes());
+            is = new ByteArrayInputStream(armoXMLConfiguracion(usuario, rol, orgPk).getBytes());
             PGEConfiguration pgeConfiguration = new PGEConfiguration(is);
-            is.close();
 
             PGEContext<PublicarProyecto_Service, PublicarProyecto> context;
             context = new PGEContext<>(PublicarProyecto_Service.class,
@@ -64,7 +65,15 @@ public class PGEProxyBean {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error invocando el WS: " + service, e);
             throw new PGEProxyException("Error invocando el WS: " + service, e.getMessage());
-        }
+        } finally{
+			if(is != null){
+				try {
+					is.close();
+				} catch (IOException ex) {
+					logger.log(Level.SEVERE, null, ex);
+				}
+			}
+		}
     }
 
     public String proxyPublicarProyecto(String usuario, ProyectoImportado pi, Integer orgPk) throws PGEProxyException {

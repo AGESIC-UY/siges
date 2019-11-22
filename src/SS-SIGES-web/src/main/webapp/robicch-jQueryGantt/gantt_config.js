@@ -121,7 +121,11 @@ function loadI18n() {
         "GANTT_SEMESTER_SHORT": "semestre ",
 //        "GANTT_CANNOT_DELETE": "No es posible eliminar el entregable. Es usado en reg. de horas, pagos, colaboradores, productos, documentos, riesgos, calidad, o interesados."
         "GANTT_CANNOT_DELETE": "No es posible eliminar el entregable. Es un entregable padre o es usado en reg. de horas, productos, pagos, colaboradores, riesgos, calidad o interesados.",
-        "GANTT_CANNOT_ADD_HITOS_CHILDS": "No es posible ingresar hijos en actividades del tipo hito."
+        "GANTT_CANNOT_ADD_HITOS_CHILDS": "No es posible ingresar hijos en actividades del tipo hito.",
+        "GANTT_CANNOT_CLONE_LEVEL_0": "No es posible clonar el entregable de nivel 0.",
+        "GANTT_CANNOT_CLONE_EMPTY": "Debe seleccionar un entregable para poder clonarlo.",
+        "GANTT_CANNOT_DELETE_PROGRESS": "No es posible eliminar el entregable, ya que tiene avance cargado.",
+        "GANTT_CANNOT_ADD_PRODUCTOS_CHILDS": "No es posible ingresar hijos en actividades que tienen un producto asociado.",
     };
 }
 

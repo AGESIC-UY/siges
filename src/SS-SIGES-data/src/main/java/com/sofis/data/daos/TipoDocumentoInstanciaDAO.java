@@ -22,7 +22,7 @@ import javax.persistence.Query;
 public class TipoDocumentoInstanciaDAO extends HibernateJpaDAOImp<TipoDocumentoInstancia, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoDocumentoInstanciaDAO.class.getName()); 
 
     public TipoDocumentoInstanciaDAO(EntityManager em) {
         super(em);

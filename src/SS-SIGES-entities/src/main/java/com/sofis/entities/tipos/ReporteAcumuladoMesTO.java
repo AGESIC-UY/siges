@@ -32,6 +32,9 @@ public class ReporteAcumuladoMesTO implements Serializable {
     private Boolean proyectadoNegativoParcial;
     private String colorRealFinalizado = ConstantesEstandares.COLOR_TRANSPARENT;
     private String colorRealParcial = ConstantesEstandares.COLOR_TRANSPARENT;
+    
+    // Se agregan atributos para el Saldo
+    private Double valorSaldo = 0d;
 
     public ReporteAcumuladoMesTO() {
     }
@@ -198,6 +201,14 @@ public class ReporteAcumuladoMesTO implements Serializable {
     }
     public boolean isProyectadoAtrasadoParcial() {
 	return isProyectadoAtrasado(1);
+    }
+
+    public Double getValorSaldo() {
+        return valorSaldo;
+    }
+
+    public void setValorSaldo(Double valorSaldo) {
+        this.valorSaldo = valorSaldo;
     }
 
     /**

@@ -41,7 +41,7 @@ public class RegistrosHorasBean {
     private DatosUsuario du;
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RegistrosHorasBean.class.getName());
 
     @Inject
     private ProyectosBean proyectosBean;

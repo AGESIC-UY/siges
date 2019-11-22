@@ -5,94 +5,9 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
                 xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
-
-    <o:form id="frmPendientes">
-        <ice:panelGroup id="proyPendientes" styleClass="proyPendientes margen-inf" 
-                        rendered="#{not empty ProgramasProyectosMB.pendientes 
-                                    and ProgramasProyectosMB.pendientes.size() > 0
-                                    and (inicioMB.usuarioOrgaPMOF || inicioMB.usuarioOrgaPMOT)}">
-            <ice:panelGroup>
-                <ice:outputText value="#{labels.inicio_pendientes_titulo}"/>
-            </ice:panelGroup>
-            <ace:dataTable id="tblResultadosPend" 
-                           value="#{ProgramasProyectosMB.pendientes}"
-                           var="pend"
-                           paginator="true" pageCount="5" 
-                           rows="#{ProgramasProyectosMB.cantElementosPorPagina}">
-
-                <ace:column headerText="#{labels.inicio_col_TipoSolicitud}">
-                    <ice:outputText value="#{labels[pend.tipoSolicitud]}"/>
-                </ace:column>
-
-                <ace:column headerText="#{labels.inicio_col_Fecha}" >
-                    <ice:outputText value="#{pend.fechaCrea}" converter="fechaConverter"/>
-                </ace:column>
-
-                <ace:column headerText="#{labels.inicio_col_TipoFicha}" >
-                    <ice:outputText value="#{labels[pend.tipoFichaStr]}"/>
-                </ace:column>
-
-                <ace:column headerText="#{labels.inicio_col_Area}" >
-                    <ice:outputText value="#{pend.areaFk.areaNombre}"/>
-                </ace:column>
-
-                <ace:column headerText="#{labels.inicio_col_Nombre}" styleClass="ajusteWordColumna">
-                    <ice:outputText value="#{pend.fichaFk} - "/>
-                    <ice:outputText value="#{pend.nombre}"/>
-                </ace:column>
-
-                <ace:column headerText="#{labels.inicio_col_Gerente}" >
-                    <ice:outputText value="#{pend.usrGerenteFk.usuNombreApellido}" />
-                </ace:column>
-
-                <ace:column styleClass="columnaBoton"
-                            rendered="#{inicioMB.fieldRendered('btnEditarProgProy')}">
-                    <ace:tooltip id="tooltipEditar" for="btnEditarPendiente">
-                        <ice:outputText value="#{labels.editarTooltip}" />
-                    </ace:tooltip>
-                    <ace:pushButton id="btnEditarPendiente"
-                                    styleClass="botonEditar iconoTabla" 
-                                    action="#{inicioMB.irEditarProgramaProyecto(pend.proyProgId, false)}" />
-                </ace:column>
-
-                <ace:column styleClass="columnaBoton" 
-                            rendered="#{inicioMB.fieldRendered('btnEliminarProgProy')}">
-                    <h:commandButton id="btnEliminarPendiente"
-                                     styleClass="botonEliminar iconoTabla"
-                                     title="Eliminar:&#13;#{pend.fichaPkNombre}"
-                                     onclick="confirmationEliminarPend#{pend.fichaFk}.show();" />
-                    <ace:confirmationDialog widgetVar="confirmationEliminarPend#{pend.fichaFk}" 
-                                            message="#{labels.eliminar}: #{pend.fichaPkNombre}"
-                                            header="#{labels.hConfirmacion}"
-                                            closable="true"
-                                            closeOnEscape="true"
-                                            severity="info"
-                                            modal="true"
-                                            position="center">
-                        <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                            <h:commandButton id="yesDelPend"
-                                             value="#{labels.si}"
-                                             styleClass="boton principal botonContinuar"
-                                             onclick="confirmationEliminarPend#{pend.fichaFk}.hide();" 
-                                             actionListener="#{ProgramasProyectosMB.eliminarPendienteAction(pend)}"/>
-                            <h:commandButton id="noDelPend"
-                                             value="#{labels.no}"
-                                             styleClass="boton principal botonEliminar"
-                                             onclick="confirmationEliminarPend#{pend.fichaFk}.hide();"/>
-                        </h:panelGrid>
-                    </ace:confirmationDialog>
-                </ace:column>
-
-            </ace:dataTable>
-            <ace:messages id="pendientesMsg"/>
-        </ice:panelGroup>
-    </o:form>
+                xmlns:o="http://omnifaces.org/ui">
 
     <o:form id="frmCargo">
         <ice:panelGroup id="otrosProyectos" styleClass="proyectos">
@@ -100,7 +15,7 @@
             <!-- FORMULARIO FILTRO BUSQUEDA -->
             <ui:include src="./../fragmentos/inicioFragmentoFiltro.xhtml" />
 
-	    <!-- spio -->
+            <!-- spio -->
             <h:panelGroup id="pnlExportar" layout="block"
                           styleClass="panelAcciones panelBotonesExportarInicio" rendered="#{not empty ProgramasProyectosMB.filtroInicioResultado}">
                 <ice:panelGroup styleClass="panelBotones" >
@@ -109,11 +24,11 @@
                                     action="#{ProgramasProyectosMB.exportarAction()}"/>
                 </ice:panelGroup>
             </h:panelGroup>
-	    
-	    
+
+
             <ice:panelGroup id="programasProyectosResultadoBusqueda">
                 <ice:panelSeries id="principalAreas" 
-                                 rows="10000" 
+                                 rows="10000"
                                  value="#{ProgramasProyectosMB.filtroInicioResultado}" 
                                  var="itemArea">
                     <ice:panelGroup styleClass="proyPendientes margen-sup">
@@ -140,21 +55,25 @@
                                     <ice:outputText value="#{labels.inicio_row_vacio}" />
                                 </ice:panelGrid>
 
-                                <ice:commandLink id="linkEditarFicha1"
-                                                 action="#{inicioMB.irEditarProgramaProyecto(item.progProyId, false)}" 
-                                                 value="#{item.fichaFk} - #{item.nombre}"
-                                                 styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
-                                                 rendered="#{item.nombre != null}"
-                                                 title="#{ProgramasProyectosMB.inicioTooltipNombreFicha(item)}"/>
+                                <h:link id="linkEditarFicha1"
+                                        value="#{item.fichaFk} - #{item.nombre}" 
+                                        styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
+                                        outcome="IR_A_EDITAR_FICHA" 
+                                        rendered="#{item.nombre != null}"
+                                        title="#{ProgramasProyectosMB.inicioTooltipNombreFicha(item)}">
+                                    <o:param name="programaProyectoId" value="#{inicioMB.encryptParam(item.progProyId)}" />
+                                </h:link>
+
                             </ace:column>
 
                             <ace:column>
                                 <ice:commandLink id="linkEditarFicha2"
-                                                 action="#{inicioMB.irEditarProgramaProyecto(item.progProyId, true)}" 
+                                                 action="#{inicioMB.irEditarProgramaProyecto(inicioMB.encryptParam(item.progProyId), true)}" 
                                                  rendered="#{item.nombre != null}"
                                                  title="#{labels.inicio_link_nombre}">
                                     <ice:graphicImage value="../img/nueva_ventana.png" />
                                 </ice:commandLink>
+
                             </ace:column>
 
                             <ace:column headerText="#{labels.inicio_col_Area}" >
@@ -169,8 +88,9 @@
                             </ace:column>
 
                             <ace:column headerText="#{labels.inicio_col_Estado}" styleClass="colCenter">
-                                <ice:panelGroup styleClass="semaforoTexto #{item.tipoFicha eq 1 ? 'esPrograma' : ''}">
-                                    <ice:outputText value="#{item.fase}" style="#{item.solCambioFase ? 'color: red;':''}"
+                                <ice:panelGroup styleClass="semaforoTexto #{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
+                                                rendered="#{item.fichaFk != null}">
+                                    <ice:outputText value="#{item.fase}" style="#{item.solCambioFase || item.estadoPendiente != null ? 'color: red;':''}"
                                                     styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}" />
 
                                     <ice:panelGroup styleClass="indicadorFase">
@@ -304,13 +224,6 @@
                                 </ice:commandLink>
                             </ace:column>
 
-                            <!--
-                            <ace:column headerText="# {labels.hGRP}" styleClass="colCenter">
-                                <ice:panelGroup styleClass="semaforoTexto">
-
-                                </ice:panelGroup>
-                            </ace:column>
-                            -->
                             <ace:rowExpansion id="rowExp"/>
 
                         </ace:dataTable>

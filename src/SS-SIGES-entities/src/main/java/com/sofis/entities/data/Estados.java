@@ -10,6 +10,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -20,12 +23,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Estados.findAll", query = "SELECT e FROM Estados e")})
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Estados implements Serializable {
 
     public enum ESTADOS {
 
         NO_EXIGIDO(0),
-        PENDIENTE(1), //No se usa
+        PENDIENTE(1), // Se usa para mostrar estado pendiente que significa PENDIENTE_PMOT o PENDIENTE_PMOF
         PENDIENTE_PMOT(11), //Cuando el PM solicita aprobacion al PMOT
         PENDIENTE_PMOF(12), //Cuando el PMOT solicita aprobacion al PMOF
         INICIO(2),
@@ -60,20 +66,9 @@ public class Estados implements Serializable {
     private String estLabel;
     @Column(name = "est_orden_proceso")
     private Integer estOrdenProceso;
-
-    public Estados() {
-    }
-
+    
     public Estados(Integer estPk) {
         this.estPk = estPk;
-    }
-
-    public Estados(Integer estPk, String estCodigo, String estNombre, String estLabel, Integer estOrdenProceso) {
-        this.estPk = estPk;
-        this.estCodigo = estCodigo;
-        this.estNombre = estNombre;
-        this.estLabel = estLabel;
-        this.estOrdenProceso = estOrdenProceso;
     }
 
     public Integer getEstPk() {

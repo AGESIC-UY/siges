@@ -41,8 +41,7 @@ public class ErrorBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<Error> ch;
-    private static final Logger logger
-            = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ErrorBean.class.getName());
 
     //private String usuario;
     //private String origen;

@@ -39,7 +39,7 @@ import javax.inject.Inject;
 public class RevisionGastosMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RevisionGastosMB.class.getName());
     private static final String PARTICIPANTE_MSG_ID = "participantesMsg";
     private static final String PARTICIPANTE_GASTOS_MSG_ID = "partGastosMsg";
     private static final String PARTICIPANTE_POPUP_MSG_ID = "participantesPopupMsg";
@@ -328,7 +328,17 @@ public class RevisionGastosMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(PARTICIPANTE_MSG_ID, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(PARTICIPANTE_MSG_ID, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(PARTICIPANTE_MSG_ID, Labels.getValue(iterStr), null);                
+            }              
+
         }
         return null;
     }

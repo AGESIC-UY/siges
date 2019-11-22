@@ -38,7 +38,7 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class ParticipantesBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ParticipantesBean.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
 

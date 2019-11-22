@@ -19,9 +19,9 @@ import javax.persistence.Query;
  */
 public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(DocFileDao.class.getName());
+    
     public DocFileDao(EntityManager em) {
         super(em);
     }
@@ -51,7 +51,8 @@ public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements 
                 + "	df.docfile_ult_mod,\n"
                 + "	df.docfile_ult_usuario,\n"
                 + "	df.docfile_version,\n"
-                + "	df.docfile_doc_fk\n"
+                + "	df.docfile_doc_fk,\n"
+                + "	df.REV\n"
                 + "from\n"
                 + "	aud_doc_file df  INNER JOIN\n"
                 + "	doc_file df_2 ON (df.docfile_pk = df_2.docfile_pk)\n"
@@ -87,8 +88,9 @@ public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements 
                 dfAux.setDocfilePath((String) tupla[2]);
                 dfAux.setDocfileUltMod(new Date(((java.sql.Timestamp) tupla[3]).getTime()));
                 dfAux.setDocfileUltUsuario((String) tupla[4]);
+                dfAux.setRev((Integer) tupla[7]);
                 dfAux.setDocfileVersion(version);
-                dfAux.setDocfilePk(version);
+                dfAux.setDocfilePk((Integer) tupla[0]);
                 /**
                  * Seteo el nombre con la version
                  */

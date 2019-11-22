@@ -33,7 +33,7 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class TipoDocumentoInstanciaBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoDocumentoInstanciaBean.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
 

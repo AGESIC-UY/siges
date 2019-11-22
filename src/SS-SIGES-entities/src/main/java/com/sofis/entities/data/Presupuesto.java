@@ -19,6 +19,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -34,6 +37,9 @@ import org.hibernate.annotations.FetchMode;
     @NamedQuery(name = "Presupuesto.findByPrePk", query = "SELECT p FROM Presupuesto p WHERE p.prePk = :prePk"),
     @NamedQuery(name = "Presupuesto.findByPreBase", query = "SELECT p FROM Presupuesto p WHERE p.preBase = :preBase"),
     @NamedQuery(name = "Presupuesto.findByPreMoneda", query = "SELECT p FROM Presupuesto p WHERE p.preMoneda = :preMoneda")})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Presupuesto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,9 +64,6 @@ public class Presupuesto implements Serializable {
     
     @OneToOne(mappedBy = "proyPreFk", fetch = FetchType.LAZY)
     private Proyectos proyecto;
-
-    public Presupuesto() {
-    }
 
     public Presupuesto(Integer prePk) {
         this.prePk = prePk;

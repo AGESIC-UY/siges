@@ -6,6 +6,7 @@ import com.sofis.entities.data.RolesInteresados;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.RolesInteresadosDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ import javax.inject.Inject;
 public class RolesInteresadosMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(RolesInteresadosMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String ROL_NOMBRE = "rolintNombre";
 
@@ -51,9 +52,6 @@ public class RolesInteresadosMB implements Serializable {
     private RolesInteresados rolEnEdicion;
 
     public RolesInteresadosMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        rolEnEdicion = new RolesInteresados();
     }
 
     public SofisPopupUI getRenderPopupEdicion() {
@@ -118,6 +116,15 @@ public class RolesInteresadosMB implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */          
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<RolesInteresados>();
+        rolEnEdicion = new RolesInteresados();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -152,7 +159,15 @@ public class RolesInteresadosMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                 
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -165,7 +180,7 @@ public class RolesInteresadosMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put("nombre", filtroNombre);
         listaResultado = rolesInteresadosDelegate.busquedaRolFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
 
@@ -178,7 +193,15 @@ public class RolesInteresadosMB implements Serializable {
             rolEnEdicion = rolesInteresadosDelegate.obtenerRolesInteresadosPorId(rolPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }             
         }
 
         renderPopupEdicion.abrir();
@@ -197,7 +220,16 @@ public class RolesInteresadosMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }              
+
         }
         return null;
     }

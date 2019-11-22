@@ -25,42 +25,42 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class ProyIndicesBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+	private static final Logger logger = Logger.getLogger(ProyIndicesBean.class.getName());
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
-    
-    public ProyIndices guardar(ProyIndices ind, Integer proyPk) {
-        ind.setProyindFechaAct(new Date());
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+	private EntityManager em;
 
-        ProyIndicesDAO dao = new ProyIndicesDAO(em);
-        try {
-            boolean isNew = ind != null && ind.getProyindPk() == null;
-            ind = dao.update(ind);
+	public ProyIndices guardar(ProyIndices ind, Integer proyPk) {
+		ind.setProyindFechaAct(new Date());
 
-            if (isNew && proyPk != null) {
-                ProyectosDAO pDao = new ProyectosDAO(em);
-                Proyectos proy = pDao.findById(Proyectos.class, proyPk);
-                proy.setProyIndices(ind);
-                pDao.update(proy);
-            }
+		ProyIndicesDAO dao = new ProyIndicesDAO(em);
+		try {
+			boolean isNew = ind != null && ind.getProyindPk() == null;
+			ind = dao.update(ind);
 
-        } catch (DAOGeneralException ex) {
+			if (isNew && proyPk != null) {
+				ProyectosDAO pDao = new ProyectosDAO(em);
+				Proyectos proy = pDao.findById(Proyectos.class, proyPk);
+				proy.setProyIndices(ind);
+				pDao.update(proy);
+			}
+
+		} catch (DAOGeneralException ex) {
 //            logger.log(Level.SEVERE, null, ex);
-            BusinessException be = new BusinessException(ex);
-            be.addError(MensajesNegocio.ERROR_PROY_IND_GUARDAR + ":"+proyPk);
-            throw be;
-        }
-        return ind;
-    }
+			BusinessException be = new BusinessException(ex);
+			be.addError(MensajesNegocio.ERROR_PROY_IND_GUARDAR + ":" + proyPk);
+			throw be;
+		}
+		return ind;
+	}
 
-    public ProyIndices obtenerIndicePorProyId(Integer proyPk) {
-        ProyIndicesDAO dao = new ProyIndicesDAO(em);
-        return dao.obtenerIndicePorProyId(proyPk);
-    }
+	public ProyIndices obtenerIndicePorProyId(Integer proyPk) {
+		ProyIndicesDAO dao = new ProyIndicesDAO(em);
+		return dao.obtenerIndicePorProyId(proyPk);
+	}
 
-    public Date ultimaActualizacion(Integer proyPk) {
-        ProyIndicesDAO dao = new ProyIndicesDAO(em);
-        return dao.ultimaActualizacion(proyPk);
-    }
+	public Date ultimaActualizacion(Integer proyPk) {
+		ProyIndicesDAO dao = new ProyIndicesDAO(em);
+		return dao.ultimaActualizacion(proyPk);
+	}
 }

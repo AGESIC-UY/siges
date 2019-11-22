@@ -13,10 +13,9 @@ import java.util.logging.Logger;
  */
 public class FichaPagoValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaPagoValidacion.class.getName());
 
-    public static boolean validar(Pagos pago) throws BusinessException {
-        logger.finest("Validar Ficha Pago.");
+    public static boolean validar(Pagos pago, boolean ejecucion, boolean exigeProveedorEnPago, boolean exigeClienteEnPago) throws BusinessException {
         BusinessException be = new BusinessException();
 
         if (pago == null) {
@@ -25,11 +24,23 @@ public class FichaPagoValidacion {
             if (pago.getEntregables() == null) {
                 be.addError(MensajesNegocio.ERROR_PAGO_ENTREGABLE);
             }
-            if (pago.getPagFechaPlanificada() == null) {
+            if (pago.getPagFechaPlanificada() == null && !ejecucion) {
                 be.addError(MensajesNegocio.ERROR_PAGO_FECHA_PLANIFICADA);
             }
-            if (pago.getPagImportePlanificado() == null) {
+            if (pago.getPagImportePlanificado() == null && !ejecucion) {
                 be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_PLANIFICADO);
+            }
+            if (pago.getPagFechaReal() == null && ejecucion) {
+                be.addError(MensajesNegocio.ERROR_PAGO_FECHA_REAL);
+            }
+            if (pago.getPagImporteReal() == null && ejecucion) {
+                be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_REAL);
+            }
+            if (exigeProveedorEnPago && Boolean.TRUE.equals(pago.getPagConfirmar()) && pago.getPagProveedorFk() == null) {
+                be.addError(MensajesNegocio.ERROR_PAGO_SIN_PROVEEDOR);
+            }
+            if (exigeClienteEnPago && Boolean.TRUE.equals(pago.getPagConfirmar()) && pago.getPagContrOrganizacionFk() == null) {
+                be.addError(MensajesNegocio.ERROR_PAGO_SIN_CLIENTE);
             }
         }
 
@@ -37,7 +48,7 @@ public class FichaPagoValidacion {
             logger.log(Level.WARNING, be.getErrores().toString(), be);
             throw be;
         }
-
+        
         return true;
     }
 }

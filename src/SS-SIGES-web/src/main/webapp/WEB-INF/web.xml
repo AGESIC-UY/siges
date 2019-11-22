@@ -7,7 +7,7 @@
     </context-param>-->
     
     <context-param>
-        <param-name>facelets.SKIP_COMMENTS</param-name>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
     <context-param>  
@@ -31,6 +31,12 @@
         <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+<!--    <context-param>
+        <param-name>org.icefaces.compressDOM</param-name>
+        <param-value>true</param-value>
+    </context-param>-->
+    
     <!--    <context-param>
         <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
         <param-value>false</param-value>
@@ -71,13 +77,16 @@
     
     <session-config>
         <session-timeout>120</session-timeout>
+        <cookie-config>
+            <!-- la sesión no puede durar más de 12 horas -->
+            <max-age>43200</max-age>
+        </cookie-config>
     </session-config>
     <!-- BRUNO 03-04-17: Para corregir timeout de sesión -->
     
     
-    
     <!-- Multimedia WS -->
-    <context-param>
+<!--    <context-param>
         <param-name>resteasy.resources</param-name>
         <param-value>com.sofis.web.ws.MultimediaUpload</param-value>
     </context-param>
@@ -94,7 +103,7 @@
     <mime-mapping>
         <extension>map</extension>
         <mime-type>application/json</mime-type>
-    </mime-mapping>
+    </mime-mapping>-->
     <!-- Multimedia WS Fin-->
     
     <listener>
@@ -202,19 +211,7 @@
     </error-page>
     
     
-    <!-- omnifaces -->
-    
-<!--    <filter>
-        <filter-name>gzipResponseFilter</filter-name>
-        <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>gzipResponseFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>-->
-    
+    <!-- omnifaces -->  
     
     <!--<distributable/>-->
     
@@ -224,8 +221,14 @@
         <param-value>true</param-value>
     </context-param>-->
     
+    <!-- 23-06-17: Agregado para arreglar el error 404 al acceder a la página de login de jaas j_security_check -->
+     <filter>
+        <filter-name>j_security_fix</filter-name>
+        <filter-class>com.sofis.web.filtros.JAASFixFilter</filter-class>
+    </filter>
     
-    <filter>
+    
+<!--    <filter>
         <filter-name>noCache</filter-name>
         <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
     </filter>
@@ -238,11 +241,11 @@
         </init-param>
     </filter>
     <filter>
-        <filter-name>cache10hours</filter-name>
+        <filter-name>cache12hours</filter-name>
         <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
         <init-param>
             <param-name>expires</param-name>
-            <param-value>10h</param-value>
+            <param-value>12h</param-value>
         </init-param>
     </filter>
     <filter>
@@ -250,21 +253,27 @@
         <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
         <init-param>
             <param-name>expires</param-name>
-            <param-value>2d</param-value>
+            <param-value>1d</param-value>
         </init-param>
-    </filter>
+    </filter>-->
     
-    <filter-mapping>
+<!--    <filter-mapping>
         <filter-name>noCache</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>cache10hours</filter-name>
+        <filter-name>cache12hours</filter-name>
         <url-pattern>*.js</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>cache10hours</filter-name>
+        <filter-name>cache12hours</filter-name>
         <url-pattern>*.css</url-pattern>
+    </filter-mapping>-->
+    
+    <!-- 23-06-17: Agregado para arreglar el error 404 al acceder a la página de login de jaas j_security_check -->
+    <filter-mapping>
+        <filter-name>j_security_fix</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
     
@@ -286,11 +295,39 @@
         <param-value>true</param-value>
     </context-param>
     
-    <context-param>
+    -->    
+<!--    <context-param>
         <description>http://www.icesoft.org/wiki/display/ICE/render.auto</description>
         <param-name>org.icefaces.render.auto</param-name>
         <param-value>true</param-value>
     </context-param>-->
+    
+    
+    <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+<!--    <context-param>
+        <param-name>org.omnifaces.HTML5_RENDER_KIT_PASSTHROUGH_ATTRIBUTES</param-name>
+        <param-value>
+            javax.faces.component.UIInput=x-webkit-speech,x-webkit-grammar;
+            javax.faces.component.UIComponent=contenteditable,draggable
+        </param-value>
+    </context-param>-->
+    
+<!--    <filter>
+        <filter-name>gzipResponseFilter</filter-name>
+        <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipResponseFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>-->
+    
+    
     
     
 </web-app>

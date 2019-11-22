@@ -1,0 +1,165 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    
+    <changeSet author="bruno (generated)" id="1510003494842-1">
+        <createTable tableName="REVINFO">
+            <column autoIncrement="true" name="REV" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="REVTSTMP" type="BIGINT"/>
+            <column defaultValueNumeric="0" name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-2">
+        <createTable tableName="componente_producto">
+            <column autoIncrement="true" name="com_pk" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="com_nombre" type="VARCHAR(300)"/>
+            <column name="com_org_fk" type="INT"/>
+            <column name="com_version" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-3">
+        <addColumn tableName="plantilla_entregables">
+            <column name="p_entregables_dependencia" type="VARCHAR(45 BYTE)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-4">
+        <addColumn tableName="adquisicion">
+            <column name="adq_componente_producto_fk" type="INT(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-5">
+        <addColumn tableName="plantilla_entregables">
+            <column name="p_entregables_es_hito" type="BIT(1)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-6">
+        <addColumn tableName="documentos">
+            <column defaultValueBoolean="false" name="docs_publicable" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-7">
+        <addColumn tableName="documentos">
+            <column name="docs_ult_pub" type="DATETIME(19)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-8">
+        <addColumn tableName="documentos">
+            <column name="docs_pub_fecha" type="DATETIME(19)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-9">
+        <addColumn tableName="prog_indices">
+            <column defaultValueNumeric="0" name="progind_fecha_act_color" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-10">
+        <addColumn tableName="proy_indices">
+            <column defaultValueNumeric="0" name="proyind_fecha_act_color" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-11">
+        <addColumn tableName="aud_ss_usuario">
+            <column name="usu_ldap_user" type="VARCHAR(45 BYTE)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-12">
+        <addColumn tableName="proyectos">
+            <column name="proy_fecha_act_pub" type="DATETIME(19)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-13">
+        <addUniqueConstraint columnNames="usu_ldap_user" constraintName="usu_ldap_user_UNIQUE" tableName="ss_usuario"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-14">
+        <createIndex indexName="adq_comp_prod_fk_idx" tableName="adquisicion">
+            <column name="adq_componente_producto_fk"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-15">
+        <createIndex indexName="docs_docfile_fk_idx" tableName="documentos">
+            <column name="docs_docfile_pk"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-16">
+        <createIndex indexName="enthist_replan_fk_idx" tableName="ent_hist_linea_base">
+            <column name="enthist_replan_fk"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-17">
+        <createIndex indexName="eta_org_fk_cod_idx" tableName="etapa">
+            <column name="eta_org_fk"/>
+            <column name="eta_codigo"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-18">
+        <createIndex indexName="fk_componente_producto_1_idx" tableName="componente_producto">
+            <column name="com_org_fk"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-19">
+        <addForeignKeyConstraint baseColumnNames="adq_componente_producto_fk" baseTableName="adquisicion" constraintName="adq_comp_prod_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="com_pk" referencedTableName="componente_producto"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-20">
+        <addForeignKeyConstraint baseColumnNames="docs_docfile_pk" baseTableName="documentos" constraintName="docs_docfile_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="docfile_pk" referencedTableName="doc_file"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-21">
+        <addForeignKeyConstraint baseColumnNames="enthist_replan_fk" baseTableName="ent_hist_linea_base" constraintName="enthist_replan_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="proyreplan_pk" referencedTableName="proy_replanificacion"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-22">
+        <dropForeignKeyConstraint baseTableName="proyectos" constraintName="proy_latlng_fk"/>
+    </changeSet>
+
+    <changeSet author="bruno (generated)" id="1510003494842-29">
+        <modifyDataType columnName="docs_fecha" newDataType="datetime(19)" tableName="documentos"/>
+        <dropNotNullConstraint columnDataType="datetime(19)" columnName="docs_fecha" tableName="documentos"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-30">
+        <addNotNullConstraint columnDataType="boolean" columnName="prog_activo" tableName="programas"/>
+        <addDefaultValue columnDataType="boolean" columnName="prog_activo" defaultValueBoolean="true" tableName="programas"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-31">
+        <addColumn tableName="programas">
+            <column name="prog_habilitado" type="TINYINT(1)"/>
+        </addColumn>
+        <modifyDataType columnName="prog_habilitado" newDataType="boolean" tableName="programas"/>
+        <addDefaultValue columnDataType="boolean" columnName="prog_habilitado" defaultValueBoolean="true" tableName="programas"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-32">
+        <modifyDataType columnName="proy_fecha_act" newDataType="datetime(19)" tableName="proyectos"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-33">
+        <modifyDataType columnName="proy_fecha_crea" newDataType="datetime(19)" tableName="proyectos"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-34">
+        <modifyDataType columnName="proy_fecha_est_act" newDataType="datetime(19)" tableName="proyectos"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-35">
+        <modifyDataType columnName="proy_ult_mod" newDataType="datetime(19)" tableName="proyectos"/>
+    </changeSet>
+    <changeSet author="bruno (generated)" id="1510003494842-36">
+        <modifyDataType columnName="usu_ldap_user" newDataType="varchar(45)" tableName="ss_usuario"/>
+    </changeSet>
+
+    <changeSet author="bruno (generated)" id="1510003494842-37">
+        <sql>
+            update latlng_proyectos 
+            set latlng_proy_fk = (
+            select p.proy_pk 
+            from proyectos as p 
+            where p.proy_latlng_fk = latlng_pk
+            );
+        </sql>
+    </changeSet>
+   
+    
+    
+</databaseChangeLog>

@@ -16,6 +16,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
@@ -35,6 +38,9 @@ import org.hibernate.envers.NotAudited;
     @NamedQuery(name = "SsUsuOfiRoles.findByUsuOfiRolesOrigen", query = "SELECT s FROM SsUsuOfiRoles s WHERE s.usuOfiRolesOrigen = :usuOfiRolesOrigen"),
     @NamedQuery(name = "SsUsuOfiRoles.findByUsuOfiRolesUserCode", query = "SELECT s FROM SsUsuOfiRoles s WHERE s.usuOfiRolesUserCode = :usuOfiRolesUserCode")})
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SsUsuOfiRoles implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,10 +73,6 @@ public class SsUsuOfiRoles implements Serializable {
     private Areas usuOfiRolesUsuArea;
     @Column(name = "usu_ofi_roles_activo")
     private Boolean usuOfiRolesActivo;
-
-    public SsUsuOfiRoles() {
-        this.usuOfiRolesActivo = true;
-    }
 
     public SsUsuOfiRoles(Integer usuOfiRolesId) {
         this.usuOfiRolesId = usuOfiRolesId;

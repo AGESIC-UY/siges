@@ -35,7 +35,7 @@ public class TipoLeccionBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoLeccionBean.class.getName());
 
     public TipoLeccion guardar(TipoLeccion tl) {
         TipoLeccionDAO dao = new TipoLeccionDAO(em);

@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ReporteProgramaMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ReporteProgramaMB.class.getName());
     private static final String REPORTE_PROG_PK = "reporteProgPk";
     private static final int INICIO_REPORTE_GANTT = 5;
     private static final int FIN_REPORTE_GANTT = 665;
@@ -85,9 +85,6 @@ public class ReporteProgramaMB implements Serializable {
     private Integer anio;
 
     public ReporteProgramaMB() {
-	this.listaTasks = new ArrayList<>();
-	this.listaAcumuladosAlcance = new ArrayList<>();
-	this.listaAcumuladosPresupuesto = new ArrayList<>();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -168,6 +165,15 @@ public class ReporteProgramaMB implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */          
+        
+	this.listaTasks = new ArrayList<ReporteTaskTO>();
+	this.listaAcumuladosAlcance = new ArrayList<ReporteAcumuladoTO>();
+	this.listaAcumuladosPresupuesto = new ArrayList<ReporteAcumuladoTO>();        
+        
 	tipoAvance = 0;
 	tipoAlcance = 0;
 	

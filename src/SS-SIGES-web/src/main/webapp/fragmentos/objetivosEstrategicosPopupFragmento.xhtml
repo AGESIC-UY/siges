@@ -4,15 +4,11 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
                 xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:o="http://omnifaces.org/ui">
 
-    <o:form id="frmObjEstPopup">
+    <o:form id="frmObjEstPopup" styleClass="formularioConTextarea">
 
         <ice:panelPopup rendered="#{objetivoEstrategicoMB.renderABMPopup}" 
                         draggable="true" 
@@ -34,11 +30,11 @@
                         <ace:textEntry value="#{objetivoEstrategicoMB.obj.objEstNombre}" maxlength="100" style="width: 820px"/>
 
                         <ice:outputLabel value="#{labels.obj_form_desc}:" />
-                        <ace:textAreaEntry value="#{objetivoEstrategicoMB.obj.objEstDescripcion}" maxlength="300" style="width: 820px"/>
+                        <ace:textAreaEntry value="#{objetivoEstrategicoMB.obj.objEstDescripcion}" maxlength="300" />
                     </ice:panelGrid>
 
                     <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages id="objEstPopupMsg"/>
+                        <ace:messages for="formObjEst"/>
                         <ace:pushButton value="#{labels.guardar}" 
                                         action="#{objetivoEstrategicoMB.guardar()}" 
                                         styleClass="boton principal guardar"/>

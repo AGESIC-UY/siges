@@ -1,5 +1,6 @@
 package com.sofis.web.mb;
 
+import com.sofis.business.ejbs.NotificacionEnvioBean;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.data.Configuracion;
@@ -23,8 +24,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
-import org.icefaces.application.PortableRenderer;
-import org.icefaces.application.PushRenderer;
 
 /**
  *
@@ -35,7 +34,7 @@ import org.icefaces.application.PushRenderer;
 public class MigracionMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstantesEstandares.LOGGER);
+    private static final Logger logger = Logger.getLogger(MigracionMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
@@ -49,6 +48,8 @@ public class MigracionMB implements Serializable {
     private OrganismoDelegate organismoDelegate;
     @Inject
     private IndicadoresDelegate indicadoresDelegate;
+    @Inject
+    private NotificacionEnvioBean notificacionEnvBean;
 
     private Boolean segundoPlano;
     private Boolean resetLineaBase;
@@ -58,13 +59,13 @@ public class MigracionMB implements Serializable {
     private Integer totalProg;
     private Integer progressProy;
     private Integer progressProg;
-    private static String GROUP_NAME = "everyone";
-    private PortableRenderer portableRenderer;
+//    private static String GROUP_NAME = "everyone";
+//    private PortableRenderer portableRenderer;
     private Thread calcularProyectosThread;
 
     public MigracionMB() {
-        PushRenderer.addCurrentView(GROUP_NAME);
-        portableRenderer = PushRenderer.getPortableRenderer();
+//        PushRenderer.addCurrentView(GROUP_NAME);
+//        portableRenderer = PushRenderer.getPortableRenderer();
     }
 
     public String salir() {
@@ -88,19 +89,25 @@ public class MigracionMB implements Serializable {
     }
 
     public String calcular() {
-
         controlarDatosFaltantes();
-
         Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-        SsUsuario usuario = inicioMB.getUsuario();
-        calcularProyectosThread = new MigracionThread(orgPk, usuario);
-        calcularProyectosThread.start();
-
+//        SsUsuario usuario = inicioMB.getUsuario();
+//        calcularProyectosThread = new MigracionThread(orgPk, usuario);
+//        calcularProyectosThread.start();
+		indicadoresDelegate.recalcularIndicadores(orgPk, true);
         if (segundoPlano != null && segundoPlano) {
             return ConstantesNavegacion.IR_A_INICIO;
         }
         return null;
     }
+    
+    public String probarMails(){
+        
+        notificacionEnvBean.enviarNotificaciones();;
+        
+        return null;
+    }
+    
 
     public Integer getCountProy() {
         return countProy;
@@ -203,7 +210,7 @@ public class MigracionMB implements Serializable {
                 countProy++;
                 progressProy = countProy * 100 / totalProy;
                 logger.log(Level.INFO, "Proyecto calculcar({0}) Ind: {1}/{2} ({3}%)", new Object[]{proyPk, countProy, totalProy, progressProy});
-                portableRenderer.render(GROUP_NAME);
+//                portableRenderer.render(GROUP_NAME);
 
             }
 
@@ -220,7 +227,7 @@ public class MigracionMB implements Serializable {
                 countProg++;
                 progressProg = countProg * 100 / totalProg;
                 logger.log(Level.INFO, "Programa calculcar Ind({0}): {1}/{2} ({3}%)", new Object[]{progPk, countProg, totalProg, progressProg});
-                portableRenderer.render(GROUP_NAME);
+//                portableRenderer.render(GROUP_NAME);
             }
 
             

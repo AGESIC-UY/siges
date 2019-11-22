@@ -29,8 +29,8 @@
 ////            final Hashtable jndiProperties = new Hashtable();
 ////            jndiProperties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
 ////            final Context context = new InitialContext(jndiProperties);
-////            final String appName = "SS-SIGES-ear-1.0-SNAPSHOT";
-////            final String moduleName = "SS-SIGES-ejb-1.0-SNAPSHOT";
+////            final String appName = "SS-SIGES-ear-5.9.1";
+////            final String moduleName = "SS-SIGES-ejb-5.9.1";
 ////            final String distinctName = "";
 ////            final String beanName="DatosUsuario";
 ////            final String viewClassFullName= DatosUsuarioRemote.class.getName();

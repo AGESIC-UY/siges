@@ -12,9 +12,8 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ice:panelGroup id="panelProductos" 
-                    styleClass="col-sm-6 cuadro" 
-                    style="#{fichaMB.selectedMostrar == 5 ? 'width: 100%; padding-right:25px' : ''}"
+    <ice:panelGroup id="panelProductos"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 5) and fichaMB.fieldRendered('panelProductos')}">
 
         <ice:panelGroup id="formProductos" styleClass="cabezal" >
@@ -66,7 +65,7 @@
             <!-- FORMULARIO INGRESO -->
             <ui:include src="./productosFragmentoForm.xhtml" />
 
-            <ace:messages id="productosMsg"/>
+            <ace:messages id="productosMsg" rendered="#{not fichaMB.prodFormDataExpanded}"/>
 
             <ice:outputLabel value="#{labels.prod_sin_productos}" 
                              rendered="#{fichaMB.productosList == null or fichaMB.productosList.size() == 0}" />
@@ -106,7 +105,7 @@
                         </ice:panelGrid>
                     </ice:panelGroup>
 
-                    
+
                     <ice:panelGroup styleClass="col-sm-9 controles">
                         <ice:panelGroup styleClass="anioProducto">
                             <ice:commandLink action="#{fichaMB.retrocederAnioProdMes(prod)}" 
@@ -159,8 +158,8 @@
                             </ace:confirmationDialog>
                         </ice:panelGroup>
                     </ice:panelGroup>
- 
-                    
+
+
                     <ice:panelGroup styleClass="col-sm-9 scrollProducto"
                                     rendered="#{prod.prodMesList != null and prod.prodMesList.size() > 0}">
                         <div class="prodItem prodItemSubtitulo">
@@ -201,7 +200,7 @@
                                                 styleClass="alinearDerecha"
                                                 converter="ImporteFormatConverter"
                                                 rendered="#{prodMes.prodmesPk>0}"/>
-                                
+
                                 <ice:outputText value="#{prodMes.prodmesAcuReal}"
                                                 styleClass="alinearDerecha"
                                                 style="border-bottom: 6px solid #{fichaMB.getProdMesAcuRealColor(prodMes)}"
@@ -215,7 +214,7 @@
                             </div>
                         </ui:repeat>
                     </ice:panelGroup>
-                   
+
                 </ice:panelGroup>
             </ice:panelSeries>
         </ice:panelGroup>

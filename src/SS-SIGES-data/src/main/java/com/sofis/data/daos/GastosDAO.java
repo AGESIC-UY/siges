@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -20,6 +21,7 @@ import javax.persistence.Query;
 public class GastosDAO extends HibernateJpaDAOImp<Gastos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(GastosDAO.class.getName());      
 
     public GastosDAO(EntityManager em) {
         super(em);

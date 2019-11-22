@@ -2,9 +2,12 @@ package com.sofis.business.utils;
 
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -33,4 +36,22 @@ public class OrganiIntProveUtils {
 
         return listOrga;
     }
+
+    public static List<OrganiIntProve> filtrarHabilitadosYOrdenarPorNombre(List<OrganiIntProve> listOrga, 
+            OrganiIntProve excepcion) {
+    
+        listOrga = new ArrayList<>(listOrga);
+        
+        ListIterator<OrganiIntProve> iter = listOrga.listIterator();
+        while(iter.hasNext()){
+            OrganiIntProve org = iter.next();
+
+            if (!org.getOrgaHabilitado() && !org.equals(excepcion)) {
+                iter.remove();
+            }
+        }
+
+        return sortByNombre(listOrga);
+    }
+
 }

@@ -67,7 +67,7 @@
                             <ace:textEntry value="#{noticiaMB.notEnEdicion.notTitulo}"/>
                         </ice:panelGrid>
                         <ice:outputLabel value="#{labels.texto}"  styleClass="obligatorio"/>
-                        <ace:richTextEntry value="#{noticiaMB.notEnEdicion.notContenido}" height="50px" toolbar="Basic" saveOnSubmit="true"/>
+                        <ace:richTextEntry value="#{noticiaMB.notEnEdicion.notContenido}" height="50px" toolbar="Basic" saveOnSubmit="true" converter="SanitizerAceRichTextConverter" converter="SanitizerAceRichTextConverter"/>
 
                         <ice:outputLabel value="#{labels.ampliar}"  styleClass="obligatorio"/>
                         <ace:textEntry value="#{noticiaMB.notEnEdicion.notAmpliar}"/>

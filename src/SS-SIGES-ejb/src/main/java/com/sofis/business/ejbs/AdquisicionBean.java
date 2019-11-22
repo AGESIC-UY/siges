@@ -7,6 +7,7 @@ import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Devengado;
 import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.Pagos;
 import com.sofis.entities.data.Presupuesto;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.AdqPagosTO;
@@ -26,7 +27,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -66,7 +66,7 @@ public class AdquisicionBean {
         //origen = du.getOrigen();
     }
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AdquisicionBean.class.getName());
 
     private Adquisicion guardar(Adquisicion adquisicion) throws GeneralException {
         AdquisicionValidacion.validar(adquisicion);
@@ -208,11 +208,17 @@ public class AdquisicionBean {
                 nvaAdq.setAdqMoneda(adq.getAdqMoneda());
                 nvaAdq.setAdqNombre(adq.getAdqNombre());
                 nvaAdq.setAdqPreFk(pre);
-                nvaAdq.setAdqProcCompra(adq.getAdqProcCompra());
-                nvaAdq.setAdqProcCompraGrp(null);
+//                nvaAdq.setAdqProcCompra(adq.getAdqProcCompra());
+                nvaAdq.setAdqProcedimientoCompra(adq.getAdqProcedimientoCompra());
+
+                nvaAdq.setAdqIdGrpErpFk(null);
                 nvaAdq.setAdqProvOrga(adq.getAdqProvOrga());
+                nvaAdq.setAdqCompartida(adq.getAdqCompartida());
+                nvaAdq.setSsUsuarioCompartida(adq.getSsUsuarioCompartida());
+                
                 nvaAdq.setPagosSet(pagosBean.copiarProyPagos(adq.getPagosSet(), nvaAdq, entSet, desfasajeDias));
                 nvaAdq.setDevengadoList(devengadoBean.copiarProyDevengado(adq.getDevengadoList(), nvaAdq, desfasajeDias));
+                
                 result.add(nvaAdq);
             }
             return result;
@@ -299,5 +305,10 @@ public class AdquisicionBean {
     public Double costoTotal(Integer adqPk) {
         AdquisicionDAO dao = new AdquisicionDAO(em);
         return dao.costoTotal(adqPk);
+    }
+
+    public Pagos obtenerUltimoPago(Integer adqPk){
+        AdquisicionDAO adqDAO = new AdquisicionDAO(em);
+        return adqDAO.obtenerUltimoPago(adqPk);
     }
 }

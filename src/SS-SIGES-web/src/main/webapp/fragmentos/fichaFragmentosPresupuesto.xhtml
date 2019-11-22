@@ -3,23 +3,17 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
-                xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
 
-    <ice:panelGroup id="panelPresupuesto" 
-                    styleClass="col-sm-6 cuadro" 
-                    style="#{fichaMB.selectedMostrar == 4 ? 'width: 100%; padding-right:25px' : ''}"
+    <ice:panelGroup id="panelPresupuesto"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 4) and fichaMB.fieldRendered('panelPresupuesto')}">
 
         <ice:panelGroup id="cabezalPresupuesto" styleClass="cabezal" >
             <ice:outputText value="#{labels.presupuesto_titulo}"/>
             <ace:pushButton value="" action="#{fichaMB.miMostrar(4)}" 
                             styleClass="#{fichaMB.selectedMostrar == 4 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
-            
+
             <ace:pushButton action="#{fichaMB.maximizarFrame(4, null)}" 
                             value=""
                             label="#{fichaMB.frameMax ? labels.pre_minimizar_frame : labels.pre_maximizar_frame}"
@@ -68,7 +62,7 @@
         </ice:panelGroup>
 
         <ice:panelGroup rendered="#{fichaMB.mostrar[4]}" styleClass="cuerpo">
-            <ice:panelGroup id="preHeader" styleClass="cabezalPresupuesto">
+            <ice:panelGroup id="preHeader" styleClass="cabezalPresupuesto" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}">
                 <ice:panelGroup styleClass="row preBase">
                     <ice:outputLabel value="#{labels.presupuesto_base}:" styleClass="col-sm-2"/>
                     <ice:panelGroup styleClass="col-sm-3">
@@ -85,23 +79,19 @@
                 </ice:panelGroup>
 
                 <ice:panelGroup styleClass="botonPresupuesto" >
-                    <!--
-                    <c:set var="renderBtnPre" value="# {fichaMB.fichaTO.preFk.prePk ne null ? fichaMB.fieldRendered('editarPresupuesto') : fichaMB.fieldRendered('agregarPresupuesto')}" />
-                    <ace:pushButton value="# {fichaMB.fichaTO.preFk ne null ? labels.editarPresupuesto : labels.agregarPresupuesto}" 
-                                    styleClass="boton principal editar" 
-                                    rendered="# {fichaMB.formPreRendered == 0 and renderBtnPre}"
-                                    action="# {fichaMB.verFormPresupuestoAction(fichaMB.fichaTO.preFk.prePk)}" />
-                    -->
                     <ace:pushButton value="#{labels.agregarAdquisicion}" 
                                     styleClass="boton principal agregar" 
-                                    rendered="#{fichaMB.fieldRendered('agregarAdquisicion') and fichaMB.formPreRendered == 0}"
+                                    rendered="#{fichaMB.fieldRendered('agregarAdquisicion')}"
                                     action="#{fichaMB.verFormAdquisicionAction(null)}" />
+                    <ace:pushButton id="btnHabilitarCargaPresupuestoDesdeArchivo" value="#{labels.carga_desde_archivo}" styleClass="boton principal agregar" 
+                                    action="#{fichaMB.mostrarCargaPresupuestoDesdeArchivo()}"
+                                    rendered="#{fichaMB.habilitarCargaPresupuestoDesdeArchivo()}"/>
+                    <ace:messages for="btnHabilitarCargaPresupuestoDesdeArchivo" />
                 </ice:panelGroup>
             </ice:panelGroup>
 
-            <ice:panelGroup id="presupuestoFormData">
-                <ice:panelCollapsible id="collapsiblePre" 
-                                      expanded="#{fichaMB.formPreRendered != 0}">
+            <ice:panelGroup id="presupuestoFormData" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}">
+                <ice:panelCollapsible id="collapsiblePre" expanded="#{fichaMB.formPreRendered != 0}">
 
                     <!-- Formulario de Presupuesto -->
                     <ui:include src="./fichaFragmentosPreFormPre.xhtml" />

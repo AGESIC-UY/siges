@@ -19,9 +19,9 @@ import javax.persistence.Query;
  */
 public class RiesgosDAO extends HibernateJpaDAOImp<Riesgos, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(RiesgosDAO.class.getName());
+    
     public RiesgosDAO(EntityManager em) {
         super(em);
     }

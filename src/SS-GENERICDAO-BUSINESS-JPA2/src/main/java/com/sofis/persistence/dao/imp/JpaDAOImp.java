@@ -39,7 +39,7 @@ import javax.persistence.Id;
 public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> {
 
 	@Transient
-	EntityManager em;
+	protected EntityManager em;
 	boolean debug = false;
 
 	public JpaDAOImp(EntityManager em) {

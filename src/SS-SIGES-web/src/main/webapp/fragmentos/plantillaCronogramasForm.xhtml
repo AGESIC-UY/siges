@@ -4,13 +4,9 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
-                xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
 
     <ice:panelGroup id="leccAprendidaFormData">
 
@@ -51,22 +47,22 @@
                         <ace:column headerText="#{labels.plaCrono_duracion}" >
                             <ice:inputText value="#{pla.pentregableDuracion}" styleClass="textoExtraCorto" />
                         </ace:column>
-                        <ace:column headerText="#{labels.plaCrono_antecesor}" >
-                            <ice:selectOneMenu id="comboEntregablesForm"
-                                               value="#{pla.pentregablesNumeroAnt}" 
-                                               styleClass="textoMedio">
-                                <f:selectItem itemValue="-1" itemLabel="-----"/>
-                                <f:selectItems var="item"  
-                                               value="#{PlantillaCronogramaMB.plantillaCronograma.plantillaEntregablesSet}" 
-                                               itemLabel="#{item.pentregablesNumero}" itemValue="#{item.pentregablesNumero}"/>
-                            </ice:selectOneMenu>
+                        <ace:column headerText="#{labels.plaCrono_eshito}" >
+                            <ace:checkboxButton value="#{pla.pentregablesEsHito}" />
                         </ace:column>
-
+                        <ace:column headerText="#{labels.plaCrono_dependencia}" >
+                            <ice:inputText value="#{pla.pentregablesDependencia}" styleClass="textoExtraCorto" />
+                        </ace:column>
+                        <ace:column headerText="Eliminar" styleClass="columnaBoton">
+                            <ice:commandButton id="btnEliminarPlantilla"
+                                               styleClass="botonEliminar iconoTabla" 
+                                               title="Eliminar entregable #{pla.pentregablesNombre}"
+                                               action="#{PlantillaCronogramaMB.eliminarEntregable(pla)}"/>
+                        </ace:column>
                     </ace:dataTable>
                 </ice:panelGrid>
-                
+
                 <ice:panelGroup styleClass="panelBotones">
-                    <ace:messages id="leccAprendidasMsgForm"/>
                     <ace:pushButton  value="#{labels.plaCrono_form_guardar}" 
                                      styleClass="boton principal guardar" 
                                      action="#{PlantillaCronogramaMB.guardar()}" />

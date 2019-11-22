@@ -41,7 +41,8 @@ public class ValorCalidadCodigosBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<Configuracion> ch;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+	
+    private static final Logger logger = Logger.getLogger(ValorCalidadCodigosBean.class.getName());
 
     public ValorCalidadCodigos obtenerPorId(Integer vcaPk) {
         ValorCalidadCodigosDAO cnfDao = new ValorCalidadCodigosDAO(em);

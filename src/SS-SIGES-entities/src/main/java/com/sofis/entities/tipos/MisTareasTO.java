@@ -140,6 +140,32 @@ public class MisTareasTO implements Serializable {
         this.entFinLineaBaseDate = entFinLineaBase;
     }
 
+    public MisTareasTO(Integer progPk, String progNombre, Integer proyPk,
+            String proyNombre, Integer entPk, String entNombre, Long entInicio,
+            Long entFin, Integer entDuracion, Boolean entParent,
+            Long entInicioLineaBase, Integer entDuracionLineaBase,
+            Long entFinLineaBase, Integer entProgreso, Integer entEsfuerzo,
+            Integer prodIds, Integer entId, Estados estado) {
+        this.progPk = progPk;
+        this.progNombre = progNombre;
+        this.proyPk = proyPk;
+        this.proyNombre = proyNombre;
+        this.entPk = entPk;
+        this.entNombre = entNombre;
+        this.entInicio = entInicio != null && entInicio > 0 ? new Date(entInicio) : null;
+        this.entFin = entFin != null && entFin > 0 ? new Date(entFin) : null;
+        this.entDuracion = entDuracion;
+        this.entParent = entParent;
+        this.entProgreso = entProgreso;
+        this.entEsfuerzo = entEsfuerzo;
+        this.entInicioLineaBaseDate = entInicioLineaBase != null && entInicioLineaBase > 0 ? new Date(entInicioLineaBase) : null;
+        this.entDuracionLineaBase = entDuracionLineaBase;
+        this.entFinLineaBaseDate = entFinLineaBase != null && entFinLineaBase > 0 ? new Date(entFinLineaBase) : null;
+        this.tieneProd = prodIds != null;
+        this.entId = entId;
+        this.proyEstado = estado;
+    }
+
     public Integer getProgPk() {
         return progPk;
     }

@@ -1,11 +1,11 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.Organismos;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.MonedaDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ import javax.inject.Inject;
 public class MonedaMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(MonedaMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String MONEDA_NOMBRE = "monNombre";
     private static final String MONEDA_SIGNO = "monSigno";
@@ -54,9 +54,6 @@ public class MonedaMB implements Serializable {
     private Moneda monedaEnEdicion;
 
     public MonedaMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        monedaEnEdicion = new Moneda();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -121,6 +118,15 @@ public class MonedaMB implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<Moneda>();
+        monedaEnEdicion = new Moneda();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -155,7 +161,17 @@ public class MonedaMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                   
+
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -168,7 +184,7 @@ public class MonedaMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put(MONEDA_NOMBRE, filtroNombre);
         listaResultado = monedaDelegate.busquedaMonedaFiltro(mapFiltro, elementoOrdenacion, ascendente, 1);
 
@@ -181,7 +197,16 @@ public class MonedaMB implements Serializable {
             monedaEnEdicion = monedaDelegate.obtenerMonedaPorId(aPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }              
         }
 
         renderPopupEdicion.abrir();
@@ -198,7 +223,16 @@ public class MonedaMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }            
         }
         return null;
     }

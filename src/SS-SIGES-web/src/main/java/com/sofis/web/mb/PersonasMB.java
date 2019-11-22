@@ -8,6 +8,8 @@ import com.sofis.exceptions.GeneralException;
 import com.sofis.web.delegates.OrganismoDelegate;
 import com.sofis.web.delegates.PersonasDelegate;
 import com.sofis.web.delegates.RolesInteresadosDelegate;
+import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +34,9 @@ import javax.inject.Inject;
 public class PersonasMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PersonasMB.class.getName());
     
-    @ManagedProperty(value = "#{inicioMB}")
+    @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
     @Inject
     private OrganismoDelegate orgDelegate;
@@ -46,9 +48,9 @@ public class PersonasMB implements Serializable {
     private String busqNombre = "";
     private Integer busqOrganismo = 0;
     private Integer busqRolInteresado = 0;
-    private List<Organismos> listaOrganismos = new ArrayList<>();
-    private List<RolesInteresados> listaRolesInteresados = new ArrayList<>();
-    private List<Personas> listaResultado = new ArrayList<>();
+    private List<Organismos> listaOrganismos = new ArrayList<Organismos>();
+    private List<RolesInteresados> listaRolesInteresados = new ArrayList<RolesInteresados>();
+    private List<Personas> listaResultado = new ArrayList<Personas>();
     private Boolean renderResultado = false;
     private String cantElementosPorPagina = "25";
     private String elementoOrdenacion = "persNombre";
@@ -56,7 +58,7 @@ public class PersonasMB implements Serializable {
     private boolean renderPopupEditar = false;
     private boolean renderPopupUnificar = false;
     private Personas personaEditar = null;
-    private List<Personas> personasUnificar = new ArrayList<>();
+    private List<Personas> personasUnificar = new ArrayList<Personas>();
     private Personas personaUnificar = null;
 
     /**
@@ -72,7 +74,7 @@ public class PersonasMB implements Serializable {
         busqNombre = "";
         busqOrganismo = 0;
         busqRolInteresado = 0;
-        listaResultado = new ArrayList<>();
+        listaResultado = new ArrayList<Personas>();
         renderResultado = false;
     }
 
@@ -101,7 +103,7 @@ public class PersonasMB implements Serializable {
     }
 
     public String buscar() {
-        Integer organismo = inicioMB.getOrganismoSeleccionado();
+        Integer organismo = inicioMB.getOrganismo().getOrgPk();
         listaResultado = persDelegate.buscar(busqNombre, organismo, elementoOrdenacion, "Ascendente".equals(ascendente));
         renderResultado = true;
         return null;
@@ -214,13 +216,27 @@ public class PersonasMB implements Serializable {
             if (personaEditar != null) {
                 renderPopupEditar = true;
             } else {
-                String msg = "La persona no puede ser editada";
-                FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+                //String msg = "La persona no puede ser editada";
+                //FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+                
+                /*
+                *   28-06-2018 Nico: Se agrega este for para poder mostrar en el front todos los mensajes
+                *           enviados desde la lógica.
+                */
+                JSFUtils.agregarMsgError("", Labels.getValue("error_persona_no_edit"), null);
+                inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         } catch (GeneralException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            String msg = "La persona no puede ser editada";
-            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+            //String msg = "La persona no puede ser editada";
+            //FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+            
+            /*
+            *   28-06-2018 Nico: Se agrega este for para poder mostrar en el front todos los mensajes
+            *           enviados desde la lógica.
+            */
+            JSFUtils.agregarMsgError("", Labels.getValue("error_persona_no_edit"), null);
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);            
         }
         return null;
     }
@@ -231,8 +247,19 @@ public class PersonasMB implements Serializable {
             buscar();
         } catch (GeneralException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            String msg = ex.getMessage();
-            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+            //String msg = ex.getMessage();
+            //FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+            
+            /*
+            *   27-06-2018 Nico: Se agrega este for para poder mostrar en el front todos los mensajes
+            *           enviados desde la lógica.
+            */
+            
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }            
+            
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
         return null;
     }

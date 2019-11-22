@@ -33,12 +33,29 @@
         <h:panelGroup id="filtroPanelFichaN" styleClass="col-sm-12">
             <h:panelGroup id="filtroPanelFicha" styleClass="col-sm-12" rendered="#{inicioMB.filtroRender}">
                 <ice:panelGrid  styleClass="formulario " columns="6" >
+
                     <ice:outputLabel value="#{labels.nivel}:"/>
                     <ice:selectOneMenu id="comboListaNivel" 
                                        value="#{inicioMB.listaNivelItemsCombo.selected}" 
                                        styleClass="textoMedio">
                         <f:selectItems value="#{inicioMB.listaNivelItemsCombo.items}" />
                     </ice:selectOneMenu>
+
+                    <ice:outputLabel value="#{labels.codigo_filtro}:"/>
+                    <ace:textEntry id="filtroCodigo" value="#{inicioMB.filtro.codigo}" />
+
+                    <ice:outputLabel value="#{labels.inicio_col_obj_est}:"/>
+                    <ice:selectOneMenu value="#{inicioMB.listaObjetivosEstrategicosCombo.selected}" 
+                                       styleClass="textoMedio">
+                        <f:selectItems value="#{inicioMB.listaObjetivosEstrategicosCombo.items}"/>
+                    </ice:selectOneMenu>
+
+                    <ice:outputLabel value="#{labels.inicio_col_fecha_act}:"/>
+                    <ace:dateTimeEntry value="#{inicioMB.filtro.fechaAct}"
+                                       styleClass="textoMedio"
+                                       pattern="#{inicioMB.calendarPattern}" 
+                                       renderAsPopup="true" navigator="true"
+                                       timeZone="#{inicioMB.calendarTimeZone}"/>
 
                     <ice:outputLabel value="#{labels.nombre_filtro}:"/>
                     <ace:textEntry value="#{inicioMB.filtro.nombre}" />
@@ -198,9 +215,48 @@
                 <ice:panelGroup styleClass="lineaDivision col-sm-4">
 
                 </ice:panelGroup>
+                
+                <ice:panelGroup styleClass="lineaDivision col-sm-12">
+                    <!-- Color Avance Proyecto -->
+                    <ice:outputLabel value="#{labels.filtro_col_tit}" styleClass="subtituloFiltro"/>
+                    <ice:panelGroup layout="block" styleClass="formulario">
+                        <ice:outputLabel value="#{labels.filtro_col_label}" styleClass="textoCorto"/>
+                             <ice:selectOneMenu id="comboColoresActualizado"
+                                               value="#{inicioMB.actualizacionProyecto.selected}"
+                                               styleClass="textoMedio">
+                                <f:selectItems value="#{inicioMB.actualizacionProyecto.items}"/>
+                            </ice:selectOneMenu>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                
+                
+                
             </h:panelGroup>
 
+            <h:panelGroup rendered="#{inicioMB.filtroRender}" styleClass="lineaDivision col-sm-12">
+                <!-- Filtro Interesados -->
+                <ice:outputLabel value="#{labels.filtro_ordenar}" styleClass="subtituloFiltro"/>
+                <h:panelGroup layout="block" styleClass="formulario">
+                    <ice:outputLabel value="#{labels.filtro_ordenar_por}:" styleClass="textoCorto"/>
+                    <ice:selectOneRadio partialSubmit="true" 
+                                        value="#{inicioMB.filtro.orderBy}" 
+                                        styleClass="radioButton">
+                        <f:selectItem itemValue="1" itemLabel="Prog/Proy Nombre" />
+                        <f:selectItem itemValue="2" itemLabel="Prog/Proy Código" />
+                    </ice:selectOneRadio >
+                </h:panelGroup>
+            </h:panelGroup>
+            
             <h:panelGroup id="filtroPanelFicha4" styleClass="panelAcciones" rendered="#{inicioMB.filtroRender}">
+                <script type="text/javascript">
+                    function limpiarFiltroInicio() {
+                        var codigo = $("[id$='filtroCodigo_input']");
+                        if (isNaN(parseInt(codigo.val()))) {
+                            codigo.val("");
+                        }
+                        return true;
+                    }
+                </script>
                 <ice:panelGroup styleClass="panelBotones" >
                     <ace:messages id="filtroBusquedaMsg" />
                     <ace:pushButton value="#{labels.buscar}" 
@@ -209,9 +265,11 @@
                     <ace:pushButton value="#{labels.guardar}" 
                                     styleClass="boton principal guardar" style="margin-left: 10px;"
                                     action="#{ProgramasProyectosMB.guardarFiltro()}"/>
-                    <ace:linkButton value="#{labels.limpiar}" 
-                                    styleClass="boton secundario" style="margin-left: 10px;"
-                                    action="#{ProgramasProyectosMB.limpiarFiltro()}"/>
+                    <ice:commandLink value="#{labels.limpiar}" 
+                                     styleClass="boton secundario" style="margin-left: 10px;"
+                                     onclick="limpiarFiltroInicio();"
+                                     action="#{ProgramasProyectosMB.limpiarFiltro()}"/>
+
                 </ice:panelGroup>
             </h:panelGroup>
 

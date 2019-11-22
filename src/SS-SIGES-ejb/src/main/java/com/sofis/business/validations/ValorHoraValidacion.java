@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class ValorHoraValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ValorHoraValidacion.class.getName());
 
     public static boolean validar(ValorHora valHora) throws BusinessException {
         BusinessException be = new BusinessException();

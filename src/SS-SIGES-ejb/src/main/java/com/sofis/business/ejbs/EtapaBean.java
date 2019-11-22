@@ -33,7 +33,7 @@ public class EtapaBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(EtapaBean.class.getName());
 
     @Inject
     private DatosUsuario du;

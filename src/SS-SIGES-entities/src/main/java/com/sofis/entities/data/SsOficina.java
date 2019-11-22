@@ -20,6 +20,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
 /**
@@ -38,6 +41,9 @@ import org.hibernate.envers.Audited;
     @NamedQuery(name = "SsOficina.findByOfiOrigen", query = "SELECT s FROM SsOficina s WHERE s.ofiOrigen = :ofiOrigen"),
     @NamedQuery(name = "SsOficina.findByOfiUsuario", query = "SELECT s FROM SsOficina s WHERE s.ofiUsuario = :ofiUsuario"),
     @NamedQuery(name = "SsOficina.findByOfiVersion", query = "SELECT s FROM SsOficina s WHERE s.ofiVersion = :ofiVersion")})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SsOficina implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -73,9 +79,6 @@ public class SsOficina implements Serializable {
     private Integer ofiVersion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuOfiRolesOficina")
     private Collection<SsUsuOfiRoles> ssUsuOfiRolesCollection;
-
-    public SsOficina() {
-    }
 
     public SsOficina(Integer ofiId) {
         this.ofiId = ofiId;

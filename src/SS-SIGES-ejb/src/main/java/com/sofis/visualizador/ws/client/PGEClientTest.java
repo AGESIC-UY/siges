@@ -1,6 +1,5 @@
 package com.sofis.visualizador.ws.client;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.exceptions.PGEProxyException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,7 +20,7 @@ import uy.gub.agesic.pge.core.config.PGEConfiguration;
  */
 public class PGEClientTest {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PGEClientTest.class.getName());
 
     public static void main(String[] args) {
         PGEClientTest p = new PGEClientTest();

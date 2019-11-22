@@ -17,6 +17,8 @@ import javax.faces.convert.ConverterException;
  */
 public class IntegerFormatConverter implements Converter {
 
+    private static final Logger logger = Logger.getLogger(IntegerFormatConverter.class.getName());
+    
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (StringsUtils.isEmpty(value)) {
@@ -40,7 +42,7 @@ public class IntegerFormatConverter implements Converter {
             try {
                 return String.valueOf((int) l);
             } catch (Exception e) {
-                Logger.getLogger(ConstanteApp.LOGGER_NAME).log(Level.WARNING, null, e);
+                logger.log(Level.WARNING, null, e);
             }
         } else if (value instanceof String) {
             return (String) value;

@@ -44,7 +44,7 @@ public class NoticiaBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<Noticia> ch;
-    private static final Logger logger = Logger.getLogger(ConstantesEstandares.LOGGER);
+    private static final Logger logger = Logger.getLogger(NoticiaBean.class.getName());
 
     //private String usuario;
     //private String origen;

@@ -14,4 +14,6 @@ public interface UsuarioLocal {
     public SsUsuario obtenerSsUsuarioPorCodigo(String codigo) throws GeneralException;
     
     public SsUsuario obtenerSsUsuarioPorMail(String mail) throws GeneralException;
+	
+	public SsUsuario obtenerSsUsuarioPorLDAPUser(String user) throws GeneralException;
 }

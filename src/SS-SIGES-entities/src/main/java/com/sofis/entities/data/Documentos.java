@@ -36,228 +36,247 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "documentos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Documentos.findAll", query = "SELECT d FROM Documentos d")})
+	@NamedQuery(name = "Documentos.findAll", query = "SELECT d FROM Documentos d")})
 public class Documentos implements Serializable {
 
-    public static final int NOMBRE_LENGHT = 100;
+	public static final int NOMBRE_LENGHT = 100;
 
-    private static final long serialVersionUID = 1L;
-    
-    private static final Logger logger = Logger.getLogger(Documentos.class.getName());
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "docs_pk")
-    private Integer docsPk;
-    @JoinColumn(name = "docs_tipodoc_fk", referencedColumnName = "tipodoc_inst_pk")
-    @ManyToOne(optional = false)
-    @Fetch(FetchMode.SELECT)
-    private TipoDocumentoInstancia docsTipo;
-    @Column(name = "docs_nombre")
-    private String docsNombre;
-    @Column(name = "docs_fecha")
-    @Temporal(TemporalType.DATE)
-    private Date docsFecha;
-    @Column(name = "docs_privado")
-    private Boolean docsPrivado;
-    @Column(name = "docs_estado")
-    private Double docsEstado;
-    @JoinColumn(name = "docs_entregable_fk", referencedColumnName = "ent_pk")
-    @ManyToOne(optional = true)
-    @Fetch(FetchMode.SELECT)
-    private Entregables docsEntregable;
-    @Transient
-    private String docsEstadoColor;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "docfileDocFk")
-    @Fetch(FetchMode.SELECT)
-    private List<DocFile> docFile;
-    @Column(name = "docs_aprobado")
-    private Boolean docsAprobado;
+	private static final long serialVersionUID = 1L;
 
-    @JoinColumn(name = "docs_pago_fk", referencedColumnName = "pag_pk")
-    @ManyToOne(optional = true)
-    @Fetch(FetchMode.SELECT)
-    private Pagos docsPagoFk;
+	private static final Logger logger = Logger.getLogger(Documentos.class.getName());
 
-    @Transient
-    private List<DocFile> docFileHistorico;
-    
-    public Documentos() {
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "docs_pk")
+	private Integer docsPk;
+	@JoinColumn(name = "docs_tipodoc_fk", referencedColumnName = "tipodoc_inst_pk")
+	@ManyToOne(optional = false)
+	@Fetch(FetchMode.SELECT)
+	private TipoDocumentoInstancia docsTipo;
+	@Column(name = "docs_nombre")
+	private String docsNombre;
+	@Column(name = "docs_fecha")
+	@Temporal(TemporalType.DATE)
+	private Date docsFecha;
+	@Column(name = "docs_privado")
+	private Boolean docsPrivado;
+	@Column(name = "docs_estado")
+	private Double docsEstado;
+	@JoinColumn(name = "docs_entregable_fk", referencedColumnName = "ent_pk")
+	@ManyToOne(optional = true)
+	@Fetch(FetchMode.SELECT)
+	private Entregables docsEntregable;
+	@Transient
+	private String docsEstadoColor;
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "docfileDocFk")
+	@Fetch(FetchMode.SELECT)
+	private List<DocFile> docFile;
+	@Column(name = "docs_aprobado")
+	private Boolean docsAprobado;
 
-    public Documentos(Integer docsPk) {
-        this.docsPk = docsPk;
-    }
+	@JoinColumn(name = "docs_pago_fk", referencedColumnName = "pag_pk")
+	@ManyToOne(optional = true)
+	@Fetch(FetchMode.SELECT)
+	private Pagos docsPagoFk;
 
-    public Integer getDocsPk() {
-        return docsPk;
-    }
+	@Column(name = "docs_publicable")
+	private Boolean docsPublicable;
 
-    public void setDocsPk(Integer docsPk) {
-        this.docsPk = docsPk;
-    }
+	@Column(name = "docs_pub_fecha")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date docsPubFecha;
 
-    public TipoDocumentoInstancia getDocsTipo() {
-        return docsTipo;
-    }
+	@Transient
+	private List<DocFile> docFileHistorico;
 
-    public void setDocsTipo(TipoDocumentoInstancia docsTipo) {
-        this.docsTipo = docsTipo;
-    }
+	public Documentos() {
+	}
 
-    public String getDocsNombre() {
-        return docsNombre;
-    }
+	public Documentos(Integer docsPk) {
+		this.docsPk = docsPk;
+	}
 
-    public void setDocsNombre(String docsNombre) {
-        this.docsNombre = docsNombre;
-    }
+	public Integer getDocsPk() {
+		return docsPk;
+	}
 
-    public Date getDocsFecha() {
-        return docsFecha;
-    }
+	public void setDocsPk(Integer docsPk) {
+		this.docsPk = docsPk;
+	}
 
-    public void setDocsFecha(Date docsFecha) {
-        this.docsFecha = docsFecha;
-    }
+	public TipoDocumentoInstancia getDocsTipo() {
+		return docsTipo;
+	}
 
-    public Boolean getDocsPrivado() {
-        return docsPrivado != null ? docsPrivado : false;
-    }
+	public void setDocsTipo(TipoDocumentoInstancia docsTipo) {
+		this.docsTipo = docsTipo;
+	}
 
-    public void setDocsPrivado(Boolean docsPrivado) {
-        this.docsPrivado = docsPrivado;
-    }
+	public String getDocsNombre() {
+		return docsNombre;
+	}
 
-    public Double getDocsEstado() {
-        return docsEstado;
-    }
+	public void setDocsNombre(String docsNombre) {
+		this.docsNombre = docsNombre;
+	}
 
-    public void setDocsEstado(Double docsEstado) {
-        this.docsEstado = docsEstado;
-    }
+	public Date getDocsFecha() {
+		return docsFecha;
+	}
 
-    public Entregables getDocsEntregable() {
-        return docsEntregable;
-    }
+	public void setDocsFecha(Date docsFecha) {
+		this.docsFecha = docsFecha;
+	}
 
-    public void setDocsEntregable(Entregables docsEntregable) {
-        this.docsEntregable = docsEntregable;
-    }
+	public Boolean getDocsPrivado() {
+		return docsPrivado != null ? docsPrivado : false;
+	}
 
-    public DocFile getDocFile() {
-        return docFile != null && docFile.size() > 0 ? docFile.get(0) : null;
-    }
+	public void setDocsPrivado(Boolean docsPrivado) {
+		this.docsPrivado = docsPrivado;
+	}
 
-    public void setDocFile(DocFile docFile) {
-        this.docFile = new ArrayList<DocFile>();
-        this.docFile.add(docFile);
-    }
+	public Double getDocsEstado() {
+		return docsEstado;
+	}
 
-    public Boolean getDocsAprobado() {
-        return docsAprobado != null ? docsAprobado : false;
-    }
+	public void setDocsEstado(Double docsEstado) {
+		this.docsEstado = docsEstado;
+	}
 
-    public void setDocsAprobado(Boolean docsAprobado) {
-        this.docsAprobado = docsAprobado;
-    }
+	public Entregables getDocsEntregable() {
+		return docsEntregable;
+	}
 
-    public Pagos getDocsPagoFk() {
-        return docsPagoFk;
-    }
+	public void setDocsEntregable(Entregables docsEntregable) {
+		this.docsEntregable = docsEntregable;
+	}
 
-    public void setDocsPagoFk(Pagos docsPagoFk) {
-        this.docsPagoFk = docsPagoFk;
-    }
+	public DocFile getDocFile() {
+		return docFile != null && docFile.size() > 0 ? docFile.get(0) : null;
+	}
 
-    public String getDocsEstadoColor() {
-        return docsEstadoColor;
-    }
+	public void setDocFile(DocFile docFile) {
+		this.docFile = new ArrayList<DocFile>();
+		this.docFile.add(docFile);
+	}
 
-    public void setDocsEstadoColor(String docsEstadoColor) {
-        this.docsEstadoColor = docsEstadoColor;
-    }
+	public Boolean getDocsAprobado() {
+		return docsAprobado != null ? docsAprobado : false;
+	}
 
-//    public byte[] getDocfileFile() {
-//        return (this.getDocFile() != null ? this.getDocFile().getDocfileFile() : null);
-//    }
+	public void setDocsAprobado(Boolean docsAprobado) {
+		this.docsAprobado = docsAprobado;
+	}
 
-    public String getDocfileNombre() {
-        return (this.getDocFile() != null ? this.getDocFile().getDocfileNombre() : null);
-    }
+	public Pagos getDocsPagoFk() {
+		return docsPagoFk;
+	}
 
-    public boolean getTieneArchivo() {
-        return this.docFile != null
-                && !this.docFile.isEmpty()
-                && this.docFile.get(0) != null;
-    }
+	public void setDocsPagoFk(Pagos docsPagoFk) {
+		this.docsPagoFk = docsPagoFk;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (docsPk != null ? docsPk.hashCode() : 0);
-        return hash;
-    }
+	public String getDocsEstadoColor() {
+		return docsEstadoColor;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Documentos)) {
-            return false;
-        }
-        Documentos other = (Documentos) object;
-        if (docsPk == null || other.docsPk == null) {
-            return this == object;
-        }
+	public void setDocsEstadoColor(String docsEstadoColor) {
+		this.docsEstadoColor = docsEstadoColor;
+	}
 
-        if ((this.docsPk == null && other.docsPk != null) || (this.docsPk != null && !this.docsPk.equals(other.docsPk))) {
-            return false;
-        }
-        return true;
-    }
+	public Boolean getDocsPublicable() {
+		return docsPublicable;
+	}
 
-    @Override
-    public String toString() {
-        return "com.sofis.entities.data.Documentos[ docsPk=" + docsPk + " ]";
-    }
+	public void setDocsPublicable(Boolean docsPublicable) {
+		this.docsPublicable = docsPublicable;
+	}
 
-    public String getEstadoColor() {
-        //Si no es exigido no se pinta el semaforo.
-        if (docsTipo != null && docsTipo.getTipodocExigidoDesde() == null) {
-            return ConstantesEstandares.COLOR_TRANSPARENT;
-        }
+	public Date getDocsPubFecha() {
+		return docsPubFecha;
+	}
 
-        if (docsEstado != null && docsEstado.equals(0D)) {
-            return ConstantesEstandares.SEMAFORO_ROJO;
-        } else if (docsEstado != null && docsEstado.equals(0.5D)) {
-            return ConstantesEstandares.SEMAFORO_AMARILLO;
-        } else if (docsEstado != null && docsEstado.equals(1D)) {
-            return ConstantesEstandares.SEMAFORO_VERDE;
-        }
-        return ConstantesEstandares.COLOR_TRANSPARENT;
-    }
+	public void setDocsPubFecha(Date docsPubFecha) {
+		this.docsPubFecha = docsPubFecha;
+	}
 
-    public void toSystemOut() {
-        logger.info("-- Documentos --");
-        logger.log(Level.INFO, "Pk:{0}", this.docsPk);
-        logger.log(Level.INFO, "nombre:{0}", this.docsNombre);
-        logger.log(Level.INFO, "tipo:{0}", this.getDocsTipo());
-        logger.log(Level.INFO, "estado:{0}", this.docsEstado);
-        logger.log(Level.INFO, "fecha:{0}", this.docsFecha.toString());
-        logger.log(Level.INFO, "privado:{0}", this.docsPrivado);
-    }
+	public String getDocfileNombre() {
+		return (this.getDocFile() != null ? this.getDocFile().getDocfileNombre() : null);
+	}
 
-    /**
-     * @return the docFileHistorico
-     */
-    public List<DocFile> getDocFileHistorico() {
-	return docFileHistorico;
-    }
+	public boolean getTieneArchivo() {
+		return this.docFile != null
+			&& !this.docFile.isEmpty()
+			&& this.docFile.get(0) != null;
+	}
 
-    /**
-     * @param docFileHistorico the docFileHistorico to set
-     */
-    public void setDocFileHistorico(List<DocFile> docFileHistorico) {
-	this.docFileHistorico = docFileHistorico;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (docsPk != null ? docsPk.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Documentos)) {
+			return false;
+		}
+		Documentos other = (Documentos) object;
+		if (docsPk == null || other.docsPk == null) {
+			return this == object;
+		}
+
+		if ((this.docsPk == null && other.docsPk != null) || (this.docsPk != null && !this.docsPk.equals(other.docsPk))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.sofis.entities.data.Documentos[ docsPk=" + docsPk + " ]";
+	}
+
+	public String getEstadoColor() {
+		//Si no es exigido no se pinta el semaforo.
+		if (docsTipo != null && docsTipo.getTipodocExigidoDesde() == null) {
+			return ConstantesEstandares.COLOR_TRANSPARENT;
+		}
+
+		if (docsEstado != null && docsEstado.equals(0D)) {
+			return ConstantesEstandares.SEMAFORO_ROJO;
+		} else if (docsEstado != null && docsEstado.equals(0.5D)) {
+			return ConstantesEstandares.SEMAFORO_AMARILLO;
+		} else if (docsEstado != null && docsEstado.equals(1D)) {
+			return ConstantesEstandares.SEMAFORO_VERDE;
+		}
+		return ConstantesEstandares.COLOR_TRANSPARENT;
+	}
+
+	public void toSystemOut() {
+		logger.info("-- Documentos --");
+		logger.log(Level.INFO, "Pk:{0}", this.docsPk);
+		logger.log(Level.INFO, "nombre:{0}", this.docsNombre);
+		logger.log(Level.INFO, "tipo:{0}", this.getDocsTipo());
+		logger.log(Level.INFO, "estado:{0}", this.docsEstado);
+		logger.log(Level.INFO, "fecha:{0}", this.docsFecha.toString());
+		logger.log(Level.INFO, "privado:{0}", this.docsPrivado);
+	}
+
+	/**
+	 * @return the docFileHistorico
+	 */
+	public List<DocFile> getDocFileHistorico() {
+		return docFileHistorico;
+	}
+
+	/**
+	 * @param docFileHistorico the docFileHistorico to set
+	 */
+	public void setDocFileHistorico(List<DocFile> docFileHistorico) {
+		this.docFileHistorico = docFileHistorico;
+	}
 }

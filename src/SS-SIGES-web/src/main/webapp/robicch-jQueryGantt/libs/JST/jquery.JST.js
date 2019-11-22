@@ -61,64 +61,73 @@ jQuery.JST = {
 		    templateBody = "<div class=\"ganttButtonBar noprint\">" +
 			    "<h1 style=\"float:left\"></h1>" +
 			    "<span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('addAboveCurrentTask.gantt');\" class=\"button textual\" title=\"insert above\" id=\"addAboveBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('addAboveCurrentTask.gantt');\" class=\"button textual\" title=\"Insertar encima\" id=\"addAboveBtn\">" +
 			    "<span class=\"teamworkIcon\">l</span></button>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('addBelowCurrentTask.gantt');\" class=\"button textual\" title=\"insert below\" id=\"addBelowBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('addBelowCurrentTask.gantt');\" class=\"button textual\" title=\"Insertar debajo\" id=\"addBelowBtn\">" +
 			    "<span class=\"teamworkIcon\">X</span></button>" +
 			    "<span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('indentCurrentTask.gantt');\" class=\"button textual\" title=\"indent task\" id=\"indentBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('indentCurrentTask.gantt');\" class=\"button textual\" title=\"Indentar adelante\" id=\"indentBtn\">" +
 			    "<span class=\"teamworkIcon\">.</span></button>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('outdentCurrentTask.gantt');\" class=\"button textual\" title=\"unindent task\" id=\"outdentBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('outdentCurrentTask.gantt');\" class=\"button textual\" title=\"Indentar atrás\" id=\"outdentBtn\">" +
 			    "<span class=\"teamworkIcon\">:</span></button>" +
 			    "<span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('moveUpCurrentTask.gantt');\" class=\"button textual\" title=\"move up\" id=\"moveUpBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('moveUpCurrentTask.gantt');\" class=\"button textual\" title=\"Subir\" id=\"moveUpBtn\">" +
 			    "<span class=\"teamworkIcon\">k</span></button>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('moveDownCurrentTask.gantt');\" class=\"button textual\" title=\"move down\" id=\"moveDownBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('moveDownCurrentTask.gantt');\" class=\"button textual\" title=\"Bajar\" id=\"moveDownBtn\">" +
 			    "<span class=\"teamworkIcon\">j</span></button>" +
 			    "<span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('zoomMinus.gantt'); return false;\" class=\"button textual\" title=\"zoom out\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('zoomMinus.gantt'); return false;\" class=\"button textual\" title=\"Alejar\">" +
 			    "<span class=\"teamworkIcon\">)</span></button>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('zoomPlus.gantt'); return false;\" class=\"button textual\" title=\"zoom in\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('zoomPlus.gantt'); return false;\" class=\"button textual\" title=\"Acercar\">" +
 			    "<span class=\"teamworkIcon\">(</span></button><span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('deleteCurrentTask.gantt');\" class=\"button textual\" title=\"delete\" id=\"deleteBtn\">" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('copyCurrentTask.gantt');\" class=\"button textual\" title=\"Duplicar\" id=\"copyBtn\">" +
+			    "<span class=\"teamworkIcon\">c</span></button><span class=\"ganttButtonSeparator\"></span>" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('deleteCurrentTask.gantt');\" class=\"button textual\" title=\"Eliminar\" id=\"deleteBtn\">" +
 			    "<span class=\"teamworkIcon\">&cent;</span></button>&nbsp; &nbsp; &nbsp; &nbsp;" +
-			    "<button onclick=\"saveGanttOnServer();\" class=\"button first big\" id=\"guardarBtn\" title=\"Guardar\">Guardar</button></div></div>";
+			    "<button onclick=\"saveGanttOnServer();\" class=\"boton principal guardar\" id=\"guardarBtn\" title=\"Guardar\">Guardar</button></div></div>";
 		}
 		if ("TASKSEDITHEAD" == typeS) {
 		    templateBody = "<table class=\"gdfTable\" cellspacing=\"0\" cellpadding=\"0\"><thead>" +
-			    "<tr style=\"height:40px\"><th class=\"gdfColHeader\" style=\"width:35px;\"></th>" +
-			    "<th class=\"gdfColHeader gdfResizable\" style=\"width:250px;\">Nombre</th>" +
-			    "<th class=\"gdfColHeader gdfResizable\" style=\"width:95px;\">Fecha Inicio</th>" +
-			    "<th class=\"gdfColHeader gdfResizable\" style=\"width:90px;\">Fecha Fin</th>" +
-			    "<th class=\"gdfColHeader gdfResizable\" style=\"width:100px;\">Dependencia.</th>" +
-			    "<th class=\"gdfColHeader gdfResizable\" style=\"width:100px;\">Horas Est. (hh:mm)</th></tr>" +
-			    "</thead></table>";
+                        "<tr style=\"height:40px\"><th class=\"gdfColHeader\" style=\"width:8px;\"></th>" +
+                        "<th class=\"gdfColHeader \" style=\"width:80px; text-align: center;\">Nombre</th>" +
+                        "<th class=\"gdfColHeader \" style=\"width:20px; text-align: center;\">Fecha Inicio</th>" +
+                        "<th class=\"gdfColHeader \" style=\"width:20px; text-align: center;\">Fecha Fin</th>" +
+//			"<th class=\"gdfColHeader gdfResizable\" style=\"width:20px; text-align: center;\" >Hito</th>" +
+                        "<th class=\"gdfColHeader \" style=\"width:20px; text-align: center;\" >Dependencia</th>" +
+//			"<th class=\"gdfColHeader gdfResizable\" style=\"width:20px; text-align: center;\" >%</th>" +
+//			"<th class=\"gdfColHeader gdfResizable\" style=\"width:100px;\">Horas Est. (hh:mm)</th></tr>" +
+                        "</thead></table>";
 		}
 
 		if ("TASKROW" == typeS) {
-		    templateBody = "<tr taskId=\"(#=obj.id#)\" class=\"taskEditRow\" level=\"(#=level#)\">" +
-			    "<th class=\"gdfCell edit\" align=\"right\" style=\"cursor:pointer;\">" +
-			    "<span class=\"taskRowIndex\">(#=obj.getRow()+1#)</span>" +
-			    "<span class=\"teamworkIcon\" style=\"font-size:12px;\">e</span></th>" +
-			    "<td class=\"gdfCell indentCell\" style=\"padding-left:(#=obj.level*10#)px;\">" +
-			    "<span type=\"text\" name=\"name\" style=\"(#=obj.level>0?'border-left:2px dotted orange':''#)\">(#=obj.name + \"-\"+ obj.esfuerzo#)</span></td>" +
-			    "<td class=\"gdfCell\"><input type=\"text\" name=\"start\" value=\"\" class=\"date\"></td>" +
-			    "<td class=\"gdfCell\"><input type=\"text\" name=\"end\" value=\"\" class=\"date\"></td>" +
-			    "<td class=\"gdfCell\"><input type=\"text\" name=\"depends\" value=\"(#=obj.depends#)\" (#=obj.hasExternalDep?\"readonly\":\"\"#)></td>" +
-			    "<td class=\"gdfCell\"><input type=\"text\" name=\"horasEstimadas\" value=\"(#=obj.horasEstimadas#)\" onkeypress=\"return isHorasEstimadas(event, this);\" onkeyup=\"validarHorasEstimadas(this);\"></td>" +
-			    "</tr>";
+                    templateBody = "<tr taskId=\"(#=obj.id#)\" class=\"taskEditRow (#=obj.isParent()?'isParent':''#) (#=obj.collapsed?'collapsed':''#)\" level=\"(#=level#)\">" +
+                        "<th class=\"gdfCell edit\" align=\"right\" style=\"cursor:pointer;\">" +
+                        "<span class=\"taskRowIndex\">(#=obj.getRow()+1#)</span>" +
+                        "<span class=\"teamworkIcon\" style=\"font-size:11px;\">e</span>"+ 
+                        "</th>" +
+                        "<td class=\"gdfCell indentCell\" style=\"padding-left:(#=obj.level*10#)px;\">" +
+                        "<span type=\"text\" name=\"name\" style=\"(#=obj.level>0?'border-left:2px dotted orange':''#)\">(#=obj.name + \"-\"+ obj.esfuerzo#)</span>"+
+                        "</td>" +
+                        "<td class=\"gdfCell\"><input type=\"text\" name=\"start\" value=\"\" class=\"date\"></td>" +
+                        "<td class=\"gdfCell\"><input type=\"text\" name=\"end\" value=\"\" class=\"date\"></td>" +
+//			"<td class=\"gdfCell\" align=\"center\"><input type=\"checkbox\" name=\"endIsMilestone\"></td>" +
+			"<td class=\"gdfCell\"><input type=\"text\" name=\"depends\" value=\"(#=obj.depends#)\" (#=obj.hasExternalDep?\"readonly\":\"\"#)></td>" +
+//			"<td class=\"gdfCell\"><input type=\"text\" name=\"progress\" class=\"validated\" entrytype=\"PERCENTILE\" autocomplete=\"off\" value=\"(#=obj.progress?obj.progress:''#)\" (#=obj.progressByWorklog?\"readOnly\":\"\"#)></td>" +
+//			"<td class=\"gdfCell\"><input type=\"text\" name=\"horasEstimadas\" value=\"(#=obj.horasEstimadas#)\" onkeypress=\"return isHorasEstimadas(event, this);\" onkeyup=\"validarHorasEstimadas(this);\"></td>" +
+                        "</tr>";
 		}
 
-		if ("TASKEMPTYROW" == typeS) {
-		    templateBody = "<tr class=\"taskEditRow emptyRow\" >"
-			    + "<th class=\"gdfCell\" align=\"right\"></th>"
-			    + "<td class=\"gdfCell\" align=\"center\"></td>"
-			    + "<td class=\"gdfCell\"></td>"
-			    + "<td class=\"gdfCell\"></td>"
-			    + "<td class=\"gdfCell\"></td>"
-			    + "<td class=\"gdfCell\"></td>"
-			    + "<td class=\"gdfCell\">"
-			    + "</td><td class=\"gdfCell\"></td></tr>";
+                if ("TASKEMPTYROW" == typeS) {
+                    templateBody = "<tr class=\"taskEditRow emptyRow\" >"
+                        + "<th class=\"gdfCell\" align=\"right\"></th>"
+                        + "<td class=\"gdfCell\" align=\"center\"></td>"
+                        + "<td class=\"gdfCell\"></td>"
+                        + "<td class=\"gdfCell\"></td>"
+                        + "<td class=\"gdfCell\"></td>"
+//			+ "<td class=\"gdfCell\"></td>"
+//                      + "<td class=\"gdfCell\"></td>"
+                    +"</tr>";
+
 		}
 
 		if ("TASKBAR" == typeS) {
@@ -127,7 +136,7 @@ jQuery.JST = {
 			    "<div class=\"taskProgress (#=obj.progress > 100 ? 'taskProgressRed' : 'taskProgressBlue'#)\" style=\"height:(#=obj.endIsMilestone ? '16px' : '90%'#); width:(#=obj.progress > 100 ? 100 : obj.progress#)%;\">" +
 			    "<span class=\"(#=obj.parent ? 'parentTaskBar' : ''#)\" style=\"color: white;\">(#=obj.parent || obj.endIsMilestone ? '' : obj.progress#)</span>" +
 			    "</div>" +
-			    "<div class=\"taskProgress1 (#=obj.parent? 'parentTaskBar' : (obj.end > obj.endLineaBase && obj.endLineaBase > 0 && obj.endLineaBase > 93599999) ? 'taskProgressRed' : new Date(new Date(obj.end).setHours(0,0,0,0)) >= new Date(new Date(new Number(document.getElementById('ficha:diaHoraServer_input').value)).setHours(0,0,0,0)) ? 'taskProgressGreen' : 'taskProgressRed' #)\" style=\"float:right; height:(#=obj.endIsMilestone ? '16px' : '100%'#); width:(#=obj.progress > 100 ? 0 : 100-obj.progress#)%;\">" +
+			    "<div class=\"taskProgress1 (#=obj.parent? 'parentTaskBar' : (obj.end < new Date()) ? 'taskProgressRed' : new Date(new Date(obj.end).setHours(0,0,0,0)) >= new Date(new Date(new Number(document.getElementById('ficha:diaHoraServer_input').value)).setHours(0,0,0,0)) ? 'taskProgressGreen' : 'taskProgressRed' #)\" style=\"float:right; height:(#=obj.endIsMilestone ? '16px' : '100%'#); width:(#=obj.progress > 100 ? 0 : 100-obj.progress#)%;\">" +
 			    "</div>" +
 // mgarcia -Se comenta porque originalmente genera una marca milestone para inicio y fin.
 //                            "<div class=\"milestone (#=obj.startIsMilestone?'active':''#)\" ></div>" +
@@ -231,7 +240,7 @@ jQuery.JST = {
 			    "	                     </div>	" +
 			    "	                     <div id=\"progressDiv\" style=\"float: right; margin-right:50px;\">	" +
 			    "	                        <label for=\"progress\">% Avance</label>	" +
-			    "	                        <select id=\"progress\" name=\"progress\" class=\"formElements\" />	" +
+			    "	                        <input id=\"progress\" name=\"progress\" class=\"formElements\" />	" +
 			    "	                     </div>	" +
 			    "	                  </div>	" +
 			    "	                  <div class=\"col-sm-12 formulario bordeSup\" style=\"padding-top: 17px;\">	" +
@@ -248,7 +257,7 @@ jQuery.JST = {
 			    "	                           <input type=\"text\" name=\"tieneProductos\" id=\"tieneProductos\" value=\"\" class=\"formElements\" disabled=\"disabled\" />	" +
 			    "	                        </div>	" +
 			    "	                     </div>	" +
-			    "	                     <div class=\"col-sm-12 formulario\">	" +
+			    "	                     <div id=\"taskDiv\" class=\"col-sm-12 formulario\">	" +
 			    "	                        <div style=\"text-align: right; padding-top: 20px; clear: both; float:right;\">	" +
 			    "	                           <button id=\"saveButton\" class=\"button big\">Confirmar</button>	" +
 			    "	                           <a id=\"closeEditor\" onclick=\"closeEditorDiv();\" name=\"closeEditor\">Cerrar</a>	" +
@@ -262,36 +271,22 @@ jQuery.JST = {
 			    "					    $(\"label[for='relevantePMO']\").css({'color': '#808080'}); " +
 			    "					}}); " +
 			    "				    $(\"#endIsMilestone\").change(function(){ " +
-			    "					selectProgress = document.getElementById(\"progress\");" +
-			    "					var progressValues;" +
 			    "					if($(this).is(\":checked\")){" +
 			    "						$(\"#startPlanDiv\").hide(); " +
 			    "						$(\"#startEjecDiv\").hide(); " +
                             "						$(\"#endEjecDiv\").css({'margin-left':'18px'}); " +
 			    "						$(\"#planDuracionDias\").hide(); " +
 			    "						$(\"#ejecDuracionDias\").hide(); " +
-			    "						progressValues = [0, 100];" +
 			    "					}else{ " +
 			    "						$(\"#startPlanDiv\").show();" +
 			    "						$(\"#startEjecDiv\").show(); " +
 			    "						$(\"#planDuracionDias\").show(); " +
 			    "						$(\"#ejecDuracionDias\").show(); " +
                             "						$(\"#endEjecDiv\").css({'margin-left':''}); " +
-			    "						progressValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];" +
 			    "					} " +
-    			    "    $('#progress').empty();" +
-			    "    for (var i = 0; i < progressValues.length; i++) {" +
-			    "	    var value = progressValues[i];" +
-			    "	    var opt = document.createElement('option');" +
-			    "	    opt.value = value;" +
-			    "	    opt.text = value;" +
-			    "	    if (value == 0) {" +
-			    "	        opt.setAttribute('selected', true);" +
-			    "	    }" +
-			    "	    selectProgress.add(opt);" +
-			    "    }" +
+//			    "    }" +
 			    "				    });" +
-                            "                        if($(\"#endIsMilestone\").is(\":checked\")){ $(\"#endEjecDiv\").css({'margin-left':'18px'}); }           " +
+//                            "                        if($(\"#endIsMilestone\").is(\":checked\")){ $(\"#endEjecDiv\").css({'margin-left':'18px'}); }           " +
 			    "			    </script>	" +
 			    "	                  </div>	" +
 			    "	               </div>	" +

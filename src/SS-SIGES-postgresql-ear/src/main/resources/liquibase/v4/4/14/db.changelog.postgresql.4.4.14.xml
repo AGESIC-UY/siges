@@ -1,0 +1,58 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="bruno (2017-09-19)" id="ldap_user_mapping">
+        <addColumn tableName="ss_usuario">
+            <column name="usu_ldap_user" type="varchar(50)"/>
+            <createIndex indexName="usu_ldap_user_idx"
+                         tableName="person"
+                         unique="true">
+                <column name="usu_ldap_user" type="varchar(255)"/>
+            </createIndex>
+        </addColumn>
+        <addColumn tableName="aud_ss_usuario">
+            <column name="usu_ldap_user" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="bruno (2017-09-19)" id="insert-ldap-config">
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_ENABLE"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_ENABLE"/>
+            <column name="cnf_valor" value="false"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SEARCH_FILTER"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SEARCH_FILTER"/>
+            <column name="cnf_valor" value="(uid=:user)"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SEARCH_URL"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SEARCH_URL"/>
+            <column name="cnf_valor" value="ldap://localhost:389"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SECURITY_PRINCIPAL"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SECURITY_PRINCIPAL"/>
+            <column name="cnf_valor" value="cn=admin,dc=sofis"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SEARCH_NAME"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SEARCH_NAME"/>
+            <column name="cnf_valor" value="dc=sofis"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SECURITY_CREDENTIAL"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SECURITY_CREDENTIAL"/>
+            <column name="cnf_valor" value="adminpwd"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SEARCH_USER_LOGIN_FILTER"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SEARCH_USER_LOGIN_FILTER"/>
+            <column name="cnf_valor" value="uid=:user,ou=users,dc=sofis"/>
+        </insert>
+        <insert tableName="ss_configuraciones">
+            <column name="cnf_codigo" value="AUTH_LDAP_SEARCH_INITIAL_CTX_FACTORY"/>
+            <column name="cnf_descripcion" value="AUTH_LDAP_SEARCH_INITIAL_CTX_FACTORY"/>
+            <column name="cnf_valor" value="com.sun.jndi.ldap.LdapCtxFactory"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

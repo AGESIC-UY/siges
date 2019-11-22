@@ -19,6 +19,7 @@ import javax.persistence.Query;
 public class AreasTagsDAO extends HibernateJpaDAOImp<AreasTags, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(AreasTagsDAO.class.getName());    
 
     public AreasTagsDAO(EntityManager em) {
         super(em);
@@ -42,7 +43,7 @@ public class AreasTagsDAO extends HibernateJpaDAOImp<AreasTags, Integer> impleme
         try {
             result = query.getResultList();
         } catch (Exception e) {
-            Logger.getLogger(ConstanteApp.LOGGER_NAME).log(Level.SEVERE, queryStr, e);
+            logger.log(Level.SEVERE, queryStr, e);
         }
         return result;
     }

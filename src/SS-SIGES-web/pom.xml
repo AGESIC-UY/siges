@@ -20,12 +20,12 @@
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>5.9.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-web</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>5.9.1</version>
     <packaging>war</packaging>
 
     <name>SS-SIGES-web</name>
@@ -33,13 +33,19 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        
+        <!-- Se utilizan estas dos propiedades para poder obtener el timestap del proyecto-->
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+            
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-remotes</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>5.9.1</version>
             <!--<scope>compile</scope>-->
             <scope>provided</scope>
         </dependency>
@@ -47,7 +53,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-ejb</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>5.9.1</version>
             <scope>provided</scope>
         </dependency>
         <!--        <dependency>
@@ -55,6 +61,18 @@
             <artifactId>webservices-rt</artifactId>
             <version>2.3</version>
         </dependency>-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.picketbox</groupId>
+            <artifactId>jbosssx</artifactId>
+            <version>4.0.7.Final</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -78,12 +96,12 @@
             <groupId>org.icefaces</groupId>
             <artifactId>icefaces</artifactId>
             <version>3.3.0</version>
-            <!--            <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>org.icepush</groupId> 
                     <artifactId>icepush</artifactId>
                 </exclusion>
-            </exclusions>-->
+            </exclusions>
         </dependency>
 
        
@@ -94,6 +112,13 @@
             <version>3.11</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.5</version>
+        </dependency>        
+        
         
         <dependency>
             <groupId>com.lowagie</groupId>
@@ -121,7 +146,7 @@
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>1.0-SP4</version>
-            <scope></scope>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
@@ -167,14 +192,14 @@
         </dependency>
         
         
-        <dependency>
+<!--        <dependency>
             <groupId>jboss</groupId>
             <artifactId>jbosssx</artifactId>
             <version>3.2.3</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency>-->
         
-        <dependency>
+<!--        <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
             <version>2.3.2.Final</version>
@@ -186,20 +211,19 @@
             <artifactId>resteasy-multipart-provider</artifactId>
             <version>2.3.2.Final</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
         
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
             <version>1.8.3</version>
         </dependency>
-        
+
         <dependency>
-            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-            <artifactId>owasp-java-html-sanitizer</artifactId>
-            <version>20160628.1</version>
+            <groupId>com.github.albfernandez</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>2.3.0</version>
         </dependency>
-        
     </dependencies>
     
     <build>
@@ -279,7 +303,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.17</version>
-<!--                <executions>
+                <!--                <executions>
                     <execution>
                         <id>validate</id>
                         <phase>validate</phase>
@@ -296,6 +320,26 @@
                     </execution>
                 </executions>-->
             </plugin>
+            
+            
+            <!-- Plugin para obtener la versión desde el pom --> 
+                       
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <archive> 
+                        <manifest> 
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
+                        </manifest> 
+                        <manifestEntries> 
+                            <build-time>${timestamp}</build-time>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>            
+            
           
         </plugins>
     </build>

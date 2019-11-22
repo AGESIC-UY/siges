@@ -34,7 +34,7 @@ import javax.naming.NamingException;
 @LocalBean
 public class IndicadoresBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(IndicadoresBean.class.getName());
 //    private static final String HORA_EJECUCION = "0,2";
     private static final String HORA_EJECUCION = "0";
     private static final String MINUTOS_EJECUCION = "5";
@@ -123,7 +123,15 @@ public class IndicadoresBean {
             Integer orgaPk = org.getOrgPk();
 
             logger.log(Level.INFO, "Buscando Proyectos...{0}", orgaPk);
-            final List<Integer> idsProy = proyectosBean.obtenerIdsProyPorOrgNoFinalizado(orgaPk);
+            List<Integer> idsProy;
+            
+            String incluirFinalizados = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.INCLUIR_CALCULAR_FINALIZADOS, orgPk);
+            
+            if (incluirFinalizados.equals("true")){
+                idsProy = proyectosBean.obtenerIdsProyPorOrg(orgaPk, true);
+            } else {
+                idsProy = proyectosBean.obtenerIdsProyPorOrgNoFinalizado(orgaPk);
+            }
             totalProy = idsProy.size();
             logger.log(Level.INFO, "Total proyectos:{0}", totalProy);
             countProy = 0;

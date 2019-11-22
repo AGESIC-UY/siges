@@ -76,6 +76,9 @@ public class OrganiIntProve implements Serializable {
     @ManyToOne(optional = false)
     private Organismos orgaOrgFk;
     
+    @Column(name = "orga_habilitado")
+    private Boolean orgaHabilitado;
+
     public OrganiIntProve() {
     }
 
@@ -186,6 +189,14 @@ public class OrganiIntProve implements Serializable {
 
     public void setOrgaOrgFk(Organismos orgaOrgFk) {
         this.orgaOrgFk = orgaOrgFk;
+    }
+
+    public Boolean getOrgaHabilitado() {
+        return orgaHabilitado;
+    }
+
+    public void setOrgaHabilitado(Boolean orgaHabilitado) {
+        this.orgaHabilitado = orgaHabilitado;
     }
 
     @Override

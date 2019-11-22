@@ -10,6 +10,7 @@ import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import com.sofis.persistence.dao.reference.EntityReference;
 import com.sofis.sofisform.to.CriteriaTO;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
@@ -28,6 +29,8 @@ import javax.persistence.PersistenceContext;
 public class EntityManagementBean {
 //        implements EntityManagementBeanRemote {
 
+    private static final Logger logger = Logger.getLogger(EntityManagementBean.class.getName());
+    
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     EntityManager em;
 

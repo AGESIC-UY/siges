@@ -30,9 +30,9 @@ import javax.persistence.Query;
  */
 public class EntregablesDAO extends HibernateJpaDAOImp<Entregables, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(EntregablesDAO.class.getName());
+    
     public EntregablesDAO(EntityManager em) {
 	super(em);
     }
@@ -598,6 +598,25 @@ public class EntregablesDAO extends HibernateJpaDAOImp<Entregables, Integer> imp
 	Query q = super.getEm().createQuery(queryStr);
 	try {
 	    return q.getResultList();
+	} catch (Exception ex) {
+	    logger.log(Level.SEVERE, ex.getMessage(), ex);
+	    TechnicalException te = new TechnicalException(ex);
+	    te.addError(ex.getMessage());
+	    throw te;
+	}
+    }
+
+    public boolean entregableEsHito(Integer entPk) {
+        String queryStr = "SELECT e.entFinEsHito"
+		+ " FROM Entregables e"
+		+ " WHERE e.entPk = :entPk";
+	Query q = super.getEm().createQuery(queryStr);
+        q.setParameter("entPk", entPk);
+        
+	try {
+            Boolean result = (Boolean) q.getSingleResult();
+	    return result != null && result == true;
+            
 	} catch (Exception ex) {
 	    logger.log(Level.SEVERE, ex.getMessage(), ex);
 	    TechnicalException te = new TechnicalException(ex);

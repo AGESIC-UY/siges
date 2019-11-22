@@ -82,7 +82,7 @@
                     <ace:column headerText="#{labels.hHabilitado}"  >
                         <ice:selectBooleanCheckbox disabled="true" value="#{cnf.propertyMap['tipdocperHabilitado']}"/>
                     </ace:column>
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ice:panelGrid title="#{labels.editar}">
                             <ace:pushButton styleClass="botonEditar iconoTabla"   action="#{tipoDocumentoPersonaMB.editar(cnf.propertyMap['tipdocperId'])}"
                                                rendered="#{menuMB.permisos['TDO_EDIT']}"/>

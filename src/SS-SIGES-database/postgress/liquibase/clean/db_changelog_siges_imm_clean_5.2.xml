@@ -1,0 +1,2763 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet author="sofis" id="1527608349660-1">
+        <createTable tableName="aud_ss_localidades">
+            <column name="loc_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="loc_codigo" type="VARCHAR(255)"/>
+            <column name="loc_nombre" type="VARCHAR(255)"/>
+            <column name="loc_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="loc_ult_origen" type="VARCHAR(255)"/>
+            <column name="loc_ult_usuario" type="VARCHAR(255)"/>
+            <column name="loc_version" type="INT4"/>
+            <column name="loc_depto_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-2">
+        <createTable tableName="organismos">
+            <column autoIncrement="true" name="org_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="organismos_pkey"/>
+            </column>
+            <column name="org_nombre" type="VARCHAR(45)"/>
+            <column name="org_logo_nombre" type="VARCHAR(45)"/>
+            <column name="org_direccion" type="VARCHAR(45)"/>
+            <column name="org_logo" type="BYTEA"/>
+            <column defaultValueBoolean="true" name="org_activo" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="org_token" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-3">
+        <createTable tableName="notificacion_instancia">
+            <column autoIncrement="true" name="notinst_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="notificacion_instancia_pkey"/>
+            </column>
+            <column name="notinst_not_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notinst_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notinst_gerente_adjunto" type="BOOL"/>
+            <column name="notinst_pmof" type="BOOL"/>
+            <column name="notinst_pmot" type="BOOL"/>
+            <column name="notinst_sponsor" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-4">
+        <createTable tableName="componente_producto">
+            <column autoIncrement="true" name="com_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="componente_producto_pkey"/>
+            </column>
+            <column name="com_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="com_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="com_version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-5">
+        <createTable tableName="ss_usuario">
+            <column autoIncrement="true" name="usu_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_usuario_pkey"/>
+            </column>
+            <column name="usu_administrador" type="BOOL"/>
+            <column name="usu_cambio_estado_desc" type="TEXT"/>
+            <column name="usu_cod" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_correo_electronico" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_cuenta_bloqueada" type="BOOL"/>
+            <column name="usu_descripcion" type="TEXT"/>
+            <column name="usu_direccion" type="TEXT"/>
+            <column name="usu_fecha_password" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_fecha_uuid" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_foto" type="BYTEA"/>
+            <column name="usu_intentos_fallidos" type="INT4"/>
+            <column name="usu_nro_doc" type="VARCHAR(255)"/>
+            <column name="usu_oficina_por_defecto" type="INT4"/>
+            <column name="usu_origen" type="TEXT"/>
+            <column name="usu_password" type="VARCHAR(255)"/>
+            <column name="usu_primer_apellido" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_primer_nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_registrado" type="BOOL"/>
+            <column name="usu_segundo_apellido" type="VARCHAR(255)"/>
+            <column name="usu_segundo_nombre" type="VARCHAR(255)"/>
+            <column name="usu_telefono" type="VARCHAR(255)"/>
+            <column name="usu_celular" type="VARCHAR(255)"/>
+            <column name="usu_user_code" type="INT4"/>
+            <column name="usu_uuid_des" type="VARCHAR(255)"/>
+            <column name="usu_version" type="INT4"/>
+            <column name="usu_vigente" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_aprob_facturas" type="BOOL"/>
+            <column name="usu_ult_usuario" type="VARCHAR(255)"/>
+            <column name="usu_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_ult_origen" type="VARCHAR(255)"/>
+            <column name="usu_area_org" type="INT4"/>
+            <column defaultValue="NULL::character varying" name="usu_token" type="VARCHAR(100)"/>
+            <column name="usu_token_act" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_ldap_user" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-6">
+        <createTable tableName="ss_tipos_documento_persona">
+            <column autoIncrement="true" name="tipdocper_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_tipos_documento_persona_pkey"/>
+            </column>
+            <column name="tipdocper_codigo" type="VARCHAR(255)"/>
+            <column name="tipdocper_descripcion" type="VARCHAR(255)"/>
+            <column name="tipdocper_habilitado" type="BOOL"/>
+            <column name="tipdocper_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tipdocper_ult_origen" type="VARCHAR(255)"/>
+            <column name="tipdocper_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tipdocper_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-7">
+        <createTable tableName="registros_horas">
+            <column autoIncrement="true" name="rh_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="registros_horas_pkey"/>
+            </column>
+            <column name="rh_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rh_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rh_ent_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rh_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rh_horas" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rh_comentario" type="VARCHAR(4000)"/>
+            <column name="rh_aprobado" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-8">
+        <createTable tableName="prod_mes">
+            <column autoIncrement="true" name="prodmes_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="prod_mes_pkey"/>
+            </column>
+            <column name="prodmes_prod_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prodmes_mes" type="INT2">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prodmes_anio" type="INT2">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prodmes_plan" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prodmes_real" type="numeric"/>
+            <column name="prodmes_acu_plan" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prodmes_acu_real" type="numeric"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-9">
+        <createTable tableName="participantes">
+            <column autoIncrement="true" name="part_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="participantes_pkey"/>
+            </column>
+            <column name="part_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="part_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="part_ent_fk" type="INT4"/>
+            <column name="part_horas_plan" type="numeric"/>
+            <column defaultValueBoolean="true" name="part_activo" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-10">
+        <createTable tableName="aud_ss_personas">
+            <column name="per_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="per_fec_nac" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="per_nro_doc" type="VARCHAR(45)"/>
+            <column name="per_primer_apellido" type="VARCHAR(100)"/>
+            <column name="per_primer_nombre" type="VARCHAR(100)"/>
+            <column name="per_segundo_apellido" type="VARCHAR(100)"/>
+            <column name="per_segundo_nombre" type="VARCHAR(100)"/>
+            <column name="per_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="per_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="per_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="per_version" type="INT4"/>
+            <column name="per_pais_doc" type="INT4"/>
+            <column name="per_tipo_doc" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-11">
+        <createTable tableName="aud_ss_usuario">
+            <column name="usu_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="usu_administrador" type="BOOL"/>
+            <column name="usu_cambio_estado_desc" type="TEXT"/>
+            <column name="usu_cod" type="VARCHAR(255)"/>
+            <column name="usu_correo_electronico" type="VARCHAR(255)"/>
+            <column name="usu_cuenta_bloqueada" type="BOOL"/>
+            <column name="usu_descripcion" type="TEXT"/>
+            <column name="usu_direccion" type="TEXT"/>
+            <column name="usu_fecha_password" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_fecha_uuid" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_foto" type="BYTEA"/>
+            <column name="usu_intentos_fallidos" type="INT4"/>
+            <column name="usu_nro_doc" type="VARCHAR(255)"/>
+            <column name="usu_oficina_por_defecto" type="INT4"/>
+            <column name="usu_origen" type="TEXT"/>
+            <column name="usu_password" type="VARCHAR(255)"/>
+            <column name="usu_primer_apellido" type="VARCHAR(255)"/>
+            <column name="usu_primer_nombre" type="VARCHAR(255)"/>
+            <column name="usu_registrado" type="BOOL"/>
+            <column name="usu_segundo_apellido" type="VARCHAR(255)"/>
+            <column name="usu_segundo_nombre" type="VARCHAR(255)"/>
+            <column name="usu_telefono" type="VARCHAR(255)"/>
+            <column name="usu_user_code" type="INT4"/>
+            <column name="usu_uuid_des" type="VARCHAR(255)"/>
+            <column name="usu_version" type="INT4"/>
+            <column name="usu_vigente" type="BOOL"/>
+            <column name="usu_aprob_facturas" type="BOOL"/>
+            <column name="usu_ult_usuario" type="VARCHAR(255)"/>
+            <column name="usu_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_ult_origen" type="VARCHAR(255)"/>
+            <column name="usu_area_org" type="INT4"/>
+            <column name="usu_celular" type="VARCHAR(255)"/>
+            <column defaultValue="NULL::character varying" name="usu_token" type="VARCHAR(100)"/>
+            <column name="usu_token_act" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="usu_ldap_user" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-12">
+        <createTable tableName="valor_hora">
+            <column autoIncrement="true" name="val_hor_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="valor_hora_pkey"/>
+            </column>
+            <column name="val_hor_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="val_hor_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="val_hor_mon_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="val_hor_valor" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="val_hor_anio" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-13">
+        <createTable tableName="prog_int">
+            <column name="progint_prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progint_int_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-14">
+        <createTable tableName="ss_noticias">
+            <column autoIncrement="true" name="not_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_noticias_pkey"/>
+            </column>
+            <column name="not_ampliar" type="VARCHAR(255)"/>
+            <column name="not_codigo" type="VARCHAR(45)"/>
+            <column name="not_contenido" type="TEXT"/>
+            <column name="not_desde" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_hasta" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_imagen" type="VARCHAR(255)"/>
+            <column name="not_titulo" type="VARCHAR(255)"/>
+            <column name="not_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="not_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="not_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-15">
+        <createTable tableName="plantilla_entregables">
+            <column autoIncrement="true" name="p_entregables_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="plantilla_entregables_pkey"/>
+            </column>
+            <column name="p_entregables_nombre" type="VARCHAR(1000)"/>
+            <column name="p_entregable_nivel" type="INT4"/>
+            <column name="p_entregable_esfuerzo" type="INT4"/>
+            <column name="p_entregable_duracion" type="INT4"/>
+            <column name="p_entregable_ant_fk" type="INT4"/>
+            <column name="p_entregable_p_cro_fk" type="INT4"/>
+            <column name="p_entregables_numero" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-16">
+        <createTable tableName="busq_filtro">
+            <column autoIncrement="true" name="busq_filtro_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="busq_filtro_pkey"/>
+            </column>
+            <column name="busq_filtro_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="busq_filtro_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="busq_filtro_xml" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-17">
+        <createTable tableName="estados">
+            <column autoIncrement="true" name="est_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="estados_pkey"/>
+            </column>
+            <column name="est_codigo" type="VARCHAR(150)"/>
+            <column name="est_nombre" type="VARCHAR(45)"/>
+            <column name="est_label" type="VARCHAR(150)"/>
+            <column name="est_orden_proceso" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-18">
+        <createTable tableName="ss_rol">
+            <column autoIncrement="true" name="rol_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_rol_pkey"/>
+            </column>
+            <column name="rol_cod" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rol_descripcion" type="TEXT"/>
+            <column name="rol_nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rol_label" type="VARCHAR(150)"/>
+            <column name="rol_origen" type="VARCHAR(255)"/>
+            <column name="rol_user_code" type="INT4"/>
+            <column name="rol_version" type="INT4"/>
+            <column name="rol_vigente" type="BOOL"/>
+            <column name="rol_tipo_usuario" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-19">
+        <createTable tableName="proy_indices">
+            <column autoIncrement="true" name="proyind_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_indices_pkey"/>
+            </column>
+            <column name="proyind_riesgo_expo" type="FLOAT8"/>
+            <column name="proyind_riesgo_ultact" type="date"/>
+            <column name="proyind_riesgo_alto" type="INT4"/>
+            <column name="proyind_metodo_estado" type="FLOAT8"/>
+            <column name="proyind_metodo_sin_aprobar" type="BOOL"/>
+            <column name="proyind_periodo_inicio" type="date"/>
+            <column name="proyind_periodo_fin" type="date"/>
+            <column name="proyind_porc_peso_total" type="FLOAT8"/>
+            <column name="proyind_cal_ind" type="FLOAT8"/>
+            <column name="proyind_cal_pend" type="INT4"/>
+            <column name="proyind_fase_color" type="INT4"/>
+            <column name="proyind_avance_par_azul" type="INT4"/>
+            <column name="proyind_avance_par_verde" type="INT4"/>
+            <column name="proyind_anvance_par_rojo" type="INT4"/>
+            <column name="proyind_avance_fin_azul" type="INT4"/>
+            <column name="proyind_avance_fin_verde" type="INT4"/>
+            <column name="proyind_anvance_fin_rojo" type="INT4"/>
+            <column name="proyind_fecha_act" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="proyind_periodo_inicio_ent_fk" type="INT4"/>
+            <column name="proyind_periodo_fin_ent_fk" type="INT4"/>
+            <column defaultValueNumeric="0" name="proyind_fecha_act_color" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-20">
+        <createTable tableName="ss_domicilios">
+            <column autoIncrement="true" name="dom_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_domicilios_pkey"/>
+            </column>
+            <column name="dom_apto" type="VARCHAR(50)"/>
+            <column name="dom_letra" type="VARCHAR(255)"/>
+            <column name="dom_calle" type="VARCHAR(150)"/>
+            <column name="dom_codigo_postal" type="VARCHAR(5)"/>
+            <column name="dom_depto_alt" type="VARCHAR(255)"/>
+            <column name="dom_descripcion" type="TEXT"/>
+            <column name="dom_inmueble_nombre" type="VARCHAR(100)"/>
+            <column name="dom_kilometro" type="VARCHAR(9)"/>
+            <column name="dom_manzana" type="VARCHAR(5)"/>
+            <column name="dom_numero_puerta" type="VARCHAR(5)"/>
+            <column name="dom_oficina" type="VARCHAR(255)"/>
+            <column name="dom_ruta" type="VARCHAR(5)"/>
+            <column name="dom_solar" type="VARCHAR(5)"/>
+            <column name="dom_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="dom_ult_origen" type="VARCHAR(255)"/>
+            <column name="dom_ult_usuario" type="VARCHAR(255)"/>
+            <column name="dom_version" type="INT4"/>
+            <column name="dom_depto_id" type="INT4"/>
+            <column name="dom_loc_id" type="INT4"/>
+            <column name="dom_pai_id" type="INT4"/>
+            <column name="dom_par_id" type="BOOL"/>
+            <column name="dom_tec_id" type="INT4"/>
+            <column name="dom_tvi_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-21">
+        <createTable tableName="image">
+            <column autoIncrement="true" name="image_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="image_pkey"/>
+            </column>
+            <column name="image_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="NULL::character varying" name="image_desc" type="VARCHAR(255)"/>
+            <column name="image_ext" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_blob" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_tipo" type="INT4"/>
+            <column name="image_orden" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-22">
+        <createTable tableName="aud_ss_rol">
+            <column name="rol_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="rol_cod" type="VARCHAR(255)"/>
+            <column name="rol_descripcion" type="TEXT"/>
+            <column name="rol_nombre" type="VARCHAR(255)"/>
+            <column name="rol_label" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rol_origen" type="VARCHAR(255)"/>
+            <column name="rol_user_code" type="INT4"/>
+            <column name="rol_version" type="INT4"/>
+            <column name="rol_vigente" type="BOOL"/>
+            <column name="rol_tipo_usuario" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-23">
+        <createTable tableName="aud_ss_noticias">
+            <column name="not_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="not_ampliar" type="VARCHAR(255)"/>
+            <column name="not_codigo" type="VARCHAR(45)"/>
+            <column name="not_contenido" type="TEXT"/>
+            <column name="not_desde" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_hasta" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_imagen" type="VARCHAR(255)"/>
+            <column name="not_titulo" type="VARCHAR(255)"/>
+            <column name="not_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="not_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="not_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="not_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-24">
+        <createTable tableName="adquisicion">
+            <column autoIncrement="true" name="adq_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="adquisicion_pkey"/>
+            </column>
+            <column name="adq_pre_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="adq_nombre" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="adq_prov_orga_fk" type="INT4"/>
+            <column name="adq_fuente_fk" type="INT4"/>
+            <column name="adq_moneda_fk" type="INT4"/>
+            <column name="adq_proc_compra" type="VARCHAR(20)"/>
+            <column name="adq_proc_compra_grp" type="VARCHAR(20)"/>
+            <column name="adq_componente_producto_fk" type="INT4"/>
+            <column name="adq_procedimiento_compra_fk" type="INT4"/>
+            <column name="adq_compartida_usuario_fk" type="INT4"/>
+            <column defaultValueBoolean="false" name="adq_compartida" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-25">
+        <createTable tableName="tipos_media">
+            <column autoIncrement="true" name="tip_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="tipos_media_pkey"/>
+            </column>
+            <column name="tip_cod" type="VARCHAR(45)"/>
+            <column name="tip_nombre" type="VARCHAR(245)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-26">
+        <createTable tableName="areas">
+            <column autoIncrement="true" name="area_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="areas_pkey"/>
+            </column>
+            <column name="area_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="area_padre" type="INT4"/>
+            <column name="area_nombre" type="VARCHAR(250)"/>
+            <column name="area_abreviacion" type="VARCHAR(45)"/>
+            <column name="area_director" type="INT4"/>
+            <column defaultValueBoolean="true" name="area_activo" type="BOOL"/>
+            <column defaultValueBoolean="true" name="area_habilitada" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-27">
+        <createTable tableName="aud_ss_paridades">
+            <column name="par_id" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="par_codigo" type="VARCHAR(9)"/>
+            <column name="par_descripcion" type="VARCHAR(45)"/>
+            <column name="par_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="par_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="par_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="par_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-28">
+        <createTable tableName="aud_programas_proyectos">
+            <column name="id" type="VARCHAR(13)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="activo" type="BOOL"/>
+            <column name="areaNombre" type="VARCHAR(255)"/>
+            <column name="areaPk" type="INT4"/>
+            <column name="estado" type="INT4"/>
+            <column name="estadoNombre" type="VARCHAR(255)"/>
+            <column name="estadoPendiente" type="INT4"/>
+            <column name="fechaCrea" type="date"/>
+            <column name="fichaFk" type="INT4"/>
+            <column name="gerente" type="INT4"/>
+            <column name="gerentePrimerApellido" type="VARCHAR(255)"/>
+            <column name="gerentePrimerNombre" type="VARCHAR(255)"/>
+            <column name="nombre" type="VARCHAR(45)"/>
+            <column name="organismo" type="INT4"/>
+            <column name="pmoFederada" type="INT4"/>
+            <column name="tipoFicha" type="INT8"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-29">
+        <createTable tableName="ss_departamentos">
+            <column autoIncrement="true" name="depto_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_departamentos_pkey"/>
+            </column>
+            <column name="depto_codigo" type="VARCHAR(255)"/>
+            <column name="depto_nombre" type="VARCHAR(255)"/>
+            <column name="depto_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="err_ult_origen" type="VARCHAR(255)"/>
+            <column name="depto_ult_usuario" type="VARCHAR(255)"/>
+            <column name="depto_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-30">
+        <createTable tableName="lecc_aprendidas">
+            <column autoIncrement="true" name="lecapr_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="lecc_aprendidas_pkey"/>
+            </column>
+            <column name="lecapr_proy_fk" type="INT4"/>
+            <column name="lecapr_tipo_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecapr_usr_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecapr_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecapr_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecapr_desc" type="VARCHAR(3000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecapr_activo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-31">
+        <createTable tableName="proy_replanificacion">
+            <column autoIncrement="true" name="proyreplan_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_replanificacion_pkey"/>
+            </column>
+            <column name="proyreplan_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyreplan_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyreplan_desc" type="VARCHAR(5000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyreplan_historial" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyreplan_activo" type="BOOL"/>
+            <column name="version" type="INT4"/>
+            <column defaultValueBoolean="false" name="proyreplan_generar_linea_base" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-32">
+        <createTable tableName="fuente_financiamiento">
+            <column autoIncrement="true" name="fue_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="fuente_financiamiento_pkey"/>
+            </column>
+            <column name="fue_nombre" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fue_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-33">
+        <createTable tableName="etapa">
+            <column autoIncrement="true" name="eta_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="etapa_pkey"/>
+            </column>
+            <column name="eta_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eta_codigo" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eta_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eta_label" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-34">
+        <createTable tableName="proy_lectura_area">
+            <column name="proglectarea_area_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proglectarea_proy_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-35">
+        <createTable tableName="proy_tags">
+            <column name="proytag_proy_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proytag_area_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-36">
+        <createTable tableName="sql_executed">
+            <column autoIncrement="true" name="sql_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="sql_executed_pkey"/>
+            </column>
+            <column name="sql_ver_mayor" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sql_ver_menor" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sql_build" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sql_desc" type="TEXT"/>
+            <column name="sql_fecha" type="date"/>
+            <column name="sql_update" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-37">
+        <createTable tableName="calidad">
+            <column autoIncrement="true" name="cal_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="calidad_pkey"/>
+            </column>
+            <column name="cal_peso" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cal_vca_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cal_actualizacion" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cal_tipo" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cal_ent_fk" type="INT4"/>
+            <column name="cal_prod_fk" type="INT4"/>
+            <column name="cal_tca_fk" type="INT4"/>
+            <column name="cal_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-38">
+        <createTable tableName="pge_configuraciones">
+            <column autoIncrement="true" name="cnf_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="pge_configuraciones_pkey"/>
+            </column>
+            <column name="cnf_clave" type="VARCHAR(255)"/>
+            <column name="cnf_crea_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cnf_crea_origen" type="INT4"/>
+            <column name="cnf_crea_usu" type="VARCHAR(255)"/>
+            <column name="cnf_ultmod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cnf_ultmod_origen" type="INT4"/>
+            <column name="cnf_ultmod_usu" type="VARCHAR(255)"/>
+            <column name="cnf_valor" type="VARCHAR(255)"/>
+            <column name="cnf_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-39">
+        <createTable tableName="tipo_gasto">
+            <column autoIncrement="true" name="tipogas_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="tipo_gasto_pkey"/>
+            </column>
+            <column name="tipogas_org_fk" type="INT4"/>
+            <column name="tipogas_nombre" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-40">
+        <createTable tableName="aud_ss_errores">
+            <column name="id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="err_codigo" type="VARCHAR(255)"/>
+            <column name="err_descripcion" type="VARCHAR(255)"/>
+            <column name="err_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="err_ult_origen" type="VARCHAR(255)"/>
+            <column name="err_ult_usuario" type="VARCHAR(255)"/>
+            <column name="err_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-41">
+        <createTable tableName="pge_invocaciones">
+            <column autoIncrement="true" name="inv_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="pge_invocaciones_pkey"/>
+            </column>
+            <column name="inv_crea_usu" type="VARCHAR(255)"/>
+            <column name="inv_env_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="inv_env_mensaje" type="VARCHAR(255)"/>
+            <column name="inv_env_ok" type="BOOL"/>
+            <column name="inv_operacion" type="VARCHAR(255)"/>
+            <column name="inv_rec_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="inv_rec_mensaje" type="VARCHAR(255)"/>
+            <column name="inv_rec_ok" type="BOOL"/>
+            <column name="inv_servicio" type="VARCHAR(255)"/>
+            <column name="inv_url" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-42">
+        <createTable tableName="aud_ss_rel_rol_operacion">
+            <column name="rel_rol_operacion_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="rel_rol_operacion_editable" type="BOOL"/>
+            <column name="rel_rol_operacion_origen" type="VARCHAR(255)"/>
+            <column name="rel_rol_operacion_user_code" type="INT4"/>
+            <column name="rel_rol_operacion_visible" type="BOOL"/>
+            <column name="rel_rol_operacion_operacion_id" type="INT4"/>
+            <column name="rel_rol_operacion_rol_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-43">
+        <createTable tableName="ss_telefonos">
+            <column autoIncrement="true" name="tel_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_telefonos_pkey"/>
+            </column>
+            <column name="tel_numero" type="VARCHAR(25)"/>
+            <column name="tel_observaciones" type="VARCHAR(255)"/>
+            <column name="tel_prefijo" type="VARCHAR(10)"/>
+            <column name="tel_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tel_ult_origen" type="VARCHAR(45)"/>
+            <column name="tel_ult_usuario" type="VARCHAR(45)"/>
+            <column name="tel_version" type="INT4"/>
+            <column name="tel_tiptel_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-44">
+        <createTable tableName="prog_docs_obl">
+            <column name="progdocsobl_docs_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progdocsobl_prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-45">
+        <createTable tableName="plantilla_cronograma">
+            <column autoIncrement="true" name="p_crono_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="plantilla_cronograma_pkey"/>
+            </column>
+            <column name="p_crono_nombre" type="VARCHAR(845)"/>
+            <column name="p_crono_org_fk" type="INT4"/>
+            <column name="activo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-46">
+        <createTable tableName="ss_categoper">
+            <column autoIncrement="true" name="cat_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_categoper_pkey"/>
+            </column>
+            <column name="cat_descripcion" type="TEXT"/>
+            <column name="cat_nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cat_origen" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cat_user_code" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cat_version" type="INT4"/>
+            <column name="cat_vigente" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-47">
+        <createTable tableName="ss_tipos_vialidad">
+            <column autoIncrement="true" name="tvi_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_tipos_vialidad_pkey"/>
+            </column>
+            <column name="tvi_abreviacion" type="VARCHAR(255)"/>
+            <column name="tvi_codigo" type="VARCHAR(255)"/>
+            <column name="tvi_descripcion" type="VARCHAR(255)"/>
+            <column name="tvi_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tvi_ult_origen" type="VARCHAR(255)"/>
+            <column name="tvi_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tvi_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-48">
+        <createTable tableName="documentos">
+            <column autoIncrement="true" name="docs_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="documentos_pkey"/>
+            </column>
+            <column name="docs_nombre" type="VARCHAR(100)"/>
+            <column name="docs_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="docs_privado" type="BOOL"/>
+            <column name="docs_estado" type="FLOAT8"/>
+            <column name="docs_entregable_fk" type="INT4"/>
+            <column name="docs_tipodoc_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="docs_docfile_pk" type="INT4"/>
+            <column name="docs_aprobado" type="BOOL"/>
+            <column name="docs_pago_fk" type="INT4"/>
+            <column name="docs_ult_pub" type="date"/>
+            <column name="docs_pub_fecha" type="date"/>
+            <column defaultValueNumeric="0" name="version" type="INT4"/>
+            <column defaultValueBoolean="false" name="docs_publicable" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-49">
+        <createTable tableName="prog_indices_pre">
+            <column autoIncrement="true" name="progindpre_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="prog_indices_pre_pkey"/>
+            </column>
+            <column name="progindpre_progind_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progindpre_mon_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progindpre_total" type="FLOAT8"/>
+            <column name="progindpre_est_pre" type="INT4"/>
+            <column name="progindpre_anio" type="FLOAT8"/>
+            <column name="progindpre_ac" type="FLOAT8"/>
+            <column name="progindpre_pv" type="FLOAT8"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-50">
+        <createTable tableName="tipo_leccion">
+            <column autoIncrement="true" name="tipolec_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="tipo_leccion_pkey"/>
+            </column>
+            <column name="tipolec_codigo" type="VARCHAR(45)"/>
+            <column name="tipolec_nombre" type="VARCHAR(150)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-51">
+        <createTable tableName="prog_indices">
+            <column autoIncrement="true" name="progind_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="prog_indices_pkey"/>
+            </column>
+            <column name="progind_riesgo_expo" type="FLOAT8"/>
+            <column name="progind_riesgo_ultact" type="date"/>
+            <column name="progind_riesgo_alto" type="INT4"/>
+            <column name="progind_metodo_estado" type="FLOAT8"/>
+            <column name="progind_metodo_sin_aprobar" type="BOOL"/>
+            <column name="progind_periodo_inicio" type="date"/>
+            <column name="progind_periodo_fin" type="date"/>
+            <column name="progind_proy_actualizacion" type="date"/>
+            <column name="progind_cal_ind" type="FLOAT8"/>
+            <column name="progind_cal_pend" type="INT4"/>
+            <column name="progind_avance_par_azul" type="INT4"/>
+            <column name="progind_avance_par_verde" type="INT4"/>
+            <column name="progind_anvance_par_rojo" type="INT4"/>
+            <column name="progind_avance_fin_azul" type="INT4"/>
+            <column name="progind_avance_fin_verde" type="INT4"/>
+            <column name="progind_anvance_fin_rojo" type="INT4"/>
+            <column name="progind_fecha_act" type="TIMESTAMP WITH TIME ZONE"/>
+            <column defaultValueNumeric="0" name="progind_fecha_act_color" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-52">
+        <createTable tableName="aud_ss_paises">
+            <column name="pai_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="pai_codigo2" type="VARCHAR(255)"/>
+            <column name="pai_codigo3" type="VARCHAR(255)"/>
+            <column name="pai_comun" type="BOOL"/>
+            <column name="pai_habilitado" type="BOOL"/>
+            <column name="pai_nombre" type="VARCHAR(255)"/>
+            <column name="pai_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="pai_ult_origen" type="VARCHAR(255)"/>
+            <column name="pai_ult_usuario" type="VARCHAR(255)"/>
+            <column name="pai_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-53">
+        <createTable tableName="ss_tipos_entrada_colectiva">
+            <column autoIncrement="true" name="tec_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_tipos_entrada_colectiva_pkey"/>
+            </column>
+            <column name="tec_codigo" type="VARCHAR(255)"/>
+            <column name="tec_descripcion" type="VARCHAR(255)"/>
+            <column name="tec_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tec_ult_origen" type="VARCHAR(255)"/>
+            <column name="tec_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tec_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-54">
+        <createTable tableName="prog_pre">
+            <column name="progpre_prog_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progpre_pre_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-55">
+        <createTable tableName="tipo_documento">
+            <column autoIncrement="true" name="tipdoc_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="tipo_documento_pkey"/>
+            </column>
+            <column name="tipodoc_nombre" type="VARCHAR(145)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipodoc_exigido_desde" type="INT4"/>
+            <column name="tipodoc_peso" type="INT4"/>
+            <column name="tipodoc_org_fk" type="INT4"/>
+            <column name="tipodoc_resum_ejecutivo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-56">
+        <createTable tableName="proy_docs">
+            <column name="proydoc_proy_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proydoc_doc_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-57">
+        <createTable tableName="proy_int">
+            <column name="proyint_proy_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyint_int_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-58">
+        <createTable tableName="productos">
+            <column autoIncrement="true" name="prod_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="productos_pkey"/>
+            </column>
+            <column name="prod_peso" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prod_und_medida" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prod_ent_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prod_fecha_crea" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prod_ult_mod" type="date"/>
+            <column name="prod_acumulado" type="BOOL"/>
+            <column name="prod_desc" type="VARCHAR(2000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-59">
+        <createTable tableName="proy_otros_datos">
+            <column autoIncrement="true" name="proy_otr_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_otros_datos_pkey"/>
+            </column>
+            <column name="proy_otr_eta_fk" type="INT4"/>
+            <column name="proy_otr_cont_fk" type="INT4"/>
+            <column name="proy_otr_ins_eje_fk" type="INT4"/>
+            <column name="proy_otr_ent_fk" type="INT4"/>
+            <column name="proy_otr_origen" type="VARCHAR(1000)"/>
+            <column name="proy_otr_plazo" type="INT4"/>
+            <column name="proy_otr_observaciones" type="VARCHAR(4000)"/>
+            <column name="proy_otr_cat_fk" type="INT4"/>
+            <column name="proy_otr_est_pub_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-60">
+        <createTable tableName="proyectos">
+            <column autoIncrement="true" name="proy_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proyectos_pkey"/>
+            </column>
+            <column name="proy_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_est_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_est_pendiente_fk" type="INT4"/>
+            <column name="proy_sol_aceptacion" type="BOOL"/>
+            <column name="proy_area_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_usr_adjunto_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_usr_sponsor_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_usr_gerente_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_usr_pmofed_fk" type="INT4"/>
+            <column name="proy_prog_fk" type="INT4"/>
+            <column name="proy_risk_fk" type="INT4"/>
+            <column name="proy_cro_fk" type="INT4"/>
+            <column name="proy_pre_fk" type="INT4"/>
+            <column name="proy_proyindices_fk" type="INT4"/>
+            <column name="proy_peso" type="INT4"/>
+            <column name="proy_descripcion" type="VARCHAR(4000)"/>
+            <column name="proy_objetivo" type="VARCHAR(4000)"/>
+            <column name="proy_obj_publico" type="VARCHAR(4000)"/>
+            <column name="proy_situacion_actual" type="VARCHAR(4000)"/>
+            <column name="proy_pub_web" type="BOOL"/>
+            <column name="proy_leccion_aprendida" type="VARCHAR(256)"/>
+            <column name="proy_nombre" type="VARCHAR(100)"/>
+            <column name="proy_grp" type="VARCHAR(45)"/>
+            <column name="proy_semaforo_amarillo" type="INT4"/>
+            <column name="proy_semaforo_rojo" type="INT4"/>
+            <column name="proy_activo" type="BOOL"/>
+            <column name="proy_fecha_crea" type="date"/>
+            <column name="proy_fecha_act" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_ult_mod" type="date"/>
+            <column name="proy_ult_origen" type="VARCHAR(45)"/>
+            <column name="proy_version" type="INT4"/>
+            <column name="proy_fecha_est_act" type="date"/>
+            <column name="proy_id_migrado" type="INT4"/>
+            <column defaultValueBoolean="true" name="proy_publicable" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_otr_dat_fk" type="INT4"/>
+            <column name="proy_latlng_fk" type="INT4"/>
+            <column name="proy_ult_usuario" type="VARCHAR"/>
+            <column name="proy_obj_est_fk" type="INT4"/>
+            <column name="proy_factor_impacto" type="TEXT"/>
+            <column name="proy_fecha_act_pub" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-61">
+        <createTable tableName="area_conocimiento">
+            <column autoIncrement="true" name="con_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="area_conocimiento_pkey"/>
+            </column>
+            <column name="con_nombre" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="con_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="con_padre_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-62">
+        <createTable tableName="aud_doc_file">
+            <column name="docfile_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT2"/>
+            <column name="docfile_nombre" type="VARCHAR(255)"/>
+            <column name="docfile_path" type="VARCHAR(255)"/>
+            <column name="docfile_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="docfile_ult_origen" type="VARCHAR(255)"/>
+            <column name="docfile_ult_usuario" type="VARCHAR(255)"/>
+            <column name="docfile_version" type="INT4"/>
+            <column name="docfile_doc_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-63">
+        <createTable tableName="aud_ss_tipos_documento_persona">
+            <column name="tipdocper_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="tipdocper_codigo" type="VARCHAR(255)"/>
+            <column name="tipdocper_descripcion" type="VARCHAR(255)"/>
+            <column name="tipdocper_habilitado" type="BOOL"/>
+            <column name="tipdocper_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tipdocper_ult_origen" type="VARCHAR(255)"/>
+            <column name="tipdocper_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tipdocper_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-64">
+        <createTable tableName="aud_ss_configuraciones">
+            <column name="id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="cnf_codigo" type="VARCHAR(255)"/>
+            <column name="cnf_descripcion" type="VARCHAR(255)"/>
+            <column name="cnf_html" type="BOOL"/>
+            <column name="cnf_protegido" type="BOOL"/>
+            <column name="cnf_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cnf_ult_origen" type="VARCHAR(255)"/>
+            <column name="cnf_ult_usuario" type="VARCHAR(255)"/>
+            <column name="cnf_valor" type="TEXT"/>
+            <column name="cnf_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-65">
+        <createTable tableName="ss_usu_ofi_roles">
+            <column autoIncrement="true" name="usu_ofi_roles_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_usu_ofi_roles_pkey"/>
+            </column>
+            <column name="usu_ofi_roles_origen" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_ofi_roles_user_code" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_ofi_roles_oficina" type="INT4"/>
+            <column name="usu_ofi_roles_rol" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_ofi_roles_usuario" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usu_ofi_roles_usu_area" type="INT4"/>
+            <column name="usu_ofi_roles_activo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-66">
+        <createTable tableName="gastos">
+            <column autoIncrement="true" name="gas_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="gastos_pkey"/>
+            </column>
+            <column name="gas_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_tipo_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_mon_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_importe" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_obs" type="VARCHAR(4000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gas_aprobado" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-67">
+        <createTable tableName="areas_tags">
+            <column autoIncrement="true" name="arastag_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="areas_tags_pkey"/>
+            </column>
+            <column name="areatag_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="areatag_padre_fk" type="INT4"/>
+            <column name="areatag_tematica" type="VARCHAR(45)"/>
+            <column name="areatag_excluyente" type="BOOL"/>
+            <column name="areatag_nombre" type="VARCHAR(45)"/>
+            <column name="areatag_categoria" type="VARCHAR(45)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-68">
+        <createTable tableName="lecapr_areacon">
+            <column name="lecaprcon_con_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lecaprcon_lecapr_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-69">
+        <createTable tableName="moneda">
+            <column autoIncrement="true" name="mon_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="moneda_pkey"/>
+            </column>
+            <column name="mon_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mon_signo" type="VARCHAR(50)"/>
+            <column name="mon_cod_pais" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-70">
+        <createTable tableName="aud_ss_departamentos">
+            <column name="depto_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="depto_codigo" type="VARCHAR(255)"/>
+            <column name="depto_nombre" type="VARCHAR(255)"/>
+            <column name="depto_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="err_ult_origen" type="VARCHAR(255)"/>
+            <column name="depto_ult_usuario" type="VARCHAR(255)"/>
+            <column name="depto_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-71">
+        <createTable tableName="roles_interesados">
+            <column autoIncrement="true" name="rolint_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="roles_interesados_pkey"/>
+            </column>
+            <column name="rolint_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rolint_nombre" type="VARCHAR(45)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-72">
+        <createTable tableName="aud_ss_tipos_telefono">
+            <column name="tipTel_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="tipTel_codigo" type="VARCHAR(255)"/>
+            <column name="tipTel_descripcion" type="VARCHAR(255)"/>
+            <column name="tipTel_habilitado" type="BOOL"/>
+            <column name="tipTel_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tipTel_ult_origen" type="VARCHAR(255)"/>
+            <column name="tipTel_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tipTel_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-73">
+        <createTable tableName="ss_ayuda">
+            <column autoIncrement="true" name="ayu_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_ayuda_pkey"/>
+            </column>
+            <column name="ayu_codigo" type="VARCHAR(45)"/>
+            <column name="ayu_texto" type="TEXT"/>
+            <column name="ayu_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="ayu_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="ayu_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="ayu_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-74">
+        <createTable tableName="ambito">
+            <column autoIncrement="true" name="amb_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ambito_pkey"/>
+            </column>
+            <column name="amb_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amb_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-75">
+        <createTable tableName="tipo_documento_instancia">
+            <column autoIncrement="true" name="tipodoc_inst_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="tipo_documento_instancia_pkey"/>
+            </column>
+            <column name="tipodoc_inst_tipodoc_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipodoc_inst_exigido_desde" type="INT4"/>
+            <column name="tipodoc_inst_peso" type="INT4"/>
+            <column name="tipodoc_inst_proy_fk" type="INT4"/>
+            <column name="tipodoc_inst_prog_fk" type="INT4"/>
+            <column name="tipodoc_inst_resum_ejecutivo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-76">
+        <createTable tableName="devengado">
+            <column autoIncrement="true" name="dev_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="devengado_pkey"/>
+            </column>
+            <column name="dev_adq_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dev_mes" type="INT2">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dev_anio" type="INT2">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dev_plan" type="numeric"/>
+            <column name="dev_real" type="numeric"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-77">
+        <createTable tableName="interesados">
+            <column autoIncrement="true" name="int_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="interesados_pkey"/>
+            </column>
+            <column name="int_rolint_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="int_observaciones" type="VARCHAR(4000)"/>
+            <column name="int_pers_fk" type="INT4"/>
+            <column name="int_orga_fk" type="INT4"/>
+            <column name="int_ent_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-78">
+        <createTable tableName="ss_rel_rol_operacion">
+            <column autoIncrement="true" name="rel_rol_operacion_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_rel_rol_operacion_pkey"/>
+            </column>
+            <column name="rel_rol_operacion_editable" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rel_rol_operacion_origen" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rel_rol_operacion_user_code" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rel_rol_operacion_visible" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rel_rol_operacion_operacion_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rel_rol_operacion_rol_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-79">
+        <createTable tableName="ss_personas">
+            <column autoIncrement="true" name="per_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_personas_pkey"/>
+            </column>
+            <column name="per_fec_nac" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="per_nro_doc" type="VARCHAR(45)"/>
+            <column name="per_primer_apellido" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="per_primer_nombre" type="VARCHAR(100)"/>
+            <column name="per_segundo_apellido" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="per_segundo_nombre" type="VARCHAR(100)"/>
+            <column name="per_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="per_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="per_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="per_version" type="INT4"/>
+            <column name="per_pais_doc" type="INT4"/>
+            <column name="per_tipo_doc" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-80">
+        <createTable tableName="proy_otros_cat_secundarias">
+            <column name="proy_cat_proy_otros_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_cat_cat_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-81">
+        <createTable tableName="categoria_proyectos">
+            <column autoIncrement="true" name="cat_proy_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="categoria_proyectos_pkey"/>
+            </column>
+            <column name="cat_proy_codigo" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cat_proy_nombre" type="VARCHAR(145)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="cat_proy_activo" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="cat_tipo" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cat_icono" type="INT4"/>
+            <column name="cat_icono_marker" type="INT4"/>
+            <column name="cat_org_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-82">
+        <createTable tableName="pagos">
+            <column autoIncrement="true" name="pag_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="pagos_pkey"/>
+            </column>
+            <column name="pag_adq_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pag_ent_fk" type="INT4"/>
+            <column name="pag_observacion" type="VARCHAR(3000)"/>
+            <column name="pag_fecha_planificada" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pag_importe_planificado" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pag_fecha_real" type="date"/>
+            <column name="pag_importe_real" type="numeric"/>
+            <column name="pag_txt_referencia" type="VARCHAR(20)"/>
+            <column name="pag_confirmar" type="BOOL"/>
+            <column defaultValueNumeric="0" name="pag_gasto" type="INT2">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="pag_inversion" type="INT2"/>
+            <column name="pag_contr_organizacion_fk" type="INT4"/>
+            <column name="pag_contr_porcentaje" type="INT2"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-83">
+        <createTable tableName="proy_sitact_historico">
+            <column autoIncrement="true" name="proy_sitact_hist_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_sitact_historico_pkey"/>
+            </column>
+            <column name="proy_sitact_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_sitact_desc" type="VARCHAR(4000)"/>
+            <column name="proy_sitact_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_sitact_usu_fk" type="INT4"/>
+            <column name="version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-84">
+        <createTable tableName="estados_publicacion">
+            <column autoIncrement="true" name="est_pub_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="estados_publicacion_pkey"/>
+            </column>
+            <column name="est_pub_codigo" type="VARCHAR(45)"/>
+            <column name="est_pub_nombre" type="VARCHAR(145)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-85">
+        <createTable tableName="prog_docs">
+            <column name="progdocs_prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progdocs_doc_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-86">
+        <createTable tableName="ent_hist_linea_base">
+            <column autoIncrement="true" name="enthist_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ent_hist_linea_base_pkey"/>
+            </column>
+            <column name="enthist_ent_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enthist_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enthist_inicio_linea_base" type="INT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enthist_fin_linea_base" type="INT8"/>
+            <column name="enthist_duracion" type="INT4"/>
+            <column name="enthist_replan_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-87">
+        <createTable tableName="media_proyectos">
+            <column autoIncrement="true" name="media_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="media_proyectos_pkey"/>
+            </column>
+            <column name="media_tipo_fk" type="INT4"/>
+            <column name="media_link" type="VARCHAR(545)"/>
+            <column name="media_estado" type="INT4"/>
+            <column name="media_proy_fk" type="INT4"/>
+            <column name="media_principal" type="BOOL"/>
+            <column name="media_orden" type="INT4"/>
+            <column name="media_usr_pub_fk" type="INT4"/>
+            <column name="media_pub_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="media_usr_mod_fk" type="INT4"/>
+            <column name="media_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="media_usr_rech_fk" type="INT4"/>
+            <column name="media_rech_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="media_comentario" type="VARCHAR(2000)"/>
+            <column name="media_contenttype" type="VARCHAR(200)"/>
+            <column name="media_publicable" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-88">
+        <createTable tableName="lineabase_historico">
+            <column autoIncrement="true" name="lineabase_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="lineabase_historico_pkey"/>
+            </column>
+            <column name="lineabase_entFk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lineabase_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lineabase_inicio" type="INT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lineabase_duracion" type="INT4"/>
+            <column name="lineabase_fin" type="INT8">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-89">
+        <createTable tableName="aud_ss_ayuda">
+            <column name="ayu_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="ayu_codigo" type="VARCHAR(45)"/>
+            <column name="ayu_texto" type="TEXT"/>
+            <column name="ayu_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="ayu_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="ayu_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="ayu_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-90">
+        <createTable tableName="cronogramas">
+            <column autoIncrement="true" name="cro_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="cronogramas_pkey"/>
+            </column>
+            <column name="cro_ent_seleccionado" type="INT4"/>
+            <column name="cro_ent_borrados" type="VARCHAR(45)"/>
+            <column name="cro_resources" type="VARCHAR(45)"/>
+            <column name="cro_permiso_escritura" type="BOOL"/>
+            <column name="cro_permiso_escritura_padre" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-91">
+        <createTable tableName="programas">
+            <column autoIncrement="true" name="prog_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="programas_pkey"/>
+            </column>
+            <column name="prog_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_area_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_est_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_est_pendiente_fk" type="INT4"/>
+            <column name="prog_sol_aceptacion" type="BOOL"/>
+            <column name="prog_usr_gerente_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_usr_adjunto_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_usr_sponsor_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_usr_pmofed_fk" type="INT4"/>
+            <column name="prog_cro_fk" type="INT4"/>
+            <column name="prog_pre_fk" type="INT4"/>
+            <column name="prog_progindices_fk" type="INT4"/>
+            <column name="prog_nombre" type="VARCHAR(100)"/>
+            <column name="prog_descripcion" type="VARCHAR(4000)"/>
+            <column name="prog_objetivo" type="VARCHAR(4000)"/>
+            <column name="prog_obj_publico" type="VARCHAR(4000)"/>
+            <column name="prog_pub_web" type="BOOL"/>
+            <column name="prog_grp" type="VARCHAR(45)"/>
+            <column name="prog_semaforo_amarillo" type="INT4"/>
+            <column name="prog_semaforo_rojo" type="INT4"/>
+            <column name="prog_activo" type="BOOL"/>
+            <column name="prog_fecha_crea" type="date"/>
+            <column name="prog_fecha_act" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prog_version" type="INT4"/>
+            <column name="prog_ult_usuario" type="VARCHAR(45)"/>
+            <column name="prog_id_migrado" type="INT4"/>
+            <column name="prog_ult_origen" type="VARCHAR"/>
+            <column name="prog_ult_mod" type="date"/>
+            <column name="prog_obj_est_fk" type="INT4"/>
+            <column name="prog_factor_impacto" type="TEXT"/>
+            <column defaultValueBoolean="true" name="prog_habilitado" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-92">
+        <createTable tableName="proy_indices_pre">
+            <column autoIncrement="true" name="proyindpre_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_indices_pre_pkey"/>
+            </column>
+            <column name="proyindpre_proyind_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyindpre_mon_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proyindpre_total" type="FLOAT8"/>
+            <column name="proyindpre_est_pre" type="INT4"/>
+            <column name="proyindpre_ac" type="FLOAT8"/>
+            <column name="proyindpre_pv" type="FLOAT8"/>
+            <column name="proyindpre_anio" type="FLOAT8"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-93">
+        <createTable tableName="aud_ss_telefonos">
+            <column name="tel_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="tel_numero" type="VARCHAR(25)"/>
+            <column name="tel_observaciones" type="VARCHAR(255)"/>
+            <column name="tel_prefijo" type="VARCHAR(10)"/>
+            <column name="tel_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tel_ult_origen" type="VARCHAR(45)"/>
+            <column name="tel_ult_usuario" type="VARCHAR(45)"/>
+            <column name="tel_version" type="INT4"/>
+            <column name="tel_tiptel_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-94">
+        <createTable tableName="departamentos">
+            <column name="dep_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dep_nombre" type="VARCHAR(145)"/>
+            <column name="dep_lat" type="FLOAT8"/>
+            <column name="dep_lng" type="FLOAT8"/>
+            <column name="dep_zoom" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-95">
+        <createTable tableName="entregables">
+            <column autoIncrement="true" name="ent_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="entregables_pkey"/>
+            </column>
+            <column name="ent_cro_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ent_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ent_nombre" type="VARCHAR(1000)"/>
+            <column name="ent_codigo" type="VARCHAR(256)"/>
+            <column name="ent_nivel" type="INT4"/>
+            <column name="ent_status" type="VARCHAR(256)"/>
+            <column name="ent_inicio" type="INT8"/>
+            <column name="ent_duracion" type="INT4"/>
+            <column name="ent_fin" type="INT8"/>
+            <column name="ent_horas_estimadas" type="VARCHAR(15)"/>
+            <column name="ent_inicio_es_hito" type="BOOL"/>
+            <column name="ent_fin_es_hito" type="BOOL"/>
+            <column name="ent_collapsed" type="BOOL"/>
+            <column name="ent_assigs" type="VARCHAR(256)"/>
+            <column name="ent_coord_usu_fk" type="INT4"/>
+            <column name="ent_esfuerzo" type="INT4"/>
+            <column defaultValueNumeric="0" name="ent_inicio_linea_base" type="INT8"/>
+            <column name="ent_duracion_linea_base" type="INT4"/>
+            <column defaultValueNumeric="0" name="ent_fin_linea_base" type="INT8"/>
+            <column name="ent_predecesor_fk" type="VARCHAR(2000)"/>
+            <column name="ent_predecesor_dias" type="INT4"/>
+            <column name="ent_descripcion" type="VARCHAR(1000)"/>
+            <column name="ent_progreso" type="INT4"/>
+            <column name="ent_relevante" type="BOOL"/>
+            <column name="ent_parent" type="BOOL"/>
+            <column defaultValueBoolean="false" name="ent_inicio_periodo" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="ent_fin_periodo" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-96">
+        <createTable tableName="objetivos_estrategicos">
+            <column autoIncrement="true" name="obj_est_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="objetivos_estrategicos_pkey"/>
+            </column>
+            <column name="obj_est_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="obj_est_descripcion" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="obj_est_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-97">
+        <createTable tableName="revinfo">
+            <column autoIncrement="true" name="rev" type="INT">
+                <constraints primaryKey="true" primaryKeyName="revinfo_pkey"/>
+            </column>
+            <column name="revtstmp" type="INT8"/>
+            <column defaultValueNumeric="0" name="version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-98">
+        <createTable tableName="ss_paises">
+            <column autoIncrement="true" name="pai_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_paises_pkey"/>
+            </column>
+            <column name="pai_codigo2" type="VARCHAR(255)"/>
+            <column name="pai_codigo3" type="VARCHAR(255)"/>
+            <column name="pai_comun" type="BOOL"/>
+            <column name="pai_habilitado" type="BOOL"/>
+            <column name="pai_nombre" type="VARCHAR(255)"/>
+            <column name="pai_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="pai_ult_origen" type="VARCHAR(255)"/>
+            <column name="pai_ult_usuario" type="VARCHAR(255)"/>
+            <column name="pai_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-99">
+        <createTable tableName="aud_ss_usu_ofi_roles">
+            <column name="usu_ofi_roles_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="usu_ofi_roles_origen" type="VARCHAR(255)"/>
+            <column name="usu_ofi_roles_user_code" type="INT4"/>
+            <column name="usu_ofi_roles_oficina" type="INT4"/>
+            <column name="usu_ofi_roles_rol" type="INT4"/>
+            <column name="usu_ofi_roles_usuario" type="INT4"/>
+            <column name="usu_ofi_roles_activo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-100">
+        <createTable tableName="roles_usuarios">
+            <column name="rol_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rol_nombre" type="VARCHAR(45)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-101">
+        <createTable tableName="aud_ss_domicilios">
+            <column name="dom_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="dom_apto" type="VARCHAR(50)"/>
+            <column name="dom_letra" type="VARCHAR(255)"/>
+            <column name="dom_calle" type="VARCHAR(150)"/>
+            <column name="dom_codigo_postal" type="VARCHAR(5)"/>
+            <column name="dom_depto_alt" type="VARCHAR(255)"/>
+            <column name="dom_descripcion" type="TEXT"/>
+            <column name="dom_inmueble_nombre" type="VARCHAR(100)"/>
+            <column name="dom_kilometro" type="VARCHAR(9)"/>
+            <column name="dom_manzana" type="VARCHAR(5)"/>
+            <column name="dom_numero_puerta" type="VARCHAR(5)"/>
+            <column name="dom_oficina" type="VARCHAR(255)"/>
+            <column name="dom_ruta" type="VARCHAR(5)"/>
+            <column name="dom_solar" type="VARCHAR(5)"/>
+            <column name="dom_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="dom_ult_origen" type="VARCHAR(255)"/>
+            <column name="dom_ult_usuario" type="VARCHAR(255)"/>
+            <column name="dom_version" type="INT4"/>
+            <column name="dom_depto_id" type="INT4"/>
+            <column name="dom_loc_id" type="INT4"/>
+            <column name="dom_pai_id" type="INT4"/>
+            <column name="dom_par_id" type="BOOL"/>
+            <column name="dom_tec_id" type="INT4"/>
+            <column name="dom_tvi_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-102">
+        <createTable tableName="notificacion">
+            <column autoIncrement="true" name="not_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="notificacion_pkey"/>
+            </column>
+            <column name="not_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="not_cod" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="not_desc" type="VARCHAR(245)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="not_valor" type="INT4"/>
+            <column name="not_gerente_adjunto" type="BOOL"/>
+            <column name="not_pmof" type="BOOL"/>
+            <column name="not_pmot" type="BOOL"/>
+            <column name="not_sponsor" type="BOOL"/>
+            <column name="not_msg" type="VARCHAR(5000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-103">
+        <createTable tableName="ss_tipos_telefono">
+            <column autoIncrement="true" name="tipTel_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_tipos_telefono_pkey"/>
+            </column>
+            <column name="tipTel_codigo" type="VARCHAR(255)"/>
+            <column name="tipTel_descripcion" type="VARCHAR(255)"/>
+            <column name="tipTel_habilitado" type="BOOL"/>
+            <column name="tipTel_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tipTel_ult_origen" type="VARCHAR(255)"/>
+            <column name="tipTel_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tipTel_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-104">
+        <createTable tableName="ss_operacion">
+            <column autoIncrement="true" name="ope_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_operacion_pkey"/>
+            </column>
+            <column name="ope_codigo" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_descripcion" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_origen" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_tipocampo" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_user_code" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_version" type="INT4"/>
+            <column name="ope_vigente" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ope_categoria_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-105">
+        <createTable tableName="aud_ss_oficina">
+            <column name="ofi_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="ofi_fecha_creacion" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="ofi_nombre" type="VARCHAR(255)"/>
+            <column name="ofi_origen" type="VARCHAR(255)"/>
+            <column name="ofi_usuario" type="INT4"/>
+            <column name="ofi_version" type="INT4"/>
+            <column name="ofi_activo" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-106">
+        <createTable tableName="doc_file">
+            <column autoIncrement="true" name="docfile_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="doc_file_pkey"/>
+            </column>
+            <column name="docfile_file" type="BYTEA"/>
+            <column name="docfile_nombre" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="docfile_doc_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="docfile_path" type="VARCHAR(255)"/>
+            <column name="docfile_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="docfile_ult_origen" type="VARCHAR(255)"/>
+            <column name="docfile_ult_usuario" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="docfile_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-107">
+        <createTable tableName="ss_paridades">
+            <column name="par_id" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="par_codigo" type="VARCHAR(9)"/>
+            <column name="par_descripcion" type="VARCHAR(45)"/>
+            <column name="par_ult_mod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="par_ult_mod_origen" type="VARCHAR(45)"/>
+            <column name="par_ult_mod_usuario" type="VARCHAR(45)"/>
+            <column name="par_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-108">
+        <createTable tableName="presupuesto">
+            <column autoIncrement="true" name="pre_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="presupuesto_pkey"/>
+            </column>
+            <column name="pre_base" type="numeric"/>
+            <column name="pre_moneda" type="INT4"/>
+            <column name="pre_fuente_organi_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-109">
+        <createTable tableName="area_organi_int_prove">
+            <column autoIncrement="true" name="areaorgintprov_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="area_organi_int_prove_pkey"/>
+            </column>
+            <column name="areaorgintprov_orga_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="areaorgintprov_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="areaorgintprov_nombre" type="VARCHAR(40)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-110">
+        <createTable tableName="ss_localidades">
+            <column autoIncrement="true" name="loc_id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_localidades_pkey"/>
+            </column>
+            <column name="loc_codigo" type="VARCHAR(255)"/>
+            <column name="loc_nombre" type="VARCHAR(255)"/>
+            <column name="loc_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="loc_ult_origen" type="VARCHAR(255)"/>
+            <column name="loc_ult_usuario" type="VARCHAR(255)"/>
+            <column name="loc_version" type="INT4"/>
+            <column name="loc_depto_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-111">
+        <createTable tableName="riesgos">
+            <column autoIncrement="true" name="risk_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="riesgos_pkey"/>
+            </column>
+            <column name="risk_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="risk_nombre" type="VARCHAR(3000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="risk_fecha_actu" type="date"/>
+            <column name="risk_probabilidad" type="INT4"/>
+            <column name="risk_impacto" type="INT4"/>
+            <column name="risk_ent_fk" type="INT4"/>
+            <column name="risk_fecha_limite" type="date"/>
+            <column name="risk_efecto" type="VARCHAR(3000)"/>
+            <column name="risk_estategia" type="VARCHAR(3000)"/>
+            <column name="risk_disparador" type="VARCHAR(3000)"/>
+            <column name="risk_contingencia" type="VARCHAR(3000)"/>
+            <column name="risk_superado" type="BOOL"/>
+            <column name="risk_fecha_superado" type="date"/>
+            <column name="risk_usuario_superado_fk" type="INT4"/>
+            <column name="risk_exposicion" type="FLOAT8"/>
+            <column name="version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-112">
+        <createTable tableName="valor_calidad_codigos">
+            <column autoIncrement="true" name="vca_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="valor_calidad_codigos_pkey"/>
+            </column>
+            <column name="vca_codigo" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vca_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vca_habilitado" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-113">
+        <createTable tableName="prog_lectura_area">
+            <column name="proglectarea_prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proglectarea_area_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-114">
+        <createTable tableName="temas_calidad">
+            <column autoIncrement="true" name="tca_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="temas_calidad_pkey"/>
+            </column>
+            <column name="tca_nombre" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tca_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-115">
+        <createTable tableName="mails_template">
+            <column autoIncrement="true" name="mail_tmp_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="mails_template_pkey"/>
+            </column>
+            <column name="mail_tmp_cod" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail_tmp_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail_tmp_asunto" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail_tmp_mensaje" type="VARCHAR(5000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-116">
+        <createTable tableName="ss_errores">
+            <column name="id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="err_codigo" type="VARCHAR(255)"/>
+            <column name="err_descripcion" type="VARCHAR(255)"/>
+            <column name="err_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="err_ult_origen" type="VARCHAR(255)"/>
+            <column name="err_ult_usuario" type="VARCHAR(255)"/>
+            <column name="err_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-117">
+        <createTable tableName="proy_pre">
+            <column name="proypre_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proypre_pre_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-118">
+        <createTable tableName="aud_programas">
+            <column name="prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="prog_org_fk" type="INT4"/>
+            <column name="prog_area_fk" type="INT4"/>
+            <column name="prog_sol_aceptacion" type="BOOL"/>
+            <column name="prog_nombre" type="VARCHAR(45)"/>
+            <column name="prog_objetivo" type="VARCHAR(256)"/>
+            <column name="prog_obj_publico" type="VARCHAR(256)"/>
+            <column name="prog_grp" type="INT4"/>
+            <column name="prog_semaforo_verde" type="INT4"/>
+            <column name="prog_semaforo_amarillo" type="INT4"/>
+            <column name="prog_version" type="INT4"/>
+            <column name="prog_ult_usuario" type="VARCHAR(45)"/>
+            <column name="prog_ult_mod" type="VARCHAR(45)"/>
+            <column name="prog_ult_origen" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-119">
+        <createTable tableName="aud_ss_tipos_vialidad">
+            <column name="tvi_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="tvi_abreviacion" type="VARCHAR(255)"/>
+            <column name="tvi_codigo" type="VARCHAR(255)"/>
+            <column name="tvi_descripcion" type="VARCHAR(255)"/>
+            <column name="tvi_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tvi_ult_origen" type="VARCHAR(255)"/>
+            <column name="tvi_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tvi_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-120">
+        <createTable tableName="notificacion_envio">
+            <column autoIncrement="true" name="notenv_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="notificacion_envio_pkey"/>
+            </column>
+            <column name="notenv_fecha" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notenv_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notenv_not_cod" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-121">
+        <createTable tableName="ss_configuraciones">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_configuraciones_pkey"/>
+            </column>
+            <column name="cnf_org_fk" type="INT4"/>
+            <column name="cnf_codigo" type="VARCHAR(145)"/>
+            <column name="cnf_descripcion" type="VARCHAR(245)"/>
+            <column name="cnf_valor" type="VARCHAR(255)"/>
+            <column name="cnf_protegido" type="BOOL"/>
+            <column name="cnf_html" type="BOOL"/>
+            <column name="cnf_ult_usuario" type="VARCHAR(45)"/>
+            <column name="cnf_ult_mod" type="VARCHAR(45)"/>
+            <column name="cnf_version" type="INT4"/>
+            <column name="cnf_ult_origen" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-122">
+        <createTable tableName="aud_ss_categoper">
+            <column name="cat_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="cat_descripcion" type="TEXT"/>
+            <column name="cat_nombre" type="VARCHAR(255)"/>
+            <column name="cat_origen" type="VARCHAR(255)"/>
+            <column name="cat_user_code" type="INT4"/>
+            <column name="cat_version" type="INT4"/>
+            <column name="cat_vigente" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-123">
+        <createTable tableName="aud_ss_operacion">
+            <column name="ope_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="ope_codigo" type="VARCHAR(255)"/>
+            <column name="ope_descripcion" type="TEXT"/>
+            <column name="ope_nombre" type="VARCHAR(255)"/>
+            <column name="ope_origen" type="VARCHAR(255)"/>
+            <column name="ope_tipocampo" type="VARCHAR(255)"/>
+            <column name="ope_user_code" type="INT4"/>
+            <column name="ope_version" type="INT4"/>
+            <column name="ope_vigente" type="BOOL"/>
+            <column name="ope_categoria_id" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-124">
+        <createTable tableName="latlng_proyectos">
+            <column autoIncrement="true" name="latlng_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="latlng_proyectos_pkey"/>
+            </column>
+            <column name="latlng_lat" type="numeric"/>
+            <column name="latlng_lng" type="numeric"/>
+            <column name="latlng_proy_fk" type="INT4"/>
+            <column name="latlang_dep_fk" type="INT4"/>
+            <column name="latlang_loc_fk" type="INT4"/>
+            <column name="latlang_codigopostal" type="INT4"/>
+            <column name="latlang_barrio" type="VARCHAR(245)"/>
+            <column name="latlang_loc" type="VARCHAR(245)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-125">
+        <createTable tableName="aud_pge_configuraciones">
+            <column name="cnf_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="cnf_clave" type="VARCHAR(255)"/>
+            <column name="cnf_crea_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cnf_crea_origen" type="INT4"/>
+            <column name="cnf_crea_usu" type="VARCHAR(255)"/>
+            <column name="cnf_ultmod_fecha" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cnf_ultmod_origen" type="INT4"/>
+            <column name="cnf_ultmod_usu" type="VARCHAR(255)"/>
+            <column name="cnf_valor" type="VARCHAR(255)"/>
+            <column name="cnf_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-126">
+        <createTable tableName="personas">
+            <column autoIncrement="true" name="pers_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="personas_pkey"/>
+            </column>
+            <column name="pers_rol_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pers_orga_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pers_nombre" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pers_telefono" type="VARCHAR(45)"/>
+            <column name="pers_cargo" type="VARCHAR(45)"/>
+            <column name="pers_mail" type="VARCHAR(45)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-127">
+        <createTable tableName="procedimiento_compra">
+            <column autoIncrement="true" name="proc_comp_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="procedimiento_compra_pkey"/>
+            </column>
+            <column defaultValue="NULL::character varying" name="proc_comp_nombre" type="VARCHAR(45)"/>
+            <column name="proc_comp_org_fk" type="INT4"/>
+            <column name="proc_comp_version" type="INT4"/>
+            <column defaultValue="NULL::character varying" name="proc_comp_descripcion" type="VARCHAR(200)"/>
+            <column defaultValueBoolean="true" name="proc_comp_habilitado" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-128">
+        <createTable tableName="proy_publica_hist">
+            <column autoIncrement="true" name="proy_publica_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="proy_publica_hist_pkey"/>
+            </column>
+            <column name="proy_publica_fecha" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_publica_proy_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="proy_publica_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-129">
+        <createTable tableName="ss_usuarios_datos">
+            <column autoIncrement="true" name="ss_usu_dat_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="ss_usuarios_datos_pkey"/>
+            </column>
+            <column name="ss_usu_dat_area_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ss_usu_dat_usu_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-130">
+        <createTable tableName="aud_ss_tipos_entrada_colectiva">
+            <column name="tec_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="INT4"/>
+            <column name="tec_codigo" type="VARCHAR(255)"/>
+            <column name="tec_descripcion" type="VARCHAR(255)"/>
+            <column name="tec_ult_mod" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="tec_ult_origen" type="VARCHAR(255)"/>
+            <column name="tec_ult_usuario" type="VARCHAR(255)"/>
+            <column name="tec_version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-131">
+        <createTable tableName="organi_int_prove">
+            <column autoIncrement="true" name="orga_pk" type="INT">
+                <constraints primaryKey="true" primaryKeyName="organi_int_prove_pkey"/>
+            </column>
+            <column name="orga_nombre" type="VARCHAR(50)"/>
+            <column name="orga_proveedor" type="BOOL"/>
+            <column name="orga_razon_social" type="VARCHAR(50)"/>
+            <column name="orga_rut" type="VARCHAR(45)"/>
+            <column name="orga_mail" type="VARCHAR(45)"/>
+            <column name="orga_telefono" type="VARCHAR(45)"/>
+            <column name="orga_web" type="VARCHAR(45)"/>
+            <column name="orga_direccion" type="VARCHAR(100)"/>
+            <column name="orga_ambito" type="VARCHAR(45)"/>
+            <column name="orga_org_fk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orga_amb_fk" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-132">
+        <createTable tableName="prog_tags">
+            <column name="progtag_prog_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progtag_area_pk" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-133">
+        <createSequence sequenceName="componente_producto_com_pk_seq"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-134">
+        <createSequence sequenceName="ss_paridades_par_id_seq"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-135">
+        <createSequence sequenceName="obj_est_pk_seq"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-136">
+        <createSequence sequenceName="hibernate_sequence"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-137">
+        <createView viewName="ss_oficina"> SELECT organismos.org_pk AS ofi_id,
+    organismos.org_nombre AS ofi_nombre,
+    organismos.org_activo AS ofi_activo,
+    now() AS ofi_fecha_creacion,
+    '' AS ofi_origen,
+    1 AS ofi_usuario,
+    1 AS ofi_version
+   FROM siges.organismos;</createView>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-138">
+        <createView viewName="programas_proyectos"> SELECT concat('1-', programas.prog_pk) AS id,
+    programas.prog_pk AS fichafk,
+    1 AS tipoficha,
+    programas.prog_fecha_crea AS fechacrea,
+    programas.prog_activo AS activo,
+    programas.prog_org_fk AS organismo,
+    programas.prog_nombre AS nombre,
+    estados.est_pk AS estado,
+    estados.est_nombre AS estadonombre,
+    programas.prog_est_pendiente_fk AS estadopendiente,
+    areas.area_pk AS areapk,
+    areas.area_nombre AS areanombre,
+    programas.prog_sol_aceptacion AS solaceptacion,
+    programas.prog_usr_gerente_fk AS gerente,
+    ss_usuario.usu_primer_apellido AS gerenteprimerapellido,
+    ss_usuario.usu_primer_nombre AS gerenteprimernombre,
+    programas.prog_usr_pmofed_fk AS pmofederada
+   FROM (((siges.programas
+     JOIN siges.estados ON ((programas.prog_est_fk = estados.est_pk)))
+     JOIN siges.areas ON ((programas.prog_area_fk = areas.area_pk)))
+     JOIN siges.ss_usuario ON ((programas.prog_usr_gerente_fk = ss_usuario.usu_id)))
+UNION
+ SELECT concat('2-', proyectos.proy_pk) AS id,
+    proyectos.proy_pk AS fichafk,
+    2 AS tipoficha,
+    proyectos.proy_fecha_crea AS fechacrea,
+    proyectos.proy_activo AS activo,
+    proyectos.proy_org_fk AS organismo,
+    proyectos.proy_nombre AS nombre,
+    estados.est_pk AS estado,
+    estados.est_nombre AS estadonombre,
+    proyectos.proy_est_pendiente_fk AS estadopendiente,
+    areas.area_pk AS areapk,
+    areas.area_nombre AS areanombre,
+    proyectos.proy_sol_aceptacion AS solaceptacion,
+    proyectos.proy_usr_gerente_fk AS gerente,
+    ss_usuario.usu_primer_apellido AS gerenteprimerapellido,
+    ss_usuario.usu_primer_nombre AS gerenteprimernombre,
+    proyectos.proy_usr_pmofed_fk AS pmofederada
+   FROM (((siges.proyectos
+     JOIN siges.estados ON ((proyectos.proy_est_fk = estados.est_pk)))
+     JOIN siges.areas ON ((proyectos.proy_area_fk = areas.area_pk)))
+     JOIN siges.ss_usuario ON ((proyectos.proy_usr_gerente_fk = ss_usuario.usu_id)));</createView>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-139">
+        <addPrimaryKey columnNames="id, rev" constraintName="aud_programas_proyectos_pkey" tableName="aud_programas_proyectos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-140">
+        <addPrimaryKey columnNames="tipTel_id, rev" constraintName="aud_ss_tipos_telefono_pkey" tableName="aud_ss_tipos_telefono"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-141">
+        <addPrimaryKey columnNames="per_id, rev" constraintName="aud_ss_personas_pkey" tableName="aud_ss_personas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-142">
+        <addPrimaryKey columnNames="proy_cat_proy_otros_fk, proy_cat_cat_proy_fk" constraintName="proy_otros_cat_secundarias_pkey" tableName="proy_otros_cat_secundarias"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-143">
+        <addPrimaryKey columnNames="not_id, rev" constraintName="aud_ss_noticias_pkey" tableName="aud_ss_noticias"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-144">
+        <addPrimaryKey columnNames="tec_id, rev" constraintName="aud_ss_tipos_entrada_colectiva_pkey" tableName="aud_ss_tipos_entrada_colectiva"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-145">
+        <addPrimaryKey columnNames="ayu_id, rev" constraintName="aud_ss_ayuda_pkey" tableName="aud_ss_ayuda"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-146">
+        <addPrimaryKey columnNames="proglectarea_prog_pk, proglectarea_area_pk" constraintName="prog_lectura_area_pkey" tableName="prog_lectura_area"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-147">
+        <addPrimaryKey columnNames="proypre_proy_fk" constraintName="proy_pre_pkey" tableName="proy_pre"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-148">
+        <addPrimaryKey columnNames="proydoc_proy_pk, proydoc_doc_pk" constraintName="proy_docs_pkey" tableName="proy_docs"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-149">
+        <addPrimaryKey columnNames="par_id, rev" constraintName="aud_ss_paridades_pkey" tableName="aud_ss_paridades"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-150">
+        <addPrimaryKey columnNames="depto_id, rev" constraintName="aud_ss_departamentos_pkey" tableName="aud_ss_departamentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-151">
+        <addPrimaryKey columnNames="pai_id, rev" constraintName="aud_ss_paises_pkey" tableName="aud_ss_paises"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-152">
+        <addPrimaryKey columnNames="ope_id, rev" constraintName="aud_ss_operacion_pkey" tableName="aud_ss_operacion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-153">
+        <addPrimaryKey columnNames="progtag_prog_pk, progtag_area_pk" constraintName="prog_tags_pkey" tableName="prog_tags"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-154">
+        <addPrimaryKey columnNames="cnf_id, rev" constraintName="aud_pge_configuraciones_pkey" tableName="aud_pge_configuraciones"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-155">
+        <addPrimaryKey columnNames="dom_id, rev" constraintName="aud_ss_domicilios_pkey" tableName="aud_ss_domicilios"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-156">
+        <addPrimaryKey columnNames="usu_ofi_roles_id, rev" constraintName="aud_ss_usu_ofi_roles_pkey" tableName="aud_ss_usu_ofi_roles"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-157">
+        <addPrimaryKey columnNames="rol_pk" constraintName="roles_usuarios_pkey" tableName="roles_usuarios"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-158">
+        <addPrimaryKey columnNames="cat_id, rev" constraintName="aud_ss_categoper_pkey" tableName="aud_ss_categoper"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-159">
+        <addPrimaryKey columnNames="usu_id, rev" constraintName="aud_ss_usuario_pkey" tableName="aud_ss_usuario"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-160">
+        <addPrimaryKey columnNames="tvi_id, rev" constraintName="aud_ss_tipos_vialidad_pkey" tableName="aud_ss_tipos_vialidad"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-161">
+        <addPrimaryKey columnNames="docfile_pk, rev" constraintName="aud_doc_file_pkey" tableName="aud_doc_file"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-162">
+        <addPrimaryKey columnNames="rol_id, rev" constraintName="aud_ss_rol_pkey" tableName="aud_ss_rol"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-163">
+        <addPrimaryKey columnNames="lecaprcon_con_fk, lecaprcon_lecapr_fk" constraintName="lecapr_areacon_pkey" tableName="lecapr_areacon"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-164">
+        <addPrimaryKey columnNames="rel_rol_operacion_id, rev" constraintName="aud_ss_rel_rol_operacion_pkey" tableName="aud_ss_rel_rol_operacion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-165">
+        <addPrimaryKey columnNames="progdocsobl_docs_pk, progdocsobl_prog_pk" constraintName="prog_docs_obl_pkey" tableName="prog_docs_obl"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-166">
+        <addPrimaryKey columnNames="prog_pk, rev" constraintName="aud_programas_pkey" tableName="aud_programas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-167">
+        <addPrimaryKey columnNames="loc_id, rev" constraintName="aud_ss_localidades_pkey" tableName="aud_ss_localidades"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-168">
+        <addPrimaryKey columnNames="progint_prog_pk, progint_int_pk" constraintName="prog_int_pkey" tableName="prog_int"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-169">
+        <addPrimaryKey columnNames="proglectarea_area_pk, proglectarea_proy_pk" constraintName="proy_lectura_area_pkey" tableName="proy_lectura_area"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-170">
+        <addPrimaryKey columnNames="progpre_prog_fk" constraintName="prog_pre_pkey" tableName="prog_pre"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-171">
+        <addPrimaryKey columnNames="id, rev" constraintName="aud_ss_configuraciones_pkey" tableName="aud_ss_configuraciones"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-172">
+        <addPrimaryKey columnNames="proytag_proy_pk, proytag_area_pk" constraintName="proy_tags_pkey" tableName="proy_tags"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-173">
+        <addPrimaryKey columnNames="par_id" constraintName="ss_paridades_pkey" tableName="ss_paridades"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-174">
+        <addPrimaryKey columnNames="dep_pk" constraintName="departamentos_pkey" tableName="departamentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-175">
+        <addPrimaryKey columnNames="ofi_id, rev" constraintName="aud_ss_oficina_pkey" tableName="aud_ss_oficina"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-176">
+        <addPrimaryKey columnNames="progdocs_prog_pk, progdocs_doc_pk" constraintName="prog_docs_pkey" tableName="prog_docs"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-177">
+        <addPrimaryKey columnNames="id" constraintName="ss_errores_pkey" tableName="ss_errores"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-178">
+        <addPrimaryKey columnNames="proyint_proy_pk, proyint_int_pk" constraintName="proy_int_pkey" tableName="proy_int"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-179">
+        <addPrimaryKey columnNames="id, rev" constraintName="aud_ss_errores_pkey" tableName="aud_ss_errores"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-180">
+        <addPrimaryKey columnNames="tel_id, rev" constraintName="aud_ss_telefonos_pkey" tableName="aud_ss_telefonos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-181">
+        <addPrimaryKey columnNames="tipdocper_id, rev" constraintName="aud_ss_tipos_documento_persona_pkey" tableName="aud_ss_tipos_documento_persona"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-182">
+        <addForeignKeyConstraint baseColumnNames="proglectarea_area_pk" baseTableName="proy_lectura_area" constraintName="proy_lectura_area_proglectarea_area_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="area_pk" referencedTableName="areas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-183">
+        <addForeignKeyConstraint baseColumnNames="proytag_area_pk" baseTableName="proy_tags" constraintName="proy_tags_proytag_area_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="arastag_pk" referencedTableName="areas_tags"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-184">
+        <addForeignKeyConstraint baseColumnNames="proy_otr_cat_fk" baseTableName="proy_otros_datos" constraintName="proy_otros_datos_proy_otr_cat_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cat_proy_pk" referencedTableName="categoria_proyectos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-185">
+        <addForeignKeyConstraint baseColumnNames="progint_int_pk" baseTableName="prog_int" constraintName="prog_int_progint_int_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="int_pk" referencedTableName="interesados"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-186">
+        <addForeignKeyConstraint baseColumnNames="cat_icono_marker" baseTableName="categoria_proyectos" constraintName="fk_hb3weyc8xvdrbp62k3u1halnb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="image_pk" referencedTableName="image"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-187">
+        <addForeignKeyConstraint baseColumnNames="progindpre_progind_fk" baseTableName="prog_indices_pre" constraintName="prog_indices_pre_progindpre_progind_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="progind_pk" referencedTableName="prog_indices"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-188">
+        <addForeignKeyConstraint baseColumnNames="progdocsobl_docs_pk" baseTableName="prog_docs_obl" constraintName="prog_docs_obl_progdocsobl_docs_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="docs_pk" referencedTableName="documentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-189">
+        <addForeignKeyConstraint baseColumnNames="lecaprcon_con_fk" baseTableName="lecapr_areacon" constraintName="lecapr_areacon_lecaprcon_con_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="con_pk" referencedTableName="area_conocimiento"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-190">
+        <addForeignKeyConstraint baseColumnNames="areatag_padre_fk" baseTableName="areas_tags" constraintName="areas_tags_areatag_padre_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="arastag_pk" referencedTableName="areas_tags"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-191">
+        <addForeignKeyConstraint baseColumnNames="notinst_not_fk" baseTableName="notificacion_instancia" constraintName="notificacion_instancia_notinst_not_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="not_pk" referencedTableName="notificacion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-192">
+        <addForeignKeyConstraint baseColumnNames="proy_area_fk" baseTableName="proyectos" constraintName="proyectos_proy_area_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="area_pk" referencedTableName="areas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-193">
+        <addForeignKeyConstraint baseColumnNames="proyind_periodo_fin_ent_fk" baseTableName="proy_indices" constraintName="proyind_periodo_fin_ent_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ent_pk" referencedTableName="entregables"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-194">
+        <addForeignKeyConstraint baseColumnNames="proy_publica_proy_fk" baseTableName="proy_publica_hist" constraintName="proy_publica_proy_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="proy_pk" referencedTableName="proyectos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-195">
+        <addForeignKeyConstraint baseColumnNames="ope_categoria_id" baseTableName="ss_operacion" constraintName="ss_operacion_ope_categoria_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="cat_id" referencedTableName="ss_categoper"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-196">
+        <addForeignKeyConstraint baseColumnNames="proyint_int_pk" baseTableName="proy_int" constraintName="proy_int_proyint_int_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="int_pk" referencedTableName="interesados"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-197">
+        <addForeignKeyConstraint baseColumnNames="proglectarea_area_pk" baseTableName="prog_lectura_area" constraintName="prog_lectura_area_proglectarea_area_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="area_pk" referencedTableName="areas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-198">
+        <addForeignKeyConstraint baseColumnNames="tipodoc_inst_tipodoc_fk" baseTableName="tipo_documento_instancia" constraintName="tipo_documento_instancia_tipodoc_inst_tipodoc_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="tipdoc_pk" referencedTableName="tipo_documento"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-199">
+        <addForeignKeyConstraint baseColumnNames="tipodoc_org_fk" baseTableName="tipo_documento" constraintName="tipo_documento_tipodoc_org_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-200">
+        <addForeignKeyConstraint baseColumnNames="pre_fuente_organi_fk" baseTableName="presupuesto" constraintName="presupuesto_pre_fuente_organi_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="fue_pk" referencedTableName="fuente_financiamiento"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-201">
+        <addForeignKeyConstraint baseColumnNames="lineabase_entFk" baseTableName="lineabase_historico" constraintName="lineabase_historico_lineabase_entFk_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ent_pk" referencedTableName="entregables"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-202">
+        <addForeignKeyConstraint baseColumnNames="proypre_pre_fk" baseTableName="proy_pre" constraintName="proy_pre_proypre_pre_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="pre_pk" referencedTableName="presupuesto"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-203">
+        <addForeignKeyConstraint baseColumnNames="progtag_area_pk" baseTableName="prog_tags" constraintName="prog_tags_progtag_area_pk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="arastag_pk" referencedTableName="areas_tags"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-204">
+        <addForeignKeyConstraint baseColumnNames="rel_rol_operacion_operacion_id" baseTableName="ss_rel_rol_operacion" constraintName="ss_rel_rol_operacion_rel_rol_operacion_operacion_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ope_id" referencedTableName="ss_operacion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-205">
+        <addForeignKeyConstraint baseColumnNames="obj_est_org_fk" baseTableName="objetivos_estrategicos" constraintName="obj_est_org_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-206">
+        <addForeignKeyConstraint baseColumnNames="loc_depto_id" baseTableName="ss_localidades" constraintName="ss_localidades_loc_depto_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="depto_id" referencedTableName="ss_departamentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-207">
+        <addForeignKeyConstraint baseColumnNames="orga_amb_fk" baseTableName="organi_int_prove" constraintName="organi_int_prove_orga_amb_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="amb_pk" referencedTableName="ambito"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-208">
+        <addForeignKeyConstraint baseColumnNames="rolint_org_fk" baseTableName="roles_interesados" constraintName="roles_interesados_rolint_org_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-209">
+        <addForeignKeyConstraint baseColumnNames="area_director" baseTableName="areas" constraintName="fk_j151q3d1wiqgx10w9n92hwx5j" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="usu_id" referencedTableName="ss_usuario"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-210">
+        <addForeignKeyConstraint baseColumnNames="p_entregable_p_cro_fk" baseTableName="plantilla_entregables" constraintName="plantilla_entregables_p_entregable_p_cro_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="p_crono_pk" referencedTableName="plantilla_cronograma"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-211">
+        <addForeignKeyConstraint baseColumnNames="usu_area_org" baseTableName="ss_usuario" constraintName="ss_usuario_usu_area_org_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="area_pk" referencedTableName="areas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-212">
+        <addForeignKeyConstraint baseColumnNames="p_crono_org_fk" baseTableName="plantilla_cronograma" constraintName="plantilla_cronograma_p_crono_org_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-213">
+        <addForeignKeyConstraint baseColumnNames="prod_ent_fk" baseTableName="productos" constraintName="productos_prod_ent_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ent_pk" referencedTableName="entregables"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-214">
+        <addForeignKeyConstraint baseColumnNames="risk_ent_fk" baseTableName="riesgos" constraintName="riesgos_risk_ent_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ent_pk" referencedTableName="entregables"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-215">
+        <addForeignKeyConstraint baseColumnNames="rh_ent_fk" baseTableName="registros_horas" constraintName="registros_horas_rh_ent_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ent_pk" referencedTableName="entregables"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-216">
+        <addForeignKeyConstraint baseColumnNames="proy_cat_cat_proy_fk" baseTableName="proy_otros_cat_secundarias" constraintName="proy_otros_cat_secundarias_proy_cat_cat_proy_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cat_proy_pk" referencedTableName="categoria_proyectos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-217">
+        <addForeignKeyConstraint baseColumnNames="tipogas_org_fk" baseTableName="tipo_gasto" constraintName="tipo_gasto_tipogas_org_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-218">
+        <addForeignKeyConstraint baseColumnNames="adq_componente_producto_fk" baseTableName="adquisicion" constraintName="adquisicion_componente_producto_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="com_pk" referencedTableName="componente_producto"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-219">
+        <addForeignKeyConstraint baseColumnNames="latlang_dep_fk" baseTableName="latlng_proyectos" constraintName="latlng_proyectos_latlang_dep_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="dep_pk" referencedTableName="departamentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-220">
+        <addForeignKeyConstraint baseColumnNames="dev_adq_fk" baseTableName="devengado" constraintName="devengado_dev_adq_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="adq_pk" referencedTableName="adquisicion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-221">
+        <addForeignKeyConstraint baseColumnNames="prog_area_fk" baseTableName="programas" constraintName="programas_prog_area_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="area_pk" referencedTableName="areas"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-222">
+        <addForeignKeyConstraint baseColumnNames="amb_org_fk" baseTableName="ambito" constraintName="fk_n5tl58dqv18cs790jbmejxom2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-223">
+        <addForeignKeyConstraint baseColumnNames="val_hor_mon_fk" baseTableName="valor_hora" constraintName="valor_hora_val_hor_mon_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="mon_pk" referencedTableName="moneda"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-224">
+        <addForeignKeyConstraint baseColumnNames="docfile_doc_fk" baseTableName="doc_file" constraintName="fk_n76rhuste8gi3p3jq7m91j7iq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="docs_pk" referencedTableName="documentos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-225">
+        <addForeignKeyConstraint baseColumnNames="busq_filtro_org_fk" baseTableName="busq_filtro" constraintName="fk_a726jrgroi6p90dip38n70ftp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-226">
+        <addForeignKeyConstraint baseColumnNames="pag_adq_fk" baseTableName="pagos" constraintName="pagos_pag_adq_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="adq_pk" referencedTableName="adquisicion"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-227">
+        <addForeignKeyConstraint baseColumnNames="pers_orga_fk" baseTableName="personas" constraintName="personas_pers_orga_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="orga_pk" referencedTableName="organi_int_prove"/>
+    </changeSet>
+    <changeSet author="sofis" id="1527608349660-228">
+        <addForeignKeyConstraint baseColumnNames="tca_org_fk" baseTableName="temas_calidad" constraintName="temas_calidad_tca_org_fk_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="org_pk" referencedTableName="organismos"/>
+    </changeSet>
+</databaseChangeLog>

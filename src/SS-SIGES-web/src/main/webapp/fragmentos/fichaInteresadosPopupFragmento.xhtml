@@ -14,7 +14,7 @@
 
     <o:form id="frmFichaInteresadosPopup">
         <ice:panelPopup  draggable="true" 
-                         autoCentre="true" 
+                         positionOnLoadOnly="true"
                          modal="true" 
                          style="width: 90%;"
                          rendered="#{fichaMB.renderPopupInteresados}">
@@ -26,6 +26,7 @@
                                        action="#{fichaMB.cerrarPopupInteresados()}"/>
                 </ice:panelGroup>
             </f:facet>
+            
             <f:facet name="body">
                 <ice:panelGroup>
                     <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
@@ -88,7 +89,7 @@
                                 <ace:column headerText="#{labels.hDescripcion}" style="display:none" >
                                     <ice:outputText value="#{cnf.propertyMap['cnfDescripcion']}"/>
                                 </ace:column>
-                                <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                                <ace:column headerText="" styleClass="columnaBoton">
                                     <ace:pushButton styleClass="botonEditar iconoTabla"   action="#{configuracionMB.editar(cnf.id)}"
                                                     rendered="#{menuMB.permisos['CONF_EDIT']}"/>
                                 </ace:column>

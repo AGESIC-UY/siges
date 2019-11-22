@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class AmbitoValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AmbitoValidacion.class.getName());
 
     public static boolean validar(Ambito ambito) throws BusinessException {
         BusinessException be = new BusinessException();

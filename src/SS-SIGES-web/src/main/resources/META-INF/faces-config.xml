@@ -30,6 +30,11 @@
     </lifecycle>
 
     <converter>
+        <converter-id>porcentajeConverter</converter-id>
+        <converter-class>com.sofis.web.converter.PorcentajeConverter</converter-class>
+    </converter>
+
+    <converter>
         <converter-id>estadoConverter</converter-id>
         <converter-class>com.sofis.web.converter.EstadosConverter</converter-class>
     </converter>
@@ -37,6 +42,11 @@
     <converter>
         <converter-id>IntegerFormatConverter</converter-id>
         <converter-class>com.sofis.web.converter.IntegerFormatConverter</converter-class>
+    </converter>
+        
+    <converter>
+        <converter-id>IdAdquisicionFormatConverter</converter-id>
+        <converter-class>com.sofis.web.converter.IdAdquisicionFormatConverter</converter-class>
     </converter>
     
     <converter>
@@ -69,6 +79,11 @@
         <converter-class>com.sofis.web.converter.SiNoConverter</converter-class>
     </converter>
 
+    <converter>
+        <converter-id>SanitizerAceRichTextConverter</converter-id>
+        <converter-class>com.sofis.web.converter.SanitizerAceRichTextConverter</converter-class>
+    </converter>
+
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
@@ -90,6 +105,30 @@
         <navigation-case>
             <from-outcome>configuracion</from-outcome>
             <to-view-id>/paginasPrivadas/configuracionCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionGeneral</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionGeneralCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>cargaManual</from-outcome>
+            <to-view-id>/paginasPrivadas/cargaManualCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>componenteProducto</from-outcome>
+            <to-view-id>/paginasPrivadas/componenteProducto.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -516,4 +555,66 @@
         </navigation-case>
     </navigation-rule>
     
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PROCEDIMIENTO_COMPRA</from-outcome>
+            <to-view-id>/paginasPrivadas/procedimientoCompra.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_GESTION_PROGRAMAS</from-outcome>
+            <to-view-id>/paginasPrivadas/gestionProgramasCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_TIPO_ADQUISICION</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoAdquisicion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_CENTRO_COSTO</from-outcome>
+            <to-view-id>/paginasPrivadas/centroCosto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_FUENTE_PROCEDIMIENTO_COMPRA</from-outcome>
+            <to-view-id>/paginasPrivadas/fuenteProcedimientoCompra.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_CAUSAL_COMPRA</from-outcome>
+            <to-view-id>/paginasPrivadas/causalCompra.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_IDENTIFICADOR_GRP_ERP</from-outcome>
+            <to-view-id>/paginasPrivadas/identificadorGrpErp.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

@@ -26,6 +26,9 @@ public class RequestGuardarProyectoTO {
     
     @XmlElement(name="attrs")
     private List<AttrTO> attrs;
+
+    public RequestGuardarProyectoTO() {
+    }    
     
     //<editor-fold defaultstate="collapsed" desc="getters-setters">
     

@@ -3,33 +3,33 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-base</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>5.9.1</version>
     <packaging>pom</packaging>
     <name>SS-SIGES-base</name>
 
     <build>
         <plugins>
-	    <!-- JREBEL -->
-<!--	    <plugin>
-		<groupId>org.zeroturnaround</groupId>
-		<artifactId>jrebel-maven-plugin</artifactId>
-		<version>1.1.6</version>
-		<configuration>
-		    <addResourcesDirToRebelXml>true</addResourcesDirToRebelXml>
-		    <alwaysGenerate>true</alwaysGenerate>
-		    <showGenerated>true</showGenerated>
-		</configuration>
-		<executions>
-		    <execution>
-			<id>generate-rebel-xml</id>
-			<phase>process-resources</phase>
-			<goals>
-			    <goal>generate</goal>
-			</goals>
-		    </execution>
-		</executions>
-	    </plugin>-->
-	    <!-- JREBEL -->
+            <!-- JREBEL -->
+            <!--	    <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <version>1.1.6</version>
+                <configuration>
+                    <addResourcesDirToRebelXml>true</addResourcesDirToRebelXml>
+                    <alwaysGenerate>true</alwaysGenerate>
+                    <showGenerated>true</showGenerated>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+            <!-- JREBEL -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,11 +49,15 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+<!--            <plugin>
+                <groupId>com.github.ferstl</groupId>
+                <artifactId>depgraph-maven-plugin</artifactId>
+                <version>2.1.0</version>
+            </plugin>-->
         </plugins>
     </build>
 
     <modules>
-        <module>SS-SIGES-ear</module>
         <module>SS-SIGES-ejb</module>
         <module>SS-SIGES-web</module>
         <module>SS-SIGES-remotes</module>
@@ -65,6 +69,8 @@
         <module>pge-client-v2.4</module>
         <module>SS-GENERIDAO-TO-JPA2</module>
         <module>SS-GENERICDAO-BUSINESS-JPA2</module>
+        <module>SS-SIGES-mysql-ear</module>
+        <module>SS-SIGES-postgresql-ear</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

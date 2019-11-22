@@ -12,6 +12,7 @@ public enum ReportePreColumnasEnum {
     AREA,
     GERENTE,
     ESTADO,
+    NOMBRE_ADQ,
     PROCEDIMIENTO,
     PROC_GRP,
     FUENTE,

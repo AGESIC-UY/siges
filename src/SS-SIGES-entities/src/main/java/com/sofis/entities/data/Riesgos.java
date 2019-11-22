@@ -77,6 +77,8 @@ public class Riesgos implements Serializable {
     private Integer riskUsuarioSuperadoFk;
     @Column(name = "risk_exposicion")
     private Double exposicion;
+    @Column(name = "risk_observaciones")
+    private String riskObservaciones;
     //Campos no persistidos
     @Transient
     private String exposicionColor;
@@ -228,6 +230,14 @@ public class Riesgos implements Serializable {
 
     public void setExposicionColor(String exposicionColor) {
         this.exposicionColor = exposicionColor;
+    }
+
+    public String getRiskObservaciones() {
+        return riskObservaciones;
+    }
+
+    public void setRiskObservaciones(String observaciones) {
+        this.riskObservaciones = observaciones;
     }
 
     @Override

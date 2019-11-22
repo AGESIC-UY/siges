@@ -4,13 +4,9 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
                 xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:o="http://omnifaces.org/ui">
 
     <o:form id="frmObjEst">
         <ice:panelGroup id="tituloPaginaObjEst" styleClass="tituloPagina">
@@ -31,7 +27,7 @@
                     <ace:textEntry value="#{objetivoEstrategicoMB.filtro.nombre}" />
                 </ice:panelGroup>
                 <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none; margin-top: -4px;">
-                    <ace:messages id="busquedaObjMsg" />
+
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{objetivoEstrategicoMB.buscar()}"/>
@@ -42,6 +38,8 @@
                 </ice:panelGroup>
             </ice:panelGroup>
         </ice:panelGroup>
+
+<!--        <ace:messages for="resultado" />-->
 
         <ice:panelGroup id="resultado" styleClass="resultado recuadro margen-sup" 
                         rendered="#{objetivoEstrategicoMB.renderResultado}">
@@ -67,8 +65,17 @@
                         <ace:column headerText="#{labels.hDescripcion}"  >
                             <ice:outputText value="#{obj.objEstDescripcion}" escape="false"/>
                         </ace:column>
+                                                
+                        <ace:column headerText="#{labels.hHabilitar}">
+                            <ice:panelGroup title="#{labels.habilitar_deshabilitar}">
+                                <ace:checkboxButton value="#{obj.objEstHabilitado}" 
+                                                    valueChangeListener="#{objetivoEstrategicoMB.objEstHabilitadoChange(obj)}">
+                                    <ace:ajax/>
+                                </ace:checkboxButton>
+                            </ice:panelGroup>
+                        </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla"
                                                 action="#{objetivoEstrategicoMB.editar(obj.objEstPk)}"/>
@@ -77,7 +84,7 @@
 
                         <ace:column styleClass="columnaBoton">
                             <h:commandButton onclick="confirmationEliminar#{obj.objEstPk}.show()" 
-                                             styleClass="botonMinimizar iconoTabla" 
+                                             styleClass="botonEliminar iconoTabla" 
                                              type="button"/>
                             <ace:confirmationDialog id="confirmDialogAprobar"
                                                     widgetVar="confirmationEliminar#{obj.objEstPk}"

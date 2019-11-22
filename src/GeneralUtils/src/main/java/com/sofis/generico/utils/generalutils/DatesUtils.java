@@ -44,6 +44,8 @@ public class DatesUtils {
     /**
      * Retorna true si la primer fecha es mayor a la segunda. Solo compara la
      * fecha y no las horas.
+	 * 
+	 * REVISAR
      *
      * @param d1
      * @param d2
@@ -71,7 +73,7 @@ public class DatesUtils {
         if (d1 != null && d2 != null && !hours) {
             return esMayor(d1, d2);
         } else if (d1 != null && d2 != null) {
-            SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSS");
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSSSS");
             Long d1Int = Long.parseLong(fmt.format(d1));
             Long d2Int = Long.parseLong(fmt.format(d2));
             return d1Int.longValue() > d2Int.longValue();

@@ -16,9 +16,8 @@
             background-color: white !important;
         }
     </style>
-    <ice:panelGroup id="panelRiesgos" 
-                    style="#{fichaMB.selectedMostrar == 2 ? 'width: 100%; padding-right:25px' : ''}" 
-                    styleClass="col-sm-6 cuadro" 
+    <ice:panelGroup id="panelRiesgos"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 2) and fichaMB.fieldRendered('panelRiesgos')}">
         <ice:panelGroup id="cabezalRiesgos" styleClass="cabezal">
             <ice:outputText value="#{labels.riesgos}"/>
@@ -80,73 +79,90 @@
         <ice:panelGroup rendered="#{fichaMB.mostrar[2]}" styleClass="cuerpo">
 
             <!-- Formulario de alta -->
-            <ice:panelGroup id="riesgosForm">
-                <ice:panelCollapsible expanded="#{fichaMB.riskFormDataExpanded}" >
+            <ice:panelGroup id="riesgosForm" styleClass="formulario formularioPopup">
+
+                <h:panelGrid columns="1">
+                    <h:commandButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
+                                     action="#{fichaMB.abrirRiesgoAction()}"
+                                     styleClass="boton principal #{fichaMB.riesgo.riskPk ne null ? 'botonEditar' : 'botonAgregar'}" 
+                                     rendered="#{fichaMB.fieldRendered('agregarRiesgo')}"/>
+                </h:panelGrid>
+
+                <ice:panelPopup id="popupRiesgosForm"
+                                visible="#{fichaMB.riskFormDataExpanded}"
+                                rendered="#{fichaMB.riskFormDataExpanded}"
+                                draggable="true"
+                                positionOnLoadOnly="true"
+                                modal="true">
+
                     <f:facet name="header">
-                        <h:panelGrid columns="1">
-                            <h:commandButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
-                                             rendered="#{!fichaMB.riskFormDataExpanded and fichaMB.fieldRendered('agregarRiesgo')}"
-                                             styleClass="boton principal #{fichaMB.riesgo.riskPk ne null ? 'botonEditar' : 'botonAgregar'}" />
-                        </h:panelGrid>
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}"/>
+                            <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                               action="#{fichaMB.cerrarFormCollapsable()}"/>
+                        </ice:panelGroup>
                     </f:facet>
+                    <f:facet name="body">
 
-                    <ice:panelGroup id="riesgosFormData">
-                        <ice:panelGrid  styleClass="formulario " columns="4">
-                            <ice:outputLabel value="#{labels.riesgo_nombre}"/>
-                            <ace:textEntry value="#{fichaMB.riesgo.riskNombre}" />
+                        <ice:panelGroup id="riesgosFormData">
+                            <ice:panelGrid  styleClass="formulario " columns="4">
+                                <ice:outputLabel value="#{labels.riesgo_nombre}"/>
+                                <ace:textEntry value="#{fichaMB.riesgo.riskNombre}" />
 
-                            <ice:outputLabel value="#{labels.riesgo_fechaLimite}"/>
-                            <ace:dateTimeEntry value="#{fichaMB.riesgo.riskFechaLimite}"
-                                               pattern="#{inicioMB.calendarPattern}" 
-                                               renderAsPopup="true" navigator="true"
-                                               timeZone="#{inicioMB.calendarTimeZone}"/>
+                                <ice:outputLabel value="#{labels.riesgo_fechaLimite}"/>
+                                <ace:dateTimeEntry value="#{fichaMB.riesgo.riskFechaLimite}"
+                                                   pattern="#{inicioMB.calendarPattern}" 
+                                                   renderAsPopup="true" navigator="true"
+                                                   timeZone="#{inicioMB.calendarTimeZone}"/>
 
-                            <ice:outputLabel value="#{labels.riesgo_probabilidad}"/>
-                            <ace:simpleSelectOneMenu id="comboProbabilidad"
-                                                     value="#{fichaMB.listaRiskProbabilidadCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaRiskProbabilidadCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
+                                <ice:outputLabel value="#{labels.riesgo_probabilidad}"/>
+                                <ace:simpleSelectOneMenu id="comboProbabilidad"
+                                                         value="#{fichaMB.listaRiskProbabilidadCombo.selected}">
+                                    <f:selectItems value="#{fichaMB.listaRiskProbabilidadCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
 
-                            <ice:outputLabel value="#{labels.riesgo_impacto}"/>
-                            <ace:simpleSelectOneMenu id="comboImpacto"
-                                                     value="#{fichaMB.listaRiskImpactoCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaRiskImpactoCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
+                                <ice:outputLabel value="#{labels.riesgo_impacto}"/>
+                                <ace:simpleSelectOneMenu id="comboImpacto"
+                                                         value="#{fichaMB.listaRiskImpactoCombo.selected}">
+                                    <f:selectItems value="#{fichaMB.listaRiskImpactoCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
 
-                            <ice:outputLabel value="#{labels.riesgo_entregable}"/>
-                            <ace:simpleSelectOneMenu id="comboEntregable"
-                                                     value="#{fichaMB.listaRiskEntregablesCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaRiskEntregablesCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
-                            
-                            <ice:outputLabel value=""/>
-                            <ice:outputLabel value=""/>
+                                <ice:outputLabel value="#{labels.riesgo_entregable}"/>
+                                <ace:simpleSelectOneMenu id="comboEntregable"
+                                                         value="#{fichaMB.listaRiskEntregablesCombo.selected}">
+                                    <f:selectItems value="#{fichaMB.listaRiskEntregablesCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
+                                
+                                <ice:outputLabel value="#{labels.riesgo_observaciones}"/>
+                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskObservaciones}" />
 
-                            <ice:outputLabel value="#{labels.riesgo_efecto}"/>
-                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskEfecto}" />
+                                <ice:outputLabel value="#{labels.riesgo_efecto}"/>
+                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskEfecto}" />
 
-                            <ice:outputLabel value="#{labels.riesgo_estrategia}"/>
-                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskEstrategia}" />
+                                <ice:outputLabel value="#{labels.riesgo_estrategia}"/>
+                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskEstrategia}" />
 
-                            <ice:outputLabel value="#{labels.riesgo_disparador}"/>
-                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskDisparador}" />
+                                <ice:outputLabel value="#{labels.riesgo_disparador}"/>
+                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskDisparador}" />
 
-                            <ice:outputLabel value="#{labels.riesgo_contingencia}"/>
-                            <ace:textAreaEntry value="#{fichaMB.riesgo.riskContingencia}" />
-                        </ice:panelGrid>
-                    </ice:panelGroup> 
+                                <ice:outputLabel value="#{labels.riesgo_contingencia}"/>
+                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskContingencia}" />
+                            </ice:panelGrid>
 
-                    <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages id="riesgosMsg"/>
-                        <ace:pushButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
-                                        styleClass="boton principal #{fichaMB.riesgo.riskPk ne null ? 'editar' : 'agregar'}" 
-                                        action="#{fichaMB.agregarRiesgoAction()}"/>
-                        <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.limpiarRiesgo()}"/>
-                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.cerrarFormCollapsable()}"/>
-                    </ice:panelGroup>
-                </ice:panelCollapsible>
+                            <ice:panelGroup styleClass="panelBotones">
+                                <ace:messages id="riesgosMsg"/>
+                                <ice:commandButton value="#{labels.guardar}" 
+                                                   styleClass="boton principal botonGuardar" 
+                                                   action="#{fichaMB.agregarRiesgoAction()}"/>
+                                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                                 action="#{fichaMB.cerrarFormCollapsable()}"/>
+                            </ice:panelGroup>
+
+                        </ice:panelGroup> 
+
+                    </f:facet>
+                </ice:panelPopup>
+
             </ice:panelGroup>
 
             <ice:panelGroup id="tablaLimiteGestionRiesgoResume" styleClass="impactoYriesgo">

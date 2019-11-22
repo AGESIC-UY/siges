@@ -2,23 +2,27 @@ package com.sofis.web.mb;
 
 import com.sofis.business.utils.OrganiIntProveUtils;
 import com.sofis.entities.codigueras.SsRolCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Areas;
+import com.sofis.entities.data.ComponenteProducto;
 import com.sofis.entities.data.Documentos;
 import com.sofis.entities.data.FuenteFinanciamiento;
 import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.OrganiIntProve;
+import com.sofis.entities.data.Pagos;
+import com.sofis.entities.data.ProcedimientoCompra;
 import com.sofis.entities.data.Programas;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.utils.SsUsuariosUtils;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.delegates.AreasDelegate;
+import com.sofis.web.delegates.ComponenteProductoDelegate;
 import com.sofis.web.delegates.FuenteFinanciamientoDelegate;
 import com.sofis.web.delegates.MonedaDelegate;
 import com.sofis.web.delegates.OrganiIntProveDelegate;
 import com.sofis.web.delegates.OrganismoDelegate;
+import com.sofis.web.delegates.ProcedimientoCompraDelegate;
 import com.sofis.web.delegates.ProgramasDelegate;
 import com.sofis.web.delegates.ProyectosDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
@@ -29,12 +33,16 @@ import com.sofis.web.utils.SofisCombo;
 import com.sofis.web.validations.MoverProyectoValidacion;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 
 /**
@@ -46,7 +54,7 @@ import javax.inject.Inject;
 public class MoverProyectoMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MoverProyectoMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
@@ -74,6 +82,11 @@ public class MoverProyectoMB implements Serializable {
     private SsUsuarioDelegate ssUsuarioDelegate;
     @Inject
     private OrganiIntProveDelegate organiIntProveDelegate;
+    @Inject
+    private ProcedimientoCompraDelegate procedimientoCompraDelegate;
+    @Inject
+    private ComponenteProductoDelegate componenteProductoDelegate;    
+    
 
     private Proyectos fichaDestinoTO;
     //Mover Proyecto
@@ -90,6 +103,22 @@ public class MoverProyectoMB implements Serializable {
     private SofisCombo listaFuentesPreCombo = new SofisCombo();
     private SofisCombo listaOrganizacionCombo = new SofisCombo();
     private SofisCombo listaTipoDocCombo = new SofisCombo();
+    
+    
+    private List<ProcedimientoCompra> listaProcedimientoCompra;
+    private SofisCombo listaProcedimientoCompraCombo = new SofisCombo();   
+    
+    private List<ComponenteProducto> listaComponenteProducto;
+    private SofisCombo listaComponenteProductoCombo = new SofisCombo();
+    
+    private List<SsUsuario> listaUsuariosAdqCompartida;
+    private List<SelectItem> listaUsuariosAdqCompartidaCombo;    
+    
+    private Map<Integer, String> mappingAdqNomUsuCompartida;
+    
+    private Integer auxUsuCompartida;
+    
+    private SofisCombo listapagContrOrganizacionCombo = new SofisCombo();
 
     public MoverProyectoMB() {
 
@@ -138,6 +167,25 @@ public class MoverProyectoMB implements Serializable {
             }
             if (adq.getAdqFuente() == null) {
                 adq.setAdqFuente(new FuenteFinanciamiento());
+            }
+            if (adq.getAdqProcedimientoCompra() == null) {
+                adq.setAdqProcedimientoCompra(new ProcedimientoCompra());
+            }
+            
+            if (adq.getAdqComponenteProducto() == null) {
+                adq.setAdqComponenteProducto(new ComponenteProducto());
+            }
+                        
+            if((adq.getAdqCompartida() != null) && (adq.getAdqCompartida())){
+                if (adq.getSsUsuarioCompartida() == null) {
+                    adq.setSsUsuarioCompartida(new SsUsuario());
+                }
+            }
+            
+            for(Pagos iterPagos : adq.getPagosSet()){
+                if (iterPagos.getPagContrOrganizacionFk() == null) {
+                    iterPagos.setPagContrOrganizacionFk(new OrganiIntProve());
+                }
             }
         }
     }
@@ -204,12 +252,24 @@ public class MoverProyectoMB implements Serializable {
         }
         listaFuentesPreCombo = new SofisCombo((List) listaFuentes, "fueNombre");
         listaFuentesPreCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-
-        List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntOrganizaciones(orgPk);
+        
+        /*
+        *   27-04-2018 Nico: Acá se pedía la lista de todos los organismos, pero había que pedir solo la de los
+        *               proveedores.
+        */
+        //List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntOrganizaciones(orgPk);
+        List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntProveedores(orgPk);
         if (listaOrganizacion != null && !listaOrganizacion.isEmpty()) {
             listaOrganizacion = OrganiIntProveUtils.sortByNombre(listaOrganizacion);
             listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
             listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            
+            /*
+            *   Uso estos valores para crear el combo de Cliete/Organismo de los Pagos
+            */
+            listapagContrOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
+            listapagContrOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            
         }
 
         List listaTipoDocumento = tipoDocumentosDelegate.obtenerTodos(orgPk);
@@ -218,22 +278,81 @@ public class MoverProyectoMB implements Serializable {
             listaTipoDocCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
         }
 
+        //Cargo la lista de los Procedimientos de Compra.
+        listaProcedimientoCompra = procedimientoCompraDelegate.obtenerProcedimientosComprasPorOrgId(orgPk);
+        if (listaProcedimientoCompra != null && !listaProcedimientoCompra.isEmpty()) {
+                listaProcedimientoCompraCombo = new SofisCombo((List) listaProcedimientoCompra, "procCompNombre");
+                listaProcedimientoCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }        
+        
+        //Cargo la lista de las Componentes/Producto
+        listaComponenteProducto = componenteProductoDelegate.obtenerComponentesProductosPorOrgId(orgPk);
+        if (listaComponenteProducto != null && !listaComponenteProducto.isEmpty()) {
+                listaComponenteProductoCombo = new SofisCombo((List) listaComponenteProducto, "comNombre");
+                listaComponenteProductoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }        
+        
+        //Cargo la lista de los Usuarios que pueden compartir la adquisición.
+        listaUsuariosAdqCompartida = aplicacionMB.obtenerUsuariosPorRolActivos(new String[]{SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL, SsRolCodigos.PMO_FEDERADA, SsRolCodigos.DIRECTOR, SsRolCodigos.USUARIO_COMUN}, orgPk);
+        if (listaUsuariosAdqCompartida != null && !listaUsuariosAdqCompartida.isEmpty()) {
+                listaUsuariosAdqCompartidaCombo = new ArrayList<>();
+                for (SsUsuario u : listaUsuariosAdqCompartida) {
+                        Areas a = u.getUsuArea(orgPk);
+                        listaUsuariosAdqCompartidaCombo.add(new SelectItem(u.hashCode(), (a != null ? a.getAreaNombre() : "SIN ÁREA") + " - " + u.getUsuNombreApellido()));
+                }
+                Collections.sort(listaUsuariosAdqCompartidaCombo, AplicacionMB.COMBO_COMPARTOR);
+                listaUsuariosAdqCompartidaCombo.add(0, new SelectItem(-1, Labels.getValue("comboEmptyItem")));
+        }        
+        
+        //Se crea esta colección para poder almacenar el string "Área - NomApelUsu" en el front
+        mappingAdqNomUsuCompartida = new HashMap<Integer, String>();
+        for(Adquisicion iterAdq : fichaDestinoTO.getProyPreFk().getAdquisicionSet()){
+            if((iterAdq.getAdqCompartida() != null) & (iterAdq.getAdqCompartida())){
+                SsUsuario usuAdq = iterAdq.getSsUsuarioCompartida();
+                Areas areaUsuAdq = usuAdq.getUsuArea(inicioMB.getOrganismoSeleccionado());
+
+                mappingAdqNomUsuCompartida.put(iterAdq.getAdqPk(), (areaUsuAdq != null ? areaUsuAdq.getAreaNombre() : "SIN ÁREA") + " - " + usuAdq.getUsuNombreApellido());
+                
+                if(listaUsuariosAdqCompartidaCombo.contains(orgPk)){
+                    auxUsuCompartida = usuAdq.hashCode();
+                }else{
+                    auxUsuCompartida = -1;
+                }
+
+            }
+        }
         
         return null;
     }
-
+    
+    public String obtenerUsuCompartidaAdqNom (Adquisicion adq){
+        return mappingAdqNomUsuCompartida.get(adq.getAdqPk());
+    }
+    
+    
     public String moverProyecto() {
         loadDestinoComboSelected();
 
         try {
+            //Indica si el proyecto origen y destino son del mismo organismo.            
+            boolean mismoOrganismo = inicioMB.getOrganismoSeleccionado().equals(fichaDestinoTO.getProyOrgFk().getOrgPk());
             MoverProyectoValidacion.validar(fichaDestinoTO, fichaMB.getFichaTO());
-            proyDelegate.moverProyecto(fichaDestinoTO, inicioMB.getUsuario());
+            proyDelegate.moverProyecto(fichaDestinoTO, inicioMB.getUsuario(), mismoOrganismo);
             this.renderPopupMoverProy = false;
 
             return "IR_A_INICIO";
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(null, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(null, be.getErrores());
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }             
+            
             return null;
         }
     }
@@ -287,18 +406,49 @@ public class MoverProyectoMB implements Serializable {
             } else {
                 adq.getAdqFuente().setFuePk(-1);
             }
+            
+            if (adq.getAdqProcedimientoCompra() != null && !(adq.getAdqProcedimientoCompra().getProcCompPk() == null || adq.getAdqProcedimientoCompra().getProcCompPk() == -1)) {
+                adq.setAdqProcedimientoCompra(procedimientoCompraDelegate.obtenerProcedimientoCompraPorPk(adq.getAdqProcedimientoCompra().getProcCompPk()));
+            } else {
+                adq.getAdqProcedimientoCompra().setProcCompPk(-1);
+            }
+            
+            if (adq.getAdqComponenteProducto() != null && !(adq.getAdqComponenteProducto().getComPk() == null || adq.getAdqComponenteProducto().getComPk() == -1)) {
+                adq.setAdqComponenteProducto(componenteProductoDelegate.obtenerComponenteProductoPorPk(adq.getAdqComponenteProducto().getComPk()));
+            } else {
+                adq.getAdqComponenteProducto().setComPk(-1);
+            }            
+
+            if((adq.getAdqCompartida() != null) && (adq.getAdqCompartida())){
+                if (adq.getSsUsuarioCompartida() != null && auxUsuCompartida != -1){
+                    adq.setSsUsuarioCompartida(ssUsuarioDelegate.obtenerSsUsuarioPorId(auxUsuCompartida));
+                }else{
+                    adq.getSsUsuarioCompartida().setUsuId(auxUsuCompartida);
+                }
+            }
+             
+            for(Pagos iterPagos : adq.getPagosSet()){
+                if (iterPagos.getPagContrOrganizacionFk() != null && !(iterPagos.getPagContrOrganizacionFk().getOrgaPk() == null || iterPagos.getPagContrOrganizacionFk().getOrgaPk() == -1)) {
+                    iterPagos.setPagContrOrganizacionFk(organiIntProveDelegate.obtenerOrganiIntProvePorId(iterPagos.getPagContrOrganizacionFk().getOrgaPk()));
+                } else {
+                    iterPagos.getPagContrOrganizacionFk().setOrgaPk(-1);
+                }                
+            }
+            
+
         }
         
-        for(Documentos doc : fichaDestinoTO.getDocumentosSet()){
-            doc.getDocsTipo().setTipodocInstTipoDocFk(
-                    tipoDocumentosDelegate.obtenerTipoDocPorId(
-                            doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk()
-                    )
-            );
+        for(Documentos doc : fichaDestinoTO.getDocumentosSet()){           
+            if (doc.getDocsTipo() != null && !(doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == null || doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk() == -1)) {
+                doc.getDocsTipo().setTipodocInstTipoDocFk(tipoDocumentosDelegate.obtenerTipoDocPorId(doc.getDocsTipo().getTipodocInstTipoDocFk().getTipdocPk()));
+            } else {
+                doc.getDocsTipo().getTipodocInstTipoDocFk().setTipdocPk(-1);
+            }                
+            
         }
         
     }
-
+    
     public Proyectos getFichaDestinoTO() {
         return fichaDestinoTO;
     }
@@ -410,5 +560,71 @@ public class MoverProyectoMB implements Serializable {
     public void setListaTipoDocCombo(SofisCombo listaTipoDocCombo) {
         this.listaTipoDocCombo = listaTipoDocCombo;
     }
+
+    public List<ProcedimientoCompra> getListaProcedimientoCompra() {
+        return listaProcedimientoCompra;
+    }
+
+    public void setListaProcedimientoCompra(List<ProcedimientoCompra> listaProcedimientoCompra) {
+        this.listaProcedimientoCompra = listaProcedimientoCompra;
+    }
+
+    public SofisCombo getListaProcedimientoCompraCombo() {
+        return listaProcedimientoCompraCombo;
+    }
+
+    public void setListaProcedimientoCompraCombo(SofisCombo listaProcedimientoCompraCombo) {
+        this.listaProcedimientoCompraCombo = listaProcedimientoCompraCombo;
+    }
+
+    public List<SsUsuario> getListaUsuariosAdqCompartida() {
+        return listaUsuariosAdqCompartida;
+    }
+
+    public void setListaUsuariosAdqCompartida(List<SsUsuario> listaUsuariosAdqCompartida) {
+        this.listaUsuariosAdqCompartida = listaUsuariosAdqCompartida;
+    }
+
+    public List<SelectItem> getListaUsuariosAdqCompartidaCombo() {
+        return listaUsuariosAdqCompartidaCombo;
+    }
+
+    public void setListaUsuariosAdqCompartidaCombo(List<SelectItem> listaUsuariosAdqCompartidaCombo) {
+        this.listaUsuariosAdqCompartidaCombo = listaUsuariosAdqCompartidaCombo;
+    }
+
+    public Map<Integer, String> getMappingAdqNomUsuCompartida() {
+        return mappingAdqNomUsuCompartida;
+    }
+
+    public void setMappingAdqNomUsuCompartida(Map<Integer, String> mappingAdqNomUsuCompartida) {
+        this.mappingAdqNomUsuCompartida = mappingAdqNomUsuCompartida;
+    }
+
+    public Integer getAuxUsuCompartida() {
+        return auxUsuCompartida;
+    }
+
+    public void setAuxUsuCompartida(Integer auxUsuCompartida) {
+        this.auxUsuCompartida = auxUsuCompartida;
+    }
+
+    public SofisCombo getListapagContrOrganizacionCombo() {
+        return listapagContrOrganizacionCombo;
+    }
+
+    public void setListapagContrOrganizacionCombo(SofisCombo listapagContrOrganizacionCombo) {
+        this.listapagContrOrganizacionCombo = listapagContrOrganizacionCombo;
+    }
+
+    public SofisCombo getListaComponenteProductoCombo() {
+        return listaComponenteProductoCombo;
+    }
+
+    public void setListaComponenteProductoCombo(SofisCombo listaComponenteProductoCombo) {
+        this.listaComponenteProductoCombo = listaComponenteProductoCombo;
+    }
+    
+    
 
 }

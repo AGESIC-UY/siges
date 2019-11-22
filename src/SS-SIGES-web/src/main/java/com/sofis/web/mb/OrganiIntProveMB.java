@@ -1,9 +1,10 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.business.properties.LabelsEJB;
 import com.sofis.entities.data.Ambito;
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.exceptions.BusinessException;
+import com.sofis.exceptions.GeneralException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.AmbitoDelegate;
 import com.sofis.web.delegates.OrganiIntProveDelegate;
@@ -33,9 +34,9 @@ import javax.inject.Inject;
 public class OrganiIntProveMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(OrganiIntProveMB.class.getName());
     private static final String ORGA_NOMBRE = "orgaNombre";
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     
     @ManagedProperty("#{inicioMB}")
@@ -56,13 +57,9 @@ public class OrganiIntProveMB implements Serializable {
     private String filtroNombre;
     private List<OrganiIntProve> listaResultado;
     private OrganiIntProve orgaEnEdicion;
-    private SofisComboG<Ambito> listaIntAmbitoCombo = new SofisComboG();
+    private SofisComboG<Ambito> listaIntAmbitoCombo = new SofisComboG<>();
 
     public OrganiIntProveMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        orgaEnEdicion = new OrganiIntProve();
-        renderPopupEdicion = new SofisPopupUI();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -141,11 +138,21 @@ public class OrganiIntProveMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */        
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<OrganiIntProve>();
+        orgaEnEdicion = new OrganiIntProve();
+        renderPopupEdicion = new SofisPopupUI();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         List<Ambito> listaAmbito = ambitoDelegate.obtenerAmbitoPorOrg(inicioMB.getOrganismo().getOrgPk());
         if (listaAmbito != null) {
-            listaIntAmbitoCombo = new SofisComboG(listaAmbito, "ambNombre");
+            listaIntAmbitoCombo = new SofisComboG<>(listaAmbito, "ambNombre");
             listaIntAmbitoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
         }
 
@@ -159,6 +166,7 @@ public class OrganiIntProveMB implements Serializable {
      */
     public String agregar() {
         orgaEnEdicion = new OrganiIntProve();
+        orgaEnEdicion.setOrgaHabilitado(true);
 
         renderPopupEdicion.abrir();
         return null;
@@ -182,7 +190,16 @@ public class OrganiIntProveMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                 
                 inicioMB.abrirPopupMensajes();
             }
         }
@@ -195,7 +212,7 @@ public class OrganiIntProveMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put(ORGA_NOMBRE, filtroNombre);
         listaResultado = organiIntProveDelegate.busquedaOrgaFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
 
@@ -213,7 +230,16 @@ public class OrganiIntProveMB implements Serializable {
             }
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }                  
         }
 
         renderPopupEdicion.abrir();
@@ -235,7 +261,16 @@ public class OrganiIntProveMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }              
         }
         return null;
     }
@@ -272,5 +307,27 @@ public class OrganiIntProveMB implements Serializable {
     public void cambiarAscendenteOrdenacion(ValueChangeEvent evt) {
         ascendente = Integer.valueOf(evt.getNewValue().toString());
         buscar();
+    }
+    
+    public void organismoHabilitadoChange(OrganiIntProve organismo) {
+
+        try {
+            organismo.setOrgaHabilitado(!organismo.getOrgaHabilitado());
+            organiIntProveDelegate.guardarOrga(organismo);
+
+            buscar();
+            aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
+            
+            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+
+        } catch (GeneralException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }            
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+        }
     }
 }

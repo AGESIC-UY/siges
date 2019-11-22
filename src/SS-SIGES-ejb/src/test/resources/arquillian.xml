@@ -1,0 +1,20 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+    <container qualifier="jbossas-managed" default="true">
+        <configuration>
+            <property name="managementPort">9908</property>
+            <property name="username">admin</property>
+            <property name="password">password</property>
+        </configuration>
+    </container>
+    <defaultProtocol type="Servlet 3.0">
+        <property name="port">8081</property>
+    </defaultProtocol>
+    
+    <extension qualifier="persistence">
+        <property name="defaultDataSource">java:jboss/datasources/testDS</property>
+    </extension>
+</arquillian>

@@ -6,6 +6,7 @@ import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -16,13 +17,17 @@ import javax.persistence.Query;
 public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(SsUsuarioDAO.class.getName());
+    
     public SsUsuarioDAO(EntityManager em) {
         super(em);
     }
 
     public List<SsUsuario> obtenerUsuariosPorRol(List<Integer> rolCodArr, Integer orgId, Boolean activos) {
-        String queryStr = "SELECT DISTINCT new SsUsuario(s.usuId,s.usuFechaPassword,s.usuNroDoc,s.usuOrigen,s.usuPrimerApellido,s.usuSegundoApellido,s.usuPrimerNombre,s.usuSegundoNombre,s.usuUserCode,s.usuVigente)"
+        /*
+        *   Se agrega este parámetro para poder tomar el correo electrónico del usuario al momento de requerir una solicitud de cambio de fase.
+        */
+        String queryStr = "SELECT DISTINCT new SsUsuario(s.usuId,s.usuFechaPassword,s.usuNroDoc,s.usuOrigen,s.usuPrimerApellido,s.usuSegundoApellido,s.usuPrimerNombre,s.usuSegundoNombre,s.usuUserCode,s.usuVigente,s.usuCorreoElectronico, b)"
                 + " FROM SsUsuario s, IN(s.ssUsuOfiRolesCollection) b"
                 + " WHERE ( ";
         int i = 0;

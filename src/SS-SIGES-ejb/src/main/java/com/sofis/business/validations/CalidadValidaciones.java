@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class CalidadValidaciones {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(CalidadValidaciones.class.getName());
 
     public static boolean validar(List<Calidad> calidad) throws BusinessException {
         boolean result = true;

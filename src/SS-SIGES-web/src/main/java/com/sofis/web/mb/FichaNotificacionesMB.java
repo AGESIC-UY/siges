@@ -26,7 +26,7 @@ import javax.inject.Inject;
 public class FichaNotificacionesMB implements Serializable{
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaNotificacionesMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
@@ -81,7 +81,16 @@ public class FichaNotificacionesMB implements Serializable{
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage());
-                JSFUtils.agregarMsg("", Labels.getValue("error_notif_inst_guardar"), null);
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsg("", Labels.getValue("error_notif_inst_guardar"), null);
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                  
+
             }
         }
         return null;

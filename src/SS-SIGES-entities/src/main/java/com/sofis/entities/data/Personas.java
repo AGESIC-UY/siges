@@ -61,7 +61,7 @@ public class Personas implements Serializable {
     @Transient
     private RolesInteresados persRol;
     @Transient
-    private Boolean seleccionada;
+    private Boolean seleccionada = false;
 
     public Personas() {
     }

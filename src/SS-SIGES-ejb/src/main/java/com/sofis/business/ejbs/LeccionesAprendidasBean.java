@@ -42,7 +42,7 @@ public class LeccionesAprendidasBean {
     private AreasConocimientoBean areasConocimientoBean;
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(LeccionesAprendidasBean.class.getName());
 
     //private String usuario;
     //private String origen;

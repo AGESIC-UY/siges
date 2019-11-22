@@ -69,6 +69,26 @@ public class ProyReplanificacion implements Serializable {
     @Column(name = "proyreplan_generar_linea_base")
     private boolean proyreplanGenerarLineaBase;
     
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "proyreplan_generar_presupuesto")
+    private boolean proyreplanGenerarPresupuesto;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "proyreplan_generar_producto")
+    private boolean proyreplanGenerarProducto;
+    
+    
+    /* 
+    *        Este valor es utilizado para no permitir la edición del presupuesto
+    *    al replanificar
+    */
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "proyreplan_permit_editar")
+    private boolean proyreplanPermitEditar;
+    
+    
     @Transient
     private FiltroInicioItem item;
 
@@ -182,4 +202,30 @@ public class ProyReplanificacion implements Serializable {
     public void setProyreplanGenerarLineaBase(boolean proyreplanGenerarLineaBase) {
         this.proyreplanGenerarLineaBase = proyreplanGenerarLineaBase;
     }
+
+    public boolean isProyreplanGenerarPresupuesto() {
+        return proyreplanGenerarPresupuesto;
+    }
+
+    public void setProyreplanGenerarPresupuesto(boolean proyreplanGenerarPresupuesto) {
+        this.proyreplanGenerarPresupuesto = proyreplanGenerarPresupuesto;
+    }
+
+    public boolean isProyreplanGenerarProducto() {
+        return proyreplanGenerarProducto;
+    }
+
+    public void setProyreplanGenerarProducto(boolean proyreplanGenerarProducto) {
+        this.proyreplanGenerarProducto = proyreplanGenerarProducto;
+    }
+
+    public boolean isProyreplanPermitEditar() {
+        return proyreplanPermitEditar;
+    }
+
+    public void setProyreplanPermitEditar(boolean proyreplanPermitEditar) {
+        this.proyreplanPermitEditar = proyreplanPermitEditar;
+    }
+    
+    
 }

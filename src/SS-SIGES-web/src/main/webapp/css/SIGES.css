@@ -1,7 +1,7 @@
 /*GENERALES*/
 html,body{
     height:100%;
-    background-color: #ebf2f7;
+    background-color: #ecf0f1;
     font-family: sans-serif;
 }
 .container{
@@ -9,6 +9,9 @@ html,body{
     height: auto;
     min-height:100%;
     margin-bottom: -174px;
+    width: 100%;
+    max-width: 1600px;
+
 }
 .container:after{
     width: 100%;
@@ -35,6 +38,7 @@ html,body{
     background: #FFF;
     min-height: 100%;
     margin-top: 15px;
+    min-width: 100%;
 }
 
 a:link, a:visited{
@@ -239,7 +243,7 @@ textarea.textoMedioLargo, .textoMedioLargo textarea, textarea.textoMedioLargo-di
 .buscador .subtitulo{
     display: initial;
     float:left;
-    margin-bottom: 0;
+    margin-bottom: 10px;
 }
 .centrarDato{
     text-align: center;
@@ -351,8 +355,10 @@ h1{
 /*BARRA USUARIO*/
 #infoUsuario{
     font-size: 13px;
-    background: #ebf2f7;
-    padding: 7px 0;
+    background: #ecf0f1;
+    /*padding: 7px 0;*/
+    padding: 7px 23px;
+
 }
 @media (max-width: 767px){
     #infoUsuario{
@@ -485,9 +491,12 @@ h1{
 }
 .panelLogin input.boton.principal{
     height: 32px;
+    padding: 0px;
+    width: 100%;
 }
 .recordatorioContrasenia {
     clear: both;
+    font-size: 11px
 }
 .recordatorioContrasenia div{
     padding:0;
@@ -496,7 +505,9 @@ h1{
     margin: 0;
 }
 .recordatorioContrasenia div:last-child span{
-    margin-left: 5px;
+    /*margin-left: 5px;*/
+    text-align: left;
+    font-size: 11px;
 }
 
 
@@ -760,6 +771,9 @@ select{
     margin: 0 0 10px 0;
     overflow: hidden;
 }
+.formularioPopup > div{
+    margin: 0 0 0 0;
+}
 .formulario > div.subtituloSeccion{
     margin-top: 15px;
     margin-bottom: 0;
@@ -868,8 +882,11 @@ select{
     border-top:0;
     min-height: 317px;
 }
-.fichaFragGrupo3 .cuadro> .cuerpo{
-    /*min-height: 0;*/
+.cuerpo:after{
+    content: "";
+    width: 100%;
+    display: block;
+    clear: both;
 }
 .otrosDatos .col-sm-6.cuadro {
     padding-right: 0;
@@ -878,16 +895,12 @@ select{
 .otrosDatos>.icePnlGrp:last-child .col-sm-6.cuadro {
     padding-right: 25px;
 }
-.fichaFragGrupo2 {
-    padding-left: 0;
-}
-.fichaFragGrupo4 {
+.fichaFragGrupo .col-sm-3:nth-child(4n+1) {
     clear: both;
 }
-/*.fichaFragGrupo1, .fichaFragGrupo2 {
-        width: 48.5%;
-        float: left;
-}*/
+.fichaFragGrupo .cuadro {
+    margin-bottom: 20px;
+}
 .tablaFicha.ui-datatable .ui-header-column{
     padding: 0px;
 }
@@ -902,6 +915,12 @@ select{
 }
 .max600{
     max-width: 600px;
+}
+.tablaGantt input{
+    width: auto;
+}
+.tablaGantt a + a{
+    margin-left: 10px;
 }
 .proyPendientes > .icePnlGrp{
     background-color: #035e9f;
@@ -1082,7 +1101,7 @@ select{
     float: none;
 }  
 .panelBotones  {
-    overflow: hidden;
+    /*    overflow: hidden;*/
     clear:both;
     float: right;
 }
@@ -1232,9 +1251,9 @@ button.ui-button.ui-state-hover{
     background: transparent url("../img/nueva_ventana.png") no-repeat center;
 }
 /**/
-input.hasDatepicker, .hasDatepicker input {
+/*input.hasDatepicker, .hasDatepicker input {
     width: 96px;
-}
+}*/
 .columnaBoton .iconoTabla button, .columnaBoton input.iconoTabla, .columnaBoton .ui-datepicker-trigger {
     height: 25px;
     width: 25px;
@@ -1315,6 +1334,9 @@ input.iconoTabla:hover, .ui-datepicker-trigger:hover {
 .botonImporte button, input.botonImporte{
     background-image: url("../img/dinero.png") !important;
 }
+.botonDuplicar button, input.botonDuplicar {
+    background-image: url("../img/duplicar.png") !important;
+}
 
 .botonLoad button, input.botonLoad{
     background-image: url("../img/load.gif") !important;
@@ -1379,7 +1401,7 @@ input[disabled].botonLoad:hover, input:disabled.botonLoad:hover{
 .secundario.botonFirmar button, input.secundario.botonFirmar {
     background-image: url("../img/firmar-sec.png") !important;
 }
-.botonGuardar button, input.botonGuardar {
+.botonGuardar button, input.botonGuardar, boton.botonGuardar {
     background-image: url("../img/guardar.png") !important;
 }
 .secundario.botonGuardar button, input.secundario.botonGuardar {
@@ -1632,7 +1654,8 @@ input.guardar{
     background-image: url("../img/adelante.png");
     padding-left: 20px !important;
 }
-input.boton.principal {
+input.boton.principal,
+button.boton.principal{
     padding: 6px 20px 6px 40px;
     color: #FFF;
     text-transform: uppercase;
@@ -1648,7 +1671,8 @@ input.boton.principal {
 input.boton.principal:hover{
     background-color: #024777;
 }
-.panelBotones input.boton.principal{
+.panelBotones input.boton.principal, 
+.panelBotones button.boton.principal{
     margin: 0 0 0 15px;
 }
 input.boton.secundario{
@@ -1924,7 +1948,7 @@ span.border{
 }
 
 .ui-datatable-data tr:hover {
-    background-color: #ebf2f7 !important;
+    background-color: #ecf0f1 !important;
 }
 
 .ui-datatable-data .ui-dialog-buttonpane tr:hover {
@@ -2179,7 +2203,7 @@ div.ui-state-error, .ui-widget-content div.ui-state-error, .ui-widget-header div
     padding: 5px 0;
 }
 .rowHover .row:hover{
-    background-color: #ebf2f7;
+    background-color: #ecf0f1;
 }
 
 /*correo*/
@@ -2193,7 +2217,7 @@ div.ui-state-error, .ui-widget-content div.ui-state-error, .ui-widget-header div
 
 /*PIE*/
 #bottom {
-    background-color: #035e9f;
+    background-color: #495252;
     padding: 10px;
     color: #FFF;
     min-height: 170px;
@@ -2808,7 +2832,7 @@ yh.colAdquisicion{
 .anioProducto{
     float: left;
     line-height: 25px;
-    background: #ebf2f7;
+    background: #ecf0f1;
     padding: 0 60px;
     border-radius: 20px;
 }
@@ -2872,6 +2896,13 @@ yh.colAdquisicion{
 .panelOtrosDatos .indice3color .icePnlGrp{
     padding: 0;
     height: 19px;
+}
+.formulario.panelOtrosDatos li{
+    color:#808080;
+}
+
+.formulario.panelOtrosDatos ul{
+    padding-left: 17px;
 }
 /*REPORTE*/
 
@@ -3066,7 +3097,7 @@ td.tituloAcumulado{
     width: 168px;
 }
 .misTareasUltimasColumnas .avance, .misTareasUltimasColumnas .nuevoFin{
-    width: 78px;
+    /*    width: 78px;*/
     position: relative;
     display: inline-block;
 }
@@ -3097,7 +3128,7 @@ td.tituloAcumulado{
     background: black;
     position: relative;
     border-radius: 1px;
-/*    transform: rotate(45deg);*/
+    /*    transform: rotate(45deg);*/
 }
 
 .taskMilestone{
@@ -3172,6 +3203,11 @@ td.tituloAcumulado{
 .alinearDerecha{
     text-align: right;
 }
+
+.alinearIzquierda{
+    text-align: left;
+}
+
 .ui-datatable tbody.ui-datatable-data > tr > td.alinearDerecha, .ui-datatable th.alinearDerecha{
     text-align: right;
 }
@@ -3371,4 +3407,94 @@ td.tituloAcumulado{
 
 .ganttTaskEditor .formulario label[for="name"]{
     width: 75px;
+}
+.texto-foot a, .texto-foot a:hover{
+    color: #FFFFFF;
+}
+.texto-foot .iceOutRsr{
+    float: none;
+    margin-top: 30px;
+}
+.izq{
+    text-align: left;
+}
+.der{
+    text-align: right;
+}
+
+.botonLogin{
+    width: 100%;
+}
+
+.porcentajeDoc span.iceOutTxt{
+    margin-left: 6px;
+}
+
+.autocompletarCorreo input{
+    width: 280px !important;
+    max-width: 100% !important;
+}
+
+
+.datosMapa .iceOutLbl {
+    margin-right: 10px;
+}
+
+.datosMapa input {
+    width: 200px !important;
+}
+
+.exportarTodoContenido{
+    float: left;
+    margin-top: 3px;
+    margin-right: 10px;
+}
+
+
+#guardarBtn {
+    float: none;
+    background-image: url(../img/guardar.png) !important;
+}
+
+
+.iceOutConStat{
+    display: none;
+}
+
+
+.panelFileEntry div:nth-child(2) {
+    display: none !important;
+}
+
+.posicionMsgPopUp{
+    position: absolute;
+    visibility: visible;
+    top: 360.5px;
+    left: 620px;
+    z-index: 25002;
+}
+
+#closeEditor{
+    cursor: pointer;
+}
+
+.agregar-fuente-proc-cau {
+    margin: 15px 0;
+}
+
+.tabla-agregar-fuente-proc-cau {
+    margin-bottom: 15px;
+}
+
+.tabla-agregar-fuente-proc-cau input {
+    margin-right: 0;
+}
+
+.tabla-agregar-fuente-proc-cau .textoMedio {
+    width: 55% !important;
+}
+
+/** Determina el largo de los textarea dentro de los popups.  */
+form.formularioConTextarea textarea {
+    width: 100%;
 }

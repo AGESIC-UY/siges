@@ -20,25 +20,23 @@ import javax.persistence.PersistenceContext;
 @Startup
 public class StartupBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(StartupBean.class.getName());
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
+	@Inject
+	private OrganismoBean organismoBean;
 
-    @Inject
-    private DBActualizacionBean dBActualizacionBean;
+	/**
+	 * Creates a new instance of StartupBean
+	 */
+	public StartupBean() {
+	}
 
-    /**
-     * Creates a new instance of StartupBean
-     */
-    public StartupBean() {
-    }
+	@PostConstruct
+	public void init() {
+		logger.log(Level.INFO, "-------------> StartupBean init. START");
+		organismoBean.controlarDatosFaltantes();
+		logger.log(Level.INFO, "-------------> StartupBean init. END");
 
-    @PostConstruct
-    public void init() {
-        logger.log(Level.INFO, "-------------> StartupBean init.");
-        
-        dBActualizacionBean.actualizarDB();
-    }
+	}
 }

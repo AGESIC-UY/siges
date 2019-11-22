@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class PersonaValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PersonaValidacion.class.getName());
 
     public static boolean validar(Personas persona) throws BusinessException {
         logger.finest("Validar Personas.");

@@ -91,7 +91,7 @@
                     <ace:column headerText="#{labels.hHabilitado}"  >
                         <ice:selectBooleanCheckbox disabled="true" value="#{tipTel.propertyMap['tipTelHabilitado']}"/>
                     </ace:column>
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ice:panelGroup  title="#{labels.editar}">
                             <ace:pushButton styleClass="botonEditar iconoTabla"   action="#{tipoTelefonoMB.editar(tipTel.propertyMap['tipTelId'])}"
                                               rendered="#{menuMB.permisos['TEL_EDIT']}"/>

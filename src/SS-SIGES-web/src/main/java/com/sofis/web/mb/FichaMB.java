@@ -3,24 +3,29 @@ package com.sofis.web.mb;
 import com.icesoft.faces.context.Resource;
 import com.icesoft.faces.context.effects.JavascriptContext;
 import com.sofis.business.properties.ConfigApp;
-import com.sofis.business.properties.LabelsEJB;
 import com.sofis.business.utils.EntregablesUtils;
 import com.sofis.business.utils.NumbersUtils;
 import com.sofis.business.utils.OrganiIntProveUtils;
 import com.sofis.business.utils.ParticipantesUtils;
 import com.sofis.business.utils.ProductosUtils;
 import com.sofis.business.utils.TipoDocumentoInstanciaUtils;
+import com.sofis.business.validations.EntregablesValidacion;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.codigueras.EstadoPublicacionCodigos;
+import com.sofis.entities.codigueras.EstadosCodigos;
 import com.sofis.entities.codigueras.SsRolCodigos;
 import com.sofis.entities.codigueras.TiposMediaCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.constantes.ConstantesLogica;
+import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.AreasTags;
+import com.sofis.entities.data.Calidad;
 import com.sofis.entities.data.CategoriaProyectos;
+import com.sofis.entities.data.CausalCompra;
+import com.sofis.entities.data.CentroCosto;
+import com.sofis.entities.data.ComponenteProducto;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.entities.data.Cronogramas;
 import com.sofis.entities.data.Departamentos;
@@ -32,6 +37,8 @@ import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.EstadosPublicacion;
 import com.sofis.entities.data.Etapa;
 import com.sofis.entities.data.FuenteFinanciamiento;
+import com.sofis.entities.data.FuenteProcedimientoCompra;
+import com.sofis.entities.data.IdentificadorGrpErp;
 import com.sofis.entities.data.Interesados;
 import com.sofis.entities.data.LatlngProyectos;
 import com.sofis.entities.data.MediaProyectos;
@@ -44,6 +51,7 @@ import com.sofis.entities.data.Participantes;
 import com.sofis.entities.data.Personas;
 import com.sofis.entities.data.PlantillaCronograma;
 import com.sofis.entities.data.Presupuesto;
+import com.sofis.entities.data.ProcedimientoCompra;
 import com.sofis.entities.data.ProdMes;
 import com.sofis.entities.data.Productos;
 import com.sofis.entities.data.Programas;
@@ -56,13 +64,18 @@ import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.Riesgos;
 import com.sofis.entities.data.RolesInteresados;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.data.TipoAdquisicion;
 import com.sofis.entities.data.TipoDocumentoInstancia;
 import com.sofis.entities.data.TiposMedia;
 import com.sofis.entities.enums.TipoFichaEnum;
+import com.sofis.entities.enums.TipoRegistroCompra;
 import com.sofis.entities.tipos.AdqPagosTO;
 import com.sofis.entities.tipos.ComboItemTO;
 import com.sofis.entities.tipos.FichaTO;
+import com.sofis.entities.tipos.FiltroCentroCostoTO;
+import com.sofis.entities.tipos.FiltroIdentificadorGrpErpTO;
 import com.sofis.entities.tipos.FiltroObjectivoEstategicoTO;
+import com.sofis.entities.tipos.FiltroTipoAdquisicionTO;
 import com.sofis.entities.tipos.MonedaImporteResumenTO;
 import com.sofis.entities.tipos.MonedaImporteTO;
 import com.sofis.entities.tipos.TablaDinamicaPresupuestoTO;
@@ -80,12 +93,16 @@ import com.sofis.exceptions.GeneralException;
 import com.sofis.exceptions.TechnicalException;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.DatesUtils;
+import com.sofis.generico.utils.generalutils.EmailValidator;
 import com.sofis.generico.utils.generalutils.StringsUtils;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.AdquisicionDelegate;
 import com.sofis.web.delegates.AreaTematicaDelegate;
 import com.sofis.web.delegates.AreasDelegate;
 import com.sofis.web.delegates.CategoriaProyectosDelegate;
+import com.sofis.web.delegates.CausalCompraDelegate;
+import com.sofis.web.delegates.CentroCostoDelegate;
+import com.sofis.web.delegates.ComponenteProductoDelegate;
 import com.sofis.web.delegates.ConfiguracionDelegate;
 import com.sofis.web.delegates.CronogramaDelegate;
 import com.sofis.web.delegates.DevengadoDelegate;
@@ -94,7 +111,10 @@ import com.sofis.web.delegates.EntregablesDelegate;
 import com.sofis.web.delegates.EstadosDelegate;
 import com.sofis.web.delegates.EtapaDelegate;
 import com.sofis.web.delegates.FuenteFinanciamientoDelegate;
+import com.sofis.web.delegates.FuenteProcedimientoCompraDelegate;
+import com.sofis.web.delegates.IdentificadorGrpErpDelegate;
 import com.sofis.web.delegates.InteresadosDelegate;
+import com.sofis.web.delegates.LatlngDelegate;
 import com.sofis.web.delegates.MediaProyectosDelegate;
 import com.sofis.web.delegates.MonedaDelegate;
 import com.sofis.web.delegates.ObjetivoEstrategicoDelegate;
@@ -104,6 +124,7 @@ import com.sofis.web.delegates.ParticipantesDelegate;
 import com.sofis.web.delegates.PersonasDelegate;
 import com.sofis.web.delegates.PlantillaCronogramaDelegate;
 import com.sofis.web.delegates.PresupuestoDelegate;
+import com.sofis.web.delegates.ProcedimientoCompraDelegate;
 import com.sofis.web.delegates.ProductosDelegate;
 import com.sofis.web.delegates.ProgProyDelegate;
 import com.sofis.web.delegates.ProgramasDelegate;
@@ -115,22 +136,24 @@ import com.sofis.web.delegates.ProyectosDelegate;
 import com.sofis.web.delegates.RiesgosDelegate;
 import com.sofis.web.delegates.RolesInteresadosDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
+import com.sofis.web.delegates.TipoAdquisicionDelegate;
 import com.sofis.web.delegates.TipoDocumentoInstanciaDelegate;
 import com.sofis.web.delegates.TiposMediaDelegate;
 import com.sofis.web.enums.FieldAttributeEnum;
 import com.sofis.web.genericos.constantes.ConstantesNavegacion;
 import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.EntregablesCargaPorFomulario;
 import com.sofis.web.utils.FilaRiesgosLimite;
 import com.sofis.web.utils.JSFUtils;
 import com.sofis.web.utils.SofisCombo;
 import com.sofis.web.utils.SofisComboG;
 import com.sofis.web.utils.SofisResource;
 import com.sofis.web.utils.WebUtils;
-import java.awt.Label;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -142,6 +165,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,6 +180,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -163,6 +189,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.icefaces.ace.component.autocompleteentry.AutoCompleteEntry;
 import org.icefaces.ace.component.datatable.DataTable;
 import org.icefaces.ace.component.fileentry.FileEntry;
@@ -173,7 +203,6 @@ import org.icefaces.ace.json.JSONException;
 import org.icefaces.ace.json.JSONObject;
 import org.icefaces.ace.model.tree.NodeState;
 import org.icefaces.ace.model.tree.NodeStateMap;
-import org.icefaces.application.PushRenderer;
 import org.icefaces.util.JavaScriptRunner;
 
 /**
@@ -185,7 +214,7 @@ import org.icefaces.util.JavaScriptRunner;
 public class FichaMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaMB.class.getName());
     private static final String FICHA_MSG_ID = "fichaMsg";
     private static final String PROD_MSG_ID = "productoMsg";
     private static final String PROD_FORM_MSG_ID = "productosFormMsg";
@@ -197,6 +226,7 @@ public class FichaMB implements Serializable {
     private static String GROUP_NAME = "everyone";
     private static final String USUARIO_POPUP_MSG = "usuarioPopupMsg";
     static final String REPLANIFICACION_POPUP_MSG = "replanificacionPopupMsg";
+    private static String div = "";
 
     //Inject
     @ManagedProperty("#{inicioMB}")
@@ -241,6 +271,8 @@ public class FichaMB implements Serializable {
     @Inject
     private FuenteFinanciamientoDelegate fuenteFinanciamientoDelegate;
     @Inject
+    private ComponenteProductoDelegate componenteProductoDelegate;
+    @Inject
     private PresupuestoDelegate presupuestoDelegate;
     @Inject
     private AdquisicionDelegate adquisicionDelegate;
@@ -275,6 +307,22 @@ public class FichaMB implements Serializable {
     @Inject
     private ObjetivoEstrategicoDelegate objetivoEstrategicoDelegate;
 
+    @Inject
+    private ProcedimientoCompraDelegate procedimiComponenteProductoDelegate;
+    @Inject
+    private IdentificadorGrpErpDelegate identificadorGrpErpDelegate;
+
+    @Inject
+    private LatlngDelegate latlngDelegate;
+    @Inject
+    private TipoAdquisicionDelegate tipoAdquisicionDelegate;
+    @Inject
+    private CentroCostoDelegate centroCostoDelegate;
+    @Inject
+    private CausalCompraDelegate causalCompraDelegate;
+    @Inject
+    private FuenteProcedimientoCompraDelegate fuenteProcedimientoCompraDelegate;
+
     // Variables
     //indica si se accede desde el reporte de mis tareas.
     private boolean misTareas = false;
@@ -284,18 +332,21 @@ public class FichaMB implements Serializable {
     private Configuracion confRiesgoTiempoLimiteRojo = null;
     private FichaTO fichaTO;
     private String areaOrganizacion;
-    private HashMap<String, Boolean> permisosEdicion = new HashMap<>();
-    private List<Personas> autoCompletePersonasList = new ArrayList<>();
+    private HashMap<String, Boolean> permisosEdicion = new HashMap<String, Boolean>();
+    private List<Personas> autoCompletePersonasList = new ArrayList<Personas>();
     private boolean mostrarPanel = true;
     private List<Areas> listaAreas;
     private List<AreasTags> listaAreasTags;
     private List<Programas> listaProgramas;
     private List<Double> listaEstDoc;
     private SofisCombo listaOrganizacionCombo = new SofisCombo();
-    private List<MutableTreeNode> listaAreasTagsTreeNode = new ArrayList<>();
+    private SofisCombo listaProveedoresCombo = new SofisCombo();
+    private SofisCombo listaClienteCombo = new SofisCombo();
+    private SofisComboG<OrganiIntProve> listaProveedoresPagoCombo = new SofisComboG();
+    private List<MutableTreeNode> listaAreasTagsTreeNode = new ArrayList<MutableTreeNode>();
     private NodeStateMap areasRestringidasStateMap;
     private NodeStateMap areasTematicasStateMap = new NodeStateMap();
-    private List<MutableTreeNode> listaAreasTreeNode = new ArrayList<>();
+    private List<MutableTreeNode> listaAreasTreeNode = new ArrayList<MutableTreeNode>();
     // Rendered Popups
     private Boolean renderPopupLectura = false;
     private Boolean renderPopupAreaTematica = false;
@@ -307,17 +358,18 @@ public class FichaMB implements Serializable {
     private Boolean renderPopupOtrosDatos = false;
     private Boolean renderPopupMapaUbicacion = false;
     private Boolean renderPopupDocumentoHistorico = false;
+    private Boolean renderPopupLocalizacion = false;
     /**
      * Gestiona si se debe mostrar los panels ampliados para cada bloque
      * resumen. 0=Documentos, 1=Interesados, 2=Riesgos, 3=Cronograma,
      * 4=Presupuesto, 5=Productos, 6=Participantes, 7=Calidad, 8=Multimedia.
      */
-    private Boolean mostrar[] = {false, false, false, false, false, false, false, false, false};
+    private Boolean mostrar[] = {false, false, false, false, false, false, false, false, false, false};
     private Long selectedMostrar = null;
     private List emptyList = new ArrayList();
     private AutoCompleteEntry autoCompletePersonasComponent;
     private DataTable docsTable;
-    private List<FilaRiesgosLimite> limiteGestionRiesgos = new ArrayList<>();
+    private List<FilaRiesgosLimite> limiteGestionRiesgos = new ArrayList<FilaRiesgosLimite>();
     //-- Ficha 
     private SofisCombo listaAreasOrganismoCombo = new SofisCombo();
     private SofisCombo listaProgramasCombo = new SofisCombo();
@@ -328,8 +380,12 @@ public class FichaMB implements Serializable {
     private SofisCombo listaEtapaPubCombo = new SofisCombo();
     private List<Entregables> listaEntregables;
     private SofisCombo listaEntregablesCombo = new SofisCombo();
+    private SofisComboG<TipoRegistroCompra> listaTipoRegistroCompraCombo = new SofisComboG();
+    private SofisComboG<TipoAdquisicion> listaTipoAdquisicionCombo = new SofisComboG();
+    private SofisComboG<CentroCosto> listaCentroCostoCombo = new SofisComboG();
+    private SofisComboG<CausalCompra> listaCausalCompraCombo = new SofisComboG();
     private SofisComboG<Pagos> listaDocPagoCombo = new SofisComboG();
-    private SofisComboG<ObjetivoEstrategico> listaObjetivosEstrategicosCombo = new SofisComboG();
+    private SofisComboG<ObjetivoEstrategico> listaObjetivosEstrategicosCombo = new SofisComboG<>();
     private List<ProySitactHistorico> historicoSitAct;
     //-- Documentos
     private Documentos documento = new Documentos();
@@ -340,13 +396,13 @@ public class FichaMB implements Serializable {
     private List<TipoDocumentoInstancia> listaTipoDocInstResumen;
     private List<Documentos> listaDocumentosFrame;
     private List<TipoDocumentoInstancia> listaTipoDocumento;
-    private List<SelectItem> listaEstDocCombo = new ArrayList<>();
+    private List<SelectItem> listaEstDocCombo = new ArrayList<SelectItem>();
     private File upFileDoc;
     private Boolean docsFormDataExpanded = false;
     private Resource fileResource;
     private SofisCombo listaTipoDocCombo = new SofisCombo();
-    private Map<Integer, SofisResource> downloadFile = new HashMap<>();
-    private Map<Integer, SofisResource> docHistDownloadFile = new HashMap<>();
+    private Map<Integer, SofisResource> downloadFile = new HashMap<Integer, SofisResource>();
+    private Map<Integer, SofisResource> docHistDownloadFile = new HashMap<Integer, SofisResource>();
     //-- Interesados
     private Interesados interesado = new Interesados();
     private List<Interesados> listaInteresadosResumen;
@@ -377,6 +433,8 @@ public class FichaMB implements Serializable {
     private List<Entregables> listaEntregablesResumen;
     //-- Presupuesto
     private Boolean preFormDataExpanded = false;
+    private Integer largoMaximoIdAdquisicion = 0;
+
     //1-Presupuesto, 2-Adquisiocion, 3-Pagos
     private int formPresupuestoRendered = 0;
     private List<Moneda> listaMonedas;
@@ -385,6 +443,8 @@ public class FichaMB implements Serializable {
     private List<FuenteFinanciamiento> listaFuentes;
     private SofisCombo listaFuentesCombo = new SofisCombo();
     private SofisCombo listaFuentesPreCombo = new SofisCombo();
+    private List<ComponenteProducto> listaComponenteProducto;
+    private SofisCombo listaComponenteProductoCombo = new SofisCombo();
     private Presupuesto presupuesto = new Presupuesto();
     private Presupuesto preFicha = new Presupuesto();
     private Adquisicion adquisicion = new Adquisicion();
@@ -394,12 +454,23 @@ public class FichaMB implements Serializable {
     private List<Moneda> monedasPresupuesto;
     private List<TablaDinamicaPresupuestoTO> presupuestoResumen;
     private String fechaUltimaSitAct;
+
+    private List<ProcedimientoCompra> listaProcedimientoCompra;
+    private SofisCombo listaProcedimientoCompraCombo = new SofisCombo();
+    private List<IdentificadorGrpErp> listaIdentificadorGrpErp;
+    private SofisComboG<IdentificadorGrpErp> listaIdentificadorGrpErpCombo = new SofisComboG();
+
+    private List<SsUsuario> listaUsuariosAdqCompartida;
+    private List<SelectItem> listaUsuariosAdqCompartidaCombo;
+
+    private Integer ssUsuarioCompartidaId;
+
     // Devengado
-    private List<Adquisicion> listAdqDev = new ArrayList<>();
+    private List<Adquisicion> listAdqDev = new ArrayList<Adquisicion>();
     private Integer anioDev;
     private boolean editDev = false;
     private SofisPopupUI renderAdqDevPopup = new SofisPopupUI();
-    private List<Adquisicion> listAdq = new ArrayList<>();
+    private List<Adquisicion> listAdq = new ArrayList<Adquisicion>();
     private SofisCombo listAdqCombo = new SofisCombo();
     // Productos
     private boolean prodFormDataExpanded;
@@ -408,7 +479,7 @@ public class FichaMB implements Serializable {
     private List<Entregables> entregablesListProd;
     private List<Productos> productosList;
     private SofisCombo listaEntProdCombo = new SofisCombo();
-    private Map<Integer, Boolean> editarProdMap = new HashMap<>();
+    private Map<Integer, Boolean> editarProdMap = new HashMap<Integer, Boolean>();
     private List<Productos> listaProductosResumen;
     private Integer limiteAmarilloProd;
     private Integer limiteRojoProd;
@@ -422,11 +493,11 @@ public class FichaMB implements Serializable {
     private Date fechaComienzoProyCopia;
 
     //-- Participantes
-    private List<Participantes> listaParticipantes = new ArrayList<>();
-    private List<Participantes> listaParticipantesResumen = new ArrayList<>();
-    private List<MonedaImporteResumenTO> listaParticipanteResumenMonedaConsolidado = new ArrayList<>();
+    private List<Participantes> listaParticipantes = new ArrayList<Participantes>();
+    private List<Participantes> listaParticipantesResumen = new ArrayList<Participantes>();
+    private List<MonedaImporteResumenTO> listaParticipanteResumenMonedaConsolidado = new ArrayList<MonedaImporteResumenTO>();
     private Boolean partFormDataExpanded = false;
-    private List<SsUsuario> listaUsuarios = new ArrayList<>();
+    private List<SsUsuario> listaUsuarios = new ArrayList<SsUsuario>();
     // Plantilla Cro Popup
     private boolean renderPopupPlantillaCro = false;
     private PlantillaCronograma plantillaCro;
@@ -436,7 +507,7 @@ public class FichaMB implements Serializable {
     // Otros Datos
     private Boolean multiFormDataExpanded = false;
     private MediaProyectos mediaProy = new MediaProyectos();
-    private SofisComboG<TiposMedia> listaTipoMediaCombo = new SofisComboG<>();
+    private SofisComboG<TiposMedia> listaTipoMediaCombo = new SofisComboG<TiposMedia>();
     private TiposMedia tipoMediaSelected;
     private int[] indiceAvanceProd;
     private int[] indiceAvanceTiempo;
@@ -452,71 +523,71 @@ public class FichaMB implements Serializable {
     private SofisComboG<OrganiIntProve> listaInstEjecCombo;
     private SofisComboG<OrganiIntProve> listaContratistaCombo;
     private SofisComboG<Entregables> listaInicioProdCombo;
-    private List<String> listaCategoriaSecundaria = new ArrayList<>();
+    private List<String> listaCategoriaSecundaria = new ArrayList<String>();
+    
+    private int pagoEliminar;
+    private int adqEliminar;
+    private int pagoConfirmar;
 
     private List<SelectItem> metodologiaTipoDocumentoRequeridoDesde;
 
-    public FichaMB() {
-        logger.finest("-- CREA FichaMB");
-        productosList = new ArrayList<>();
-        anioDev = new GregorianCalendar().get(Calendar.YEAR);
+    // Localizacion
+    private Boolean localizacionFormDataExpanded = false;
+    private LatlngProyectos latlngProyectosAux;
+    private DataTable latLngProyListDataTable;
 
-    }
+    //Label Objetivo Estrategico
+    private Configuracion confLabelObjEst;
+    private String labelObjEstValue;
 
-    /**
-     * @return the listaObjetivosEstrategicosCombo
+    //parche: Borrar
+    private boolean primeraCargarGantt = true;
+    private boolean recienCreado = false;
+    private FuenteFinanciamiento fuenteFinanciamientoSelected;
+    private ProcedimientoCompra procedimientoCompraSelected;
+    /*
+        *   19-09-18 Nico: Voy a poner este Mapa para poder asociar los coordinadores
+        *           a los entregables, y así hacer el render de los botones
+        *           para editar y eliminar documentos.
      */
-    public SofisComboG<ObjetivoEstrategico> getListaObjetivosEstrategicosCombo() {
-        return listaObjetivosEstrategicosCombo;
-    }
+    private Map<Integer, Boolean> auxAsocCoordEnt = new HashMap<Integer, Boolean>();
 
-    /**
-     * @param listaObjetivosEstrategicosCombo the
-     * listaObjetivosEstrategicosCombo to set
+    /*
+        *   20-03-18 Nico: Agrego esta variable booleana para saber si voy a editar
+        *           un Pago o voy a darlo de alta.
      */
-    public void setListaObjetivosEstrategicosCombo(SofisComboG<ObjetivoEstrategico> listaObjetivosEstrategicosCombo) {
-        this.listaObjetivosEstrategicosCombo = listaObjetivosEstrategicosCombo;
-    }
+    boolean edicionPago;
 
-    /**
-     * @return the renderPopupDocumentoHistorico
+    /*
+        *   06-06-2018 Nico: Se agrega esta varibale para poder cargar el template desde el 
+        *        programa cuando se consulta el histórico desde la pantalla expandida y luego se le da guardar.
      */
-    public Boolean getRenderPopupDocumentoHistorico() {
-        return renderPopupDocumentoHistorico;
-    }
+    boolean alAbrirEnTodaLaPantalla = false;
 
-    /**
-     * @param renderPopupDocumentoHistorico the renderPopupDocumentoHistorico to
-     * set
+    /*
+        *       Se agrega esta variable para conocer la última replanificación al momento
+        *   de analizar el "fieldAttribute".
      */
-    public void setRenderPopupDocumentoHistorico(Boolean renderPopupDocumentoHistorico) {
-        this.renderPopupDocumentoHistorico = renderPopupDocumentoHistorico;
-    }
+    private ProyReplanificacion ultimaReplan;
 
-    /**
-     * @return the docHistDownloadFile
-     */
-    public Map<Integer, SofisResource> getDocHistDownloadFile() {
-        return docHistDownloadFile;
-    }
+    private Boolean devengadoMsgs;
 
-    /**
-     * @param docHistDownloadFile the docHistDownloadFile to set
-     */
-    public void setDocHistDownloadFile(Map<Integer, SofisResource> docHistDownloadFile) {
-        this.docHistDownloadFile = docHistDownloadFile;
-    }
+    private Boolean aprobPMOF;
 
-    private Object getFlashContext(String attName) {
-        return FacesContext.getCurrentInstance().getExternalContext().getFlash().get(attName);
-    }
+    private Boolean aprobReplanPMOF;
+    private Boolean gerentesAsignanAreasTematicas;
 
-    public void setAplicacionMB(AplicacionMB aplicacionMB) {
-        this.aplicacionMB = aplicacionMB;
-    }
-
+//	public FichaMB() {
+//	}
     @PostConstruct
     public void init() {
+
+        /*
+            *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+         */
+        logger.finest("-- CREA FichaMB");
+        productosList = new ArrayList<Productos>();
+        anioDev = new GregorianCalendar().get(Calendar.YEAR);
 
         metodologiaTipoDocumentoRequeridoDesde = new ArrayList<SelectItem>();
         getMetodologiaTipoDocumentoRequeridoDesde().add(new SelectItem(0, Labels.getValue("estado_NoExigido")));
@@ -527,6 +598,11 @@ public class FichaMB implements Serializable {
 
         //las banderas
         renderPopupLectura = false;
+
+        /*
+                *   20-03-18 Nico: Variables de algunos chequeos
+         */
+        edicionPago = false;
 
         inicioMB.cargarOrganismoSeleccionado();
 
@@ -540,11 +616,6 @@ public class FichaMB implements Serializable {
         limiteAmarilloProd = Integer.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PRODUCTO_INDICE_LIMITE_AMARILLO, orgPk).getCnfValor());
         limiteRojoProd = Integer.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PRODUCTO_INDICE_LIMITE_ROJO, orgPk).getCnfValor());
 
-        //Obtiene los Programas segun el Organismo seleccionado.
-        if (inicioMB.getOrganismoSeleccionado() != null) {
-            listaProgramas = programaDelegate.obtenerProgPorOrganismo(inicioMB.getOrganismoSeleccionado());
-        }
-
         //Se cargan los valores necesarios al fichaTO.
         fichaTO = new FichaTO();
 
@@ -552,29 +623,50 @@ public class FichaMB implements Serializable {
         interesado = new Interesados();
         interesado.setIntPersonaFk(new Personas());
         interesado.setIntRolintFk(new RolesInteresados());
-
-//		System.out.println("########################################################");
-//		System.out.println("# fichaMB: " + this);
-//		System.out.println("# fichaMB.viewId: " + FacesContext.getCurrentInstance().getViewRoot().getViewId());
-//		for (Map.Entry<String, Object> entry : FacesContext.getCurrentInstance().getViewRoot().getViewMap().entrySet()) {
-//			System.out.println("fichaMB.viewMap -> (" + entry.getKey() + " , " + entry.getValue() + " )");
-//		}
-//		System.out.println("# fichaMB.inicioMB: " + inicioMB);
         String programaProyectoId = (String) getFlashContext(ConstantesPresentacion.PROG_PROY_ID);
-//		System.out.println("# fichaMB.inicioMB: programaProyectoId (Flash): " + programaProyectoId);
         if (programaProyectoId == null) {
-            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-//			System.out.println("# fichaMB.inicioMB: getSession: " + request.getSession().getId());
-            programaProyectoId = (String) request.getSession().getAttribute(ConstantesPresentacion.PROG_PROY_ID);
-//			System.out.println("# fichaMB.inicioMB: getSession: " + request.getSession().getId());
-            request.getSession().removeAttribute(ConstantesPresentacion.PROG_PROY_ID);
-//			System.out.println("# fichaMB.inicioMB: programaProyectoId (Session): " + programaProyectoId);
+            /**
+             * Busco el parámetro en el request
+             */
+            HttpServletRequest request = (HttpServletRequest) FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getRequest();
+            programaProyectoId = (String) request
+                    .getParameter(ConstantesPresentacion.PROG_PROY_ID);
+
+            programaProyectoId = inicioMB.decryptParam(programaProyectoId);
+
+            if (programaProyectoId == null && request != null) {
+                programaProyectoId = (String) request.getSession().getAttribute(ConstantesPresentacion.PROG_PROY_ID);
+
+                programaProyectoId = inicioMB.decryptParam(programaProyectoId);
+            }
+
         }
-//		System.out.println("########################################################");
         cargarCombosFicha();
 
         if (!StringsUtils.isEmpty(programaProyectoId)) {
-            editarFichaAction(programaProyectoId);
+            try {
+                editarFichaAction(programaProyectoId);
+            } catch (Exception ex) {
+                try {
+                    logger.log(Level.SEVERE, "error al cargar la ficha con el id: " + programaProyectoId, ex);
+                    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+                    ec.redirect("/SS-SIGES-web/paginasPrivadas/paginaInicioCliente.jsf");
+                    return;
+                } catch (IOException ex1) {
+                    Logger.getLogger(FichaMB.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            }
+            if (!fichaTO.getActivo() || fichaTO.getOrgFk().getOrgPk() != inicioMB.getOrganismo().getOrgPk()) {
+                try {
+                    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+                    ec.redirect("/SS-SIGES-web/paginasPrivadas/paginaInicioCliente.jsf");
+                } catch (IOException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
 
         } else {
             SsUsuario usuario = inicioMB.getUsuario();
@@ -583,8 +675,10 @@ public class FichaMB implements Serializable {
             fichaTO.setPeso(riesgosCantAltos);
             listaGerenteCombo.setSelected(usuario.getUsuId());
 
-            LatlngProyectos latLng = new LatlngProyectos();
-            fichaTO.setLatlngProy(latLng);
+            /**
+             * 12-10-17 Bruno: agregadas las localizaciones
+             */
+            fichaTO.setLatLngProyList(new ArrayList<LatlngProyectos>());
 
             Areas usuArea = usuario.getUsuArea(org.getOrgPk());
             if (usuArea != null && usuArea.getAreaHabilitada()) {
@@ -602,13 +696,62 @@ public class FichaMB implements Serializable {
             }
         }
 
+        // Se toma la configuración para ingresar el valor de la etiqueta de "Objetivo Estratégico"
+        confLabelObjEst = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.LABEL_OBJ_ESTRE, inicioMB.getOrganismo().getOrgPk());
+
+        if (confLabelObjEst == null) {
+            labelObjEstValue = "Problema";
+        } else {
+            labelObjEstValue = confLabelObjEst.getCnfValor();
+        }
+
         //listaUsuarios = ssUsuarioDelegate.busquedaUsuFiltro(inicioMB.getOrganismo(), null, null, null, null, true);
         listaUsuarios = aplicacionMB.obtenerTodosPorOrganismoActivos(orgPk);
+
+        /*
+                *   Se agrega esto para conocer la última replanificación
+         */
+        if (fichaTO.getFichaFk() != null) {
+            ultimaReplan = proyReplanificacionDelegate.obtenerUltimaSolicitud(fichaTO.getFichaFk());
+        } else {
+            ultimaReplan = null;
+        }
 
         confAdjPre = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.ADJUNTO_MODIFICA_PRESUPUESTO, inicioMB.getOrganismo().getOrgPk());
         frameMax = false;
         inicioMB.setContainerMax(false);
+        cargarAreasTematicas();
         cerrarFormCollapsable();
+
+        devengadoMsgs = false;
+
+        /*
+                *       Se chequea la configuración para conocer si el PMOF es el encargado de aprobar las solicitudes de cambio de fase.
+                *   Se hace acá para no sobrecargar la operación "fieldAttribute".
+         */
+        Configuracion cnfAprobPMOF = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_PMOF, orgPk);
+
+        if (cnfAprobPMOF != null && cnfAprobPMOF.getCnfValor().equals("true")) {
+            aprobPMOF = Boolean.TRUE;
+        } else {
+            aprobPMOF = Boolean.FALSE;
+        }
+
+        Configuracion cnfAprobReplanPMOF = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_REPLANIFICACION_PMOF, orgPk);
+
+        if (cnfAprobReplanPMOF != null && cnfAprobReplanPMOF.getCnfValor().equals("true")) {
+            aprobReplanPMOF = Boolean.TRUE;
+        } else {
+            aprobReplanPMOF = Boolean.FALSE;
+        }
+
+        this.checkDatosEntregablesCronograma();
+
+        gerentesAsignanAreasTematicas = configuracionDelegate.obtenerCnfValorPorCodigo(
+            ConfiguracionCodigos.GERENTES_ASIGNAN_AREAS_TEMATICAS, orgPk).equals("true");
+        
+        largoMaximoIdAdquisicion = Integer
+            .valueOf(configuracionDelegate.obtenerCnfValorPorCodigo(ConfiguracionCodigos.LARGO_MAXIMO_ID_ADQUISICION, inicioMB.getOrganismo().getOrgPk()));
     }
 
     @PreDestroy
@@ -635,9 +778,10 @@ public class FichaMB implements Serializable {
             }
         }
 
-        listaProgramas = programaDelegate.obtenerProgIniciadoPorOrg(orgPk);
+//		listaProgramas = programaDelegate.obtenerProgIniciadoPorOrg(orgPk);
+        listaProgramas = programaDelegate.obtenerProgComboPorOrg(orgPk, true);
         if (listaProgramas != null && !listaProgramas.isEmpty()) {
-            listaProgramasCombo = new SofisCombo((List) listaProgramas, "progNombre");
+            listaProgramasCombo = new SofisCombo((List) listaProgramas, "nombreComboFicha");
             listaProgramasCombo.addEmptyItem(Labels.getValue("comboProgramasFichaEmpty"));
         }
 
@@ -681,10 +825,20 @@ public class FichaMB implements Serializable {
             listaMonedaPreCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
         }
 
-        listaFuentes = fuenteFinanciamientoDelegate.obtenerFuentesPorOrgId(orgPk);
+        Map<String, Object> filtroFuentes = new HashMap<>();
+        filtroFuentes.put("habilitada", true);
+
+        listaFuentes = fuenteFinanciamientoDelegate.busquedaFuenteFiltro(orgPk, filtroFuentes, "fueNombre", 1);
+
         if (listaFuentes != null && !listaFuentes.isEmpty()) {
             listaFuentesPreCombo = new SofisCombo((List) listaFuentes, "fueNombre");
             listaFuentesPreCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        listaComponenteProducto = componenteProductoDelegate.obtenerComponentesProductosPorOrgId(orgPk);
+        if (listaComponenteProducto != null && !listaComponenteProducto.isEmpty()) {
+            listaComponenteProductoCombo = new SofisCombo((List) listaComponenteProducto, "comNombre");
+            listaComponenteProductoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
         }
 
         List<Etapa> listEtapas = etapaDelegate.obtenerEtapaPorOrgId(orgPk);
@@ -695,10 +849,79 @@ public class FichaMB implements Serializable {
 
         FiltroObjectivoEstategicoTO filtroObjEstTO = new FiltroObjectivoEstategicoTO();
         filtroObjEstTO.setOrganismo(inicioMB.getOrganismo());
+        filtroObjEstTO.setHabilitado(true);
+
         List<ObjetivoEstrategico> listaObjetivosEstrategicos = objetivoEstrategicoDelegate.obtenerPorFiltro(filtroObjEstTO);
         if (listaObjetivosEstrategicos != null) {
             listaObjetivosEstrategicosCombo = new SofisComboG<>(listaObjetivosEstrategicos, "objEstNombre");
             listaObjetivosEstrategicosCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        //Carga los procedimientos de compra
+        listaProcedimientoCompra = procedimiComponenteProductoDelegate.obtenerProcedimientosComprasPorOrgId(orgPk);
+        if (listaProcedimientoCompra != null && !listaProcedimientoCompra.isEmpty()) {
+            listaProcedimientoCompraCombo = new SofisCombo((List) listaProcedimientoCompra, "procCompNombre");
+            listaProcedimientoCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        //Carga los identificadores GRP/ERP
+        final FiltroIdentificadorGrpErpTO filtroIdentificadorGrpErpTO = new FiltroIdentificadorGrpErpTO();
+        filtroIdentificadorGrpErpTO.setOrganismo(this.getInicioMB().getOrganismo());
+        filtroIdentificadorGrpErpTO.setHabilitado(true);
+        listaIdentificadorGrpErp = identificadorGrpErpDelegate.obtenerPorFiltro(filtroIdentificadorGrpErpTO);
+        if (listaIdentificadorGrpErp != null && !listaIdentificadorGrpErp.isEmpty()) {
+            listaIdentificadorGrpErpCombo = new SofisComboG((List) listaIdentificadorGrpErp, "idGrpErpNombre");
+            listaIdentificadorGrpErpCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        //la lista de usuarios que no son ni Editores ni Usuarios Externos
+        listaUsuariosAdqCompartida = aplicacionMB.obtenerUsuariosPorRolActivos(new String[]{SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL, SsRolCodigos.PMO_FEDERADA, SsRolCodigos.DIRECTOR, SsRolCodigos.USUARIO_COMUN}, orgPk);
+        if (listaUsuariosAdqCompartida != null && !listaUsuariosAdqCompartida.isEmpty()) {
+            listaUsuariosAdqCompartidaCombo = new ArrayList<>();
+            for (SsUsuario u : listaUsuariosAdqCompartida) {
+                Areas a = u.getUsuArea(orgPk);
+                listaUsuariosAdqCompartidaCombo.add(new SelectItem(u.hashCode(), (a != null ? a.getAreaNombre() : "SIN ÁREA") + " - " + u.getUsuNombreApellido()));
+            }
+            Collections.sort(listaUsuariosAdqCompartidaCombo, AplicacionMB.COMBO_COMPARTOR);
+            listaUsuariosAdqCompartidaCombo.add(0, new SelectItem(-1, Labels.getValue("comboEmptyItem")));
+        }
+
+        List<TipoRegistroCompra> tipoRegistroCompra = Arrays.asList(TipoRegistroCompra.values());
+        listaTipoRegistroCompraCombo = new SofisComboG(tipoRegistroCompra, "text");
+        listaTipoRegistroCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        listaTipoRegistroCompraCombo.setSelectedT(TipoRegistroCompra.COMPRA_ORIGINAL); // default COMPRA_ORIGINAL
+
+        // cargar lista tipo adquisiciones
+        FiltroTipoAdquisicionTO filtroAdquisicion = new FiltroTipoAdquisicionTO();
+        filtroAdquisicion.setHabilitado(Boolean.TRUE);
+        filtroAdquisicion.setOrganismo(this.getInicioMB().getOrganismo());
+        List<TipoAdquisicion> tipoAdquisiciones = tipoAdquisicionDelegate.obtenerPorFiltro(filtroAdquisicion);
+        listaTipoAdquisicionCombo = new SofisComboG<>(tipoAdquisiciones, "tipAdqNombre");
+        listaTipoAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+
+        // cargo lista centro costo
+        FiltroCentroCostoTO filtroCentroCosto = new FiltroCentroCostoTO();
+        filtroCentroCosto.setHabilitado(Boolean.TRUE);
+        filtroCentroCosto.setOrganismo(this.getInicioMB().getOrganismo());
+        List<CentroCosto> centros = centroCostoDelegate.obtenerPorFiltro(filtroCentroCosto);
+        listaCentroCostoCombo = new SofisComboG<>(centros, "cenCosNombre");
+        listaCentroCostoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+    }
+    
+    private void actualizarComboCausales() {
+        // Cargo lista vacía
+        List<CausalCompra> causales = new ArrayList<>();
+        listaCausalCompraCombo = new SofisComboG<>(causales, "cauComNombre");
+        listaCausalCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+
+        // obtengo causales en base a la tabla N-N, si tiene fuente y procedimiento de compra
+        if (fuenteFinanciamientoSelected != null && procedimientoCompraSelected != null) {
+            FuenteProcedimientoCompra fuenteProcedimientoCompra = fuenteProcedimientoCompraDelegate.obtenerPorFuenteProcedimientoCompra(fuenteFinanciamientoSelected, procedimientoCompraSelected);
+            if (fuenteProcedimientoCompra != null) {
+                causales = fuenteProcedimientoCompra.getFueProComCausalesCompra();
+                listaCausalCompraCombo = new SofisComboG<>(causales, "cauComNombre");
+                listaCausalCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            }
         }
 
     }
@@ -891,7 +1114,7 @@ public class FichaMB implements Serializable {
     public void cargarResumenPresupuesto() {
         if (fichaTO.getPreFk() != null) {
             monedasPresupuesto = presupuestoDelegate.obtenerMonedasPresupuesto(fichaTO.getPreFk().getPrePk(), null);
-            presupuestoResumen = new ArrayList<>();
+            presupuestoResumen = new ArrayList<TablaDinamicaPresupuestoTO>();
 
             TablaDinamicaPresupuestoTO t = new TablaDinamicaPresupuestoTO();
             t.setTitle(Labels.getValue("presupuesto_resumen_total"));
@@ -923,18 +1146,19 @@ public class FichaMB implements Serializable {
 
     public void cargarResumenParticipantes() {
         listaParticipantes = participantesDelegate.obtenerParticipantesConHoraYGasto(fichaTO.getFichaFk());
-        listaParticipanteResumenMonedaConsolidado = new ArrayList();
 
+        // Revisar esta-
+        //listaParticipanteResumenMonedaConsolidado = new ArrayList<MonedaImporteResumenTO>();
         double listaParticipanteHorasPendientes = 0d;
         double listaParticipanteHorasAprobadas = 0d;
 
-        Map<Moneda, MonedaImporteResumenTO> monImpor = new HashMap<>();
+        Map<Moneda, MonedaImporteResumenTO> monImpor = new HashMap<Moneda, MonedaImporteResumenTO>();
 
         int count = 0;
         int size = 8;
         listaParticipantesResumen.clear();
         if (CollectionsUtils.isNotEmpty(listaParticipantes)) {
-            List<Participantes> listaPart = new ArrayList<>(listaParticipantes);
+            List<Participantes> listaPart = new ArrayList<Participantes>(listaParticipantes);
             listaPart = ParticipantesUtils.sortByHorasPendientes(listaPart, false);
             for (Participantes part : listaPart) {
                 if (count >= size) {
@@ -973,7 +1197,7 @@ public class FichaMB implements Serializable {
 
                 if (monImpor != null) {
                     Set<Moneda> keys = monImpor.keySet();
-                    Map<Moneda, MonedaImporteResumenTO> monImporDatos = new HashMap<>();
+                    Map<Moneda, MonedaImporteResumenTO> monImporDatos = new HashMap<Moneda, MonedaImporteResumenTO>();
                     for (Moneda key : keys) {
                         MonedaImporteResumenTO mir = monImpor.get(key);
                         if (!mir.getImporteApro().equals(0D) && !mir.getImportePend().equals(0D)) {
@@ -983,7 +1207,7 @@ public class FichaMB implements Serializable {
                     monImpor = monImporDatos;
                 }
 
-                listaParticipanteResumenMonedaConsolidado = new ArrayList();
+                listaParticipanteResumenMonedaConsolidado = new ArrayList<MonedaImporteResumenTO>();
                 listaParticipanteResumenMonedaConsolidado.add(new MonedaImporteResumenTO(null, listaParticipanteHorasAprobadas, listaParticipanteHorasPendientes));
                 listaParticipanteResumenMonedaConsolidado.addAll(monImpor.values());
             }
@@ -1071,7 +1295,15 @@ public class FichaMB implements Serializable {
             }
         } catch (GeneralException ge) {
             logger.log(Level.SEVERE, null, ge);
-            JSFUtils.agregarMsg(FICHA_MSG_ID, "error_ficha_actualizar", null);
+
+            /*
+                       *  18-06-2018 Inspección de código.
+             */
+            //JSFUtils.agregarMsg(FICHA_MSG_ID, "error_ficha_actualizar", null);
+            for (String iterStr : ge.getErrores()) {
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
         }
     }
 
@@ -1081,6 +1313,16 @@ public class FichaMB implements Serializable {
      * @return
      */
     public String guardarFichaAction() {
+        /*
+                *   25-04-2018   Nico: Agrego el control para cambiar el valor de la variable "recienCreado", porque cuando se creaba un proyeto nuevo y se 
+                *           ingresaba un cronograma desde un plantilla en el mismo momento que se crea, el gantt se mostraba mal.
+         */
+        if (fichaTO.getFichaFk() == null) {
+            recienCreado = true;
+        }
+
+        Programas prog = fichaTO.getProgFk();
+
         setCombosToFichaTO();
         setAreasRestringidasToFichaTO();
         setAreasTematicasToFichaTO();
@@ -1090,22 +1332,42 @@ public class FichaMB implements Serializable {
         Object obj = null;
 
         try {
-
+                      
             fichaTO.setFechaAct(obtenerFechaAct());
-
+            FichaValidacion.validarTexto(fichaTO);      
+            
             FichaValidacion.validar(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
             obj = progProyDelegate.guardarProgProy(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
             if (obj != null) {
                 JSFUtils.agregarMsg(FICHA_MSG_ID, "info_ficha_guardada", null);
             }
 
+            if (prog != null && prog != fichaTO.getProgFk()) {
+                programaDelegate.actualizarProgramaPorProyectos(prog.getProgPk(), inicioMB.getUsuario(), "web");
+            }
+
         } catch (BusinessException | TechnicalException w) {
-            logger.log(Level.SEVERE, w.getMessage(), w);
-            JSFUtils.agregarMsgs(FICHA_MSG_ID, w.getErrores());
+            logger.log(Level.SEVERE, Labels.getMessage(w), w);
+
+            /*
+                         *  18-06-2018 Inspección de código.
+             */
+            //JSFUtils.agregarMsgs(FICHA_MSG_ID, w.getErrores());
+            for (String iterStr : w.getErrores()) {
+                String mensaje = Labels.getValue(iterStr).startsWith("?") ? iterStr : Labels.getValue(iterStr);
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, mensaje, null);
+            }
+
             return null;
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
-            JSFUtils.agregarMsg(FICHA_MSG_ID, "error_ficha_guardar", null);
+
+            /*
+                         *  18-06-2018 Inspección de código.
+             */
+            //JSFUtils.agregarMsg(FICHA_MSG_ID, "error_ficha_guardar", null);
+            JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue("error_ficha_guardar"), null);
+
             return null;
         }
 
@@ -1122,9 +1384,6 @@ public class FichaMB implements Serializable {
     }
 
     public String eliminarFichaAction(FichaTO fichaTO) {
-        JSFUtils.agregarMsg(FICHA_MSG_ID, "warn_ficha_eliminando", null);
-        PushRenderer.addCurrentView(GROUP_NAME);
-        PushRenderer.render(GROUP_NAME);
 
         try {
             Object progProy = progProyDelegate.eliminarProgProy(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
@@ -1142,7 +1401,15 @@ public class FichaMB implements Serializable {
 
         } catch (GeneralException ge) {
             logger.log(Level.SEVERE, null, ge);
-            JSFUtils.agregarMsg(FICHA_MSG_ID, ge.getMessage(), null);
+            /*
+                        *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsg(FICHA_MSG_ID, ge.getMessage(), null);
+            for (String iterStr : ge.getErrores()) {
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
         }
 
         return null;
@@ -1155,6 +1422,8 @@ public class FichaMB implements Serializable {
                     replanificacion = new ProyReplanificacion();
                     replanificacion.setProyectoFk(new Proyectos(fichaTO.getFichaFk()));
                     replanificacion.setProyreplanActivo(true);
+                    replanificacion.setProyreplanHistorial(Boolean.TRUE);
+
                     renderPopupReplanificacion = true;
                 } else if (inicioMB.getUsuario().isUsuarioPMOT(inicioMB.getOrganismo().getOrgPk())) {
                     if (fichaTO.getEstadoPendiente() != null
@@ -1165,10 +1434,17 @@ public class FichaMB implements Serializable {
                         replanificacion = new ProyReplanificacion();
                         replanificacion.setProyectoFk(new Proyectos(fichaTO.getFichaFk()));
                         replanificacion.setProyreplanActivo(true);
+                        replanificacion.setProyreplanHistorial(Boolean.TRUE);
+
                         renderPopupReplanificacion = true;
                     }
                 } else {
-                    JSFUtils.agregarMsg(FICHA_MSG_ID, "error_modificar_estado", null);
+                    /*
+                                        *  18-06-2018 Inspección de código.
+                     */
+
+                    //JSFUtils.agregarMsg(FICHA_MSG_ID, "error_modificar_estado", null);
+                    JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue("error_modificar_estado"), null);
                 }
             } else {
                 this.guardarRetrocederEstado();
@@ -1179,25 +1455,38 @@ public class FichaMB implements Serializable {
 
     public String guardarRetrocederEstado() {
         try {
-
-            if (replanificacion != null) {
-                replanificacion.setProyreplanHistorial(replanificacion.isProyreplanGenerarLineaBase() && replanificacion.getProyreplanHistorial());
-                replanificacion.setProyreplanDesc(replanificacion.getProyreplanHistorial() ? replanificacion.getProyreplanDesc() : "");
-            }
-
-            if (replanificacion != null && replanificacion.getProyreplanHistorial() && StringsUtils.isEmpty(replanificacion.getProyreplanDesc())) {
-                JSFUtils.agregarMsg(REPLANIFICACION_POPUP_MSG, "error_ficha_msg_retroceder_descripcion_obligatorio", null);
+            if (replanificacion != null && StringsUtils.isEmpty(replanificacion.getProyreplanDesc())) {
+                /*
+                            *  18-06-2018 Inspección de código.
+                 */
+                JSFUtils.agregarMsgError(REPLANIFICACION_POPUP_MSG, Labels.getValue("error_ficha_msg_retroceder_descripcion_obligatorio"), null);
                 return null;
-//               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("errrr","sdasd"));
             } else {
+                if (fichaTO.getEstadoPendiente() != null
+                        && fichaTO.getEstadoPendiente().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+                    replanificacion.setProyreplanActivo(Boolean.FALSE);
+                }
+
                 progProyDelegate.guardarRetrocederEstado(fichaTO.getFichaFk(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk(), replanificacion);
                 renderPopupReplanificacion = false;
                 JSFUtils.agregarMsg(FICHA_MSG_ID, "ficha_msg_retroceder_estado", null);
-//                JSFUtils.agregarMsgError("ficha_msg_retroceder_estado");
+
+                /*
+                            *   Actualizo la última replanificación para consultar en el "fieldAttribute"
+                 */
+                ultimaReplan = proyReplanificacionDelegate.obtenerUltimaSolicitud(fichaTO.getFichaFk());
             }
         } catch (GeneralException ge) {
             logger.log(Level.SEVERE, null, ge);
-            JSFUtils.agregarMsgs(REPLANIFICACION_POPUP_MSG, ge.getErrores());
+            /*
+                        *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs(REPLANIFICACION_POPUP_MSG, ge.getErrores());
+            for (String iterStr : ge.getErrores()) {
+                JSFUtils.agregarMsgError(REPLANIFICACION_POPUP_MSG, Labels.getValue(iterStr), null);
+            }
+
         }
 
         actualizarFichaTO(null);
@@ -1208,7 +1497,6 @@ public class FichaMB implements Serializable {
     }
 
     public String cancelarReplanificacion() {
-
         try {
 
             if (replanificacion.getProyreplanPk() != null) {
@@ -1219,7 +1507,13 @@ public class FichaMB implements Serializable {
             renderPopupReplanificacion = false;
 
         } catch (GeneralException ge) {
-            JSFUtils.agregarMsgs(FICHA_MSG_ID, ge.getErrores());
+            /*
+                *  18-06-2018 Inspección de código.
+             */
+            for (String iterStr : ge.getErrores()) {
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
         }
 
         actualizarFichaTO(null);
@@ -1272,16 +1566,28 @@ public class FichaMB implements Serializable {
             cerrarFormCollapsable();
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
-            JSFUtils.agregarMsgs(FICHA_MSG_ID, ex.getErrores());
+            /*
+                        *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs(FICHA_MSG_ID, ex.getErrores());
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
-            JSFUtils.agregarMsg(FICHA_MSG_ID, "error_aprobacion_fase", null);
+            /*
+                        *  18-06-2018 Inspección de código.
+             */
+            //JSFUtils.agregarMsg(FICHA_MSG_ID, "error_aprobacion_fase", null);
+            JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue("error_aprobacion_fase"), null);
         }
     }
 
     private void removerDocumentosDummy(FichaTO fichaTO) {
         if (fichaTO != null && fichaTO.getDocumentos() != null && !fichaTO.getDocumentos().isEmpty()) {
-            List<Documentos> listDocs = new ArrayList<>();
+            List<Documentos> listDocs = new ArrayList<Documentos>();
             for (Documentos doc : fichaTO.getDocumentos()) {
                 if (!doc.getDocsPk().equals(-1)
                         || !doc.getDocsNombre().trim().equals(Labels.getValue("ficha_doc_pendiente").trim())) {
@@ -1331,11 +1637,17 @@ public class FichaMB implements Serializable {
         if (tipoFichaEditar.isPrograma()) {
             Programas prog = programaDelegate.obtenerProgPorId(idEditar);
             logger.log(Level.FINEST, "-- PROGRAMA ({0} - {1}) --", new Object[]{idEditar, prog});
+            if (prog == null) {
+                throw new BusinessException("No se a encontrado el programa " + programaProyectoId);
+            }
             programaToFichaTO(prog);
 
         } else if (tipoFichaEditar.isProyecto()) {
             Proyectos proy = proyectoDelegate.obtenerProyPorId(idEditar);
             logger.log(Level.FINEST, "-- PROYECTO ({0} - {1}) --", new Object[]{idEditar, proy});
+            if (proy == null) {
+                throw new BusinessException("No se a encontrado el proyecto " + programaProyectoId);
+            }
             proyectoToFichaTO(proy);
         }
 
@@ -1344,20 +1656,24 @@ public class FichaMB implements Serializable {
             addItemSofisCombo(listaGerenteCombo, fichaTO.getUsrGerenteFk(), fichaTO.getUsrGerenteFk().getUsuId(), true);
         }
         //adjunto
+
         if (fichaTO.getUsrAdjuntoFk() != null) {
             addItemSofisCombo(listaAdjuntoCombo, fichaTO.getUsrAdjuntoFk(), fichaTO.getUsrAdjuntoFk().getUsuId(), true);
         }
         //sponsor
+
         if (fichaTO.getUsrSponsorFk() != null) {
             addItemSofisCombo(listaSponsorCombo, fichaTO.getUsrSponsorFk(), fichaTO.getUsrSponsorFk().getUsuId(), true);
         }
         //pmof
+
         if (fichaTO.getUsrPmofedFk() != null) {
             addItemSofisCombo(listaPmoFederadaCombo, fichaTO.getUsrPmofedFk(), fichaTO.getUsrPmofedFk().getUsuId(), true);
         }
         //objetivoEstrategico
+
         if (fichaTO.getObjetivoEstrategico() != null) {
-            listaObjetivosEstrategicosCombo.setSelectedT(fichaTO.getObjetivoEstrategico());
+            addItemSofisCombo(listaObjetivosEstrategicosCombo, fichaTO.getObjetivoEstrategico(), fichaTO.getObjetivoEstrategico().getObjEstPk(), true);
         }
 
         cargarResumenes();
@@ -1376,8 +1692,8 @@ public class FichaMB implements Serializable {
 
     /**
      * Dado el SofisCombo controla que el valor exista, si no agrega el objeto
-     * en el combo. Se usa cuando un usuario está dado de baja pero debe de
-     * seguir apareciendo en el combo si es el que está seleccionado.
+     * en el combo. Se usa cuando una entidad está dada de baja pero debe de
+     * seguir apareciendo en el combo si es la que está seleccionada.
      *
      * @param listaCombo
      * @param objectToAdd
@@ -1395,13 +1711,11 @@ public class FichaMB implements Serializable {
             }
             if (!existe) {
 
-                List<SsUsuario> listaGerente = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismoSeleccionado());//ssUsuarioDelegate.obtenerTodosPorOrganismo(orgPk);
-                System.out.println("size AN:" + listaGerente.size());
+                //List<SsUsuario> listaGerente = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismoSeleccionado());//ssUsuarioDelegate.obtenerTodosPorOrganismo(orgPk);
 
                 listaCombo.add(objectToAdd);
 
-                listaGerente = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismoSeleccionado());//ssUsuarioDelegate.obtenerTodosPorOrganismo(orgPk);
-                System.out.println("size DE:" + listaGerente.size() + ":" + listaCombo.getItems().size());
+                //listaGerente = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismoSeleccionado());//ssUsuarioDelegate.obtenerTodosPorOrganismo(orgPk);
 
                 List<SelectItem> list = listaCombo.getItems();
 
@@ -1425,6 +1739,39 @@ public class FichaMB implements Serializable {
         }
     }
 
+    private <T> void addItemSofisCombo(SofisComboG<T> listaCombo, T objectToAdd, Integer value, boolean asc) {
+
+        List<SelectItem> items = listaCombo.getItems();
+        boolean existe = false;
+        for (SelectItem item : items) {
+            if (((Integer) item.getValue()).equals(value)) {
+                existe = true;
+            }
+        }
+        if (!existe) {
+            listaCombo.add(objectToAdd);
+
+            List<SelectItem> list = listaCombo.getItems();
+
+            if (CollectionsUtils.isNotEmpty(list)) {
+                final boolean ascOrder = asc;
+                Collections.sort(list, new Comparator<SelectItem>() {
+                    @Override
+                    public int compare(SelectItem item1, SelectItem item2) {
+                        if (item1 != null && item1.getLabel() != null && item2 != null && item2.getLabel() != null) {
+                            if (ascOrder) {
+                                return item1.getLabel().toUpperCase().compareTo(item2.getLabel().toUpperCase());
+                            } else {
+                                return item2.getLabel().toUpperCase().compareTo(item1.getLabel().toUpperCase());
+                            }
+                        }
+                        return 0;
+                    }
+                });
+            }
+        }
+    }
+
     public String solCambioEstadoStr() {
         if (fichaTO.getEstadoPendiente() != null) {
             return String.format(Labels.getValue("ficha_msg_cambio_estado"), estadosDelegate.estadoStr(fichaTO.getEstadoPendiente().getEstPk()));
@@ -1437,7 +1784,7 @@ public class FichaMB implements Serializable {
             renderPopupLectura = true;
 
             if (listaAreasTreeNode == null || listaAreasTreeNode.isEmpty()) {
-                listaAreasTreeNode = new ArrayList<>();
+                listaAreasTreeNode = new ArrayList<MutableTreeNode>();
 
                 //listaAreas = areasDelegate.obtenerAreasPorOrganismo(inicioMB.getOrganismo().getOrgPk());
                 listaAreas = aplicacionMB.obtenerAreasPorOrganismo(inicioMB.getOrganismo().getOrgPk());
@@ -1458,20 +1805,23 @@ public class FichaMB implements Serializable {
         logger.fine("areaTematicaPopup.");
         try {
             renderPopupAreaTematica = true;
-
-            listaAreasTagsTreeNode = new ArrayList<>();
-
-            listaAreasTags = areaTematicaDelegate.obtenerAreasTematicasPorOrganizacion(inicioMB.getOrganismo().getOrgPk());
-            if (listaAreasTags != null && !listaAreasTags.isEmpty()) {
-                Map<String, Object> mapAreasTag = WebUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode, fichaTO.getAreasTematicas(), areasTematicasStateMap);
-                listaAreasTagsTreeNode = (List<MutableTreeNode>) mapAreasTag.get(WebUtils.LISTA_AREAS_TAG_TREE_NODE);
-                areasTematicasStateMap = (NodeStateMap) mapAreasTag.get(WebUtils.AREAS_TEMATICAS_STATE_MAP);
-
-            }
+            cargarAreasTematicas();
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    private void cargarAreasTematicas() {
+        listaAreasTagsTreeNode = new ArrayList<MutableTreeNode>();
+
+        listaAreasTags = areaTematicaDelegate.obtenerAreasTematicasPorOrganizacion(inicioMB.getOrganismo().getOrgPk());
+        if (listaAreasTags != null && !listaAreasTags.isEmpty()) {
+            Map<String, Object> mapAreasTag = WebUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode, fichaTO.getAreasTematicas(), areasTematicasStateMap);
+            listaAreasTagsTreeNode = (List<MutableTreeNode>) mapAreasTag.get(WebUtils.LISTA_AREAS_TAG_TREE_NODE);
+            areasTematicasStateMap = (NodeStateMap) mapAreasTag.get(WebUtils.AREAS_TEMATICAS_STATE_MAP);
+
+        }
     }
 
     public String metodologiaPopup() {
@@ -1504,6 +1854,7 @@ public class FichaMB implements Serializable {
 
         if (frame != null) {
             if (frameMax && !mostrar[frame.intValue()]) {
+                this.alAbrirEnTodaLaPantalla = true;
                 miMostrar(frame);
             } else if (frame.equals(3L)) {
                 cargarFrameCronograma(true);
@@ -1528,7 +1879,11 @@ public class FichaMB implements Serializable {
         }
         mostrar[number.intValue()] = !valorAnt;
 
-        //0=Documentos ,1=Interesados, 2=Riesgos, 3=Cronograma, 4=Presupuesto, 5=Productos, 6=Participantes, 7=Calidad, 8=Multimedia. 
+        /**
+         * 0=Documentos, 1=Interesados, 2=Riesgos, 3=Cronograma, 4=Presupuesto,
+         * 5=Productos, 6=Participantes, 7=Calidad, 8=Multimedia,
+         * 9=Localizaciones
+         */
         if (selectedMostrar == null) {
             actualizarFichaTO(null);
             cargarResumenes();
@@ -1545,7 +1900,7 @@ public class FichaMB implements Serializable {
         } else if (number == 3) {
             cargarFrameCronograma(true);
         } else if (number == 4) {
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(true);
         } else if (number == 5) {
             maximizarFrame(number, false);
             cargarFrameProductos();
@@ -1553,6 +1908,8 @@ public class FichaMB implements Serializable {
         } else if (number == 7) {
         } else if (number == 8) {
             cargarFrameMultimedia(true);
+        } else if (number == 9) {
+            cargarFrameLocalizaciones();
         }
 
         return null;
@@ -1567,12 +1924,17 @@ public class FichaMB implements Serializable {
         partFormDataExpanded = false;
         multiFormDataExpanded = false;
         tipoMediaSelected = null;
-        limpiarDocumento();
-        limpiarRiesgo();
+        localizacionFormDataExpanded = false;
         limpiarPresupuesto();
-        limpiarProducto();
+        limpiarAdquisicion();
+        limpiarRiesgo();
         limpiarInteresado();
         limpiarMedia();
+        limpiarProducto();
+        limpiarDocumento();
+        limpiarPago();
+        limpiarLocalizacion();
+
     }
 
     public String cerrarFormIntCollapsable() {
@@ -1582,7 +1944,122 @@ public class FichaMB implements Serializable {
         return null;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="localizacion">}
+    public void limpiarLocalizacion() {
+        latlngProyectosAux = null;
+        JSFUtils.removerMensages();
+    }
+
+    public void cargarFrameLocalizaciones() {
+
+    }
+
+    public void abrirLocalizacionAction() {
+        Proyectos proy = new Proyectos(fichaTO.getFichaFk());
+        latlngProyectosAux = new LatlngProyectos();
+        latlngProyectosAux.setProyecto(proy);
+        latlngProyectosAux.setLatlangDepFk(new Departamentos());
+        latlngProyectosAux.setLatlngLat(BigDecimal.ZERO);
+        latlngProyectosAux.setLatlngLng(BigDecimal.ZERO);
+        String latitudElem = "ficha:locLatAux_input";
+        String longitudElem = "ficha:locLngAux_input";
+        String deptoElem = "ficha:deptoAux_input";
+        String mapElem = "localizaciones-map-canvas";
+        String llamada = "initialize2('";
+        llamada += mapElem;
+        llamada += "', '";
+        llamada += latitudElem;
+        llamada += "', '";
+        llamada += longitudElem;
+        llamada += "', '";
+        llamada += deptoElem;
+        llamada += "', ";
+        llamada += latlngProyectosAux.getLatlngLat();
+        llamada += ", ";
+        llamada += latlngProyectosAux.getLatlngLng();
+        llamada += ", ";
+        llamada += "";
+        llamada += "' , '";
+        llamada += " ) ;";
+        JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), llamada);
+        renderPopupLocalizacion = true;
+    }
+
+    public void editarLocalizacionAction(LatlngProyectos latlngProyectos) {
+        latlngProyectosAux = latlngProyectos;
+        String latitudElem = "ficha:locLatAux_input";
+        String longitudElem = "ficha:locLngAux_input";
+        String deptoElem = "ficha:deptoAux_input";
+        String mapElem = "localizaciones-map-canvas";
+        String llamada = "initialize2('";
+        llamada += mapElem;
+        llamada += "', '";
+        llamada += latitudElem;
+        llamada += "', '";
+        llamada += longitudElem;
+        llamada += "', '";
+        llamada += deptoElem;
+        llamada += "', ";
+        llamada += latlngProyectosAux.getLatlngLat();
+        llamada += ", ";
+        llamada += latlngProyectosAux.getLatlngLng();
+        llamada += ", ";
+        llamada += "";
+        llamada += "' , '";
+        llamada += " ) ;";
+        JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), llamada);
+        renderPopupLocalizacion = true;
+    }
+
+    public void guardarLocalizacionAction() {
+
+        try {
+            latlngProyectosAux.setLatlangDepFk(
+                    new Departamentos(
+                            deptoToCodificacionINE(latlngProyectosAux.getLatlangDepFk().getDepNombre())
+                    )
+            );
+            latlngDelegate.guardar(latlngProyectosAux);
+            actualizarFichaTO(null);
+//			JSFUtils.agregarMsg("info__actualizado");
+            cargarFrameLocalizaciones();
+            renderPopupLocalizacion = false;
+        } catch (GeneralException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsg("mapaLocalizacionMsg", "error_agregar_localizacion", null);
+            JSFUtils.agregarMsgs("mapaLocalizacionMsg", ex.getErrores());
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsg("mapaLocalizacionMsg", "error_agregar_localizacion", null);
+        }
+    }
+
+    public void eliminarLocalizacionAction(LatlngProyectos latlngProyectos) {
+        try {
+            latlngDelegate.eliminar(latlngProyectos);
+            actualizarFichaTO(null);
+            cargarFrameLocalizaciones();
+            renderPopupLocalizacion = false;
+        } catch (GeneralException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsgs(DOC_MSG_ID, ex.getErrores());
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void cerrarPopupLocalizacion() {
+        renderPopupLocalizacion = false;
+    }
+
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="riesgos">
+    public String abrirRiesgoAction() {
+        limpiarRiesgo();
+        riskFormDataExpanded = true;
+        return null;
+    }
+
     public String editarRiesgoAction(Integer riskPk) {
         riesgo = riesgosDelegate.obtenerRiesgoPorId(riskPk);
 
@@ -1697,19 +2174,38 @@ public class FichaMB implements Serializable {
                 limpiarMedia();
                 cerrarFormCollapsable();
 
-                //TODO Problema de performance, solo se tiene que traer los bytes de este archivo 
-                //y no todos los bytes de nuevo!
                 cargarFrameMultimedia(true);
 
             } catch (BusinessException | TechnicalException w) {
-                List<String> errores = w.getErrores();
-                JSFUtils.agregarMsgs("multimediaMsg", errores);
+
+                /*
+                                *  18-06-2018 Inspección de código.
+                 */
+                //List<String> errores = w.getErrores();
+                //JSFUtils.agregarMsgs("multiForm", errores);
+                for (String iterStr : w.getErrores()) {
+                    JSFUtils.agregarMsgError("multiForm", Labels.getValue(iterStr), null);
+                }
+
             }
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsg("multimediaMsg", "error_guardar_riesgo", null);
+            /*
+                        *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsg("multiForm", "error_guardar_riesgo", null);
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError("multiForm", Labels.getValue(iterStr), null);
+            }
+
         }
         return null;
+    }
+
+    public void abrirMediaAction() {
+        limpiarMedia();
+        multiFormDataExpanded = true;
     }
 
     public String editarMediaAction(Integer mediaPk) {
@@ -1783,12 +2279,27 @@ public class FichaMB implements Serializable {
                 cerrarFormCollapsable();
 
             } catch (BusinessException | TechnicalException w) {
-                List<String> errores = w.getErrores();
-                JSFUtils.agregarMsgs("riesgosMsg", errores);
+                /*
+                                *  18-06-2018 Inspección de código.
+                 */
+
+                //List<String> errores = w.getErrores();
+                //JSFUtils.agregarMsgs("riesgosMsg", errores);                                
+                for (String iterStr : w.getErrores()) {
+                    JSFUtils.agregarMsgError("riesgosMsg", Labels.getValue(iterStr), null);
+                }
             }
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsg("riesgosMsg", "error_guardar_riesgo", null);
+            /*
+                         *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsg("riesgosMsg", "error_guardar_riesgo", null);
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError("riesgosMsg", Labels.getValue(iterStr), null);
+            }
+
         }
         return null;
     }
@@ -1820,6 +2331,9 @@ public class FichaMB implements Serializable {
 
     public void generarMatrizRiesgos() {
         logger.fine("Generar Matriz de Riesgos.");
+        if (fichaTO == null || fichaTO.getFichaFk() == null) {
+            return;
+        }
         try {
 
             List<Riesgos> listaRiesgos = fichaTO.getRiesgos();
@@ -1908,7 +2422,8 @@ public class FichaMB implements Serializable {
                 autoCompletePersonasList = personasDelegate.obtenerPersonas(interesado.getIntOrgaFk().getOrgaPk());
             }
 
-            cargarFrameInteresados();
+//			cargarFrameInteresados();
+            cerrarFormIntCollapsable();
             limpiarInteresado();
             JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "limpiarCorreoAutocompletar();");
             //Al cerrar el colapsable no deja borrar al campo mail.
@@ -1928,10 +2443,28 @@ public class FichaMB implements Serializable {
         return null;
     }
 
+    public void abrirInteresadosAction() {
+        limpiarInteresado();
+        intFormDataExpanded = true;
+    
+        List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntOrganizaciones(inicioMB.getOrganismo().getOrgPk());
+        listaOrganizacion = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaOrganizacion, null);
+
+        listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
+        listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));    
+    }
+
     public String editarInteresadoAction(Integer intPk) {
 
         interesado = interesadosDelegate.obtenerInteresadosPorId(intPk);
         JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value = '" + interesado.getIntPersonaFk().getPersMail() + "'");
+        
+        List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntOrganizaciones(inicioMB.getOrganismo().getOrgPk());
+        listaOrganizacion = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaOrganizacion, interesado.getIntOrgaFk());
+
+        listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
+        listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+    
         listaOrganizacionCombo.setSelected(interesado.getIntOrgaFk().getOrgaPk());
 
         listaRolesInteresados = rolesInteresadosDelegate.obtenerRolPorOrganizacionId(interesado.getIntOrgaFk().getOrgaPk());
@@ -1980,16 +2513,19 @@ public class FichaMB implements Serializable {
 
     public String limpiarInteresado() {
         try {
-            interesado = new Interesados();
-            interesado.setIntPersonaFk(new Personas());
-            interesado.setIntRolintFk(new RolesInteresados());
-            listaOrganizacionCombo.setSelected(-1);
-            listaRolesInteresadosCombo.setSelected(-1);
-            listaIntEntregablesCombo.setSelected(-1);
-//            autoCompletePersonasComponent = null;
-            autoCompletePersonasList = new ArrayList<>();
-//            JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value = ''");
-            JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "limpiarCorreoAutocompletar();");
+            String confValue = configuracionDelegate.obtenerCnfValorPorCodigo(ConfiguracionCodigos.SHOW_MODULO_INTERESADOS, inicioMB.getOrganismo().getOrgPk());
+            if (confValue.equals("true")) {
+                interesado = new Interesados();
+                interesado.setIntPersonaFk(new Personas());
+                interesado.setIntRolintFk(new RolesInteresados());
+                listaOrganizacionCombo.setSelected(-1);
+                listaRolesInteresadosCombo.setSelected(-1);
+                listaIntEntregablesCombo.setSelected(-1);
+//                autoCompletePersonasComponent = null;
+                autoCompletePersonasList = new ArrayList<>();
+//                JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value = ''");
+                JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "limpiarCorreoAutocompletar();");
+            }
 
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, null, ex);
@@ -2067,11 +2603,28 @@ public class FichaMB implements Serializable {
     public void cargarFrameDocumentos() {
         if (fichaTO.hasPk()) {
             List<Documentos> listDocumentos = documentosDelegate.obtenerDocumentosOrderByFecha(fichaTO.getFichaFk(), fichaTO.getTipoFicha());
+//                        if(listDocumentos != null){
             listDocumentos = documentosDelegate.cargarArchivosDocumentos(listDocumentos);
+//                        }else{
+//                            listDocumentos = new ArrayList<Documentos>();
+//                        }
+//                        
             fichaTO.setDocumentos(listDocumentos);
+
+            SsUsuario usuario = inicioMB.getUsuario();
 
             if (fichaTO.getDocumentos() == null) {
                 fichaTO.setDocumentos(new ArrayList<Documentos>());
+            }
+
+            boolean esParticipante = false;
+            if (fichaTO.getParticipantes() != null) {
+                for (Participantes p : fichaTO.getParticipantes()) {
+                    if (p.getPartUsuarioFk().equals(inicioMB.getUsuario())) {
+                        esParticipante = true;
+                        break;
+                    }
+                }
             }
 
             if (SsUsuariosUtils.isUsuarioComun(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk())) {
@@ -2084,6 +2637,42 @@ public class FichaMB implements Serializable {
                 setListaDocumentosFrame(docNoPrivados);
             } else {
                 setListaDocumentosFrame(fichaTO.getDocumentos());
+            }
+
+            /*
+                        *   19-03-08 Nico: En la siguiente iteración voy a recorrer los entregables asociados
+                        *           al cronograma, y así poder conocer cuales son los documentos a los que 
+                        *           el usuario loggeado puede editar y eliminar.
+             */
+            Cronogramas cro = fichaTO.getCroFk();
+
+            if (cro != null) {
+                if (cro.getEntregablesSet() != null) {
+                    /*
+                                    *   19-06-2018 Nico: Se agrega esta condición de "isEstadoFinalizado" para que cuando se recorra se fije que si esta finalizado el proyecto
+                                    *               se ponga en false el valor. De esta manera no se pisa el valor obtenido en setRenderAttribute.
+                     */
+                    boolean isEstadoFinalizado = fichaTO.isEstado(Estados.ESTADOS.FINALIZADO.estado_id);
+
+                    List<Entregables> entregables = new ArrayList<>(cro.getEntregablesSet());
+                    for (Entregables iterEnt : entregables) {
+                        if (!isEstadoFinalizado && ((iterEnt.getCoordinadorUsuFk() != null) && (iterEnt.getCoordinadorUsuFk().getUsuId().equals(usuario.getUsuId())))) {
+                            auxAsocCoordEnt.put(iterEnt.getEntId(), true);
+                        } else {
+                            auxAsocCoordEnt.put(iterEnt.getEntId(), false);
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Filtrar los documentos en los que es participante
+             */
+            if (esParticipante) {
+//				System.out.println("#########################################");
+//				System.out.println("SOY PARTICIPANTE");
+//				System.out.println("#########################################");
+
             }
 
             //se obtienen los tipos de documentos que no tiene la ficha para
@@ -2106,17 +2695,32 @@ public class FichaMB implements Serializable {
                 }
             }
 
-            listaTipoDocumento = tipoDocumentoInstanciaDelegate.obtenerTiposDocumentoInstanciaPorProyecto(fichaTO.getFichaFk());
+            listaTipoDocumento = tipoDocumentoInstanciaDelegate.obtenerTipoDocsInstanciaPorProgProyId(fichaTO.getFichaFk(), fichaTO.getTipoFicha(), fichaTO.getOrgFk().getOrgPk());
             if (listaTipoDocumento != null && !listaTipoDocumento.isEmpty()) {
                 listaTipoDocCombo = new SofisCombo((List) listaTipoDocumento, "tipodocInstTipoDocFk.tipodocNombre");
                 listaTipoDocCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
             }
 
+            /*
+                        *   19-03-18 Nico: Para saber si el usuario esta asociado a algún entregable, primero me fijo si es Gerente
+                        *           o Adjunto, luego si no lo es, le paso el Mapa que tiene la información de a cual entregable 
+                        *           esta asociado el usuario.
+             */
+            boolean isGerente = SsUsuariosUtils.isUsuarioGerenteFicha(fichaTO, usuario);
+            boolean isAdjunto = SsUsuariosUtils.isUsuarioAdjuntoFicha(fichaTO, usuario);
+            boolean isGerenteOAdjunto = isGerente || isAdjunto;
+
             if (fichaTO.getCroFk() != null && fichaTO.getCroFk().getEntregablesSet() != null) {
                 listaEntregables = new ArrayList<>(fichaTO.getCroFk().getEntregablesSet());
-                listaEntregables = EntregablesUtils.cargarCamposCombos(listaEntregables);
-                listaEntregables = EntregablesUtils.entregablesSinPadres(listaEntregables);
+                if (isGerenteOAdjunto) {
+                    listaEntregables = EntregablesUtils.cargarCamposCombos(listaEntregables);
+                    listaEntregables = EntregablesUtils.entregablesSinPadres(listaEntregables);
+                } else {
+                    listaEntregables = EntregablesUtils.cargarCamposCombos(listaEntregables, auxAsocCoordEnt);
+                    listaEntregables = EntregablesUtils.entregablesSinPadres(listaEntregables, auxAsocCoordEnt);
+                }
             }
+
             if (listaEntregables != null && !listaEntregables.isEmpty()) {
                 listaEntregablesCombo = new SofisCombo((List) listaEntregables, "fechaNivelNombreCombo");
                 listaEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
@@ -2151,6 +2755,23 @@ public class FichaMB implements Serializable {
         agruparDocumentosVista();
     }
 
+    /*
+        *   19-03-18 Nico: Creo esta función, aparte de "fieldRendered" para que en "fieldRendered"
+        *           vea si es Adjunto o Gerente, y acá se fije si es coordinador de ese entregable.
+     */
+    public boolean isCoordinadordeEntregable(Documentos paramDocumento) {
+        if (paramDocumento != null) {
+            Entregables docEnt = paramDocumento.getDocsEntregable();
+
+            if (docEnt != null) {
+                if (docEnt.getEntId() != null) {
+                    return auxAsocCoordEnt.get(docEnt.getEntId());
+                }
+            }
+        }
+        return false;
+    }
+
     public Long getDiaHoraServer() {
         Date d = new Date();
         return d.getTime();
@@ -2160,15 +2781,6 @@ public class FichaMB implements Serializable {
     }
 
     public void cargarFrameInteresados() {
-
-        //Lista para los combos de Interesados
-        //List<OrganiIntProve> listaOrganizacion = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), null);
-        List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntOrganizaciones(inicioMB.getOrganismo().getOrgPk());
-        if (listaOrganizacion != null && !listaOrganizacion.isEmpty()) {
-            listaOrganizacion = OrganiIntProveUtils.sortByNombre(listaOrganizacion);
-            listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
-            listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-        }
 
         listaRolesInteresados = rolesInteresadosDelegate.obtenerRolPorOrganizacionId(inicioMB.getOrganismoSeleccionado());
         if (listaRolesInteresados != null && !listaRolesInteresados.isEmpty()) {
@@ -2220,6 +2832,13 @@ public class FichaMB implements Serializable {
         if (actualizar) {
             actualizarFichaTO(null);
         }
+
+        /**
+         * Para que abra siempre el módulo en el gantt
+         */
+        cargaDesdeArchivo = false;
+        cargaPorFormulario = false;
+
         Cronogramas cro = fichaTO.getCroFk();
         if (cro == null) {
             cro = new Cronogramas();
@@ -2413,6 +3032,7 @@ public class FichaMB implements Serializable {
     }
 
     public void subirArchivoDocAction(FileEntryEvent e) {
+
         JSFUtils.removerMensages();
         logger.info("[subirArchivoAction] Subiendo archivo...");
         if (e != null && e.getComponent() != null) {
@@ -2440,6 +3060,7 @@ public class FichaMB implements Serializable {
                 upFileDoc = archivoS;
             } catch (Exception e2) {
                 JSFUtils.agregarMsg("error_subir_archivo");
+                logger.log(Level.SEVERE, e2.getMessage(), e2);
             }
         }
     }
@@ -2452,34 +3073,45 @@ public class FichaMB implements Serializable {
             FileEntryResults results = fe.getResults();
             File archivoS = results.getFiles() != null ? results.getFiles().get(0).getFile() : null;
             if (archivoS == null) {
-                JSFUtils.agregarMsg(fe.getClientId(), "error_archivo_subido_fail", null);
+                //JSFUtils.agregarMsg(fe.getClientId(), "error_archivo_subido_fail", null);
+                JSFUtils.agregarMsgError("multiForm", Labels.getValue("error_archivo_no_permitido"), null);
             } else {
                 try {
                     String mimeType = new MimetypesFileTypeMap().getContentType(archivoS);
                     logger.log(Level.FINEST, "Mime Type:", mimeType);
                     if (mimeType != null) {
-                        //FIXME FD boolean esValido = archivoHechos.isAValidMimeType(mimeType);
-                        boolean esValido = true;
+                        boolean esValido = false;
+                        if (mimeType.matches(configuracionDelegate.obtenerCnfValorPorCodigo("MEDIA_MIMETYPE_REGEX", null))) {
+                            esValido = true;
+                        }
                         if (!esValido) {
-                            JSFUtils.agregarMsg("error_archivo_no_permitido");
+                            JSFUtils.agregarMsgError("multiForm", Labels.getValue("error_archivo_no_permitido"), null);
                             return;
                         }
                     } else {
-                        JSFUtils.agregarMsg("error_archivo_no_permitido");
+                        JSFUtils.agregarMsgError("multiForm", Labels.getValue("error_archivo_no_permitido"), null);
                         return;
                     }
                     logger.info("[subirArchivoAction] Subiendo archivo finalizado");
 
                     mediaProy.setMediaBytes(FileUtils.readFileToByteArray(archivoS));
                 } catch (Exception e2) {
-                    JSFUtils.agregarMsg("error_subir_archivo");
+                    //JSFUtils.agregarMsg("multiForm", Labels.getValue("error_subir_archivo"), null);
+                    JSFUtils.agregarMsgError("multiForm", Labels.getValue("error_archivo_no_permitido"), null);
                     logger.log(Level.SEVERE, e2.getMessage(), e2);
                 }
             }
         }
     }
 
+    public String abrirDocumentoAction() {
+        limpiarDocumento();
+        docsFormDataExpanded = true;
+        return null;
+    }
+
     public String editarDocumentoAction(Integer docPk) {
+
         documento = documentosDelegate.obtenerDocumentosPorId(docPk);
         listaTipoDocCombo.setSelected(documento.getDocsTipo().getTipodocInstPk());
         if (documento.getDocsEntregable() != null) {
@@ -2543,8 +3175,9 @@ public class FichaMB implements Serializable {
     }
 
     public String agregarDocumentoAction() {
-        logger.fine("Agregando Documento a la ficha.");
 
+        logger.fine("Agregando Documento a la ficha.");
+        JSFUtils.removerMensages();
         documento.setDocsEntregable(null);
         if (listaEntregablesCombo.getSelectedObject() != null) {
             Entregables ent = (Entregables) listaEntregablesCombo.getSelectedObject();
@@ -2566,11 +3199,14 @@ public class FichaMB implements Serializable {
             documento.setDocsEstado(null);
         }
 
+        FileInputStream fileInputStream = null;
+
         try {
+
             if (upFileDoc != null) {
+
                 try {
-                    FileInputStream fileInputStream = new FileInputStream(upFileDoc);
-//		    byte[] bFile = IOUtils.toByteArray(fileInputStream);
+                    fileInputStream = new FileInputStream(upFileDoc);
                     documento.setDocFile(documentosDelegate.obtenerDocFilePorDocId(documento.getDocsPk()));
                     if (documento.getDocFile() == null) {
                         documento.setDocFile(new DocFile());
@@ -2586,6 +3222,9 @@ public class FichaMB implements Serializable {
                     te.addError(ex.getMessage());
                     throw te;
                 }
+            } else if (documento.getDocsPk() == null) {
+                JSFUtils.agregarMsg(DOC_MSG_ID, "error_agregar_documento_doc_file_null", null);
+                return null;
             }
 
             try {
@@ -2605,9 +3244,19 @@ public class FichaMB implements Serializable {
                 JSFUtils.agregarMsgs(DOC_MSG_ID, w.getErrores());
             }
 
-        } catch (TechnicalException ex) {
+        } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
             JSFUtils.agregarMsg(DOC_MSG_ID, "error_agregar_documento", null);
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+
+                } catch (IOException ex) {
+                    Logger.getLogger(FichaMB.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
 
         return null;
@@ -2691,8 +3340,8 @@ public class FichaMB implements Serializable {
         }
         return null;
     }
-    // </editor-fold>
 
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="metodologia">
     public String cerrarPopupMetodologia() {
         try {
@@ -2827,7 +3476,7 @@ public class FichaMB implements Serializable {
                 //Interesados es Lazy 
                 List<Interesados> interesadosList = interesadosDelegate.obtenerIntersadosPorFichaPk(fichaTO.getFichaFk(), fichaTO.getTipoFicha());
                 if (interesadosList != null) {
-                    fichaTO.setInteresados(new ArrayList<>(interesadosList));
+                    fichaTO.setInteresados(interesadosList);
                 }
             }
 
@@ -2835,7 +3484,7 @@ public class FichaMB implements Serializable {
                 //Documentos es Lazy 
                 List<Documentos> documentosList = documentosDelegate.obtenerDocumentosPorFichaPk(fichaTO.getFichaFk(), fichaTO.getTipoFicha());
                 if (documentosList != null) {
-                    fichaTO.setDocumentos(new ArrayList<>(documentosList));
+                    fichaTO.setDocumentos(documentosList);
                 }
             } else {
                 fichaTO.setDocumentos(new ArrayList<Documentos>());
@@ -2898,6 +3547,10 @@ public class FichaMB implements Serializable {
                     listaMonedaPreCombo.setSelected(preFicha.getPreMoneda().getMonPk());
                 }
                 if (preFicha.getFuenteFinanciamiento() != null) {
+
+                    addItemSofisCombo(listaFuentesPreCombo, preFicha.getFuenteFinanciamiento(), 
+                            preFicha.getFuenteFinanciamiento().getFuePk(), true);
+                    
                     listaFuentesPreCombo.setSelected(preFicha.getFuenteFinanciamiento().getFuePk());
                 }
             }
@@ -2925,6 +3578,7 @@ public class FichaMB implements Serializable {
                 e.printStackTrace();
             }
 
+            cargarDocFiles();
             fichaTOOriginal(prog);
         }
     }
@@ -2971,11 +3625,13 @@ public class FichaMB implements Serializable {
             fichaTO.setProyIndices(proy.getProyIndices());
             fichaTO.setProyProgVersion(proy.getProyVersion());
 
+            fichaTO.setFechaActPub(proy.getProyFechaActPub());
+
             if (fichaTO.hasPk()) {
                 //Documentos es Lazy 
                 List<Documentos> documentosList = documentosDelegate.obtenerDocumentosPorFichaPk(fichaTO.getFichaFk(), fichaTO.getTipoFicha());
                 if (documentosList != null) {
-                    fichaTO.setDocumentos(new ArrayList<>(documentosList));
+                    fichaTO.setDocumentos(documentosList);
                 }
             } else {
                 fichaTO.setDocumentos(new ArrayList<Documentos>());
@@ -2989,7 +3645,7 @@ public class FichaMB implements Serializable {
                 //Interesados es Lazy 
                 List<Interesados> interesadosList = interesadosDelegate.obtenerIntersadosPorFichaPk(fichaTO.getFichaFk(), fichaTO.getTipoFicha());
                 if (interesadosList != null) {
-                    fichaTO.setInteresados(new ArrayList<>(interesadosList));
+                    fichaTO.setInteresados(interesadosList);
                 }
             }
 
@@ -2997,7 +3653,7 @@ public class FichaMB implements Serializable {
                 //Riesgos es Lazy 
                 List<Riesgos> riesgosList = riesgosDelegate.obtenerRiesgosPorProyecto(fichaTO.getFichaFk());
                 if (riesgosList != null) {
-                    fichaTO.setRiesgos(new ArrayList<>(riesgosList));
+                    fichaTO.setRiesgos(riesgosList);
                 }
             }
 
@@ -3037,10 +3693,21 @@ public class FichaMB implements Serializable {
             if (proy.getProyOtrosDatos() != null && proy.getProyOtrosDatos().getProyOtrEtaFk() != null) {
                 listaEtapaPubCombo.setSelectedObject(proy.getProyOtrosDatos().getProyOtrEtaFk());
             }
-            if (proy.getProyPk() != null) {
-                if (proy.getProyProgFk() != null) {
-                    listaProgramasCombo.setSelected(proy.getProyProgFk().getProgPk());
+            if (proy.getProyPk() != null && proy.getProyProgFk() != null) {
+                if (!listaProgramas.contains(proy.getProyProgFk())) {
+                    listaProgramas.add(proy.getProyProgFk());
+                    Collections.sort(listaProgramas, new Comparator() {
+                        @Override
+                        public int compare(Object o1, Object o2) {
+                            Programas p1 = (Programas) o1;
+                            Programas p2 = (Programas) o2;
+                            return p1.getProgNombre().compareTo(p2.getProgNombre());
+                        }
+                    });
+                    listaProgramasCombo = new SofisCombo((List) listaProgramas, "nombreComboFicha");
+                    listaProgramasCombo.addEmptyItem(Labels.getValue("comboProgramasFichaEmpty"));
                 }
+                listaProgramasCombo.setSelected(proy.getProyProgFk().getProgPk());
             }
 
 //            if (proy.getProyPreFk() != null) {
@@ -3058,6 +3725,10 @@ public class FichaMB implements Serializable {
                     listaMonedaPreCombo.setSelected(preFicha.getPreMoneda().getMonPk());
                 }
                 if (preFicha.getFuenteFinanciamiento() != null) {
+                    
+                    addItemSofisCombo(listaFuentesPreCombo, preFicha.getFuenteFinanciamiento(), 
+                        preFicha.getFuenteFinanciamiento().getFuePk(), true);
+                    
                     listaFuentesPreCombo.setSelected(preFicha.getFuenteFinanciamiento().getFuePk());
                 }
             }
@@ -3090,14 +3761,18 @@ public class FichaMB implements Serializable {
             if (fichaTO.hasPk()) {
                 List<Participantes> participantesList = participantesDelegate.obtenerParticipantesPorFichaPk(fichaTO.getFichaFk());
                 if (participantesList != null) {
-                    fichaTO.setParticipantes(new ArrayList<>(participantesList));
+                    fichaTO.setParticipantes(participantesList);
                 }
             }
 
             //Otros Datos
             fichaTO.setPublicable(proy.getProyPublicable());
             fichaTO.setOtrosDatos(proy.getProyOtrosDatos());
-            fichaTO.setLatlngProy(proy.getProyLatlngFk() != null ? proy.getProyLatlngFk() : new LatlngProyectos());
+//			fichaTO.setLatlngProy(proy.getProyLatlngFk() != null ? proy.getProyLatlngFk() : new LatlngProyectos());
+            /**
+             * 12-10-17 Bruno: agregadas localizaciones
+             */
+            fichaTO.setLatLngProyList(new ArrayList<LatlngProyectos>(proy.getLatLngProyList()));
 
             // Objetivos Estrategicos
             fichaTO.setObjetivoEstrategico(proy.getObjetivoEstrategico());
@@ -3237,22 +3912,53 @@ public class FichaMB implements Serializable {
             actualizarFichaTO(progProy);
 
             limpiarPresupuesto();
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(false);
             cerrarFormPreCollapsable();
 
         } catch (BusinessException | TechnicalException w) {
-            JSFUtils.agregarMsg(PRESUPUESTO_FORM_MSG_ID, "error_agregar_presupuesto", null);
-            JSFUtils.agregarMsgs(PRESUPUESTO_FORM_MSG_ID, w.getErrores());
+            /*
+                    *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsg(PRESUPUESTO_FORM_MSG_ID, "error_agregar_presupuesto", null);
+            //JSFUtils.agregarMsgs(PRESUPUESTO_FORM_MSG_ID, w.getErrores());
+            for (String iterStr : w.getErrores()) {
+                JSFUtils.agregarMsgError(PRESUPUESTO_FORM_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
         }
         return null;
     }
 
     public String agregarAdquisicionAction() {
+        /*
+            *       2018-09-18 RQ-6 Release 5.3.6 : Como se piden todos los OrganiIntProvee para los Pagos, se cambia para las Adquisiciones
+            *   solo se asocien a un proveedor.
+         */
 
-        OrganiIntProve orga = (OrganiIntProve) listaOrganizacionCombo.getSelectedObject();
+        //OrganiIntProve orga = (OrganiIntProve) listaOrganizacionCombo.getSelectedObject();
+        OrganiIntProve orga = (OrganiIntProve) listaProveedoresCombo.getSelectedObject();
         adquisicion.setAdqProvOrga(orga);
         FuenteFinanciamiento fuente = (FuenteFinanciamiento) listaFuentesCombo.getSelectedObject();
+        ComponenteProducto componenteProducto = (ComponenteProducto) listaComponenteProductoCombo.getSelectedObject();
+        ProcedimientoCompra procedimientoCompra = (ProcedimientoCompra) listaProcedimientoCompraCombo.getSelectedObject();
         adquisicion.setAdqFuente(fuente);
+        adquisicion.setAdqComponenteProducto(componenteProducto);
+        adquisicion.setAdqProcedimientoCompra(procedimientoCompra);
+        adquisicion.setAdqTipoRegistro(listaTipoRegistroCompraCombo.getSelectedT());
+        adquisicion.setAdqTipoAdquisicion(listaTipoAdquisicionCombo.getSelectedT());
+        adquisicion.setAdqCentroCosto(listaCentroCostoCombo.getSelectedT());
+        adquisicion.setAdqCausalCompra(listaCausalCompraCombo.getSelectedT());
+        adquisicion.setAdqIdGrpErpFk(listaIdentificadorGrpErpCombo.getSelectedT());
+
+        if (!adquisicion.getAdqCompartida()) {
+            adquisicion.setSsUsuarioCompartida(null);
+        } else {
+            if (ssUsuarioCompartidaId != null) {
+                adquisicion.setSsUsuarioCompartida(ssUsuarioDelegate.obtenerSsUsuarioPorId(ssUsuarioCompartidaId));
+            }
+        }
+
         Moneda moneda = (Moneda) listaMonedaCombo.getSelectedObject();
         adquisicion.setAdqMoneda(moneda);
         if (fichaTO.getPreFk() != null) {
@@ -3260,48 +3966,181 @@ public class FichaMB implements Serializable {
         }
 
         try {
-            FichaAdquisicionValidacion.validar(adquisicion);
+            Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+            Boolean exigeProveedorEnCompra = false;
+            Configuracion cnfExigeProveedorEnCompra = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_COMPRA, orgPk);
+            if (cnfExigeProveedorEnCompra != null && cnfExigeProveedorEnCompra.getCnfValor().equalsIgnoreCase("true")) {
+                exigeProveedorEnCompra = true;
+            }
 
+            FichaAdquisicionValidacion.validar(adquisicion, exigeProveedorEnCompra, existeFuenteProcedimientoCompra(), camposExigidosEnAdquisicion(), largoMaximoIdAdquisicion);
             adquisicion = adquisicionDelegate.guardarAdquisicion(adquisicion, fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
             JSFUtils.agregarMsg("formAdqMsg", "info_adquisicion_guardada", null);
 
             actualizarFichaTO(null);
-
             limpiarAdquisicion();
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(false);
             cerrarFormCollapsable();
             formPresupuestoRendered = 0;
 
         } catch (BusinessException | TechnicalException w) {
-            List<String> errores = w.getErrores();
-            JSFUtils.agregarMsgs("formAdqMsg", errores);
+            /*
+                    *  18-06-2018 Inspección de código.
+             */
+
+            //List<String> errores = w.getErrores();
+            //JSFUtils.agregarMsgs("formAdqMsg", errores);
+            for (String iterStr : w.getErrores()) {
+                JSFUtils.agregarMsgError("formAdqMsg", Labels.getValue(iterStr), null);
+            }
+
         }
         return null;
     }
 
+    public void adquisicionCompartidaValueChange(ValueChangeEvent ev) {
+        this.adquisicion.setAdqCompartida((Boolean) ev.getNewValue());
+    }
+
+    public void adquisicionArrastreValueChange(ValueChangeEvent ev) {
+        this.adquisicion.setAdqArrastre((Boolean) ev.getNewValue());
+    }
+
     public String agregarPagoAction() {
         Entregables ent = (Entregables) listaEntregablesCombo.getSelectedObject();
+        OrganiIntProve orga = (OrganiIntProve) listaOrganizacionCombo.getSelectedObject();
+        OrganiIntProve prov = listaProveedoresPagoCombo.getSelectedT();
+        
         pagos.setEntregables(ent);
-        try {
-            FichaPagoValidacion.validar(pagos);
+        pagos.setPagContrOrganizacionFk(orga);
+        pagos.setPagProveedorFk(prov);
 
+        if (orga == null) {
+            pagos.setPagContrPorcentaje(null);
+        }
+        try {
+            Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+            Boolean exigeProveedorEnPago = false;
+            Configuracion cnfExigeProveedorEnPago = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_PAGO, orgPk);
+            if (cnfExigeProveedorEnPago != null && cnfExigeProveedorEnPago.getCnfValor().equalsIgnoreCase("true")) {
+                exigeProveedorEnPago = true;
+            }
+            
+            Boolean exigeClienteEnPago = false;
+            Configuracion cnfExigeClienteEnPago = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.CLIENTE_ES_EXIGIDO_EN_PAGO, orgPk);
+            if (cnfExigeClienteEnPago != null && cnfExigeClienteEnPago.getCnfValor().equalsIgnoreCase("true")) {
+                exigeClienteEnPago = true;
+            }
+
+            FichaPagoValidacion.validar(pagos, fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id), exigeProveedorEnPago, exigeClienteEnPago);            
+            
+
+            if ((fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) && (!edicionPago)) {
+                pagos.setPagFechaPlanificada(new Date());
+                pagos.setPagImportePlanificado((double) 0);
+            }
             Integer progPk = fichaTO.getProgFk() != null ? fichaTO.getProgFk().getProgPk() : null;
             Integer proyPk = fichaTO.getTipoFicha().equals(TipoFichaEnum.PROYECTO.id) ? fichaTO.getFichaFk() : null;
             pagosDelegate.guardarPago(pagos, proyPk, progPk, inicioMB.getOrganismo().getOrgPk());
             JSFUtils.agregarMsg("formPagoMsg", "info_pago_guardada", null);
 
+            /*
+                *   20-03-18 Nico: Después de ingresado el Pago, si esta en edición lo cambio a false.
+             */
+            if (edicionPago) {
+                edicionPago = false;
+            }
             actualizarFichaTO(null);
             limpiarAdquisicion();
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(false);
             cerrarFormCollapsable();
             formPresupuestoRendered = 0;
 
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            List<String> errores = be.getErrores();
-            JSFUtils.agregarMsgs("formPagoMsg", errores);
+            /*
+                    *  18-06-2018 Inspección de código.
+             */
+
+            //List<String> errores = be.getErrores();
+            //JSFUtils.agregarMsgs("formPagoMsg", errores);
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError("formPagoMsg", Labels.getValue(iterStr), null);
+            }
+
         }
+
         return null;
+    }
+
+    public void pagosGastoChange(AjaxBehaviorEvent ev) {
+        if (this.pagos.getPagGasto() != null) {
+            if (this.pagos.getPagGasto() < 0) {
+                this.pagos.setPagGasto(0);
+            }
+            if (this.pagos.getPagGasto() > 100) {
+                this.pagos.setPagGasto(100);
+            }
+        } else {
+            this.pagos.setPagGasto(0);
+        }
+        this.pagos.setPagInversion(100 - this.pagos.getPagGasto());
+    }
+
+    public void copiarPagoAction(Integer pagPk) {
+        try {
+            Pagos pago = pagosDelegate.obtenerPagosPorId(pagPk);
+            Pagos pagoCopia = pago.clone();
+            Integer progPk = fichaTO.getProgFk() != null ? fichaTO.getProgFk().getProgPk() : null;
+            Integer proyPk = fichaTO.getTipoFicha().equals(TipoFichaEnum.PROYECTO.id) ? fichaTO.getFichaFk() : null;
+
+            /*
+                        *   16-07-2018 Nico: Se chequea en este punto si se esta en fase de planificación o ejecución para poder aplicar el cambio relacionado
+                        *       a copiar solamente la fecha planificada más un mes, en caso de estar en fase de planificación, o copiar solamente la fecha real 
+                        *       más un mes, en caso de estar en fase de ejecución.
+             */
+            if (!fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
+                pagoCopia.setPagFechaReal(null);
+                pagoCopia.setPagImporteReal(null);
+
+                //Corro un mes la fecha planificada
+                GregorianCalendar calAux = new GregorianCalendar();
+                calAux.setTime(pagoCopia.getPagFechaPlanificada());
+                calAux.add(Calendar.MONTH, 1);
+
+                pagoCopia.setPagFechaPlanificada(calAux.getTime());
+            } else {
+                // Pongo el monto planificado en 0 y la fecha panificada igual a la real
+                GregorianCalendar calAux = new GregorianCalendar();
+                calAux.setTime(pagoCopia.getPagFechaReal());
+                calAux.add(Calendar.MONTH, 1);
+
+                pagoCopia.setPagFechaPlanificada(calAux.getTime());
+                pagoCopia.setPagImportePlanificado(0d);
+
+                pagoCopia.setPagFechaReal(calAux.getTime());
+            }
+
+            pagosDelegate.guardarPago(pagoCopia, proyPk, progPk, inicioMB.getOrganismo().getOrgPk());
+            JSFUtils.agregarMsg("formPagoMsg", "info_pago_guardada", null);
+
+            actualizarFichaTO(null);
+            limpiarAdquisicion();
+            cargarFramePresupuestos(false);
+            cerrarFormCollapsable();
+            formPresupuestoRendered = 0;
+        } catch (GeneralException ge) {
+            /*
+                    *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs("", ge.getErrores());
+            for (String iterStr : ge.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
+
+            inicioMB.abrirPopupMensajes();
+        }
     }
 
     public String verFormPresupuestoAction(Integer prePk) {
@@ -3319,22 +4158,197 @@ public class FichaMB implements Serializable {
     }
 
     public String verFormAdquisicionAction(Integer adqPk) {
+
+        cargarComboFuentes();
+
         if (adqPk != null) {
             adquisicion = adquisicionDelegate.obtenerAdquisicionPorId(adqPk);
+            procedimientoCompraSelected = adquisicion.getAdqProcedimientoCompra(); // utilizada en actualizarComboCausales()
+            fuenteFinanciamientoSelected = adquisicion.getAdqFuente(); // utilizada en actualizarComboCausales()
+            actualizarComboCausales();
+
             listaMonedaCombo.setSelected(adquisicion.getAdqMoneda().getMonPk());
+
+            addItemSofisCombo(listaFuentesCombo, adquisicion.getAdqFuente(), adquisicion.getAdqFuente().getFuePk(), true);
+               
             listaFuentesCombo.setSelected(adquisicion.getAdqFuente().getFuePk());
-            if (adquisicion.getAdqProvOrga() != null) {
-                listaOrganizacionCombo.setSelected(adquisicion.getAdqProvOrga().getOrgaPk());
+
+            if (adquisicion.getAdqProcedimientoCompra() != null) {
+                /*
+                            * 06-04-18 Nico: Se controla si esta en la lista el procedimiento compra de la adquisicion, sino esta
+                            *           se agrega.
+                 */
+
+                if (listaProcedimientoCompraCombo.getObjectById(adquisicion.getAdqProcedimientoCompra().getProcCompPk()) == null) {
+                    listaProcedimientoCompraCombo.add(adquisicion.getAdqProcedimientoCompra());
+                }
+
+                listaProcedimientoCompraCombo.setSelected(adquisicion.getAdqProcedimientoCompra().getProcCompPk());
             }
+
+            SsUsuario auxUsuCompartida = adquisicion.getSsUsuarioCompartida();
+
+            if (auxUsuCompartida != null) {
+                ssUsuarioCompartidaId = adquisicion.getSsUsuarioCompartida().hashCode();
+            }
+
+            if (adquisicion.getAdqComponenteProducto() != null) {
+                listaComponenteProductoCombo.setSelected(adquisicion.getAdqComponenteProducto().getComPk());
+            } else {
+                listaComponenteProductoCombo.setSelected(-1);
+            }
+
+            if (adquisicion.getAdqTipoRegistro() != null) {
+                listaTipoRegistroCompraCombo.setSelectedT(adquisicion.getAdqTipoRegistro());
+            } // no se hace un set -1 en combo porque al cerrar popup se limpia con otro action
+
+            if (adquisicion.getAdqTipoAdquisicion() != null) {
+                listaTipoAdquisicionCombo.setSelectedT(adquisicion.getAdqTipoAdquisicion());
+            }
+            if (adquisicion.getAdqCentroCosto() != null) {
+                listaCentroCostoCombo.setSelectedT(adquisicion.getAdqCentroCosto());
+            }
+            if (adquisicion.getAdqCausalCompra() != null) {
+                listaCausalCompraCombo.setSelectedT(adquisicion.getAdqCausalCompra());
+            }
+            if (adquisicion.getAdqIdGrpErpFk() != null) {
+                listaIdentificadorGrpErpCombo.setSelectedT(adquisicion.getAdqIdGrpErpFk());
+            }
+
+        } else { // si es null, es nueva adquisición
+            listaTipoRegistroCompraCombo.setSelectedT(TipoRegistroCompra.COMPRA_ORIGINAL); // seteo default
+
         }
+
+        cargarComboProveedores();
+        cargarComboClientes();
 
         renderedFormAdquisicionAction("editarAdquisicion");
 
         return null;
     }
 
-    public String confirmarPago(Integer pagPk) {
-        Pagos pago = pagosDelegate.obtenerPagosPorId(pagPk);
+    private void cargarComboFuentes() {
+        
+        Map<String, Object> filtroFuentes = new HashMap<>();
+        filtroFuentes.put("habilitada", true);
+
+        listaFuentes = fuenteFinanciamientoDelegate.busquedaFuenteFiltro(inicioMB.getOrganismo().getOrgPk(), filtroFuentes, "fueNombre", 1);
+       
+        if (listaFuentes != null && !listaFuentes.isEmpty()) {
+            listaFuentesCombo = new SofisCombo((List) listaFuentes, "fueNombre");
+            listaFuentesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+    }
+    
+    /**
+     * *
+     * Cargar el combo para actualizar la lista de proveedores.
+     */
+    private void cargarComboProveedores() {
+
+        // Obtengo la lista de Proveedores
+        List<OrganiIntProve> listaProveedores = new ArrayList<>(organiIntProveDelegate
+                .obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), true));
+
+        OrganiIntProve organiSelected = null;
+        if (adquisicion.getAdqProvOrga() != null) {
+
+            // Obtengo el OrganiIntProve de la fk
+            organiSelected = organiIntProveDelegate.obtenerOrganiIntProvePorId(adquisicion.getAdqProvOrga().getOrgaPk());
+
+            if (organiSelected != null && !listaProveedores.contains(organiSelected)) {
+
+                // Si no estaba en la lista lo agrego
+                listaProveedores.add(organiSelected);
+            }
+        }
+
+        // Ordeno la lista y vuelvo a crear el SofisCombo
+        listaProveedores = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaProveedores, organiSelected);
+        
+        listaProveedoresCombo = new SofisCombo((List) listaProveedores, "orgaNombre");
+        listaProveedoresCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+
+        if (organiSelected != null) {
+            
+            listaProveedoresCombo.setSelected(organiSelected.getOrgaPk());
+        }
+    }
+
+    /**
+     * *
+     * Cargar el combo para actualizar la lista de proveedores.
+     */
+    private void cargarComboClientes() {
+
+        List<OrganiIntProve> listaCliente = new ArrayList<>(organiIntProveDelegate
+                .obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), false));
+
+        OrganiIntProve organiSelected = null;
+        if (adquisicion.getAdqProvOrga() != null) {
+
+            organiSelected = organiIntProveDelegate.obtenerOrganiIntProvePorId(adquisicion.getAdqProvOrga().getOrgaPk());
+
+            if (organiSelected != null && !listaCliente.contains(organiSelected)) {
+
+                listaCliente.add(organiSelected);
+            }
+        }
+
+        listaCliente = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaCliente, organiSelected);
+        
+        listaClienteCombo = new SofisCombo((List) listaCliente, "orgaNombre");
+        listaClienteCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+
+        if (organiSelected != null) {
+            
+            listaClienteCombo.setSelected(organiSelected.getOrgaPk());
+        }
+    }    
+    
+    /**
+     * *
+     * Cargar el combo para actualizar la lista de proveedores de un pago.
+     */
+    private void cargarComboProveedoresPago() {
+
+        // Obtengo la lista de Proveedores
+        List<OrganiIntProve> listaProveedores = new ArrayList<>(organiIntProveDelegate
+                .obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), true));
+
+        OrganiIntProve organiSelected = null;
+        if (pagos.getPagProveedorFk() != null) {
+
+            // Obtengo el OrganiIntProve de la fk
+            organiSelected = organiIntProveDelegate.obtenerOrganiIntProvePorId(pagos.getPagProveedorFk().getOrgaPk());
+
+            if (organiSelected != null && !listaProveedores.contains(organiSelected)) {
+
+                // Si no estaba en la lista lo agrego
+                listaProveedores.add(organiSelected);
+            }
+        }
+
+        // Ordeno la lista y vuelvo a crear el SofisCombo
+        listaProveedores = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaProveedores, organiSelected);
+        
+        // Actualizo los Proveedores del pago
+        listaProveedoresPagoCombo = new SofisComboG(listaProveedores, "orgaNombre");
+        listaProveedoresPagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        
+        if (organiSelected != null) {
+            
+            listaProveedoresPagoCombo.setSelected(organiSelected.getOrgaPk());
+        }
+    }
+
+    public void confirmarPago(Integer pagPk) {
+        pagoConfirmar = pagPk;
+    }
+    
+    public String confirmarPago() {
+        Pagos pago = pagosDelegate.obtenerPagosPorId(pagoConfirmar);
         if (pago != null) {
             if (pago.isPagConfirmado()) {
                 if (SsUsuariosUtils.isUsuarioPMO(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk())) {
@@ -3349,10 +4363,18 @@ public class FichaMB implements Serializable {
             try {
                 pagosDelegate.guardarPago(pago, proyPk, progPk, inicioMB.getOrganismo().getOrgPk());
                 actualizarFichaTO(null);
-                cargarFramePresupuestos();
+                cargarFramePresupuestos(false);
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage(), be);
-                JSFUtils.agregarMsgs(FICHA_MSG_ID, be.getErrores());
+                /*
+                                 *  18-06-2018 Inspección de código.
+                 */
+
+                //JSFUtils.agregarMsgs(FICHA_MSG_ID, be.getErrores());
+                for (String iterStr : be.getErrores()) {
+                    JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+                }
+
                 inicioMB.setRenderPopupMensajes(true);
             }
         }
@@ -3360,43 +4382,133 @@ public class FichaMB implements Serializable {
     }
 
     public String verFormPagoAction(Integer pagPk, Integer adqPk) {
+
         if (pagPk != null && pagPk != 0) {
             pagos = pagosDelegate.obtenerPagosPorId(pagPk);
             if (pagos.getEntregables() != null) {
                 listaEntregablesCombo.setSelected(pagos.getEntregables().getEntPk());
             }
+
+            cargarComboProveedoresPago();
+            cargarComboOrganizaciones();
+
+            edicionPago = true;
         } else {
             Adquisicion adq = adquisicionDelegate.obtenerAdquisicionPorId(adqPk);
             pagos = new Pagos();
             pagos.setPagAdqFk(adq);
             pagos.setEntregables(new Entregables());
+
+            cargarComboProveedoresPago();
+
+            // asocio al nuevo pago el proveedor de la adquisición
+            OrganiIntProve prov = adq.getAdqProvOrga();
+            if (prov != null) {
+                listaProveedoresPagoCombo.setSelectedT(prov);
+            }
+            // ACA VA LO DE AGREGAR GASTO Y CLIENTE DE UNA ADQUISICIÓN                       
+            Pagos pagoFinal = adquisicionDelegate.obtenerUltimoPago(adqPk);
+
+            if ((pagoFinal == null) || (pagoFinal.getPagGasto() == null)) {
+                this.pagos.setPagGasto(0);
+                pagosGastoChange(null);
+
+                cargarComboOrganizaciones(null);
+
+            } else {
+                this.pagos.setPagGasto(pagoFinal.getPagGasto());
+                
+                cargarComboOrganizaciones((pagoFinal.getPagContrOrganizacionFk() != null) 
+                        ? pagoFinal.getPagContrOrganizacionFk() : null);
+            }
+
+            /*
+                        *   20-03-18 Nico: FIX para mostrar la inversión cuando carga el form de Pago
+             */
+            pagosGastoChange(null);
+
+            // ACA TERMINA LO DE AGREGAR GASTO Y CLIENTE DE UNA ADQUISICIÓN
         }
+//		this.listaOrganizacionCombo.setSelected(-1);
         formPresupuestoRendered = 3;
         setFocus("comboEntregablesPag");
         return null;
     }
 
-    public String eliminarAdquisicionAction(Integer adqPk) {
-        logger.log(Level.FINE, "Eliminar Adquicición.");
+    /**
+     * *
+     * Carga el combo para actualizar las organizaciones que no son proveedores.
+     */
+    private void cargarComboOrganizaciones() {
+                
+        OrganiIntProve organiSelected = null;
+        if (pagos.getPagContrOrganizacionFk() != null) {
+
+            organiSelected = organiIntProveDelegate.obtenerOrganiIntProvePorId(pagos.getPagContrOrganizacionFk().getOrgaPk());
+        }
+
+        cargarComboOrganizaciones(organiSelected);
+    }
+
+    private void cargarComboOrganizaciones(OrganiIntProve organiSelected) {
+
+        List<OrganiIntProve> listaOrganizacion = new ArrayList<>(organiIntProveDelegate
+                .obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), false));
+
+        if (organiSelected != null && !listaOrganizacion.contains(organiSelected)) {
+
+            listaOrganizacion.add(organiSelected);
+        }
+        
+        listaOrganizacion = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listaOrganizacion, organiSelected);
+        
+        listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
+        listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+
+        if (organiSelected != null) {
+            
+            listaOrganizacionCombo.setSelected(organiSelected.getOrgaPk());
+        }
+    }
+    
+    public void eliminarAdquisicionAction(Integer adqPk) {
+        adqEliminar = adqPk;
+    }
+    
+    public String eliminarAdquisicionAction() {
+        logger.log(Level.FINE, "Eliminar Adquisición.");
         try {
-            adquisicionDelegate.eliminarAdquisicion(adqPk, fichaTO.getFichaFk(), fichaTO.getOrgFk().getOrgPk());
+            adquisicionDelegate.eliminarAdquisicion(adqEliminar, fichaTO.getFichaFk(), fichaTO.getOrgFk().getOrgPk());
             actualizarFichaTO(null);
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(false);
 
         } catch (BusinessException be) {
-            JSFUtils.agregarMsgs("", be.getErrores());
+            /*
+                     *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs("", be.getErrores());
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
+
             inicioMB.abrirPopupMensajes();
         }
         return null;
     }
+    
+    public void eliminarPagoAction(Integer pagPk) {
+        pagoEliminar = pagPk;
+    }
 
-    public String eliminarPagoAction(Integer pagPk) {
+    public String eliminarPagoAction() {
         try {
-            pagosDelegate.eliminarPagoActInd(pagPk, fichaTO.getFichaFk(), fichaTO.getOrgFk().getOrgPk());
+            pagosDelegate.eliminarPagoActInd(pagoEliminar, fichaTO.getFichaFk(), fichaTO.getOrgFk().getOrgPk());
             actualizarFichaTO(null);
-            cargarFramePresupuestos();
+            cargarFramePresupuestos(false);
         } catch (GeneralException ge) {
-            JSFUtils.agregarMsgs("", ge.getErrores());
+            JSFUtils.agregarMsgsErrores("", Labels.getValues(ge.getErrores()));
+            JSFUtils.agregarMsgError("", "Verifique si hay documentos asociados al pago que se desea eliminar", null);
             inicioMB.abrirPopupMensajes();
         }
 
@@ -3407,18 +4519,39 @@ public class FichaMB implements Serializable {
         presupuesto = new Presupuesto();
         listaMonedaCombo.setSelected(-1);
         listaFuentesCombo.setSelected(-1);
+        listaComponenteProductoCombo.setSelected(-1);
     }
 
     public void limpiarAdquisicion() {
+        /*
+            * 16-04-18 Nico: Me fijo si el procedimiento de compra que queda esta habilitado o no, asi lo saco de la lista.
+         */
+        if ((adquisicion != null) && (adquisicion.getAdqProcedimientoCompra() != null) && (!(adquisicion.getAdqProcedimientoCompra().getProcCompHabilitado()))) {
+            listaProcedimientoCompraCombo.remove(adquisicion.getAdqProcedimientoCompra());
+        }
+
         adquisicion = new Adquisicion();
         listaOrganizacionCombo.setSelected(-1);
+        listaProveedoresCombo.setSelected(-1);
         listaFuentesCombo.setSelected(-1);
         listaMonedaCombo.setSelected(-1);
+        listaComponenteProductoCombo.setSelected(-1);
+        listaProcedimientoCompraCombo.setSelected(-1);
+        listaTipoRegistroCompraCombo.setSelected(-1);
+        listaTipoAdquisicionCombo.setSelected(-1);
+        listaCentroCostoCombo.setSelected(-1);
+        listaCausalCompraCombo.setSelected(-1);
+        listaIdentificadorGrpErpCombo.setSelected(-1);
+        ssUsuarioCompartidaId = -1;
+        procedimientoCompraSelected = null;
+        fuenteFinanciamientoSelected = null;
+
     }
 
     public void limpiarPago() {
         pagos = new Pagos();
         listaEntregablesCombo.setSelected(-1);
+        listaProveedoresPagoCombo.setSelected(-1);
     }
 
     public String renderedFormPresupuestoAction() {
@@ -3446,39 +4579,73 @@ public class FichaMB implements Serializable {
         formPresupuestoRendered = 0;
         limpiarPresupuesto();
         limpiarAdquisicion();
+        limpiarRiesgo();
+        limpiarInteresado();
+        limpiarMedia();
+        limpiarProducto();
+        limpiarDocumento();
         limpiarPago();
     }
 
-    public void cargarFramePresupuestos() {
+    public void cargarFramePresupuestos(boolean recargarCombos) {
         if (fichaTO.hasPk()) {
-            listaMonedas = monedaDelegate.obtenerMonedas();
-            if (listaMonedas != null && !listaMonedas.isEmpty()) {
-                listaMonedaCombo = new SofisCombo((List) listaMonedas, "monSigno");
-                listaMonedaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-            }
+            if (recargarCombos) {
 
-            //List<OrganiIntProve> listaOrganizacion = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), Boolean.TRUE);
-            List<OrganiIntProve> listaOrganizacion = aplicacionMB.obtenerOrganiIntProveedores(inicioMB.getOrganismo().getOrgPk());
-            if (listaOrganizacion != null && !listaOrganizacion.isEmpty()) {
-                listaOrganizacion = OrganiIntProveUtils.sortByNombre(listaOrganizacion);
-                listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
-                listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-            }
+                listaMonedas = monedaDelegate.obtenerMonedas();
+                if (listaMonedas != null && !listaMonedas.isEmpty()) {
+                    listaMonedaCombo = new SofisCombo((List) listaMonedas, "monSigno");
+                    listaMonedaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
 
-            listaFuentes = fuenteFinanciamientoDelegate.obtenerFuentesPorOrgId(inicioMB.getOrganismo().getOrgPk());
-            if (listaFuentes != null && !listaFuentes.isEmpty()) {
-                listaFuentesCombo = new SofisCombo((List) listaFuentes, "fueNombre");
-                listaFuentesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-            }
+                //List<OrganiIntProve> listaOrganizacion = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), Boolean.TRUE);
+                /*
+                        *       2018-09-18 RQ-6 Release 5.3.6 : Se piden todos los OrganiIntProveedores, no solo los que son Proveedores para los Pagos.
+                        *   En el caso de las Adquisiciones, se mantienen los Proveedores.
+                 */
+                List<OrganiIntProve> listaProveedores = aplicacionMB.obtenerOrganiIntProveedores(inicioMB.getOrganismo().getOrgPk());
+                if (listaProveedores != null && !listaProveedores.isEmpty()) {
+                    listaProveedores = OrganiIntProveUtils.sortByNombre(listaProveedores);
+                    listaProveedoresCombo = new SofisCombo((List) listaProveedores, "orgaNombre");
+                    listaProveedoresCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                    // para los del pago
+                    listaProveedoresPagoCombo = new SofisComboG(listaProveedores, "orgaNombre");
+                    listaProveedoresPagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
 
-            if (fichaTO.getCroFk() != null && fichaTO.getCroFk().getEntregablesSet() != null) {
-                listaEntregables = new ArrayList<>(fichaTO.getCroFk().getEntregablesSet());
-                listaEntregables = EntregablesUtils.cargarCamposCombos(listaEntregables);
-            }
+                List<OrganiIntProve> listaCliente = aplicacionMB.obtenerOrganiIntNoProveedores(inicioMB.getOrganismo().getOrgPk());//organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), false);
+                if (listaCliente != null && !listaCliente.isEmpty()) {
+                    listaCliente = OrganiIntProveUtils.sortByNombre(listaCliente);
+                    listaClienteCombo = new SofisCombo((List) listaCliente, "orgaNombre");
+                    listaClienteCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
 
-            if (listaEntregables != null && !listaEntregables.isEmpty()) {
-                listaEntregablesCombo = new SofisCombo((List) listaEntregables, "fechaNivelNombreCombo");
-                listaEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                List<OrganiIntProve> listaOrganizacion = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(inicioMB.getOrganismo().getOrgPk(), false);
+                if (listaOrganizacion != null && !listaOrganizacion.isEmpty()) {
+                    listaOrganizacion = OrganiIntProveUtils.sortByNombre(listaOrganizacion);
+                    listaOrganizacionCombo = new SofisCombo((List) listaOrganizacion, "orgaNombre");
+                    listaOrganizacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
+
+                listaComponenteProducto = componenteProductoDelegate.obtenerComponentesProductosPorOrgId(inicioMB.getOrganismo().getOrgPk());
+                if (listaComponenteProducto != null && !listaComponenteProducto.isEmpty()) {
+                    listaComponenteProductoCombo = new SofisCombo((List) listaComponenteProducto, "comNombre");
+                    listaComponenteProductoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
+
+                if (fichaTO.getCroFk() != null && fichaTO.getCroFk().getEntregablesSet() != null) {
+                    listaEntregables = new ArrayList<>(fichaTO.getCroFk().getEntregablesSet());
+                    listaEntregables = EntregablesUtils.cargarCamposCombos(listaEntregables);
+                }
+
+                if (listaEntregables != null && !listaEntregables.isEmpty()) {
+                    listaEntregablesCombo = new SofisCombo((List) listaEntregables, "fechaNivelNombreCombo");
+                    listaEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
+
+                if (listaIdentificadorGrpErp != null && !listaIdentificadorGrpErp.isEmpty()) {
+                    listaIdentificadorGrpErpCombo = new SofisComboG((List) listaIdentificadorGrpErp, "idGrpErpNombre");
+                    listaIdentificadorGrpErpCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                }
             }
 
             if (fichaTO.getPreFk() != null && fichaTO.getPreFk().getPrePk() != null) {
@@ -3490,7 +4657,7 @@ public class FichaMB implements Serializable {
                 formPresupuestoRendered = 1;
                 preFormDataExpanded = true;
             } else if (fichaTO.getPreFk() != null && listaAdqPagosFrame.isEmpty()) {
-                renderedFormAdquisicionAction("agregarAdquisicion");
+//				renderedFormAdquisicionAction("agregarAdquisicion");
                 preFormDataExpanded = true;
             }
 
@@ -3534,16 +4701,15 @@ public class FichaMB implements Serializable {
             try {
                 prod = productosDelegate.guardarProducto(prod, true);
                 if (prod != null) {
-                    JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_producto_guardado", null);
+                    JSFUtils.agregarMsg("productosMsg", "info_producto_guardado", null);
                     editarProducto(prod);
-//                    actualizarFichaTO(null);
                     cargarFrameCronograma(true);
                     cargarResumenCronograma();
-//                    this.guardarCronograma();
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage());
-                JSFUtils.agregarMsgs(PROD_MSG_ID, be.getErrores());
+                JSFUtils.agregarMsgError(PROD_MSG_ID, Labels.getValue(be.getMessage()), null);
+                //JSFUtils.agregarMsgs(PROD_MSG_ID, be.getErrores());
                 inicioMB.setRenderPopupMensajes(true);
                 return null;
             }
@@ -3573,6 +4739,12 @@ public class FichaMB implements Serializable {
         return productosDelegate.prodMesAcuRealColor(prodMes, inicioMB.getOrganismo().getOrgPk(), limiteAmarilloProd, limiteRojoProd);
     }
 
+    public String abrirProductoAction() {
+        limpiarProducto();
+        prodFormDataExpanded = true;
+        return null;
+    }
+
     public String editarProducto(Productos prod) {
         if (!editarProdMap.containsKey(prod.getProdPk())
                 || editarProdMap.get(prod.getProdPk())) {
@@ -3587,15 +4759,20 @@ public class FichaMB implements Serializable {
     public String eliminarProducto(Productos prod) {
         try {
             productosDelegate.eliminarProducto(prod.getProdPk());
-            JSFUtils.removerMensages();
-            JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_producto_eliminado", null);
-            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+            JSFUtils.agregarMsg("productosMsg", "info_producto_eliminado", null);
             productosList.remove(prod);
             cargarFrameCronograma(false);
             cargarResumenCronograma();
         } catch (BusinessException be) {
-            JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, be.getErrores());
-            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+            /*
+                     *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs("productosMsg", be.getErrores());
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError("productosMsg", Labels.getValue(iterStr), null);
+            }
+
         }
         return null;
     }
@@ -3645,7 +4822,7 @@ public class FichaMB implements Serializable {
     private Set<AreasTags> getAreasTagsSelected() {
         if (areasTematicasStateMap != null) {
             List lista = areasTematicasStateMap.getSelected();
-            Set<AreasTags> result = new HashSet<>();
+            Set<AreasTags> result = new HashSet<AreasTags>();
 
             for (Object object : lista) {
                 if (object instanceof DefaultMutableTreeNode) {
@@ -3678,7 +4855,15 @@ public class FichaMB implements Serializable {
             cerrarRenderPopupCopiaProy();
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(FICHA_MSG_ID, be.getErrores());
+            /*
+                         *  18-06-2018 Inspección de código.
+             */
+
+            //JSFUtils.agregarMsgs(FICHA_MSG_ID, be.getErrores());
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError(FICHA_MSG_ID, Labels.getValue(iterStr), null);
+            }
+
             inicioMB.abrirPopupMensajes();
         }
 
@@ -3722,6 +4907,23 @@ public class FichaMB implements Serializable {
     }
 
     private boolean fieldAttribute(String fieldName, FieldAttributeEnum field, Object param) {
+        
+        //Validación de campos
+        if(fichaTO.getDescripcion() == null || fichaTO.getDescripcion().equals("")){
+            fichaTO.setDescripcion("<p></p>");
+        }
+        if(fichaTO.getObjetivo()== null || fichaTO.getObjetivo().equals("")){
+            fichaTO.setObjetivo("<p></p>");
+        }
+        if(fichaTO.getObjPublico()== null || fichaTO.getObjPublico().equals("")){
+            fichaTO.setObjPublico("<p></p>");
+        }
+        if(fichaTO.getFactorImpacto()== null || fichaTO.getFactorImpacto().equals("")){
+            fichaTO.setFactorImpacto("<p></p>");
+        }
+        if(fichaTO.getSituacionActual()== null || fichaTO.getSituacionActual().equals("")){
+            fichaTO.setSituacionActual("<p></p>");
+        }
 
         boolean checkDisabled = field == FieldAttributeEnum.DISABLED;
         boolean checkRendered = field == FieldAttributeEnum.RENDERED;
@@ -3761,6 +4963,11 @@ public class FichaMB implements Serializable {
         boolean isEstadoFinalizado = fichaTO.isEstado(Estados.ESTADOS.FINALIZADO.estado_id);
         boolean isEstadoPendCerrar = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_CANCELAR_PMOT.estado_id);
 
+        boolean isEstadoPendReplanif = fichaTO.getEstadoPendiente() != null && fichaTO.getEstadoPendiente().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id) && isEstadoEjecucion;
+
+        boolean isEstadoSolCerrarHaciaPMOF = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id);
+        boolean isEstadoSolCerrarHaciaPMOT = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+
         boolean isActivo = fichaTO.getActivo() == null || fichaTO.getActivo();
 
         boolean deshabilitar = !isActivo
@@ -3775,6 +4982,24 @@ public class FichaMB implements Serializable {
         boolean isSolAprobacion = fichaTO.getEstadoPendiente() != null
                 && estadosDelegate.isOrdenProcesoMenor(fichaTO.getEstado(), fichaTO.getEstadoPendiente());
 
+        /*
+                * 16-03-2018 Nico: Se agrega el atributo "isPrograma" para saber si la Ficha es un programa
+         */
+        boolean isPrograma = fichaTO.isPrograma();
+
+        /*
+                * 16-03-2018 Nico: Se agrega un chequeo para poder desactivar agegar modificar y eliminar documento 
+                *       si el usuario no es gerente o adjunto del proyecto, o no es coordinador del documento.
+         */
+        if (fieldName.equals("btnAgregarDocumento")) {
+            if (isEstadoFinalizado || !(isGerente) && !(isAdjunto)) {
+                rendered = false;
+            }
+        }
+
+        // Si es null es porque todavía no se ha replanificado.
+        boolean habilitadoReplan = ultimaReplan == null ? true : ultimaReplan.isProyreplanPermitEditar();
+
 //        if (isDirector) {
         if (fieldName.equalsIgnoreCase("AprobarFicha")) {
             //el boton aprobar no aplica si es un alta
@@ -3783,10 +5008,19 @@ public class FichaMB implements Serializable {
                     || (isEstadoPendientes && isGerenteOAdjunto && !(isPMOT || isPMOF))
                     || (isEstadoPendientePMOF && !isPMOF)
                     || (isEstadoPendientePMOT && !isPMOT)
-                    || (isPMOF && (isEstadoInicio || isEstadoPlanificacion) && !isPMOT && !isGerenteOAdjunto)
+                    || ((isPMOF && !aprobPMOF) && (isEstadoInicio || isEstadoPlanificacion) && !isPMOT && !isGerenteOAdjunto)
                     || !(isGerenteOAdjunto || isPMOT || isPMOF)
                     || (isProg && (isEstadoInicio || isEstadoPlanificacion || isEstadoEjecucion))
-                    || isEstadoPendCerrar) {
+                    || (isEstadoSolCerrarHaciaPMOF && !(isPMOF || isPMOT) || isEstadoSolCerrarHaciaPMOT && !isPMOT) // En el caso de que se envie una solicitud de cierre, no se puede retroceder.
+                    || isEstadoPendCerrar
+                    || (isEstadoPendReplanif) // Se saca el botón para avanzar cuando se tiene una solicitud de replanificación.
+                    || this.selectedMostrar != null) {
+                rendered = false;
+            }
+            
+            // No se debería mostrar en los programas si progEstFk es pendiente 
+            // pero progEstPendienteFk es nulo, porque el que está pendiente es uno de sus proyectos
+            if (fichaTO.isPrograma() && fichaTO.getEstado() != null && fichaTO.getEstado().isPendientes() && fichaTO.getEstadoPendiente() == null) {
                 rendered = false;
             }
         }
@@ -3795,8 +5029,12 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("retrocederEstadoFicha")) {
             if (deshabilitar
                     || isAlta
-                    || (isEstadoPendientes || isEstadoInicio)
-                    || !(isPMOT || (isPMOF && isEstadoEjecucion))) {
+                    || (isEstadoPendientes || isEstadoInicio) // || isEstadoFinalizado)
+                    || !((isPMOT) || (isPMOF && aprobPMOF) || (isPMOF && !aprobPMOF && isEstadoEjecucion)) // A esta condición se agrega la variable "aprobPMOF" para poder diferenciar el caso en que PMOF tiene permiso para pasar de fase
+                    || (isEstadoSolCerrarHaciaPMOF && !(isPMOF || isPMOT) || isEstadoSolCerrarHaciaPMOT && !isPMOT) // En el caso de que se envie una solicitud de cierre, no se puede retroceder.
+                    || (!(isPMOT) && isEstadoPendReplanif) // Se controla que solamente el PMOT puede ver las solicitudes de replanificación
+                    || this.selectedMostrar != null
+                    || isProg) {
                 rendered = false;
             }
         }
@@ -3804,16 +5042,22 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("GuardarFicha")) {
             if (deshabilitarFinalizado || isEstadoFinalizado
                     || (isEstadoPendientePMOF && !isPMOF)
-                    || (isEstadoPendientePMOT && !isPMOT)) {
+                    || (isEstadoPendientePMOT && !isPMOT)
+                    || this.selectedMostrar != null) {
                 rendered = false;
             }
         }
 
+        /*
+                * 16-03-2018 Nico: Se chequea el valor de "isPrograma" para sacar el botón de Eliminar
+         */
         if (fieldName.equalsIgnoreCase("EliminarFicha")) {
             if (deshabilitar
                     || isAlta || isEstadoFinalizado
                     || (isProg && !isPMOT)
-                    || (isProy && !(isPMOT || isPMOF))) {
+                    || (isProy && !(isPMOT || isPMOF))
+                    || this.selectedMostrar != null
+                    || isPrograma) {
                 rendered = false;
             }
         }
@@ -3825,7 +5069,8 @@ public class FichaMB implements Serializable {
         }
 
         if (fieldName.equalsIgnoreCase("moverProyecto")) {
-            if (isProg || isAlta || !isPMOT
+            if (!Boolean.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.HABILITAR_MOVER_PROYECTO, null).getCnfValor())
+                    || isProg || isAlta || !isPMOT
                     || !(isEstadoInicio || isEstadoPlanificacion || isEstadoEjecucion || isEstadoFinalizado)) {
                 rendered = false;
             }
@@ -4007,7 +5252,10 @@ public class FichaMB implements Serializable {
         }
 
         if (fieldName.equalsIgnoreCase("AreaTematicaTree")) {
-            if (deshabilitarFinalizado || !(isPMOT || isPMOF)) {
+            
+            if (deshabilitarFinalizado 
+                    || !(isPMOT || isPMOF || (isGerenteOAdjunto && gerentesAsignanAreasTematicas))) {
+                
                 rendered = false;
             }
         }
@@ -4074,7 +5322,8 @@ public class FichaMB implements Serializable {
                 || fieldName.equalsIgnoreCase("panelGannt")
                 || fieldName.equalsIgnoreCase("panelRiesgos")
                 || fieldName.equalsIgnoreCase("panelCalidad")
-                || fieldName.equalsIgnoreCase("panelMultimedia")) {
+                || fieldName.equalsIgnoreCase("panelMultimedia")
+                || fieldName.equalsIgnoreCase("panelLocalizaciones")) {
             if (!isActivo || (isEstadoPendientes && isGerenteOAdjunto && !(isPMOT || isPMOF))
                     || isProyPaso1_1 || isProgPaso1_1) {
                 rendered = false;
@@ -4089,7 +5338,10 @@ public class FichaMB implements Serializable {
                     || fieldName.equalsIgnoreCase("panelPresupuesto")
                     || fieldName.equalsIgnoreCase("panelGannt")
                     || fieldName.equalsIgnoreCase("panelProductos")
-                    || fieldName.equalsIgnoreCase("panelMultimedia")) {
+                    || fieldName.equalsIgnoreCase("panelMultimedia")
+                    || fieldName.equalsIgnoreCase("panelLocalizaciones")
+                    || fieldName.equalsIgnoreCase("panelDocumentos")
+                    || fieldName.equalsIgnoreCase("panelInteresados")) {
                 rendered = false;
             }
         }
@@ -4101,19 +5353,23 @@ public class FichaMB implements Serializable {
         }
 
         if (fieldName.equalsIgnoreCase("editarMultimedia")) {
-            if (!(isGerenteOAdjunto || isEditor)) {
+            if (isEstadoFinalizado || !(isGerenteOAdjunto || isEditor)) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("eliminarMultimedia")) {
-            if (!(isGerenteOAdjunto)) {
+            if (isEstadoFinalizado || !(isGerenteOAdjunto)) {
                 rendered = false;
             }
         }
 
+        /*
+                *  19-03-18 Nico: Acá agrego que si "isGerenteOAdjunto" lo deje editar 
+                *           cuando aparezca "estadoDocumento"
+         */
         if (fieldName.equalsIgnoreCase("estadoDocumento")) {
-            if (!(isPMOF || isPMOT)) {
+            if (!(isPMOF || isPMOT || isGerenteOAdjunto)) {
                 rendered = false;
             }
         }
@@ -4141,7 +5397,7 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("agregarRiesgo")
                 || fieldName.equalsIgnoreCase("editarRiesgo")
                 || fieldName.equalsIgnoreCase("eliminarRiesgo")) {
-            if (deshabilitarFinalizado || (!isGerenteOAdjunto && !isEstadoFinalizado)) {
+            if (isEstadoFinalizado || deshabilitarFinalizado || (!isGerenteOAdjunto && !isEstadoFinalizado)) {
                 rendered = false;
             }
         }
@@ -4171,46 +5427,76 @@ public class FichaMB implements Serializable {
         }
 
         if (fieldName.equalsIgnoreCase("agregarAdquisicion")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion) {
+            /**
+             * /15-03-2018 Nico: Se permite agregar Adquisiciones en estado de
+             * Ejecución
+             */
+            //if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("editarAdquisicion")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoEjecucion && !isGerenteOAdjuntoPre)) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoEjecucion && !isGerenteOAdjuntoPre) || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("eliminarAdquisicion")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("agregarPago")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion) {
+            /**
+             * /25-09-2017 (Bruno): se agrega el requerimiento que permite
+             * agregar pagos en ejecución
+             */
+            //if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || isEstadoEjecucion) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
 
-        if (fieldName.equalsIgnoreCase("editarPago")) {
+        if (fieldName.equalsIgnoreCase("editarPago") || fieldName.equalsIgnoreCase("duplicarPago")) {
+            /**
+             * 25-09-2017 (Bruno): se agrega el requerimiento que permite
+             * agregar pagos en ejecución
+             */
+//			if ((deshabilitarFinalizado && !usuAprobFact)
+//					|| !(isGerenteOAdjuntoPre || usuAprobFact)
+//					|| (isEstadoEjecucion && !(isGerenteOAdjuntoPre || usuAprobFact))) {
             if ((deshabilitarFinalizado && !usuAprobFact)
-                    || !(isGerenteOAdjuntoPre || usuAprobFact)
-                    || (isEstadoEjecucion && !(isGerenteOAdjuntoPre || usuAprobFact))) {
+                    || !isGerenteOAdjuntoPre
+                    || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("eliminarPago")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoEjecucion)) {
+            /**
+             * 25-09-2017 (Bruno): se agrega el requerimiento que permite
+             * agregar pagos en ejecución
+             */
+            //if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoEjecucion)) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
+            }
+            
+            if (param != null) {
+                // En fase de “Ejecución” sólo debe aparecer el botón “eliminar pago” en aquellos pagos que tengan importe planificado = 0
+                Double importePlanificado = pagosDelegate.getImportePlanificado((Integer)param);
+                if (fichaTO.getEstado().getEstCodigo().equals(EstadosCodigos.EJECUCION) && importePlanificado != 0.0) {
+                    rendered = false;
+                }
             }
         }
 
         if (fieldName.equalsIgnoreCase("confirmarPagoCol")) {
             if (!(isGerenteOAdjuntoPre || isPMOF || isPMOT || usuAprobFact)) {
-//                rendered = false;
+//                      rendered = false;
             }
         }
 
@@ -4229,8 +5515,18 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("prePagosImpPlan")
                 || fieldName.equalsIgnoreCase("prePagosFechaPlan")
                 || fieldName.equalsIgnoreCase("prePagosEntregables")) {
-            if (deshabilitarFinalizado || isEstadoEjecucion) {
-                disabled = true;
+            /**
+             * /25-09-2017 (Bruno): se agrega el requerimiento que permite
+             * agregar pagos en ejecución
+             */
+            if (fieldName.equalsIgnoreCase("prePagosEntregables")) {
+                if (deshabilitarFinalizado) {
+                    disabled = true;
+                }
+            } else {
+                if (deshabilitarFinalizado || isEstadoEjecucion) {
+                    disabled = true;
+                }
             }
         }
 
@@ -4243,21 +5539,24 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("preAdqNombre")
                 || fieldName.equalsIgnoreCase("preAdqMoneda")
                 || fieldName.equalsIgnoreCase("preAdqFuente")
-                || fieldName.equalsIgnoreCase("preAdqProcCompraGRP")
-                || fieldName.equalsIgnoreCase("preAdqProcCompraGRP")) {
+                || fieldName.equalsIgnoreCase("preAdqIdGrpErp")) {
             if (deshabilitarFinalizado || isEstadoEjecucion) {
-                disabled = true;
+                /**
+                 * /15-03-2018 Nico: Se dejan como activados los campos para
+                 * editar una Adquisicion en el Estado Ejecución del Proyecto
+                 */
+                disabled = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("agregarDevengado")
                 || fieldName.equalsIgnoreCase("eliminarDevengado")) {
-            if (deshabilitarFinalizado || isEstadoEjecucion || !isGerenteOAdjuntoPre) {
+            if (deshabilitarFinalizado || isEstadoEjecucion || !isGerenteOAdjuntoPre || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
         if (fieldName.equalsIgnoreCase("editarDevengado")) {
-            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre) {
+            if (deshabilitarFinalizado || !isGerenteOAdjuntoPre || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
@@ -4272,14 +5571,14 @@ public class FichaMB implements Serializable {
         if (fieldName.equalsIgnoreCase("editarProducto")) {
             boolean isCoordEnt = param != null && param instanceof Boolean ? (Boolean) param : false;
 //            if (!isActivo || (!isGerenteOAdjunto || !isCoordEnt)) {
-            if (!(isActivo && (isGerenteOAdjunto || isCoordEnt))) {
+            if (isEstadoFinalizado || !(isActivo && (isGerenteOAdjunto || isCoordEnt))) {
                 rendered = false;
             }
         }
 
         if (fieldName.equalsIgnoreCase("eliminarProducto")) {
             boolean isCoordEnt = param != null && param instanceof Boolean ? (Boolean) param : false;
-            if (!((isActivo && !isEstadoEjecucion) && (isGerenteOAdjunto || isCoordEnt))) {
+            if (isEstadoFinalizado || !((isActivo && !isEstadoEjecucion) && (isGerenteOAdjunto || isCoordEnt))) {
                 rendered = false;
             }
         }
@@ -4331,7 +5630,7 @@ public class FichaMB implements Serializable {
             }
         }
 
-        if (disabled == null && deshabilitarFinalizado) {
+        if (disabled == null && deshabilitarFinalizado && !(fieldName.equals("retrocederEstadoFicha"))) {
             disabled = true;
         }
 
@@ -4349,6 +5648,39 @@ public class FichaMB implements Serializable {
             }
         }
 
+        if (fieldName.equalsIgnoreCase("agregarLocalizacion")) {
+            if (isEstadoFinalizado || !isGerenteOAdjunto) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("editarLocalizacion")) {
+            if (isEstadoFinalizado || !isGerenteOAdjunto) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("eliminarLocalizacion")) {
+            if (isEstadoFinalizado || !isGerenteOAdjunto) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("preAdqCausal")) {
+            rendered = existeFuenteProcedimientoCompra();
+            disabled = !isPMOF && !isPMOT && !isGerenteOAdjunto;
+        }
+
+        if (fieldName.equalsIgnoreCase("preAdqProveedor")) {
+            rendered = true;
+            disabled = !isPMOF && !isPMOT && !isGerenteOAdjunto;
+        }
+        
+        if (fieldName.equalsIgnoreCase("preAdqCliente")) {
+            rendered = true;
+            disabled = !isPMOF && !isPMOT && !isGerenteOAdjunto;
+        }        
+
         if (checkDisabled) {
             return disabled != null ? disabled : false;
         } else if (checkRendered) {
@@ -4356,6 +5688,14 @@ public class FichaMB implements Serializable {
         } else {
             return false;
         }
+    }
+
+    private boolean existeFuenteProcedimientoCompra() {
+        Boolean existeFuenteProcedimientoCompra = false;
+        if (fuenteFinanciamientoSelected != null && procedimientoCompraSelected != null) {
+            existeFuenteProcedimientoCompra = fuenteProcedimientoCompraDelegate.fuenteProcedimientoCompraEstaEnTabla(fuenteFinanciamientoSelected, procedimientoCompraSelected);
+        }
+        return existeFuenteProcedimientoCompra;
     }
 
     public boolean isGerenteOAdjuntoFicha() {
@@ -4366,11 +5706,18 @@ public class FichaMB implements Serializable {
         if (fichaTO.getCroFk() != null
                 && CollectionsUtils.isNotEmpty(fichaTO.getCroFk().getEntregablesSet())) {
             Set<Entregables> entSet = fichaTO.getCroFk().getEntregablesSet();
-            for (Entregables ent : entSet) {
-                if (ent.getCoordinadorUsuFk() != null
-                        && ent.getCoordinadorUsuFk().getUsuId().equals(inicioMB.getUsuario().getUsuId())) {
-                    return true;
+
+            boolean isEstadoFinalizado = fichaTO.isEstado(Estados.ESTADOS.FINALIZADO.estado_id);
+
+            if (!isEstadoFinalizado) {
+                for (Entregables ent : entSet) {
+                    if (ent.getCoordinadorUsuFk() != null
+                            && ent.getCoordinadorUsuFk().getUsuId().equals(inicioMB.getUsuario().getUsuId())) {
+                        return true;
+                    }
                 }
+            } else {
+                return false;
             }
         }
 
@@ -4399,12 +5746,25 @@ public class FichaMB implements Serializable {
     }
 
     public String getLabelBtnEstAnterior() {
+        boolean isPMOF = SsUsuariosUtils.isUsuarioPMOF(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+        boolean isPMOT = SsUsuariosUtils.isUsuarioPMOT(inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+
+        boolean isEstadoSolCerrarHaciaPMOF = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id);
+        boolean isEstadoSolCerrarHaciaPMOT = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+
+        boolean isEstadoEjecucion = fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id);
+
         String result = "";
         if (fichaTO.getEstado() != null
                 && fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
 
-            if (SsUsuariosUtils.isUsuarioPMOT(inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk())) {
-                if (fichaTO.getEstadoPendiente() != null) {
+            /*
+                *       Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
+                *   se chequea si es o no PMOF del proyecto.
+             */
+            if (isPMOT || (isPMOF && aprobPMOF) || (isPMOT && (isEstadoSolCerrarHaciaPMOT || isEstadoSolCerrarHaciaPMOF))) {
+
+                if (fichaTO.getEstadoPendiente() != null && !(isEstadoSolCerrarHaciaPMOT || isEstadoSolCerrarHaciaPMOF)) {
                     result = StringsUtils.concat(result, Labels.getValue("estado_aprobar"), " ");
                 }
             } else {
@@ -4423,11 +5783,17 @@ public class FichaMB implements Serializable {
      */
     public String getLabelBtnAprobar() {
 
+        boolean isPMOF = SsUsuariosUtils.isUsuarioPMOF(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+        boolean isPMOT = inicioMB.isUsuarioOrgaPMOT();
+
         boolean isEstado = fichaTO.getEstado() != null;
         boolean isPendientePMOT = isEstado
                 && fichaTO.getEstado().getEstPk().equals(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
         boolean isPendientePMOF = isEstado
                 && fichaTO.getEstado().getEstPk().equals(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
+
+        boolean isEstadoSolCerrarHaciaPMOF = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id);
+        boolean isEstadoSolCerrarHaciaPMOT = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
 
         if (isPendientePMOF || isPendientePMOT) {
             return Labels.getValue("estado_aprobar");
@@ -4435,11 +5801,17 @@ public class FichaMB implements Serializable {
             StringBuffer label = new StringBuffer();
 
             if ((SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(fichaTO, inicioMB.getUsuario())
-                    || (SsUsuariosUtils.isUsuarioPMOF(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk())
-                    && !isPendientePMOF))
-                    && !inicioMB.isUsuarioOrgaPMOT()) {
+                    || (isPMOF && !aprobPMOF && !fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id) && !isPendientePMOF))
+                    && ((!isPMOT))) {
+
                 label.append(Labels.getValue("estado_solicitar")).append(" ");
-            } else if (inicioMB.isUsuarioOrgaPMOT() && fichaTO.getEstadoPendiente() != null) {
+
+                /*
+                        *       Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
+                        *   se chequea si es o no PMOF del proyecto.
+                 */
+            } else if ((isPMOT || (isPMOF && aprobPMOF)) && fichaTO.getEstadoPendiente() != null
+                    || isPMOT && (isEstadoSolCerrarHaciaPMOF || isEstadoSolCerrarHaciaPMOT) || isPMOF && isEstadoSolCerrarHaciaPMOF) {
                 label.append(Labels.getValue("estado_aprobar")).append(" ");
             }
 
@@ -4500,7 +5872,7 @@ public class FichaMB implements Serializable {
                 }
 
                 if (countLevel0 > 1) {
-                    JSFUtils.agregarMsgError("ganttMsg", Labels.getValue("error_cro_guardar_ent_level_0_mult"), null);
+                    JSFUtils.agregarMsgError("ganttForm", Labels.getValue("error_cro_guardar_ent_level_0_mult"), null);
                     cargarFrameCronograma(false);
                     return null;
                 }
@@ -4514,7 +5886,7 @@ public class FichaMB implements Serializable {
                             for (Entregables e2 : cro.getEntregablesSet()) {
                                 if (e2.getEntId() == e.getEntId() + 1) {
                                     if (e2.getEntNivel() > e.getEntNivel()) {
-                                        JSFUtils.agregarMsgError("ganttMsg", Labels.getValue("error_cro_guardar_ent_hito_padre"), null);
+                                        JSFUtils.agregarMsgError("ganttForm", Labels.getValue("error_cro_guardar_ent_hito_padre"), null);
                                         cargarFrameCronograma(false);
                                         return null;
                                     } else {
@@ -4526,29 +5898,38 @@ public class FichaMB implements Serializable {
                     }
                 }
 
-                cro.setEntregablesSet(new HashSet<>(EntregablesUtils.corregirFechasPadres(new ArrayList<>(cro.getEntregablesSet()), true, true)));
-                
+                cro.setEntregablesSet(new HashSet<>(EntregablesUtils.ajustarFechas(cro.getEntregablesSet())));
+
                 Object progProy = cronogramaDelegate.guardarCronograma(cro, fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
 
                 if (progProy == null) {
-                    JSFUtils.agregarMsgError("ganttMsg", "error_cro_guardar", null);
+                    JSFUtils.agregarMsgError("ganttForm", "error_cro_guardar", null);
                 } else {
                     actualizarFichaTO(progProy);
-                    cargarFrameCronograma(false);
-                    JSFUtils.agregarMsg("ganttMsg", "info_cronograma_guardado", null);
+
+                    if (this.alAbrirEnTodaLaPantalla && inicioMB.isAlHacerConsultaHistorico()) {
+                        cargarFrameCronograma(true);
+
+                        inicioMB.setAlHacerConsultaHistorico(false);
+                        this.alAbrirEnTodaLaPantalla = false;
+                    } else {
+                        cargarFrameCronograma(false);
+                    }
+
+                    JSFUtils.agregarMsg("ganttForm", "info_cronograma_guardado", null);
                 }
 
                 JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), "setUnchangeGantt();");
 
             } catch (JSONException ex) {
                 logger.log(Level.SEVERE, null, ex);
-                JSFUtils.agregarMsgError("ganttMsg", "error_cro_guardar", null);
+                JSFUtils.agregarMsgError("ganttForm", "error_cro_guardar", null);
             } catch (BusinessException be) {
-                for(String err : be.getErrores()){
-                    if(err.startsWith("error_entregables")){
-                        JSFUtils.agregarMsgError("ganttMsg", Labels.getValue(err), null);
-                    }else{
-                        JSFUtils.agregarMsgError("ganttMsg", err, null);
+                for (String err : be.getErrores()) {
+                    if (err.startsWith("error_entregables")) {
+                        JSFUtils.agregarMsgError("ganttForm", Labels.getValue(err), null);
+                    } else {
+                        JSFUtils.agregarMsgError("ganttForm", err, null);
                     }
                 }
                 cargarFrameCronograma(false);
@@ -4566,8 +5947,6 @@ public class FichaMB implements Serializable {
     private Cronogramas jsonToCronograma(JSONObject j) {
         if (j != null) {
             try {
-
-//                System.out.println("Cronograma: " + j.toString());
                 Cronogramas c = new Cronogramas();
                 if (j.has(ConstantesPresentacion.CRONO_PK)) {
                     c.setCroPk(j.getInt(ConstantesPresentacion.CRONO_PK));
@@ -4577,7 +5956,6 @@ public class FichaMB implements Serializable {
                     c.setCroEntSeleccionado(j.getInt(ConstantesPresentacion.CRONO_SELECTED_ROW));
                 }
                 if (j.has(ConstantesPresentacion.CRONO_CAN_WRITE)) {
-//                    c.setCroPermisoEscritura(j.getBoolean(ConstantesPresentacion.CRONO_CAN_WRITE));
                     c.setCroPermisoEscritura(true);
                 }
                 if (j.has(ConstantesPresentacion.CRONO_CAN_WRITE_PARENT)) {
@@ -4594,7 +5972,7 @@ public class FichaMB implements Serializable {
 
             } catch (Exception w) {
                 logger.log(Level.SEVERE, w.getMessage(), w);
-                JSFUtils.agregarMsg("ganttMsg", "error_cro_guardar", null);
+                JSFUtils.agregarMsg("ganttForm", "error_cro_guardar", null);
             }
         }
 
@@ -4727,7 +6105,7 @@ public class FichaMB implements Serializable {
     private Set<Entregables> jsonToEntregables(JSONObject j) throws Exception {
         if (j != null) {
             try {
-                Set<Entregables> setEnt = new HashSet<>();
+                Set<Entregables> setEnt = new HashSet<Entregables>();
                 JSONArray tasks = j.getJSONArray(ConstantesPresentacion.TASKS);
 
                 for (int i = 0; i < tasks.length(); i++) {
@@ -5878,6 +7256,14 @@ public class FichaMB implements Serializable {
     }
 
     // </editor-fold>
+    public String getLabelObjEstValue() {
+        return labelObjEstValue;
+    }
+
+    public void setLabelObjEstValue(String labelObjEstValue) {
+        this.labelObjEstValue = labelObjEstValue;
+    }
+
     public List<Participantes> getListaParticipantes() {
         return listaParticipantes;
     }
@@ -6102,6 +7488,30 @@ public class FichaMB implements Serializable {
         this.frameMax = frameMax;
     }
 
+    public int getPagoEliminar() {
+        return pagoEliminar;
+    }
+
+    public void setPagoEliminar(int pagoEliminar) {
+        this.pagoEliminar = pagoEliminar;
+    }
+
+    public int getPagoConfirmar() {
+        return pagoConfirmar;
+    }
+
+    public void setPagoConfirmar(int pagoConfirmar) {
+        this.pagoConfirmar = pagoConfirmar;
+    }
+
+    public int getAdqEliminar() {
+        return adqEliminar;
+    }
+
+    public void setAdqEliminar(int adqEliminar) {
+        this.adqEliminar = adqEliminar;
+    }
+
     public String plantillaCroPopup() {
         renderPopupPlantillaCro = true;
         plantillaCroList = plantillaCronogramaDelegate.buscarPorFiltro(null, inicioMB.getOrganismo().getOrgPk());
@@ -6125,25 +7535,61 @@ public class FichaMB implements Serializable {
         renderPopupPlantillaCro = false;
         plantillaCro = null;
         plantillaFechaInicio = null;
+
+        /*
+            *   07-06-2018 Nico: Se agrega este control para poder cargar el template desde el 
+            *        programa cuando se abre por primera vez el popup de plantilla cronograma y 
+            *        luego se le da cerrar.
+         */
+        if (primeraCargarGantt) {
+            cargarFrameCronograma(true);
+            primeraCargarGantt = false;
+        }
+
     }
 
     public String generarCroDesdePlantilla() {
         plantillaCro = (PlantillaCronograma) plantillaCroListCombo.getSelectedObject();
+        if (plantillaCro == null) {
+            JSFUtils.agregarMsgError("ganttForm", MensajesNegocio.ERROR_CRO_PLANTILLA_OBTENER, null);
+            return null;
+        }
         try {
+
             Object progProy = plantillaCronogramaDelegate.generarCroDesdePlantilla(fichaTO.getFichaFk(), plantillaCro, plantillaFechaInicio, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
 
             if (progProy == null) {
-                JSFUtils.agregarMsg("ganttMsg", "error_cro_guardar", null);
+                JSFUtils.agregarMsg("ganttForm", "error_cro_guardar", null);
             } else {
                 actualizarFichaTO(progProy);
-                cargarFrameCronograma(false);
+
+                if (primeraCargarGantt) {
+                    if (recienCreado) {
+                        cargarFrameCronograma(false);
+                    } else {
+                        cargarFrameCronograma(true);
+                    }
+                } else {
+                    cargarFrameCronograma(false);
+                }
+                primeraCargarGantt = false;
+
                 renderPopupPlantillaCro = false;
-                JSFUtils.agregarMsg("ganttMsg", "info_cronograma_guardado", null);
+                JSFUtils.agregarMsg("ganttForm", "info_cronograma_guardado", null);
             }
 
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, null, be);
-            JSFUtils.agregarMsgs(PLANTILLA_CRO_MSG_ID, be.getErrores());
+            //JSFUtils.agregarMsgs(PLANTILLA_CRO_MSG_ID, be.getErrores());
+
+            /*
+                        *   14-06-2018 Nico: Se cambia la forma de tomar los mensajes de errores para tomar el último, dado que es el más
+                        *           ilustrativo, y además para no generar una gran cantidad de mensajes en la pantalla.
+             */
+            JSFUtils.agregarMsgError(PLANTILLA_CRO_MSG_ID, Labels.getValue(be.getErrores().get(be.getErrores().size() - 1)), null);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsgError("ganttForm", MensajesNegocio.ERROR_CRO_PLANTILLA_OBTENER, null);
         }
 
         return null;
@@ -6155,13 +7601,10 @@ public class FichaMB implements Serializable {
      * @return
      */
     public String linkToGRP() {
-        String grp = fichaTO.getGrp();
-
         String grpUrl = ConfigApp.getValue("grp_url");
         if (!StringsUtils.isEmpty(grpUrl)) {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             try {
-//                ec.redirect(grpUrl+"/"+grp);
                 ec.redirect(grpUrl);
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
@@ -6183,6 +7626,7 @@ public class FichaMB implements Serializable {
         }
 
         listAdqDev = cargarDevMesAux(listAdqDev);
+        devengadoMsgs = true;
 
         return null;
     }
@@ -6206,14 +7650,21 @@ public class FichaMB implements Serializable {
                 adq = adquisicionDelegate.guardarAdquisicion(adq, fichaFk, tipoFicha, usu, orgPk);
             }
 
-            JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_devengado_guardado", null);
+            JSFUtils.agregarMsg("presupuestoListMsg", "info_devengado_guardado", null);
             editDev = false;
             listAdqDev = cargarDevMesAux(null);
 
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+
+            devengadoMsgs = false;
+
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage());
-            JSFUtils.agregarMsgs(DEV_MSG_ID, be.getErrores());
-            inicioMB.setRenderPopupMensajes(true);
+
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
         return null;
     }
@@ -6308,7 +7759,7 @@ public class FichaMB implements Serializable {
      * original. Usado cuando se pasa de un año a otro.
      */
     private void agregarDevNuevos() {
-        List<Devengado> listTmpDev = new ArrayList<>();
+        List<Devengado> listTmpDev = new ArrayList<Devengado>();
         for (Adquisicion adq : listAdqDev) {
             for (Devengado dev : adq.getListDevAux()) {
                 if (dev.getDevPk() == null
@@ -6336,7 +7787,7 @@ public class FichaMB implements Serializable {
         renderAdqDevPopup.abrir();
         listAdq = adquisicionDelegate.obtenerAdquisicionPorProy(fichaTO.getFichaFk());
         if (listAdq != null) {
-            List<Adquisicion> listAdqAux = new ArrayList<>();
+            List<Adquisicion> listAdqAux = new ArrayList<Adquisicion>();
             for (Adquisicion adq : listAdq) {
                 if (!listAdqDev.contains(adq)) {
                     listAdqAux.add(adq);
@@ -6406,8 +7857,6 @@ public class FichaMB implements Serializable {
         boolean esEntreFechas1 = DatesUtils.esEntreFechas(calMes.getTime(), cEntInicioDate.getTime(), ent.getEntFinDate(), "yyyyMM");
         boolean esEntreFechas2 = DatesUtils.esEntreFechas(calMes.getTime(), today.getTime(), ent.getEntFinDate(), "yyyyMM");
 
-        //System.out.println("calMes.get(Calendar.YEAR)" +calMes.get(Calendar.YEAR));
-        //System.out.println("esEntreFechas2 " +esEntreFechas2 + calMes.getTime() + ":"+ today.getTime() + ":" + ent.getEntFinDate());
         return esEntreFechas1 && esEntreFechas2;
     }
 
@@ -6424,37 +7873,6 @@ public class FichaMB implements Serializable {
             }
         }
         return "";
-    }
-
-    public String mapaUbicacionPopupAction() {
-
-        //System.out.println("fichaTO.getLatlngProy().getLatlngLat().toString():"+fichaTO.getLatlngProy().getLatlngLat().toString());
-        String lat;
-        String lng;
-
-        if (fichaTO.getLatlngProy().getLatlngLat() == null || fichaTO.getLatlngProy().getLatlngLat().intValue() == 0) {
-            lat = "0";
-        } else {
-            lat = fichaTO.getLatlngProy().getLatlngLat().toString();
-        }
-        if (fichaTO.getLatlngProy().getLatlngLng() == null || fichaTO.getLatlngProy().getLatlngLng().intValue() == 0) {
-            lng = "0";
-        } else {
-            lng = fichaTO.getLatlngProy().getLatlngLng().toString();
-        }
-
-        String llamada = "initialize2(";
-        llamada += lat;
-        llamada += ", ";
-        llamada += lng;
-        llamada += ", '";
-        llamada += "";
-        llamada += "' , \"";
-        llamada += "";
-        llamada += "\" ) ;";
-        JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), llamada);
-        renderPopupMapaUbicacion = true;
-        return null;
     }
 
     public String otrosDatosPopupAction() {
@@ -6487,26 +7905,25 @@ public class FichaMB implements Serializable {
             }
         }
 
-        //List<OrganiIntProve> listInstEjec = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, false);
         List<OrganiIntProve> listInstEjec = aplicacionMB.obtenerOrganiIntNoProveedores(orgPk);
-        if (listInstEjec != null) {
-            listInstEjec = OrganiIntProveUtils.sortByNombre(listInstEjec);
-            listaInstEjecCombo = new SofisComboG<>(listInstEjec, "orgaNombre");
-            listaInstEjecCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-            if (pod != null && pod.getProyOtrInsEjeFk() != null) {
-                listaInstEjecCombo.setSelectedT(pod.getProyOtrInsEjeFk());
-            }
+        
+        listInstEjec = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listInstEjec, pod.getProyOtrInsEjeFk());
+        listaInstEjecCombo = new SofisComboG<>(listInstEjec, "orgaNombre");
+        listaInstEjecCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+       
+        if (pod.getProyOtrInsEjeFk() != null) {
+            listaInstEjecCombo.setSelectedT(pod.getProyOtrInsEjeFk());
         }
 
-        //List<OrganiIntProve> listContra = organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, true);
         List<OrganiIntProve> listContra = aplicacionMB.obtenerOrganiIntProveedores(orgPk);
-        if (listContra != null) {
-            listContra = OrganiIntProveUtils.sortByNombre(listContra);
-            listaContratistaCombo = new SofisComboG<>(listContra, "orgaNombre");
-            listaContratistaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-            if (pod != null && pod.getProyOtrContFk() != null) {
-                listaContratistaCombo.setSelectedT(pod.getProyOtrContFk());
-            }
+        listContra = OrganiIntProveUtils.filtrarHabilitadosYOrdenarPorNombre(listContra, pod.getProyOtrContFk());
+        
+        listContra = OrganiIntProveUtils.sortByNombre(listContra);
+        listaContratistaCombo = new SofisComboG<>(listContra, "orgaNombre");
+        listaContratistaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        
+        if (pod.getProyOtrContFk() != null) {
+            listaContratistaCombo.setSelectedT(pod.getProyOtrContFk());
         }
 
         if (fichaTO.isProyecto()) {
@@ -6532,16 +7949,18 @@ public class FichaMB implements Serializable {
     }
 
     public void replanificacionGenerarLineaBaseChange(ValueChangeEvent ev) {
-//        System.out.println("CALL replanificacionGenerarLineaBaseChange");
         replanificacion.setProyreplanGenerarLineaBase((Boolean) ev.getNewValue());
         if (!replanificacion.isProyreplanGenerarLineaBase()) {
             replanificacion.setProyreplanHistorial(false);
+            replanificacion.setProyreplanDesc("");
+            replanificacion.setProyreplanGenerarPresupuesto(false);
+            replanificacion.setProyreplanGenerarProducto(false);
+            replanificacion.setProyreplanPermitEditar(false);
             replanificacion.setProyreplanDesc("");
         }
     }
 
     public void replanificacionProyreplanHistorialChange(ValueChangeEvent ev) {
-//        System.out.println("CALL replanificacionProyreplanHistorialChange");
         replanificacion.setProyreplanHistorial((Boolean) ev.getNewValue());
         if (!replanificacion.getProyreplanHistorial()) {
             replanificacion.setProyreplanDesc("");
@@ -6562,6 +7981,11 @@ public class FichaMB implements Serializable {
         pod.setProyOtrInsEjeFk(instEjec);
         pod.setProyOtrContFk(contratista);
         pod.setProyOtrEntFk(ent);
+        if (ent != null) {
+            pod.setProyOtrPlazo(ent.getEntDuracion());
+        } else {
+            pod.setProyOtrPlazo(null);
+        }
 
         if (listaCategoriaSecundaria != null) {
             if (pod.getProyOtrosCatSecundarias() == null) {
@@ -6595,12 +8019,9 @@ public class FichaMB implements Serializable {
             if (ep.getEstPubCodigo().equalsIgnoreCase(EstadoPublicacionCodigos.PUBLICADO)) {
                 ultima = proyPublicaHistDelegate.obtenerUltimaFecha(fichaTO.getFichaFk());
                 if (ultima != null) {
-                    sb.append(" ").append(DatesUtils.toStringFormat(ultima, ConstantesEstandares.CALENDAR_PATTERN));
+                    sb.append(" ").append(DatesUtils.toStringFormat(ultima, "dd/MM/yyyy HH:mm:ss"));
                 }
             }
-//            if (ep.getEstPubCodigo().equalsIgnoreCase(EstadoPublicacionCodigos.PENDIENTE_CARGAR)) {
-//                sb.append(": ").append(camposPendientesPublicacion());
-//            }
             return sb.toString();
         }
         return null;
@@ -6634,13 +8055,8 @@ public class FichaMB implements Serializable {
                 sb.append(sb.length() > 0 ? ", " : "");
                 sb.append(Labels.getValue("objPublicoFicha"));
             }
-            if (fichaTO.getLatlngProy() == null
-                    || fichaTO.getLatlngProy().getLatlngLat() == null
-                    || fichaTO.getLatlngProy().getLatlngLng() == null
-                    || (
-                        fichaTO.getLatlngProy().getLatlngLat().intValue() == 0 &&
-                        fichaTO.getLatlngProy().getLatlngLng().intValue() == 0)
-                    )  {
+
+            if (fichaTO.getLatLngProyList() == null || fichaTO.getLatLngProyList().isEmpty()) {
                 sb.append(sb.length() > 0 ? ", " : "");
                 sb.append(Labels.getValue("ficha_ubicacion"));
             }
@@ -6681,84 +8097,63 @@ public class FichaMB implements Serializable {
         }
     }
 
-    public void guardarUbicacionProyecto() {
-
-        fichaTO.getLatlngProy().setLatlngLat(new BigDecimal(fichaTO.getLatlngLatAux().toString()));
-        fichaTO.getLatlngProy().setLatlngLng(new BigDecimal(fichaTO.getLatlngLngAux().toString()));
-
-        if (fichaTO.getLatlngProy().getLatlangDepFk() == null) {
-            fichaTO.getLatlngProy().setLatlangDepFk(new Departamentos());
-        }
-        //System.out.println("fichaTO.getDeptoAux():"+fichaTO.getDeptoAux());
-        fichaTO.getLatlngProy().getLatlangDepFk().setDepPk(deptoToCodificacionINE(fichaTO.getDeptoAux()));
-        //System.out.println("fichaTO.getDeptoAux():"+deptoToCodificacionINE(fichaTO.getDeptoAux()));
-        if (fichaTO.getLatlngProy().getLatlangDepFk().getDepPk() == 0) {
-            fichaTO.getLatlngProy().setLatlangDepFk(null);
-        }
-        guardarFichaAction();
-        cerrarPopupMapaUbicacion();
-
-    }
-
     public Integer deptoToCodificacionINE(String deptoGoogle) {
         deptoGoogle = StringsUtils.removeTildes(deptoGoogle);
-        //System.out.println("deptoGoogle");
-        if (deptoGoogle.toLowerCase().indexOf("montevideo") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("montevideo")) {
             return 1;
         }
-        if (deptoGoogle.toLowerCase().indexOf("artigas") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("artigas")) {
             return 2;
         }
-        if (deptoGoogle.toLowerCase().indexOf("canelones") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("canelones")) {
             return 3;
         }
-        if (deptoGoogle.toLowerCase().indexOf("cerro largo") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("cerro largo")) {
             return 4;
         }
-        if (deptoGoogle.toLowerCase().indexOf("colonia") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("colonia")) {
             return 5;
         }
-        if (deptoGoogle.toLowerCase().indexOf("durazno") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("durazno")) {
             return 6;
         }
-        if (deptoGoogle.toLowerCase().indexOf("flores") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("flores")) {
             return 7;
         }
-        if (deptoGoogle.toLowerCase().indexOf("florida") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("florida")) {
             return 8;
         }
-        if (deptoGoogle.toLowerCase().indexOf("lavalleja") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("lavalleja")) {
             return 9;
         }
-        if (deptoGoogle.toLowerCase().indexOf("maldonado") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("maldonado")) {
             return 10;
         }
-        if (deptoGoogle.toLowerCase().indexOf("paysandu") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("paysandu")) {
             return 11;
         }
-        if (deptoGoogle.toLowerCase().indexOf("rio negro") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("rio negro")) {
             return 12;
         }
-        if (deptoGoogle.toLowerCase().indexOf("rivera") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("rivera")) {
             return 13;
         }
-        if (deptoGoogle.toLowerCase().indexOf("rocha") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("rocha")) {
             return 14;
         }
-        if (deptoGoogle.toLowerCase().indexOf("salto") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("salto")) {
             return 15;
         }
-        if (deptoGoogle.toLowerCase().indexOf("san jose") >= 0) {
-
+        if (deptoGoogle.toLowerCase().contains("san jose")) {
             return 16;
         }
-        if (deptoGoogle.toLowerCase().indexOf("soriano") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("soriano")) {
             return 17;
         }
-        if (deptoGoogle.toLowerCase().indexOf("tacuarembo") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("tacuarembo")) {
             return 18;
         }
-        if (deptoGoogle.toLowerCase().indexOf("treinta y tres") >= 0) {
+        if (deptoGoogle.toLowerCase().contains("treinta y tres")) {
             return 19;
         }
         return 0;
@@ -6856,9 +8251,7 @@ public class FichaMB implements Serializable {
              * producto siembre debería aparecer un semáforo para cada color y
              * mostrar la cantidad de productos y en porcentaje para cada caso.
              */
-//            if (cant > 0) {
             return StringsUtils.concat(String.valueOf(cant), " - ", desc, " (", String.valueOf(porc), "%)");
-//            }
         }
         return null;
     }
@@ -6903,4 +8296,1422 @@ public class FichaMB implements Serializable {
         this.metodologiaTipoDocumentoRequeridoDesde = metodologiaTipoDocumentoRequeridoDesde;
     }
 
+    /**
+     * @return the listaObjetivosEstrategicosCombo
+     */
+    public SofisComboG<ObjetivoEstrategico> getListaObjetivosEstrategicosCombo() {
+        return listaObjetivosEstrategicosCombo;
+    }
+
+    /**
+     * @param listaObjetivosEstrategicosCombo the
+     * listaObjetivosEstrategicosCombo to set
+     */
+    public void setListaObjetivosEstrategicosCombo(SofisComboG<ObjetivoEstrategico> listaObjetivosEstrategicosCombo) {
+        this.listaObjetivosEstrategicosCombo = listaObjetivosEstrategicosCombo;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<ComponenteProducto> getListaComponenteProducto() {
+        return listaComponenteProducto;
+    }
+
+    /**
+     *
+     * @param listaComponenteProducto
+     */
+    public void setListaComponenteProducto(List<ComponenteProducto> listaComponenteProducto) {
+        this.listaComponenteProducto = listaComponenteProducto;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public SofisCombo getListaComponenteProductoCombo() {
+        return listaComponenteProductoCombo;
+    }
+
+    /**
+     *
+     * @param listaComponenteProductoCombo
+     */
+    public void setListaComponenteProductoCombo(SofisCombo listaComponenteProductoCombo) {
+        this.listaComponenteProductoCombo = listaComponenteProductoCombo;
+    }
+
+    /**
+     * @return the renderPopupDocumentoHistorico
+     */
+    public Boolean getRenderPopupDocumentoHistorico() {
+        return renderPopupDocumentoHistorico;
+    }
+
+    /**
+     * @param renderPopupDocumentoHistorico the renderPopupDocumentoHistorico to
+     * set
+     */
+    public void setRenderPopupDocumentoHistorico(Boolean renderPopupDocumentoHistorico) {
+        this.renderPopupDocumentoHistorico = renderPopupDocumentoHistorico;
+    }
+
+    /**
+     * @return the docHistDownloadFile
+     */
+    public Map<Integer, SofisResource> getDocHistDownloadFile() {
+        return docHistDownloadFile;
+    }
+
+    /**
+     * @param docHistDownloadFile the docHistDownloadFile to set
+     */
+    public void setDocHistDownloadFile(Map<Integer, SofisResource> docHistDownloadFile) {
+        this.docHistDownloadFile = docHistDownloadFile;
+    }
+
+    private Object getFlashContext(String attName) {
+        return FacesContext.getCurrentInstance().getExternalContext().getFlash().get(attName);
+    }
+
+    public void setAplicacionMB(AplicacionMB aplicacionMB) {
+        this.aplicacionMB = aplicacionMB;
+    }
+
+    // ======================================================================================================================
+    // Carga masiva de tareas del Gantt desde archivo
+    private boolean cargaDesdeArchivo = false;
+
+    public boolean getCargaDesdeArchivo() {
+        return cargaDesdeArchivo;
+    }
+
+    public boolean habilitarCargaDesdeArchivo() {
+        /* 15-03-2018 Nico: Dejo comentada esta línea para no mostrar el campo de cargar datos desde archivo 
+         */
+        //return fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id) || fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
+        return false;
+    }
+
+    public void mostrarCargaDesdeArchivo() {
+
+        if (TipoFichaEnum.PROGRAMA.getValue() == fichaTO.getTipoFicha()) {
+            JSFUtils.agregarMsgError("ganttForm", "Esta funcionalidad solo está disponible para proyectos.", null);
+            return;
+        }
+
+        Cronogramas cro = fichaTO.getCroFk();
+        if (cro == null) {
+            return;
+        }
+
+        //Solo se permite cargar datos de un archivo si sus entregables no tienen avance (avance mayor a 0) y no estén asociados a productos, 
+        //interesados, colaboradores, calidad, riesgos o pagos
+        for (Entregables entregable : cro.getEntregablesSet()) {
+            if ((entregable.getEntProgreso() != null && entregable.getEntProgreso() > 0)) {
+                JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable tiene avance mayor a cero.", null);
+                return;
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene interesados registrados
+        if (fichaTO.getInteresados() != null) {
+            for (Interesados interesado : fichaTO.getInteresados()) {
+                if (interesado.getIntEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un interesado.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene participantes registrados
+        if (fichaTO.getParticipantes() != null) {
+            for (Participantes participante : fichaTO.getParticipantes()) {
+                if (participante.getPartEntregablesFk() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un participante.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene registros de calidad
+        if (fichaTO.getCalidadList() != null) {
+            for (Calidad calidad : fichaTO.getCalidadList()) {
+                if (calidad.getCalEntFk() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a una calidad.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene riesgos registrados
+        if (fichaTO.getRiesgos() != null) {
+            for (Riesgos riesgo : fichaTO.getRiesgos()) {
+                if (riesgo.getRiskEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un riesgo.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene documentos registrados
+        if (fichaTO.getDocumentos() != null) {
+            for (Documentos documento : fichaTO.getDocumentos()) {
+                if (documento.getDocsEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un documento.", null);
+                    return;
+                } else {
+                    if (documento.getDocsPagoFk() != null && documento.getDocsPagoFk().getEntregables() != null) {
+                        JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un pago.", null);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si el proyecto no tiene productos registrados
+        Proyectos proyecto = proyectoDelegate.obtenerProyPorId(fichaTO.getFichaFk());
+        if (proyecto != null) {
+            List<Productos> productos = productosDelegate.obtenerProdPorProyPk(proyecto.getProyPk());
+            if (productos != null) {
+                for (Productos producto : productos) {
+                    if (producto.getProdEntregableFk() != null) {
+                        JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque al menos un entregable está asociado a un producto.", null);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Los pagos están siempre asociados a un entregable, por lo que si existe un pago no se pueden eliminar los entregables actuales
+        List<AdqPagosTO> adqPagos = adquisicionDelegate.obtenerAdquisicionPagosList(fichaTO.getPreFk().getPrePk());
+        if (adqPagos != null) {
+            for (AdqPagosTO adqPago : adqPagos) {
+                if (adqPago.getTipo() == 2) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga desde un archivo porque hay al menos un pago asociado a entregables.", null);
+                    return;
+                }
+            }
+        }
+
+        //Si llegó hasta acá es porque pasó todas las validaciones
+        cargaDesdeArchivo = true;
+    }
+
+    public void cancelarCargaDesdeArchivo() {
+        JSFUtils.removerMensages();
+        cargarFrameCronograma(true);
+        cargaDesdeArchivo = false;
+    }
+
+    private File planillaCargarEntregables;
+
+    public void subirPlanillaCargaEntregablesAction(FileEntryEvent evento) {
+        JSFUtils.removerMensages();
+        try {
+            planillaCargarEntregables = null;
+            FileEntry fileEntry = (FileEntry) evento.getComponent();
+            FileEntryResults results = fileEntry.getResults();
+            planillaCargarEntregables = results.getFiles().get(0).getFile();
+        } catch (Exception e2) {
+            JSFUtils.agregarMsg("error_subir_archivo");
+            logger.log(Level.SEVERE, e2.getMessage(), e2);
+        }
+    }
+
+    public void importarEntregablesDesdeArchivo() {
+        JSFUtils.removerMensages();
+        if (planillaCargarEntregables == null) {
+            JSFUtils.agregarMsgError("fileEntryPlanilla", "No ha seleccionado una planilla", null);
+            return;
+        }
+        try {
+            HSSFSheet hoja;
+            try {
+                //Abrir el archivo
+                InputStream stream = new FileInputStream(planillaCargarEntregables);
+                //Abrir el libro
+                HSSFWorkbook libro = new HSSFWorkbook(stream);
+                //Obtener la hoja 1
+                hoja = libro.getSheetAt(0);
+            } catch (Exception ex) {
+                throw new BusinessException("No se puede acceder a la planilla indicada o la misma no tiene el formato correcto");
+            }
+            HSSFRow fila;
+            //Iterar por las filas 
+            Iterator rows = hoja.rowIterator();
+            int nroFila = 0;
+            List<Entregables> entregables = new LinkedList();
+            boolean procesamientoTerminado = false;
+            while (!procesamientoTerminado && rows.hasNext()) {
+                nroFila++;
+                fila = (HSSFRow) rows.next();
+                if (nroFila == 1) {
+                    //Saltear la primer fila (los encabezados)
+                    continue;
+                }
+                //Si no hay valor en la columna 0 se asume que se terminaron los datos
+                if (fila.getCell(0) == null || fila.getCell(0).toString().trim().isEmpty()) {
+                    procesamientoTerminado = true;
+                    continue;
+                }
+                Entregables entregable = new Entregables();
+                //Columna 0: número (identificador del entregable)
+                try {
+                    entregable.setEntId((Double.valueOf(fila.getCell(0).toString().trim())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'número' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 1: nombre
+                try {
+                    entregable.setEntNombre(fila.getCell(1).toString().trim());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'nombre' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 2: nivel
+                try {
+                    entregable.setEntNivel((Double.valueOf(fila.getCell(2).toString().trim())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'nivel' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 3: esfuerzo
+                try {
+                    entregable.setEntEsfuerzo((Double.valueOf(fila.getCell(3).toString().trim())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'esfuerzo' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 4: avance
+                try {
+                    entregable.setEntProgreso((Double.valueOf(fila.getCell(4).toString().trim())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'avance' en la fila " + nroFila + " no es correcto", ex);
+                }
+                //Columna 5: fecha de inicio
+                try {
+                    //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                    entregable.setEntInicio(fila.getCell(5).getDateCellValue().getTime() + 12 * 60 * 60 * 1000);
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de inicio' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 6: fecha de fin
+                try {
+                    //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                    entregable.setEntFin(fila.getCell(6).getDateCellValue().getTime() + 12 * 60 * 60 * 1000);
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de fin' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 7: fecha de inicio de línea base (no es requerida)
+                try {
+                    if (fila.getCell(7) != null && !fila.getCell(7).toString().trim().isEmpty()) {
+                        //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                        entregable.setEntInicioLineaBase(fila.getCell(7).getDateCellValue().getTime() + 12 * 60 * 60 * 1000);
+                    }
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de inicio de línea base' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 8: fecha de fin de línea base (no es requerida)
+                try {
+                    if (fila.getCell(8) != null && !fila.getCell(8).toString().trim().isEmpty()) {
+                        //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                        entregable.setEntFinLineaBase(fila.getCell(8).getDateCellValue().getTime() + 12 * 60 * 60 * 1000);
+                    }
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de fin de línea base' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 9: es hito
+                try {
+                    entregable.setEntInicioEsHito(Boolean.FALSE);
+                    String value = fila.getCell(9).toString().trim();
+                    if (value == null || !("SI".equalsIgnoreCase(value) || "NO".equalsIgnoreCase(value))) {
+                        throw new BusinessException("El campo 'es hito' en la fila " + nroFila + " no es correcto");
+                    }
+                    entregable.setEntFinEsHito(fila.getCell(9).toString().equalsIgnoreCase("SI"));
+                } catch (BusinessException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'es hito' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 10: predecesores
+                try {
+                    if (fila.getCell(10) != null && !fila.getCell(10).toString().trim().isEmpty()) {
+                        //Es necesario convertirla a String porque sino cuando hay un solo dígito lo toma como número y lo devuelve con decimales
+                        fila.getCell(10).setCellType(HSSFCell.CELL_TYPE_STRING);
+                        String value = fila.getCell(10).toString().trim();
+                        entregable.setEntPredecesorFk(value);
+                        entregable.setEntPredecesorDias(0);
+                        //Si tiene predecesores configurados debe cumplir el patrón
+                        if (entregable.getEntPredecesorFk() != null && !entregable.getEntPredecesorFk().isEmpty()
+                                && !entregable.getEntPredecesorFk().matches(EntregablesValidacion.DEPENDENCIA_REGEX)) {
+                            throw new BusinessException("El campo 'dependencia' en la fila " + nroFila + " no es correcto");
+                        }
+                    }
+                } catch (BusinessException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'dependencia' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 11: es clave PMO
+                try {
+                    String value = fila.getCell(11).toString().trim();
+                    if (value == null || !("SI".equalsIgnoreCase(value) || "NO".equalsIgnoreCase(value))) {
+                        throw new BusinessException("El campo 'es clave PMO' en la fila " + nroFila + " no es correcto");
+                    }
+                    entregable.setEntRelevante(value.equalsIgnoreCase("SI"));
+                } catch (BusinessException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'es clave PMO' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 12: coordinador
+                String coordinador;
+                try {
+                    if (fila.getCell(12) != null && !fila.getCell(12).toString().trim().isEmpty()) {
+                        coordinador = fila.getCell(12).toString();
+                        //Si no es vacío debe ser una dirección de correo electrónico
+                        if (!coordinador.trim().isEmpty() && !EmailValidator.validateEmail(coordinador)) {
+                            throw new BusinessException("El campo 'coordinador' en la fila " + nroFila + " no es correcto");
+                        }
+                        if (coordinador.length() > 50) {
+                            throw new BusinessException("El campo 'coordinador' en la fila " + nroFila + " tiene más de 50 caracteres.");
+                        }
+                        entregable.setCoordinadorUsuFk(ssUsuarioDelegate.obtenerSsUsuarioPorMail(coordinador));
+                    }
+                } catch (BusinessException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'coordinador' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 13: observaciones
+                try {
+                    if (fila.getCell(13) != null && !fila.getCell(13).toString().trim().isEmpty()) {
+                        entregable.setEntDescripcion(fila.getCell(13).toString());
+                    }
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'observaciones' en la fila " + nroFila + " no es correcto");
+                }
+                //Otros campos que no vienen en la planilla
+                entregable.setEntStatus("STATUS_ACTIVE");
+                entregable.setEntCollapsed(Boolean.FALSE);
+                entregable.setEntInicioProyecto(Boolean.FALSE);
+                entregable.setEntFinProyecto(Boolean.FALSE);
+                //Si es un hito se pone como fecha de inicio la misma que la fecha de fin
+                if (entregable.getEntFinEsHito()) {
+                    entregable.setEntInicio(entregable.getEntFin());
+                }
+                entregables.add(entregable);
+                //Queda pendiente lo siguiente porque dependen de otros entregables (hay que hacerlo después de cargar todos los entregables):
+                //1-Ajustar las fechas de inicio y fin, y las fechas de inicio y fin de la línea base
+                //2-Completar los campos entParent, entDuracion, entDuracionLineaBase
+            }
+            //Ajustar las fechas de los entregables en base a los hijos y las dependencias
+            entregables = EntregablesUtils.ajustarFechas(entregables);
+            //Validar los datos y las fechas de los entregables
+            EntregablesValidacion.validarEntregables(entregables);
+            //Si llegó hasta acá se importaron y validaron todos los entregables
+            fichaTO.getCroFk().getEntregablesSet().clear();
+            for (Entregables entregable : entregables) {
+                entregable.setEntCroFk(fichaTO.getCroFk());
+                fichaTO.getCroFk().getEntregablesSet().add(entregable);
+            }
+            //Guardar el cronograma con todos los entregables
+            Object progProy = cronogramaDelegate.guardarCronograma(fichaTO.getCroFk(), fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+            if (progProy == null) {
+                JSFUtils.agregarMsgError("ganttForm", "error_cro_guardar", null);
+            } else {
+                actualizarFichaTO(progProy);
+                cargarFrameCronograma(true);
+                JSFUtils.agregarMsg("ganttForm", "info_cronograma_guardado", null);
+            }
+            //Volver a la vista normal del cronograma
+            cargaDesdeArchivo = false;
+        } catch (BusinessException bEx) {
+            logger.log(Level.SEVERE, bEx.getMessage());
+            JSFUtils.agregarMsgError("fileEntryPlanilla", bEx.getMessage(), null);
+        }
+    }
+
+    // ======================================================================================================================
+    // Carga masiva de tareas del Gantt
+    private boolean cargaPorFormulario = false;
+
+    public boolean getCargaPorFormulario() {
+        return cargaPorFormulario;
+    }
+
+    public boolean habilitarCargaPorFormulario() {
+        return fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id) || fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
+    }
+
+    /*
+        * 13-03-18 Nico: Agregue "habilitarCargaDesdePlantilla" para poder desactivar el botón cuando no este en estado
+        *           "Planificando" o "Inicial".
+     */
+    public boolean habilitarCargaDesdePlantilla() {
+        return fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id) || fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
+    }
+
+    public void mostrarCargaPorFormulario() {
+
+        if (TipoFichaEnum.PROGRAMA.getValue() == fichaTO.getTipoFicha()) {
+            JSFUtils.agregarMsgError("ganttForm", "Esta funcionalidad solo está disponible para proyectos.", null);
+            return;
+        }
+
+        Cronogramas cro = fichaTO.getCroFk();
+        if (cro == null) {
+            return;
+        }
+
+        //Solo se permite cargar datos por formulario si sus entregables no tienen avance (avance mayor a 0) y no estén asociados a productos, 
+        //interesados, colaboradores, calidad, riesgos o pagos
+        for (Entregables entregable : cro.getEntregablesSet()) {
+            if ((entregable.getEntProgreso() != null && entregable.getEntProgreso() > 0)) {
+                JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable tiene avance mayor a cero.", null);
+                return;
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene interesados registrados
+        if (fichaTO.getInteresados() != null) {
+            for (Interesados interesado : fichaTO.getInteresados()) {
+                if (interesado.getIntEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un interesado.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene participantes registrados
+        if (fichaTO.getParticipantes() != null) {
+            for (Participantes participante : fichaTO.getParticipantes()) {
+                if (participante.getPartEntregablesFk() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un participante.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene registros de calidad
+        if (fichaTO.getCalidadList() != null) {
+            for (Calidad calidad : fichaTO.getCalidadList()) {
+                if (calidad.getCalEntFk() != null) {
+                    JSFUtils.agregarMsgError(null, "No se permite la carga por formulario porque al menos un entregable está asociado a una calidad.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene riesgos registrados
+        if (fichaTO.getRiesgos() != null) {
+            for (Riesgos riesgo : fichaTO.getRiesgos()) {
+                if (riesgo.getRiskEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un riesgo.", null);
+                    return;
+                }
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene documentos registrados
+        if (fichaTO.getDocumentos() != null) {
+            for (Documentos documento : fichaTO.getDocumentos()) {
+                if (documento.getDocsEntregable() != null) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un documento.", null);
+                    return;
+                } else {
+                    if (documento.getDocsPagoFk() != null && documento.getDocsPagoFk().getEntregables() != null) {
+                        JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un pago.", null);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Solo se permite cargar datos por formulario si el proyecto no tiene productos registrados
+        Proyectos proyecto = proyectoDelegate.obtenerProyPorId(fichaTO.getFichaFk());
+        if (proyecto != null) {
+            List<Productos> productos = productosDelegate.obtenerProdPorProyPk(proyecto.getProyPk());
+            if (productos != null) {
+                for (Productos producto : productos) {
+                    if (producto.getProdEntregableFk() != null) {
+                        JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque al menos un entregable está asociado a un producto.", null);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Los pagos están siempre asociados a un entregable, por lo que si existe un pago no se pueden eliminar los entregables actuales
+        List<AdqPagosTO> adqPagos = adquisicionDelegate.obtenerAdquisicionPagosList(fichaTO.getPreFk().getPrePk());
+        if (adqPagos != null) {
+            for (AdqPagosTO adqPago : adqPagos) {
+                if (adqPago.getTipo() == 2) {
+                    JSFUtils.agregarMsgError("ganttForm", "No se permite la carga por formulario porque hay al menos un pago asociado a entregables.", null);
+                    return;
+                }
+            }
+        }
+
+        if (cro == null) {
+            return;
+        }
+        entregablesCargaPorFormulario = new LinkedList();
+        if (cro.getEntregablesSet() != null && !cro.getEntregablesSet().isEmpty()) {
+            List<Entregables> entregables = EntregablesUtils.sortById(new LinkedList<>(cro.getEntregablesSet()));
+            for (Entregables entregable : entregables) {
+                EntregablesCargaPorFomulario entregableCargaFormulario = new EntregablesCargaPorFomulario();
+                entregableCargaFormulario.setEsHito(entregable.getEntFinEsHito());
+                entregableCargaFormulario.setEsfuerzo(entregable.getEntEsfuerzo() != null ? entregable.getEntEsfuerzo().toString() : "");
+                entregableCargaFormulario.setFin(entregable.getEntFinDate());
+                entregableCargaFormulario.setInicio(entregable.getEntInicioDate());
+                entregableCargaFormulario.setNivel(entregable.getEntNivel() != null ? entregable.getEntNivel().toString() : "");
+                entregableCargaFormulario.setNombre(entregable.getEntNombre() != null ? entregable.getEntNombre() : "");
+                entregableCargaFormulario.setPredecesores(entregable.getEntPredecesorFk() != null ? entregable.getEntPredecesorFk() : "");
+                entregableCargaFormulario.setProgreso(entregable.getEntProgreso() != null ? entregable.getEntProgreso().toString() : "");
+                //Determinar si el entregable puede ser eliminado (luego, además, hay que verificar cada vez que ningun otro entregable dependa de él)
+                boolean tieneProductos = productosDelegate.tieneProdporEnt(entregable.getEntPk());
+                boolean tieneDependencias = entregablesDelegate.tieneDependencias(entregable.getEntPk());
+                entregableCargaFormulario.setEliminable(!tieneDependencias && !tieneProductos);
+                entregablesCargaPorFormulario.add(entregableCargaFormulario);
+            }
+        } else {
+            entregablesCargaPorFormulario.add(new EntregablesCargaPorFomulario());
+        }
+
+        cargaPorFormulario = true;
+    }
+
+    public void cancelarCargaPorFormulario() {
+        cargarFrameCronograma(true);
+        cargaPorFormulario = false;
+    }
+
+    List<EntregablesCargaPorFomulario> entregablesCargaPorFormulario = new LinkedList();
+
+    public List<EntregablesCargaPorFomulario> getEntregablesCargaPorFormulario() {
+        return entregablesCargaPorFormulario;
+    }
+
+    //Añade un entregable en la posición siguiente a la indicada
+    public String agregarEntregableCargaPorFormulario(EntregablesCargaPorFomulario entregable) {
+        //Los entregables se indexan a partir de 1 pero la lista en Java a partir de 0, por eso se suma 1
+        Integer entId = entregablesCargaPorFormulario.indexOf(entregable) + 1;
+        entregablesCargaPorFormulario.add(entId, new EntregablesCargaPorFomulario());
+        //Ajustar todos los entregables: dado que todos los entregables preexistentes que tienen EntId mayor al actual aumentan su EntId en 1
+        //hay que ajustar las dependencias
+        for (EntregablesCargaPorFomulario entregableCargaFormulario : entregablesCargaPorFormulario) {
+            if (entregableCargaFormulario.getPredecesoresLista() != null) {
+                StringBuilder sDependencias = new StringBuilder("");
+                for (EntregablesCargaPorFomulario.Predecesor predecesor : entregableCargaFormulario.getPredecesoresLista()) {
+                    //La coma, si ya hay un predecesor incluido
+                    if (sDependencias.length() > 0) {
+                        sDependencias.append(",");
+                    }
+                    //Si el id de la dependencia es mayor al eliminado, se aumenta en 1 sino se mantiene como está
+                    if (predecesor.getId() > entId) {
+                        sDependencias.append(predecesor.getId() + 1);
+                    } else {
+                        sDependencias.append(predecesor.getId());
+                    }
+                    //Si hay desplazamiento en días se incluye
+                    if (predecesor.getDias() != null) {
+                        sDependencias.append(":").append(predecesor.getDias());
+                    }
+                }
+                entregableCargaFormulario.setPredecesores(sDependencias.toString());
+            }
+        }
+        return null;
+    }
+
+    //Añade un entregable al final
+    public void agregarEntregableCargaPorFormulario() {
+        entregablesCargaPorFormulario.add(new EntregablesCargaPorFomulario());
+    }
+
+    //Quita un entregable en la posición indicada
+    public String quitarEntregableCargaPorFormulario(EntregablesCargaPorFomulario entregable) {
+        //Primero verificar si el entregable puede ser eliminado por sí mismo
+        if (!entregable.isEliminable()) {
+            JSFUtils.agregarMsgError("ficha:tblCargaPorFormulario", "No es posible eliminar el entregable. Es un entregable padre o es usado en reg. de horas, productos, pagos, colaboradores, riesgos, calidad o interesados.", null);
+            return null;
+        }
+        //Los entregables se indexan a partir de 1 pero la lista en Java a partir de 0, por eso se suma 1
+        int entId = entregablesCargaPorFormulario.indexOf(entregable) + 1;
+        //Si pasó las validaciones se puede quitar el entregable, ajustando los demás entregables
+        //Dado que todos los entregables preexistentes que tienen EntId mayor al actual disminuyen su EntId en 1 hay que ajustar las dependencias
+        for (EntregablesCargaPorFomulario entregableCargaFormulario : entregablesCargaPorFormulario) {
+            if (entregableCargaFormulario.getPredecesoresLista() != null) {
+                StringBuilder sDependencias = new StringBuilder("");
+                for (EntregablesCargaPorFomulario.Predecesor predecesor : entregableCargaFormulario.getPredecesoresLista()) {
+                    //Si el id de la dependencia es igual al eliminado, se ignora (se quita la dependencia)
+                    if (predecesor.getId() == entId) {
+                        continue;
+                    }          //La coma, si ya hay un predecesor incluido
+                    if (sDependencias.length() > 0) {
+                        sDependencias.append(",");
+                    }
+                    //Si el id de la dependencia es mayor al eliminado, se reduce en 1 sino se mantiene como está
+                    if (predecesor.getId() > entId) {
+                        sDependencias.append(predecesor.getId() - 1);
+                    } else {
+                        sDependencias.append(predecesor.getId());
+                    }
+                    //Si hay desplazamiento en días se incluye
+                    if (predecesor.getDias() != null) {
+                        sDependencias.append(":").append(predecesor.getDias());
+                    }
+                }
+                //Volver a poner las depedencias (vuelve a calcular la lista)
+                entregableCargaFormulario.setPredecesores(sDependencias.toString());
+            }
+        }
+        //La eliminación hay que hacerla después de ajustar las dependencias para no modificar los identificadores antes de terminar los cálculos
+        entregablesCargaPorFormulario.remove(entregable);
+        return null;
+    }
+
+    public void importarEntregablesPorFormulario() {
+        JSFUtils.removerMensages();
+        try {
+            List<Entregables> entregables = new LinkedList();
+            int nroFila = 0;
+            for (EntregablesCargaPorFomulario entregableCargaPorFormulario : entregablesCargaPorFormulario) {
+                nroFila++;
+                Entregables entregable = new Entregables();
+                entregable.setEntId(nroFila);
+                entregable.setEntNombre(entregableCargaPorFormulario.getNombre());
+                try {
+                    entregable.setEntNivel((Double.valueOf(entregableCargaPorFormulario.getNivel())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'nivel' en la fila " + nroFila + " no es correcto");
+                }
+                try {
+                    entregable.setEntEsfuerzo((Double.valueOf(entregableCargaPorFormulario.getEsfuerzo())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'esfuerzo' en la fila " + nroFila + " no es correcto");
+                }
+                try {
+                    entregable.setEntProgreso((Double.valueOf(entregableCargaPorFormulario.getProgreso())).intValue());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'progreso' en la fila " + nroFila + " no es correcto", ex);
+                }
+                try {
+                    //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                    entregable.setEntInicio(entregableCargaPorFormulario.getInicio().getTime() + 12 * 60 * 60 * 1000);
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de inicio' en la fila " + nroFila + " no es correcto");
+                }
+                try {
+                    //A la fecha obtenida de la planilla se le suma 12 horas para que quede al mediodía
+                    entregable.setEntFin(entregableCargaPorFormulario.getFin().getTime() + 12 * 60 * 60 * 1000);
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'fecha de fin' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 9: es hito
+                try {
+                    entregable.setEntInicioEsHito(Boolean.FALSE);
+                    entregable.setEntFinEsHito(entregableCargaPorFormulario.getEsHito());
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'es hito' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 10: predecesores
+                try {
+                    if (entregableCargaPorFormulario.getPredecesores() != null && !entregableCargaPorFormulario.getPredecesores().trim().isEmpty()) {
+                        entregable.setEntPredecesorFk(entregableCargaPorFormulario.getPredecesores());
+                        entregable.setEntPredecesorDias(0);
+                    }
+                    if (entregable.getEntPredecesorFk() != null && !entregable.getEntPredecesorFk().isEmpty()
+                            && !entregable.getEntPredecesorFk().matches(EntregablesValidacion.DEPENDENCIA_REGEX)) {
+                        throw new BusinessException("El campo 'dependencia' en la fila " + nroFila + " no es correcto");
+                    }
+
+                } catch (Exception ex) {
+                    throw new BusinessException("El campo 'predecesores' en la fila " + nroFila + " no es correcto");
+                }
+                //Columna 12: coordinador
+                entregable.setCoordinadorUsuFk(inicioMB.getUsuario());
+                //Otros campos que no se toman del formulario
+                entregable.setEntStatus("STATUS_ACTIVE");
+                entregable.setEntCollapsed(Boolean.FALSE);
+                entregable.setEntInicioProyecto(Boolean.FALSE);
+                entregable.setEntFinProyecto(Boolean.FALSE);
+                //Si es un hito se pone como fecha de inicio la misma que la fecha de fin
+                if (entregable.getEntFinEsHito()) {
+                    entregable.setEntInicio(entregable.getEntFin());
+                }
+                entregables.add(entregable);
+                //Queda pendiente lo siguiente porque dependen de otros entregables (hay que hacerlo después de cargar todos los entregables):
+                //1-Ajustar las fechas de inicio y fin, y las fechas de inicio y fin de la línea base
+                //2-Completar los campos entParent, entDuracion, entDuracionLineaBase
+            }
+            //Ajustar las fechas de los entregables en base a los hijos y las dependencias
+            entregables = EntregablesUtils.ajustarFechas(entregables);
+            //Validar los datos y las fechas de los entregables
+            EntregablesValidacion.validarEntregables(entregables);
+            //Si llegó hasta acá se importaron y validaron todos los entregables
+            fichaTO.getCroFk().getEntregablesSet().clear();
+            for (Entregables entregable : entregables) {
+                entregable.setEntCroFk(fichaTO.getCroFk());
+                fichaTO.getCroFk().getEntregablesSet().add(entregable);
+            }
+            //Guardar el cronograma con todos los entregables
+            Object progProy = cronogramaDelegate.guardarCronograma(fichaTO.getCroFk(), fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+            if (progProy == null) {
+                JSFUtils.agregarMsgError("ganttForm", "error_cro_guardar", null);
+            } else {
+                actualizarFichaTO(progProy);
+                cargarFrameCronograma(true);
+                JSFUtils.agregarMsg("ganttForm", "info_cronograma_guardado", null);
+                //Volver a la vista normal del cronograma
+                cargaPorFormulario = false;
+            }
+
+        } catch (BusinessException bEx) {
+            logger.log(Level.SEVERE, Labels.getMessage(bEx));
+            JSFUtils.agregarMsgError("tblCargaPorFormulario", Labels.getMessage(bEx), null);
+        }
+    }
+
+    // ======================================================================================================================
+    // Carga masiva de tareas del Gantt desde archivo
+    private boolean cargaPresupuestoDesdeArchivo = false;
+
+    public boolean getCargaPresupuestoDesdeArchivo() {
+        return cargaPresupuestoDesdeArchivo;
+    }
+
+    public boolean habilitarCargaPresupuestoDesdeArchivo() {
+        /* 15-03-2018 Nico: Dejo comentada esta línea para no mostrar el campo de cargar datos desde archivo 
+         */
+        //return fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id) || fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
+        return false;
+    }
+
+    public void mostrarCargaPresupuestoDesdeArchivo() {
+
+        if (TipoFichaEnum.PROGRAMA.getValue() == fichaTO.getTipoFicha()) {
+            JSFUtils.agregarMsgError("btnHabilitarCargaPresupuestoDesdeArchivo", "Esta funcionalidad solo está disponible para proyectos.", null);
+            return;
+        }
+
+        //Solo se permite cargar datos de un archivo si no hay registros de devengados
+        for (Adquisicion adquisicion : listAdqDev) {
+            if (adquisicion.getDevengadoList() != null && !adquisicion.getDevengadoList().isEmpty()) {
+                JSFUtils.agregarMsgError("btnHabilitarCargaPresupuestoDesdeArchivo", "No se permite la carga desde un archivo porque existe al menos un registro devengado.", null);
+                return;
+            }
+        }
+
+        //Solo se permite cargar datos de un archivo si no existe ningún pago confirmado
+        for (AdqPagosTO adqPago : listaAdqPagosFrame) {
+            if (adqPago.getTipo() == 2 && adqPago.getConfirmado() != null && adqPago.getConfirmado().booleanValue()) {
+                JSFUtils.agregarMsgError("btnHabilitarCargaPresupuestoDesdeArchivo", "No se permite la carga desde un archivo porque hay al menos un pago confirmado.", null);
+                return;
+            }
+        }
+
+        //Si llegó hasta acá es porque pasó todas las validaciones
+        cargaPresupuestoDesdeArchivo = true;
+    }
+
+    public void cancelarCargaPresupuestoDesdeArchivo() {
+        cargaPresupuestoDesdeArchivo = false;
+    }
+
+    private File planillaPresupuestoDesdeArchivo;
+
+    public void subirPlanillaCargaPresupuestoDesdeArchivoAction(FileEntryEvent evento) {
+        JSFUtils.removerMensages();
+        try {
+            planillaPresupuestoDesdeArchivo = null;
+            FileEntry fileEntry = (FileEntry) evento.getComponent();
+            FileEntryResults results = fileEntry.getResults();
+            planillaPresupuestoDesdeArchivo = results.getFiles().get(0).getFile();
+        } catch (Exception e2) {
+            JSFUtils.agregarMsg("error_subir_archivo");
+            logger.log(Level.SEVERE, e2.getMessage(), e2);
+        }
+    }
+
+    @SuppressWarnings("LocalVariableHidesMemberVariable")
+    public String cargarPresupuestoDesdeArchivo() {
+        JSFUtils.removerMensages();
+        if (planillaPresupuestoDesdeArchivo == null) {
+            JSFUtils.agregarMsgError("fileEntryPlanilla", "No ha seleccionado una planilla", null);
+            return null;
+        }
+        try {
+            HSSFSheet hoja;
+            try {
+                //Abrir el archivo
+                InputStream stream = new FileInputStream(planillaPresupuestoDesdeArchivo);
+                //Abrir el libro
+                HSSFWorkbook libro = new HSSFWorkbook(stream);
+                //Obtener la hoja 1
+                hoja = libro.getSheetAt(0);
+            } catch (Exception ex) {
+                throw new BusinessException("No se puede acceder a la planilla indicada o la misma no tiene el formato correcto");
+            }
+            HSSFRow fila;
+            //Iterar por las filas 
+            Iterator rows = hoja.rowIterator();
+            int nroFila = 0;
+
+            //Armar un mapa de entregables por EntId
+            Map<Integer, Entregables> entregables = new HashMap<Integer, Entregables>();
+            for (Entregables entregable : entregablesDelegate.obtenerEntPorProyPk(fichaTO.getFichaFk())) {
+                entregables.put(entregable.getEntId(), entregable);
+            }
+            //Armar un mapa de monedas por símbolo
+            Map<String, Moneda> monedas = new HashMap<String, Moneda>();
+            for (Moneda moneda : monedaDelegate.obtenerMonedas()) {
+                monedas.put(moneda.getMonSigno(), moneda);
+            }
+
+            List<Adquisicion> adquisiciones = new LinkedList<Adquisicion>();
+            Adquisicion adquisicion = null;
+
+            boolean procesamientoTerminado = false;
+
+            while (!procesamientoTerminado && rows.hasNext()) {
+
+                nroFila++;
+                fila = (HSSFRow) rows.next();
+                if (nroFila == 1) {
+                    //Saltear la primer fila (el encabezado)
+                    continue;
+                }
+
+//				//Si no hay valor en la columna 0 se asume que se terminaron los datos
+//				if (fila.getCell(0) == null || fila.getCell(0).toString().trim().isEmpty()) {
+//					procesamientoTerminado = true;
+//					continue;
+//				}
+                /**
+                 * Si la fila está vacía se asume que se terminaron los datos.
+                 */
+                if ((fila.getCell(0) == null || fila.getCell(0).toString().trim().isEmpty())
+                        && (fila.getCell(1) == null || fila.getCell(1).toString().trim().isEmpty())
+                        && (fila.getCell(2) == null || fila.getCell(2).toString().trim().isEmpty())
+                        && (fila.getCell(3) == null || fila.getCell(3).toString().trim().isEmpty())
+                        && (fila.getCell(4) == null || fila.getCell(4).toString().trim().isEmpty())
+                        && (fila.getCell(5) == null || fila.getCell(5).toString().trim().isEmpty())
+                        && (fila.getCell(6) == null || fila.getCell(6).toString().trim().isEmpty())
+                        && (fila.getCell(7) == null || fila.getCell(7).toString().trim().isEmpty())) {
+                    procesamientoTerminado = true;
+                    continue;
+                }
+
+                String tipo = fila.getCell(0) != null ? fila.getCell(0).toString() : "";
+                switch (tipo) {
+                    case "G":
+                        adquisicion = obtenerAdquisicion(fila, nroFila, monedas);
+                        adquisicion.setPagosSet(new HashSet<Pagos>());
+                        adquisiciones.add(adquisicion);
+                        break;
+                    case "P":
+                        if (adquisicion == null) {
+                            throw new BusinessException("Se ha encontrado un pago sin una adquisición asociada");
+                        }
+                        Pagos pago = obtenerPago(fila, nroFila, entregables);
+                        pago.setPagAdqFk(adquisicion);
+                        adquisicion.getPagosSet().add(pago);
+                        break;
+                    default:
+                        throw new BusinessException("Tipo ingresado en el archivo no es válido. Sólo son válidos \"G\" y \"P\"");
+                }
+
+            }
+
+            //Validar las adquisiciones  y sus respectivos pagos
+            validarAdquisiciones(adquisiciones);
+
+            //Si pasó todas las validaciones se eliminan las adquisiciones actuales y se persisten las adquisiciones y los pagos
+            for (AdqPagosTO adqPago : listaAdqPagosFrame) {
+                if (adqPago.getTipo() == 1) {
+                    adquisicionDelegate.eliminarAdquisicion(adqPago.getAdqPk(), fichaTO.getFichaFk(), inicioMB.getOrganismo().getOrgPk());
+                }
+            }
+            for (Adquisicion adquisicion1 : adquisiciones) {
+                adquisicion1 = adquisicionDelegate.guardarAdquisicion(adquisicion1, fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+                for (Pagos pago : adquisicion1.getPagosSet()) {
+                    Integer progPk = fichaTO.getProgFk() != null ? fichaTO.getProgFk().getProgPk() : null;
+                    Integer proyPk = fichaTO.getTipoFicha().equals(TipoFichaEnum.PROYECTO.id) ? fichaTO.getFichaFk() : null;
+                    pagosDelegate.guardarPago(pago, proyPk, progPk, inicioMB.getOrganismo().getOrgPk());
+                }
+            }
+
+            //Volver a la vista normal del cronograma
+            cargarFramePresupuestos(false);
+            cargaPresupuestoDesdeArchivo = false;
+        } catch (BusinessException bEx) {
+            logger.log(Level.SEVERE, Labels.getMessage(bEx));
+            JSFUtils.agregarMsgError("fileEntryCargaPresupuestoDesdeArchivo", Labels.getMessage(bEx), null);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("LocalVariableHidesMemberVariable")
+    private Adquisicion obtenerAdquisicion(HSSFRow fila, int nroFila, Map<String, Moneda> monedas) throws BusinessException {
+        Adquisicion adquisicion = new Adquisicion();
+        adquisicion.setAdqPreFk(fichaTO.getPreFk());
+        //Columna 1: gasto
+        try {
+            adquisicion.setAdqNombre(fila.getCell(1).toString());
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'gasto' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 3: proveedor
+        try {
+            if (fila.getCell(3) != null && !fila.getCell(3).toString().trim().isEmpty()) {
+                fila.getCell(3).setCellType(HSSFCell.CELL_TYPE_STRING);
+                Integer proveedorPk = Integer.valueOf(fila.getCell(3).toString());
+                OrganiIntProve proveedor = organiIntProveDelegate.obtenerOrganiIntProvePorId(proveedorPk);
+                if (proveedor == null || !proveedor.getOrgaOrgFk().equals(inicioMB.getOrganismo())) {
+                    throw new BusinessException("No se encuentra el proveedor especificado");
+                }
+                adquisicion.setAdqProvOrga(proveedor);
+            }
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'proveedor' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 4: fuente de financiamiento
+        try {
+            if (fila.getCell(4) != null && !fila.getCell(4).toString().trim().isEmpty()) {
+                fila.getCell(4).setCellType(HSSFCell.CELL_TYPE_STRING);
+                Integer fuenteFinanciamientoPk = Integer.valueOf(fila.getCell(4).toString());
+                FuenteFinanciamiento fuenteFinanciamiento = fuenteFinanciamientoDelegate.obtenerFuentePorPk(fuenteFinanciamientoPk);
+                if (fuenteFinanciamiento == null || !fuenteFinanciamiento.getFueOrgFk().equals(inicioMB.getOrganismo())) {
+                    throw new BusinessException("No se encuentra la fuente de financiamiento especificada");
+                }
+                adquisicion.setAdqFuente(fuenteFinanciamiento);
+            }
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'fuente de financiamiento' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 5: moneda
+        try {
+            if (fila.getCell(5) != null && !fila.getCell(5).toString().trim().isEmpty()) {
+                String monedaSigno = fila.getCell(5).toString().trim();
+                if (!monedas.containsKey(monedaSigno)) {
+                    throw new BusinessException("No se encuentra la moneda especificada");
+                }
+                adquisicion.setAdqMoneda(monedas.get(monedaSigno));
+            }
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'moneda' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 6: procedimiento de compra
+
+        /*
+                *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
+                *           se maneja como una entidad nueva.
+         */
+//		try {
+//			adquisicion.setAdqProcCompra(fila.getCell(6).toString());
+//		} catch (Exception ex) {
+//			throw new BusinessException("El campo 'gasto' en la fila " + nroFila + " no es correcto", ex);
+//		}
+        //Columna 7: procedimiento de compra GRP
+        try {
+            final FiltroIdentificadorGrpErpTO filtroIdentificadorGrpErpTO = new FiltroIdentificadorGrpErpTO();
+            filtroIdentificadorGrpErpTO.setNombre(fila.getCell(7).toString());
+            filtroIdentificadorGrpErpTO.setOrganismo(this.getInicioMB().getOrganismo());
+
+            adquisicion.setAdqIdGrpErpFk(this.identificadorGrpErpDelegate.obtenerPorFiltro(filtroIdentificadorGrpErpTO).get(0));
+        } catch (Exception ex) {
+            throw new BusinessException(
+                    String.format(
+                            "No se pudo obtener el valor del campo '%s' en la fila %d.",
+                            Labels.getValue("adquisicion_identificador_grp"), nroFila
+                    ),
+                    ex
+            );
+        }
+        return adquisicion;
+    }
+
+    private Pagos obtenerPago(HSSFRow fila, int nroFila, Map<Integer, Entregables> entregables) throws BusinessException {
+        Pagos pago = new Pagos();
+        String value;
+        //Columna 2: entregable
+        try {
+            fila.getCell(2).setCellType(HSSFCell.CELL_TYPE_STRING);
+            Integer entregableId = Integer.valueOf(fila.getCell(2).toString());
+            //El identificador no es el campo EntPk sino el campo EntId
+            if (!entregables.containsKey(entregableId)) {
+                throw new BusinessException("No se encuentra el entregable especificado");
+            }
+            pago.setEntregables(entregables.get(entregableId));
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'entregable' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 8: fecha planificada
+        try {
+            pago.setPagFechaPlanificada(fila.getCell(8).getDateCellValue());
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'fecha planificada' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 9: importe planificado
+        try {
+            pago.setPagImportePlanificado(Double.valueOf(fila.getCell(9).toString()));
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'importe planificado' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 10: fecha real
+        try {
+            if (fila.getCell(10) != null && !fila.getCell(10).toString().trim().isEmpty()) {
+                pago.setPagFechaReal(fila.getCell(10).getDateCellValue());
+            }
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'fecha real' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 11: importe real
+        try {
+            if (fila.getCell(11) != null && !fila.getCell(11).toString().trim().isEmpty()) {
+                pago.setPagImporteReal(Double.valueOf(fila.getCell(11).toString()));
+            }
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'importe real' en la fila " + nroFila + " no es correcto", ex);
+        }
+        //Columna 9: confirmado
+        try {
+            value = fila.getCell(12).toString().trim();
+            if (value == null || !("SI".equalsIgnoreCase(value) || "NO".equalsIgnoreCase(value))) {
+                throw new BusinessException("El campo 'confirmado' en la fila " + nroFila + " no es correcto");
+            }
+            pago.setPagConfirmar(fila.getCell(12).toString().equalsIgnoreCase("SI"));
+        } catch (BusinessException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new BusinessException("El campo 'confirmado' en la fila " + nroFila + " no es correcto", ex);
+        }
+        if (fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
+            pago.setPagFechaPlanificada(pago.getPagFechaReal());
+            pago.setPagImportePlanificado(0.0);
+        }
+        return pago;
+    }
+
+    /**
+     * Valida las adquisiciones y los pagos asociados
+     *
+     * @param adquisiciones
+     */
+    @SuppressWarnings("LocalVariableHidesMemberVariable")
+    private void validarAdquisiciones(List<Adquisicion> adquisiciones) throws BusinessException {
+        if (adquisiciones == null) {
+            return;
+        }
+        for (Adquisicion adquisicion : adquisiciones) {
+            //El nombre es requerido
+            if (adquisicion.getAdqNombre() == null) {
+                throw new BusinessException("El nombre es requerido");
+            }
+            //El nombre debe tener largo mayor a 1 y menor a 20
+            if (adquisicion.getAdqNombre().trim().isEmpty() || adquisicion.getAdqNombre().trim().length() > 100) {
+                throw new BusinessException("El nombre debe tener entre 1 y 100 caracteres");
+            }
+            if (adquisicion.getAdqFuente() == null) {
+                throw new BusinessException("La fuente de financiamiento es requerida");
+            }
+            if (adquisicion.getAdqMoneda() == null) {
+                throw new BusinessException("La moneda es requerida");
+            }
+            for (Pagos pago : adquisicion.getPagosSet()) {
+                //El entregable es requerido
+                if (pago.getEntregables() == null) {
+                    throw new BusinessException("El entregable es requerido");
+                }
+            }
+            //El procedimiento de compra es requerido
+
+            /*
+                        *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
+                        *           se maneja como una entidad nueva.
+             */
+//			if (adquisicion.getAdqProcCompra() == null) {
+//				throw new BusinessException("El procedimiento de compra es requerido");
+//			}
+//			//El nombre debe tener largo mayor a 1 y menor a 20
+//			if (adquisicion.getAdqProcCompra().trim().isEmpty() || adquisicion.getAdqProcCompra().trim().length() > 20) {
+//				throw new BusinessException("El procedimiento de compra debe tener entre 1 y 20 caracteres");
+//			}
+            if (adquisicion.getAdqProcedimientoCompra() == null) {
+                throw new BusinessException("El procedimiento de compra es requerido");
+            }
+        }
+    }
+
+    // Esta operación es utilizada para poder cheaquer se existen inconsistencias en el Cronograma
+    private void checkDatosEntregablesCronograma() {
+        if (this.fichaTO.getCroFk() != null
+                && this.fichaTO.getCroFk().getEntregablesSet() != null
+                && !this.fichaTO.getCroFk().getEntregablesSet().isEmpty()) {
+
+            //hash auxiliar para controlar la dependecias circulares
+            Map<Integer, Boolean> visitados = new HashMap<Integer, Boolean>();
+
+            // Variable utilizada para poder corroborar si existe algún entregable de nivel 0
+            boolean cronoNivelesCorrecto = false;
+
+            for (Entregables iterEnt : this.fichaTO.getCroFk().getEntregablesSet()) {
+                // utilizo el for para poder cargar el hash auxiliar para controlar dependencias circulares
+                visitados.put(iterEnt.getEntId(), Boolean.FALSE);
+
+                // Si existe un entregable de nivel 0, el cronograma no presenta problemas, por lo que la variable queda en "true"
+                if (iterEnt.getEntNivel() == 0) {
+                    cronoNivelesCorrecto = true;
+                }
+            }
+
+            if (!cronoNivelesCorrecto) {
+                // Corrijo los niveles de los entregables en el Cronograma
+                for (Entregables iterEnt : this.fichaTO.getCroFk().getEntregablesSet()) {
+                    iterEnt.setEntNivel(iterEnt.getEntNivel() - 1);
+                }
+            }
+
+//            // Para controlar las dependencias circulares utilizo el hash auxiliar creado
+//            for (Entregables iterEnt : this.fichaTO.getCroFk().getEntregablesSet()) {
+//                // Busco un entregable con dependencias y que no haya sido visitado
+//                if (iterEnt.getEntPredecesorFk() != null && iterEnt.getEntPredecesorFk() != ""
+//                        && (!visitados.get(iterEnt.getEntId()))) {
+//                    checkCronogramaDependenciasCirculares(iterEnt, this.fichaTO.getCroFk().getEntregablesSet(), visitados);
+//                }
+//            }
+//
+//            cronogramaDelegate.guardarDespuesDeCheck(this.fichaTO.getCroFk());
+        }
+    }
+
+//    private void checkCronogramaDependenciasCirculares(Entregables ent, Set<Entregables> entEnCrono, Map<Integer, Boolean> visitados) {
+//        // Si no fue visitado, lo marco como visitado y busco el entregable en el set
+//        if (!visitados.get(ent.getEntId())) {
+//            visitados.remove(ent.getEntId());
+//            visitados.put(ent.getEntId(), Boolean.TRUE);
+//
+//            Entregables entToVisit = null;
+//
+//            for (Entregables iterEnt : entEnCrono) {
+//                if (iterEnt.getEntPredecesorFk() != null && iterEnt.getEntId() != null
+//                        && ent.getEntPredecesorFk().equals(iterEnt.getEntId().toString())) {
+//                    entToVisit = iterEnt;
+//                    break;
+//                }
+//            }
+//
+//            if (entToVisit != null) {
+//                checkCronogramaDependenciasCirculares(entToVisit, entEnCrono, visitados);
+//            }
+//
+//        } else {
+//            // En este caso el entregable fue visitado, por lo que lo debo marcar como visitado y borrar el valor de "getEntPredecesorFk"
+//            ent.setEntPredecesorFk(null);
+//        }
+//    }
+    public void cambioFuente(ValueChangeEvent evt) {
+        Integer idFuente = (Integer) evt.getNewValue();
+        fuenteFinanciamientoSelected = fuenteFinanciamientoDelegate.obtenerFuentePorPk(idFuente);
+        actualizarComboCausales();
+    }
+
+    public void cambioProcedimientoCompra(ValueChangeEvent evt) {
+        Integer idProcedimientoCompra = (Integer) evt.getNewValue();
+        procedimientoCompraSelected = procedimiComponenteProductoDelegate.obtenerProcedimientoCompraPorPk(idProcedimientoCompra);
+        actualizarComboCausales();
+    }
+
+    public Boolean getLocalizacionFormDataExpanded() {
+        return localizacionFormDataExpanded;
+    }
+
+    public void setLocalizacionFormDataExpanded(Boolean localizacionFormDataExpanded) {
+        this.localizacionFormDataExpanded = localizacionFormDataExpanded;
+    }
+
+    public LatlngProyectos getLatlngProyectosAux() {
+        return latlngProyectosAux;
+    }
+
+    public void setLatlngProyectosAux(LatlngProyectos latlngProyectosAux) {
+        this.latlngProyectosAux = latlngProyectosAux;
+    }
+
+    public Boolean getRenderPopupLocalizacion() {
+        return renderPopupLocalizacion;
+    }
+
+    public void setRenderPopupLocalizacion(Boolean renderPopupLocalizacion) {
+        this.renderPopupLocalizacion = renderPopupLocalizacion;
+    }
+
+    public DataTable getLatLngProyListDataTable() {
+        return latLngProyListDataTable;
+    }
+
+    public void setLatLngProyListDataTable(DataTable latLngProyListDataTable) {
+        this.latLngProyListDataTable = latLngProyListDataTable;
+    }
+
+    public SofisCombo getListaProcedimientoCompraCombo() {
+        return listaProcedimientoCompraCombo;
+    }
+
+    public void setListaProcedimientoCompraCombo(SofisCombo listaProcedimientoCompraCombo) {
+        this.listaProcedimientoCompraCombo = listaProcedimientoCompraCombo;
+    }
+
+    public SofisComboG getListaIdentificadorGrpErpCombo() {
+        return listaIdentificadorGrpErpCombo;
+    }
+
+    public void setListaIdentificadorGrpErpCombo(SofisComboG listaIdentificadorGrpErpCombo) {
+        this.listaIdentificadorGrpErpCombo = listaIdentificadorGrpErpCombo;
+    }
+
+    public List<SelectItem> getListaUsuariosAdqCompartidaCombo() {
+        return listaUsuariosAdqCompartidaCombo;
+    }
+
+    public void setListaUsuariosAdqCompartidaCombo(List<SelectItem> listaUsuariosAdqCompartidaCombo) {
+        this.listaUsuariosAdqCompartidaCombo = listaUsuariosAdqCompartidaCombo;
+    }
+
+    public List<SsUsuario> getListaUsuariosAdqCompartida() {
+        return listaUsuariosAdqCompartida;
+    }
+
+    public void setListaUsuariosAdqCompartida(List<SsUsuario> listaUsuariosAdqCompartida) {
+        this.listaUsuariosAdqCompartida = listaUsuariosAdqCompartida;
+    }
+
+    public Integer getSsUsuarioCompartidaId() {
+        return ssUsuarioCompartidaId;
+    }
+
+    public void setSsUsuarioCompartidaId(Integer ssUsuarioCompartidaId) {
+        this.ssUsuarioCompartidaId = ssUsuarioCompartidaId;
+    }
+
+    public Boolean getDevengadoMsgs() {
+        return devengadoMsgs;
+    }
+
+    public void setDevengadoMsgs(Boolean devengadoMsgs) {
+        this.devengadoMsgs = devengadoMsgs;
+    }
+
+    public SofisCombo getListaProveedoresCombo() {
+        return listaProveedoresCombo;
+    }
+
+    public void setListaProveedoresCombo(SofisCombo listaProveedoresCombo) {
+        this.listaProveedoresCombo = listaProveedoresCombo;
+    }
+
+    public SofisComboG<TipoRegistroCompra> getListaTipoRegistroCompraCombo() {
+        return listaTipoRegistroCompraCombo;
+    }
+
+    public void setListaTipoRegistroCompraCombo(SofisComboG<TipoRegistroCompra> listaTipoRegistroCompraCombo) {
+        this.listaTipoRegistroCompraCombo = listaTipoRegistroCompraCombo;
+    }
+
+    public SofisComboG<OrganiIntProve> getListaProveedoresPagoCombo() {
+        return listaProveedoresPagoCombo;
+    }
+
+    public void setListaProveedoresPagoCombo(SofisComboG<OrganiIntProve> listaProveedoresPagoCombo) {
+        this.listaProveedoresPagoCombo = listaProveedoresPagoCombo;
+    }
+
+    public SofisComboG<TipoAdquisicion> getListaTipoAdquisicionCombo() {
+        return listaTipoAdquisicionCombo;
+    }
+
+    public void setListaTipoAdquisicionCombo(SofisComboG<TipoAdquisicion> listaTipoAdquisicionCombo) {
+        this.listaTipoAdquisicionCombo = listaTipoAdquisicionCombo;
+    }
+
+    public SofisComboG<CentroCosto> getListaCentroCostoCombo() {
+        return listaCentroCostoCombo;
+    }
+
+    public void setListaCentroCostoCombo(SofisComboG<CentroCosto> listaCentroCostoCombo) {
+        this.listaCentroCostoCombo = listaCentroCostoCombo;
+    }
+
+    public SofisComboG<CausalCompra> getListaCausalCompraCombo() {
+        return listaCausalCompraCombo;
+    }
+
+    public void setListaCausalCompraCombo(SofisComboG<CausalCompra> listaCausalCompraCombo) {
+        this.listaCausalCompraCombo = listaCausalCompraCombo;
+    }
+
+	public Integer getLargoMaximoIdAdquisicion() {
+		return largoMaximoIdAdquisicion;
+	}
+
+	public void setLargoMaximoIdAdquisicion(Integer largoMaximoIdAdquisicion) {
+		this.largoMaximoIdAdquisicion = largoMaximoIdAdquisicion;
+	}
+	
+    public Boolean camposExigidosEnAdquisicion() {
+        return configuracionDelegate.obtenerCnfPorCodigoYOrg(
+                ConfiguracionCodigos.CAMPOS_SON_EXIGIDOS_EN_ADQUISICION,
+                this.getInicioMB().getOrganismo().getOrgPk()
+        ).getCnfValor().equalsIgnoreCase("true");
+    }
+ 
+    public boolean mostrarModulo(String modulo) {
+        String codigo = "";
+        switch (modulo) {
+            case "Riesgos":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_RIESGOS;
+                break;
+                
+            case "Productos":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_PRODUCTOS;
+                break;
+            
+            case "Presupuesto":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_PRESUPUESTO;
+                break;
+            
+            case "Documentos":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_DOCUMENTOS;
+                break;
+            
+            case "Interesados":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_INTERESADOS;
+                break;
+            
+            case "Colaboradores":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_COLABORADORES;
+                break;
+            
+            case "Localizaciones":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_LOCALIZACIONES;
+                break;
+            
+            case "Calidad":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_CALIDAD;
+                break;
+            
+            case "Multimedia":
+                codigo = ConfiguracionCodigos.SHOW_MODULO_MULTIMEDIA;
+                break;            
+        }
+        
+        if (fichaTO.getOrgFk() != null) {
+            return configuracionDelegate.obtenerCnfPorCodigoYOrg(codigo, fichaTO.getOrgFk().getOrgPk()).getCnfValor().equals("true");
+        }
+        
+        // El caso de crear una nueva ficha
+        return true;
+    }
 }

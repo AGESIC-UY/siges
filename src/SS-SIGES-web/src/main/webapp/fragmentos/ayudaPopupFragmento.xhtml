@@ -63,7 +63,7 @@
                         <ace:textEntry value="#{ayudaMB.ayuEnEdicion.ayuCodigo}"/>
 
                         <ice:outputLabel value="#{labels.descripcion}"  styleClass="obligatorio"/>
-                        <ace:richTextEntry value="#{ayudaMB.ayuEnEdicion.ayuTexto}"/>
+                        <ace:richTextEntry value="#{ayudaMB.ayuEnEdicion.ayuTexto}" converter="SanitizerAceRichTextConverter"/>
                          
                         <ice:panelGrid/>
                         <ice:panelGroup styleClass="panelBotones">

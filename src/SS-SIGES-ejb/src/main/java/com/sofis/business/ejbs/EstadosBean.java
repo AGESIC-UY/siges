@@ -47,7 +47,7 @@ public class EstadosBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(EstadosBean.class.getName());
 
     @EJB
     private ProyectosBean proyectosBean;
@@ -175,7 +175,12 @@ public class EstadosBean {
 
             long difDias = (calHasta.getTimeInMillis() - calDesde.getTimeInMillis()) / (24 * 60 * 60 * 1000);
             long diasTranscurridos = (cal.getTimeInMillis() - calDesde.getTimeInMillis()) / (24 * 60 * 60 * 1000);
-            double porcAvance = diasTranscurridos * 100 / difDias;
+            
+            /*
+            *   09-05-2018 Nico: Cambio la asignación porque existe un caso en que divide entre cero
+            */
+            
+            double porcAvance = (difDias > 0) ? diasTranscurridos * 100 / difDias : 0;
 
             Integer semaforoAmarillo = null;
             Integer semaforoRojo = null;

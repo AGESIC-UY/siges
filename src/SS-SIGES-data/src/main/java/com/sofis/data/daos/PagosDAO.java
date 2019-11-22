@@ -20,7 +20,7 @@ import javax.persistence.Query;
 public class PagosDAO extends HibernateJpaDAOImp<Pagos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PagosDAO.class.getName());   
 
     public PagosDAO(EntityManager em) {
         super(em);
@@ -121,6 +121,17 @@ public class PagosDAO extends HibernateJpaDAOImp<Pagos, Integer> implements Seri
             w.printStackTrace();
             return null;
         }
+    }
+    
+    public Double obtenerImportePlanificado(Integer pagPk) {
+        String queryStr = 
+                "SELECT p.pagImportePlanificado " +
+                "FROM Pagos p " +
+                "WHERE p.pagPk = :pagPk";
+        
+        Query query = super.getEm().createQuery(queryStr);
+        query.setParameter("pagPk", pagPk);
 
+        return (Double) query.getSingleResult();
     }
 }

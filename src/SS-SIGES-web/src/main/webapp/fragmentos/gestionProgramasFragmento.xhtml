@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmFicha">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.titulo_gestion_programas}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="buscador" styleClass="buscador recuadro margen-inf">
+            <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
+            <ice:panelGrid  styleClass="formulario " columns="4">
+                <ice:outputLabel value="#{labels.listado_programa_id}"/>
+                <ace:textEntry value="#{gestionProgramasMB.codigo}" />
+                <ice:outputLabel value="#{labels.listado_programa_nombre}"/>
+                <ace:textEntry value="#{gestionProgramasMB.nombre}" />
+                <ice:panelGrid />
+                <ice:panelGrid />
+                <ice:panelGrid />
+                <ice:panelGroup styleClass="panelBotones"   >
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{gestionProgramasMB.buscar()}"/>
+                    <ace:linkButton  value="#{labels.limpiar}" 
+                                     styleClass="boton secundario" 
+                                     action="#{gestionProgramasMB.limpiar()}"/>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="resultado" styleClass="resultado recuadro"  rendered="#{gestionProgramasMB.renderResultado}">
+            <ice:outputText value="#{labels.resultadoBusqueda} #{gestionProgramasMB.programas.size()} elemento(s)" styleClass="resultadoBusqueda"/>
+            <ice:panelGrid rendered="#{not empty gestionProgramasMB.programas}" width="100%" >
+                <ice:panelGroup  styleClass="funcionalidadesResultado"  >
+                    <ice:outputLabel value="#{labels.elementosPorPagina}"/>
+                    <ace:simpleSelectOneMenu  value="#{gestionProgramasMB.cantElementosPorPagina}" styleClass="textoCorto"
+                                              valueChangeListener="#{gestionProgramasMB.cambiarCantPaginas}">
+                        <f:selectItem itemLabel="25" itemValue="25"/>
+                        <f:selectItem itemLabel="50" itemValue="50"/>
+                        <f:selectItem itemLabel="100" itemValue="100"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+                    <ace:dataExporter target="tblResultados" label="Exportar a Planilla Electrónica" type="xls" fileName="Exportar_Resultados"
+                                      includeHeaders="true" excludeColumns="5,6"  />
+
+<!--                    <ace:messages id="messages"/>-->
+
+                </ice:panelGroup>
+                <ace:dataTable  id="tblResultados" value="#{gestionProgramasMB.programas}" var="prog"
+                                paginator="true" pageCount="5" rows="#{gestionProgramasMB.cantElementosPorPagina}">
+                    <ace:column headerText="#{labels.listado_programa_id}" >
+                        <h:outputText value="#{prog.progPk}"/>
+                    </ace:column>
+                    <ace:column headerText="#{labels.listado_programa_nombre}">
+                        <h:outputText value="#{prog.progNombre}"/>
+                    </ace:column>
+                    <ace:column headerText="#{labels.listado_programa_area}" >
+                        <ice:outputText value="#{prog.progAreaFk.areaNombre}"/>
+                    </ace:column>
+                    <ace:column headerText="#{labels.listado_programa_gerente}" >
+                        <ice:outputText value="#{prog.progUsrGerenteFk.usuPrimerNombre} #{prog.progUsrGerenteFk.usuPrimerApellido}" 
+                                        title="#{labels.listado_programa_adjunto}: #{prog.progUsrAdjuntoFk.getUsuNombreApe(100)}"/>
+                    </ace:column>
+                    <ace:column headerText="#{labels.listado_programa_fase}">
+                        <ice:outputText value="#{prog.progEstFk.estNombre}" />
+                    </ace:column>
+                    
+                 <!--   <ace:excludeFromExport />  -->
+<!--                    <ace:column headerText="#{labels.listado_programa_habilitar}" styleClass="columnaBoton" >-->
+                    <ace:column headerText="" styleClass="columnaBoton" >
+                        <ice:panelGroup styleClass="iconoTabla">
+                            <ace:pushButton action="#{gestionProgramasMB.habilitar(prog.progPk)}" 
+                                            rendered="#{not prog.progHabilitado}"
+                                            styleClass="botonAgregar"/>
+                            <ace:pushButton action="#{gestionProgramasMB.deshabilitar(prog.progPk)}" 
+                                            rendered="#{prog.progHabilitado}"
+                                            styleClass="botonMinimizar"/>
+                        </ice:panelGroup>
+                    </ace:column>
+                    
+                    <!-- <ace:excludeFromExport /> -->
+<!--                    <ace:column headerText="#{labels.listado_programa_eliminar}" styleClass="columnaBoton">-->
+                        <ace:column headerText="" styleClass="columnaBoton">
+                        <ice:panelGroup title="#{labels.listado_programa_eliminar}">
+                            <h:commandButton onclick="confirmationEliminar#{prog.progPk}.show()"
+                                             styleClass="botonEliminar iconoTabla" 
+                                             type="button"/>
+
+                            <ace:confirmationDialog id="confirmDialogEliminar"
+                                                    widgetVar="confirmationEliminar#{prog.progPk}"
+                                                    message="#{labels.confirmacionEliminacion}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesEliminar"
+                                                     value="#{labels.si}"
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationEliminar#{prog.progPk}.hide()" 
+                                                     actionListener="#{gestionProgramasMB.eliminar(prog.progPk)}"/>
+                                    <h:commandButton id="noEliminar"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationEliminar#{prog.progPk}.hide()"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog> 
+                        </ice:panelGroup>
+                    </ace:column>
+                </ace:dataTable>
+            </ice:panelGrid>
+            <ice:panelGrid rendered="#{empty gestionProgramasMB.programas}" width="100%">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

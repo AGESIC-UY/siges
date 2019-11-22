@@ -1,0 +1,12 @@
+est_pk|est_codigo|est_nombre|est_label|est_orden_proceso
+0|NO_EXIGIDO|No Exigido||NULL
+1|PENDIENTE|Pendiente||1
+2|INICIO|Inicio||2
+3|PLANIFICACION|Planificacion||3
+4|EJECUCION|Ejecucion||4
+5|FINALIZADO|Finalizado||5
+11|PENDIENTE_PMOT|Pendiente PMO T.||NULL
+12|PENDIENTE_PMOF|Pendiente PMO F.||NULL
+41|SOLICITUD_FINALIZADO_PMOF|Solicitud Finalizado PMO F.||NULL
+42|SOLICITUD_FINALIZADO_PMOT|Solicitud Finalizado PMO T.||NULL
+61|SOLICITUD_CANCELAR_PMOT|Solicitud Cancelar PMO T.||NULL

@@ -43,6 +43,10 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerSsUsuarioPorMail");
         return ssUsuarioBean.obtenerSsUsuarioPorMail(mail);
     }
+	
+	public SsUsuario obtenerUsuarioPorLDAPUser(String codigoUsuario) {
+        return ssUsuarioBean.obtenerSsUsuarioPorLDAPUser(codigoUsuario);
+    }
 
     public List<SsUsuario> obtenerTodos() throws GeneralException {
         //System.out.println("obtenerTodos");

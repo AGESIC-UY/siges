@@ -1,7 +1,6 @@
 package com.sofis.business.validations;
 
 import com.sofis.business.utils.Utils;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.exceptions.BusinessException;
@@ -15,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class AdquisicionValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AdquisicionValidacion.class.getName());
 
     public static boolean validar(Adquisicion adq) throws BusinessException {
         logger.finest("Validar Adquisicion.");
@@ -37,6 +36,12 @@ public class AdquisicionValidacion {
             if (adq.getAdqMoneda() == null) {
                 be.addError(MensajesNegocio.ERROR_ADQISICION_MONEDAS);
             }
+            if (adq.getAdqCompartida() != null && adq.getAdqCompartida() && adq.getSsUsuarioCompartida() == null) {
+                be.addError(MensajesNegocio.ERROR_ADQISICION_USUARIO_COMPARTIDA_REQUERIDO);
+            } 
+            if (adq.getAdqIdAdquisicion() == null || adq.getAdqIdAdquisicion() <= 0) {
+                be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_VACIO);
+            } 
         }
 
         if (be.getErrores().size() > 0) {

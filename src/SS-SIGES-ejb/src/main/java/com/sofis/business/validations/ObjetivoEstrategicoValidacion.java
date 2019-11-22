@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * @author Sofis Solutions (www.sofis-solutions.com)
  */
 public class ObjetivoEstrategicoValidacion {
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ObjetivoEstrategicoValidacion.class.getName());   
     
     public static boolean validar(ObjetivoEstrategico objEst) throws BusinessException {
         //TO-DO

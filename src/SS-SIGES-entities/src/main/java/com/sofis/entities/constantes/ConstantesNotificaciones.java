@@ -18,4 +18,11 @@ public class ConstantesNotificaciones {
     public static final String NOT_COD_PRESUPUESTO_4 = "Presupuesto4";
     public static final String NOT_COD_PRESUPUESTO_5 = "Presupuesto5";
     public static final String NOT_COD_CRONOGRAMA_1 = "Cronograma1";
+	
+	/**
+	 * 25-09-17 (Bruno): Agregadas
+	 */
+	public static final String NOT_COD_ELIMINACION_PROY_1 = "EliminacionProy1";
+	public static final String NOT_COD_CAMBIO_FASE_PROY_1 = "CambioFase1";
+	
 }

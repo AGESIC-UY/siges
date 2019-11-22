@@ -82,8 +82,9 @@
                         <ice:panelGroup rendered="#{ssUsuarioMB.usuarioEnEdicion.nuevo}"/>
                         <ace:linkButton value="#{labels.usuario_form_reset_pass}" 
                                         action="#{ssUsuarioMB.resetearContraseña()}"
-                                        rendered="#{!ssUsuarioMB.usuarioEnEdicion.nuevo}"
+                                        rendered="#{!ssUsuarioMB.usuarioEnEdicion.nuevo and !ssUsuarioMB.authLdapEnable}"
                                         styleClass="secundario" />
+                        <ice:panelGroup rendered="#{!ssUsuarioMB.usuarioEnEdicion.nuevo and ssUsuarioMB.authLdapEnable}"/>
 
                         <ice:outputLabel value="#{labels.usuario_form_primer_nombre}:" styleClass="obligatorio"/>
                         <ace:textEntry value="#{ssUsuarioMB.usuarioEnEdicion.usuPrimerNombre}"
@@ -146,6 +147,12 @@
                             <ice:outputLabel value="#{labels.usuario_msg_deshabilitar}"
                                              styleClass="comentario"/>
                         </ice:panelGroup>
+
+                        <ice:outputLabel value="#{labels.usuario_form_user_ldap}:" rendered="#{ssUsuarioMB.authLdapEnable}"/>
+                        <ace:textEntry value="#{ssUsuarioMB.usuarioEnEdicion.usuLdapUser}"
+                                       rendered="#{ssUsuarioMB.authLdapEnable}"
+                                       disabled="#{ssUsuarioMB.disableInputPopupForm}"/>
+
 
                     </ice:panelGrid>
 

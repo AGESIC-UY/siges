@@ -57,7 +57,7 @@
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
                     <ace:dataExporter target="tblResultados" label="Exportar a Planilla Electrónica" type="xls" fileName="Exportar_Resultados"
-                                      includeHeaders="true" excludeColumns="4,5"  />
+                                      includeHeaders="true" excludeColumns="4,5,6"  />
                 </ice:panelGroup>
                 <ace:dataTable  id="tblResultados" value="#{configuracionMB.listaResultado}" var="cnf"
                                 paginator="true" pageCount="5" rows="#{configuracionMB.cantElementosPorPagina}">
@@ -86,7 +86,7 @@
                         <ice:outputText value="#{cnf.propertyMap['cnfDescripcion']}"/>
                     </ace:column>
 
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ace:pushButton styleClass="botonEditar iconoTabla" action="#{configuracionMB.editar(cnf.id)}"
                                         rendered="#{menuMB.permisos['CONF_EDIT']}"/>
                     </ace:column>

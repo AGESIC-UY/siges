@@ -34,7 +34,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaMsg" />
+<!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{areaTematicaMB.buscar()}"/>
@@ -101,7 +101,7 @@
                             <h:outputText value="#{at.areatagNombre}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{areaTematicaMB.editar(at.arastagPk)}" />

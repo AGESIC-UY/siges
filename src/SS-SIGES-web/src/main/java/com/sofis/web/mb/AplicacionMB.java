@@ -21,15 +21,21 @@ import com.sofis.web.delegates.OrganiIntProveDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.delegates.TipoDocumentoPersonaDelegate;
 import com.sofis.web.delegates.TipoTelefonoDelegate;
+import com.sofis.web.utils.SelectItemComparator;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 /**
@@ -41,6 +47,8 @@ import javax.inject.Inject;
 public class AplicacionMB implements Serializable {
 
     private final TiposMediaCodigos tiposMediaCod = new TiposMediaCodigos();
+
+    public static final SelectItemComparator COMBO_COMPARTOR = new SelectItemComparator();    
 
     @Inject
     private ConfiguracionDelegate confDelegate;
@@ -97,23 +105,80 @@ public class AplicacionMB implements Serializable {
     public static final Object usuariosMUTEX = new Object();
     public static final Object areasPorOrganismoMUTEX = new Object();
     public static final Object organiIntMUTEX = new Object();
+    
+    /*
+    *   08-06-2018 Nico: Se agregan estos atributos para poder obtener la infomación del projecto desde el pom.
+    */
+    
+    private Manifest manifest;
+    
+    private String proyectVersion;
+    private String proyectBuild;
+    private String proyectTimestamp;
 
     /**
      * Creates a new instance of AplicacionMB
      */
-    public AplicacionMB() {
-    }
+//    public AplicacionMB() {
+//    }
 
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AplicacionMB.class.getName());
+    
+    private String googleAPIKey;
+    
     @PostConstruct
     public void init() {
+        try {
+            Configuracion confAPI = confDelegate.obtenerCnfPorCodigoYOrg("GOOGLE_API_KEY", null);
+            if(confAPI != null && confAPI.getCnfValor() != null){
+                setGoogleAPIKey(confAPI.getCnfValor());
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF");
+            manifest = new Manifest();
+            manifest.read(is);
+
+            Attributes atts = manifest.getMainAttributes();
+            for (Iterator it = atts.keySet().iterator(); it.hasNext();) {
+                Attributes.Name attrName = (Attributes.Name) it.next();
+                String attrValue = atts.getValue(attrName);
+                logger.log(Level.INFO, "*attr: " + attrValue);
+            }
+            proyectVersion = atts.getValue("Implementation-Version");
+            proyectTimestamp = atts.getValue("build-time");        
+            
+            // A partir de aca, utiliza el string obtenido de "proyectVersion" para sacar el nro. de Build
+            
+            String[] auxSplit = proyectVersion.split("\\.");
+            
+            proyectVersion = auxSplit[0] + "." + auxSplit[1];
+            proyectBuild = auxSplit[2];
+            
+            
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     public String getAppVersion() {
-        return ConstanteApp.APP_VERSION;
+        return this.proyectVersion;
     }
 
     public String getAppBuild() {
-        return ConstanteApp.APP_BUILD;
+        return this.proyectBuild;
+    }
+    
+    /*
+    *   06-06-0218 Nico: Se agrega fecha de release
+    */
+    
+    public String getReleaseDate(){
+        return this.proyectTimestamp;
     }
 
     private void cargarConfiguracion() {
@@ -402,5 +467,13 @@ public class AplicacionMB implements Serializable {
             organiIntOrganizaciones.put(orgPk, organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, null));
             organiIntNoProveedores.put(orgPk, organiIntProveDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, false));
         }
+    }
+
+    public String getGoogleAPIKey() {
+        return googleAPIKey;
+    }
+
+    public void setGoogleAPIKey(String googleAPIKey) {
+        this.googleAPIKey = googleAPIKey;
     }
 }

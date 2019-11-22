@@ -22,7 +22,7 @@ import javax.inject.Inject;
 public class ReportesMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ReportesMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;

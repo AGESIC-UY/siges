@@ -1,12 +1,17 @@
 package com.sofis.entities.data;
 
+import com.sofis.entities.enums.TipoRegistroCompra;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,11 +22,17 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -31,12 +42,20 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "adquisicion")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Adquisicion.findAll", query = "SELECT a FROM Adquisicion a"),
-    @NamedQuery(name = "Adquisicion.findByAdqPk", query = "SELECT a FROM Adquisicion a WHERE a.adqPk = :adqPk"),
-    @NamedQuery(name = "Adquisicion.findByAdqNombre", query = "SELECT a FROM Adquisicion a WHERE a.adqNombre = :adqNombre"),
-    @NamedQuery(name = "Adquisicion.findByAdqProvOrga", query = "SELECT a FROM Adquisicion a WHERE a.adqProvOrga = :adqProvOrga"),
-    @NamedQuery(name = "Adquisicion.findByAdqFuente", query = "SELECT a FROM Adquisicion a WHERE a.adqFuente = :adqFuente"),
+    @NamedQuery(name = "Adquisicion.findAll", query = "SELECT a FROM Adquisicion a")
+    ,
+    @NamedQuery(name = "Adquisicion.findByAdqPk", query = "SELECT a FROM Adquisicion a WHERE a.adqPk = :adqPk")
+    ,
+    @NamedQuery(name = "Adquisicion.findByAdqNombre", query = "SELECT a FROM Adquisicion a WHERE a.adqNombre = :adqNombre")
+    ,
+    @NamedQuery(name = "Adquisicion.findByAdqProvOrga", query = "SELECT a FROM Adquisicion a WHERE a.adqProvOrga = :adqProvOrga")
+    ,
+    @NamedQuery(name = "Adquisicion.findByAdqFuente", query = "SELECT a FROM Adquisicion a WHERE a.adqFuente = :adqFuente")
+    ,
     @NamedQuery(name = "Adquisicion.findByAdqMoneda", query = "SELECT a FROM Adquisicion a WHERE a.adqMoneda = :adqMoneda")})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Adquisicion implements Serializable {
 
     public static final int NOMBRE_LENGHT = 300;
@@ -61,25 +80,71 @@ public class Adquisicion implements Serializable {
     @JoinColumn(name = "adq_fuente_fk", referencedColumnName = "fue_pk")
     @ManyToOne(fetch = FetchType.EAGER)
     private FuenteFinanciamiento adqFuente;
+    @JoinColumn(name = "adq_componente_producto_fk", referencedColumnName = "com_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ComponenteProducto adqComponenteProducto;
     @JoinColumn(name = "adq_moneda_fk", referencedColumnName = "mon_pk")
     @ManyToOne(fetch = FetchType.EAGER)
     private Moneda adqMoneda;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "pagAdqFk")
     @Fetch(FetchMode.SELECT)
     private Set<Pagos> pagosSet;
-    @Column(name = "adq_proc_compra")
-    private String adqProcCompra;
-    @Column(name = "adq_proc_compra_grp")
-    private String adqProcCompraGrp;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "adq_id_grp_erp_fk", referencedColumnName = "id_grp_erp_pk")
+    private IdentificadorGrpErp adqIdGrpErpFk;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "devAdqFk", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(FetchMode.SELECT)
     private List<Devengado> devengadoList;
 
+    // Agrego estos atributos por la modificación en la tabla de Adquisición
+    @JoinColumn(name = "adq_procedimiento_compra_fk", referencedColumnName = "proc_comp_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ProcedimientoCompra adqProcedimientoCompra;
+
+    @Basic(optional = false)
+    @Column(name = "adq_compartida")
+    private Boolean adqCompartida;
+
+    @JoinColumn(name = "adq_compartida_usuario_fk", referencedColumnName = "usu_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private SsUsuario ssUsuarioCompartida;
+
+    @Column(name = "adq_tipo_registro")
+    @Enumerated(EnumType.STRING)
+    private TipoRegistroCompra adqTipoRegistro;
+
+    @Basic(optional = false)
+    @Column(name = "adq_arrastre")
+    private Boolean adqArrastre;
+
+    @Basic(optional = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "adq_fecha_estimada_inicio_compra")
+    private Date adqFechaEstimadaInicioCompra;
+
+    @Basic(optional = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "adq_fecha_esperada_inicio_ejecucion")
+    private Date adqFechaEsperadaInicioEjecucion;
+
+    @JoinColumn(name = "adq_tipo_adquisicion_fk", referencedColumnName = "tip_adq_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private TipoAdquisicion adqTipoAdquisicion;
+
+    @Column(name = "adq_id_adquisicion")
+    private Integer adqIdAdquisicion;
+
+    @JoinColumn(name = "adq_centro_costo_fk", referencedColumnName = "cen_cos_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private CentroCosto adqCentroCosto;
+
+    @JoinColumn(name = "adq_causal_compra_fk", referencedColumnName = "cau_com_pk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private CausalCompra adqCausalCompra;
+
+    // Agrego estos atributos por la modificación en la tabla de Adquisición
     @Transient
     private List<Devengado> listDevAux;
-
-    public Adquisicion() {
-    }
 
     public Adquisicion(Integer adqPk) {
         this.adqPk = adqPk;
@@ -112,6 +177,14 @@ public class Adquisicion implements Serializable {
 
     public void setAdqNombre(String adqNombre) {
         this.adqNombre = adqNombre;
+    }
+
+    public ComponenteProducto getAdqComponenteProducto() {
+        return adqComponenteProducto;
+    }
+
+    public void setAdqComponenteProducto(ComponenteProducto adqComponenteProducto) {
+        this.adqComponenteProducto = adqComponenteProducto;
     }
 
     public OrganiIntProve getAdqProvOrga() {
@@ -147,22 +220,14 @@ public class Adquisicion implements Serializable {
         this.pagosSet = pagosSet;
     }
 
-    public String getAdqProcCompra() {
-        return adqProcCompra;
+    public IdentificadorGrpErp getAdqIdGrpErpFk() {
+        return adqIdGrpErpFk;
     }
 
-    public void setAdqProcCompra(String adqProcCompra) {
-        this.adqProcCompra = adqProcCompra;
+    public void setAdqIdGrpErpFk(IdentificadorGrpErp adqIdGrpErpFk) {
+        this.adqIdGrpErpFk = adqIdGrpErpFk;
     }
-
-    public String getAdqProcCompraGrp() {
-        return adqProcCompraGrp;
-    }
-
-    public void setAdqProcCompraGrp(String adqProcCompraGrp) {
-        this.adqProcCompraGrp = adqProcCompraGrp;
-    }
-
+    
     public List<Devengado> getDevengadoList() {
         return devengadoList;
     }
@@ -188,7 +253,7 @@ public class Adquisicion implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Adquisicion)) {
             return false;
         }
@@ -250,10 +315,173 @@ public class Adquisicion implements Serializable {
         if (pagosSet != null && !pagosSet.isEmpty()) {
             Double result = 0D;
             for (Pagos pagos : pagosSet) {
-                result += pagos.getImporteSaldo();
+                if (pagos.getImporteSaldo() != null) {
+                    result += pagos.getImporteSaldo();
+                } else {
+                    result += 0;
+                }
             }
             return result;
         }
-        return null;
+        return 0d;
     }
+    
+    /**
+     * Calcula el saldo de los pagos realizados en un año.
+     *
+     * @param anio El año.
+     * @return Saldo de los pagos realizados.
+     */
+    public Double getImporteSaldoAnio(int anio) {
+        Double planificado = 0.0;
+        Double real = 0.0;
+        if (this.getPagosSet() != null && !this.getPagosSet().isEmpty()) {
+            for (Pagos pago : this.getPagosSet()) {
+                if (new DateTime(pago.getPagFechaPlanificada()).getYear() == anio) {
+                    planificado += pago.getPagImportePlanificado() != null ? pago.getPagImportePlanificado() : 0.0;
+                }
+                if (new DateTime(pago.getPagFechaReal()).getYear() == anio) {
+                    real += pago.getPagImporteReal() != null ? pago.getPagImporteReal() : 0.0;
+                }
+            }
+        }
+        return planificado - real;
+    }
+
+    // Se agrega una operación para obtener el saldo por mes
+    public Double getImporteSaldoMes(int mes, boolean acumulado) {
+        if (this.getPagosSet() != null && !this.getPagosSet().isEmpty()) {
+            Double result = 0D;
+            for (Pagos iterPago : this.getPagosSet()) {
+                if (iterPago.getImporteSaldo() != null) {
+                    Calendar calAuxPlan = Calendar.getInstance();
+                    calAuxPlan.setTime(iterPago.getPagFechaPlanificada());
+
+                    if (acumulado) {
+                        if (calAuxPlan.get(Calendar.MONTH) <= mes - 1) {
+                            if (iterPago.getPagFechaReal() != null) {
+                                Calendar calAuxReal = Calendar.getInstance();
+                                calAuxReal.setTime(iterPago.getPagFechaReal());
+                                if (calAuxReal.get(Calendar.MONTH) <= mes - 1) {
+                                    result += iterPago.getImporteSaldo();
+                                } else {
+                                    result += (iterPago.getPagImportePlanificado() != null ? iterPago.getPagImportePlanificado() : 0);
+                                }
+                            } else {
+                                result += (iterPago.getPagImportePlanificado() != null ? iterPago.getPagImportePlanificado() : 0);
+                            }
+                        }
+                    } else {
+                        if (calAuxPlan.get(Calendar.MONTH) == mes - 1) {
+                            if (iterPago.getPagFechaReal() != null) {
+                                Calendar calAuxReal = Calendar.getInstance();
+                                calAuxReal.setTime(iterPago.getPagFechaReal());
+                                if (calAuxReal.get(Calendar.MONTH) == mes - 1) {
+                                    result += iterPago.getImporteSaldo();
+                                } else {
+                                    result += (iterPago.getPagImportePlanificado() != null ? iterPago.getPagImportePlanificado() : 0);
+                                }
+                            } else {
+                                result += (iterPago.getPagImportePlanificado() != null ? iterPago.getPagImportePlanificado() : 0);
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        return 0d;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="getters and sSetters">
+    //Agrego los getters y setters faltantes de los atributos puestos después de modificar la tabla
+    public ProcedimientoCompra getAdqProcedimientoCompra() {
+        return adqProcedimientoCompra;
+    }
+
+    public void setAdqProcedimientoCompra(ProcedimientoCompra adqProcedimientoCompra) {
+        this.adqProcedimientoCompra = adqProcedimientoCompra;
+    }
+
+    public Boolean getAdqCompartida() {
+        return adqCompartida;
+    }
+
+    public void setAdqCompartida(Boolean adqCompartida) {
+        this.adqCompartida = adqCompartida;
+    }
+
+    public SsUsuario getSsUsuarioCompartida() {
+        return ssUsuarioCompartida;
+    }
+
+    public void setSsUsuarioCompartida(SsUsuario ssUsuarioCompartida) {
+        this.ssUsuarioCompartida = ssUsuarioCompartida;
+    }
+
+    public TipoRegistroCompra getAdqTipoRegistro() {
+        return adqTipoRegistro;
+    }
+
+    public void setAdqTipoRegistro(TipoRegistroCompra adqTipoRegistro) {
+        this.adqTipoRegistro = adqTipoRegistro;
+    }
+
+    public Boolean getAdqArrastre() {
+        return adqArrastre;
+    }
+
+    public void setAdqArrastre(Boolean adqArrastre) {
+        this.adqArrastre = adqArrastre;
+    }
+
+    public Date getAdqFechaEstimadaInicioCompra() {
+        return adqFechaEstimadaInicioCompra;
+    }
+
+    public void setAdqFechaEstimadaInicioCompra(Date adqFechaEstimadaInicioCompra) {
+        this.adqFechaEstimadaInicioCompra = adqFechaEstimadaInicioCompra;
+    }
+
+    public Date getAdqFechaEsperadaInicioEjecucion() {
+        return adqFechaEsperadaInicioEjecucion;
+    }
+
+    public void setAdqFechaEsperadaInicioEjecucion(Date adqFechaEsperadaInicioEjecucion) {
+        this.adqFechaEsperadaInicioEjecucion = adqFechaEsperadaInicioEjecucion;
+    }
+
+    public TipoAdquisicion getAdqTipoAdquisicion() {
+        return adqTipoAdquisicion;
+    }
+
+    public void setAdqTipoAdquisicion(TipoAdquisicion adqTipoAdquisicion) {
+        this.adqTipoAdquisicion = adqTipoAdquisicion;
+    }
+
+    public Integer getAdqIdAdquisicion() {
+        return adqIdAdquisicion;
+    }
+
+    public void setAdqIdAdquisicion(Integer adqIdAdquisicion) {
+        this.adqIdAdquisicion = adqIdAdquisicion;
+    }
+
+    public CentroCosto getAdqCentroCosto() {
+        return adqCentroCosto;
+    }
+
+    public void setAdqCentroCosto(CentroCosto adqCentroCosto) {
+        this.adqCentroCosto = adqCentroCosto;
+    }
+
+    public CausalCompra getAdqCausalCompra() {
+        return adqCausalCompra;
+    }
+
+    public void setAdqCausalCompra(CausalCompra adqCausalCompra) {
+        this.adqCausalCompra = adqCausalCompra;
+    }
+    //</editor-fold>
+
 }

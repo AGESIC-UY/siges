@@ -22,6 +22,16 @@ public class PresupuestoTO {
     @XmlElement (name = "adquisicionSet", required = false)
     private List<AdquisicionTO> adquisicionSet;
     
+	@XmlElement (name = "preMoneda")
+	private Integer preMoneda;
+	
+	@XmlElement (name = "preBase")
+	private Double preBase;
+	
+	@XmlElement (name = "fuenteFinanciamiento")
+	private Integer fuenteFinanciamiento;
+	
+	
     @XmlElement(name="attrs")
     private List<AttrTO> attrs;
     
@@ -54,6 +64,30 @@ public class PresupuestoTO {
     public void setAttrs(List<AttrTO> attrs) {
         this.attrs = attrs;
     }
+
+	public Integer getPreMoneda() {
+		return preMoneda;
+	}
+
+	public void setPreMoneda(Integer preMoneda) {
+		this.preMoneda = preMoneda;
+	}
+
+	public Double getPreBase() {
+		return preBase;
+	}
+
+	public void setPreBase(Double preBase) {
+		this.preBase = preBase;
+	}
+
+	public Integer getFuenteFinanciamiento() {
+		return fuenteFinanciamiento;
+	}
+
+	public void setFuenteFinanciamiento(Integer fuenteFinanciamiento) {
+		this.fuenteFinanciamiento = fuenteFinanciamiento;
+	}
     
     
 }

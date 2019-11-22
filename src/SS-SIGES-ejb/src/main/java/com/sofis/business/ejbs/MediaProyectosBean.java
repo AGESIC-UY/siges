@@ -47,7 +47,7 @@ public class MediaProyectosBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MediaProyectosBean.class.getName());
     @Inject
     private DatosUsuario du;
     @Inject
@@ -91,10 +91,15 @@ public class MediaProyectosBean {
             if (mediaProy.getMediaPk() == null) {
                 mediaProy.setMediaUsrPubFk(usu);
                 mediaProy.setMediaPubFecha(new Date());
-            } else {
-                mediaProy.setMediaUsrModFk(usu);
-                mediaProy.setMediaModFecha(new Date());
             }
+            
+			/**
+			 * Bruno 25-07-17: siempre setea el usuario que modificó y la fecha. 
+			 * Corrige el bug de exportar multimedia del visualizador
+			 */
+			mediaProy.setMediaUsrModFk(usu);
+            mediaProy.setMediaModFecha(new Date());
+            
             if (mediaProy.getMediaPublicable() == null) {
                 mediaProy.setMediaPublicable(Boolean.FALSE);
             }

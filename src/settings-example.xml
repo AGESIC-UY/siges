@@ -1,0 +1,96 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <profiles>
+        <profile>
+            <id>siges-dev</id>
+            <properties>
+                <!-- home del usuario-->
+                <user.home>/home/juan</user.home>
+          
+                <!-- home del proyecto siges-->
+                <siges.agesic.home>${user.home}/Documentos/Proyectos/SIGES</siges.agesic.home>
+                <!-- home del proyecto siges-->
+          
+                <!-- codigo fuente-->
+                <siges.agesic.sources>${siges.agesic.home}/desarrollo/git/AG-SIGES</siges.agesic.sources>
+                <visua.agesic.sources>${siges.agesic.home}/desarrollo/git/AG-SIGES-VISUA</visua.agesic.sources>
+                <!-- codigo fuente-->
+          
+                <!-- ambiente docker-compose -->
+                <siges.agesic.docker-compose>${siges.agesic.home}/ambientes/SIGES_INTEGRACION_AGESIC/</siges.agesic.docker-compose>
+                <siges.imm.docker-compose>${siges.agesic.home}/ambientes/SIGES_INTEGRACION_IMM/</siges.imm.docker-compose>
+                
+                <!-- ambiente docker-compose agesic -->
+                <siges.agesic.jboss.siges>${siges.agesic.docker-compose}/SIGES-AGESIC/jboss</siges.agesic.jboss.siges>
+                <siges.agesic.jboss.visua-ga>${siges.agesic.docker-compose}/VISUALIZADOR-GA/jboss</siges.agesic.jboss.visua-ga>
+                <siges.agesic.jboss.visua-opp>${siges.agesic.docker-compose}/VISUALIZADOR-OPP/jboss</siges.agesic.jboss.visua-opp>
+                
+                <!-- ambiente docker-compose imm -->
+                <siges.imm.jboss.siges>${siges.imm.docker-compose}/SIGES-IMM/jboss</siges.imm.jboss.siges>
+                <siges.imm.jboss.visua-imm>${siges.imm.docker-compose}/VISUALIZADOR-IMM/jboss</siges.imm.jboss.visua-imm>
+                <!-- ambiente docker-compose -->
+
+                <!-- liquibase -->
+                <!-- los cambiso se le aplicarán sobre la base de datos para quede igual a la de referencia-->
+                
+                <!-- liquibase para siges -->  
+                <siges.agesic.liquibase.url>jdbc:mysql://siges-db-mysql.ambientes.sofis:3306/siges_agesic_prod_20170810</siges.agesic.liquibase.url>
+                <siges.agesic.liquibase.user>root</siges.agesic.liquibase.user>
+                <siges.agesic.liquibase.pass>siges.db.2016</siges.agesic.liquibase.pass>
+                <siges.agesic.liquibase.driver>com.mysql.jdbc.Driver</siges.agesic.liquibase.driver>
+                <siges.agesic.liquibase.reference-url>jdbc:mysql://localhost:3307/siges_agesic</siges.agesic.liquibase.reference-url>
+                <siges.agesic.liquibase.reference-user>root</siges.agesic.liquibase.reference-user>
+                <siges.agesic.liquibase.reference-pass>siges</siges.agesic.liquibase.reference-pass>
+                <siges.agesic.liquibase.reference-driver>com.mysql.jdbc.Driver</siges.agesic.liquibase.reference-driver>
+                
+                <!-- liquibase para visualizador opp -->
+                <visua.opp.agesic.liquibase.url>jdbc:mysql://siges-db-mysql.ambientes.sofis:3306/siges_agesic_visua_opp_prod_20170711</visua.opp.agesic.liquibase.url>
+                <visua.opp.agesic.liquibase.user>root</visua.opp.agesic.liquibase.user>
+                <visua.opp.agesic.liquibase.pass>siges.db.2016</visua.opp.agesic.liquibase.pass>
+                <visua.opp.agesic.liquibase.driver>com.mysql.jdbc.Driver</visua.opp.agesic.liquibase.driver>
+                <visua.opp.agesic.liquibase.reference-url>jdbc:mysql://localhost:3307/siges_visua_opp</visua.opp.agesic.liquibase.reference-url>
+                <visua.opp.agesic.liquibase.reference-user>root</visua.opp.agesic.liquibase.reference-user>
+                <visua.opp.agesic.liquibase.reference-pass>siges</visua.opp.agesic.liquibase.reference-pass>
+                <visua.opp.agesic.liquibase.reference-driver>com.mysql.jdbc.Driver</visua.opp.agesic.liquibase.reference-driver>
+                
+                <!-- liquibase para visualizador ga -->
+                <visua.ga.agesic.liquibase.reference-driver>jdbc:mysql://siges-db-mysql.ambientes.sofis:3306/siges_visua_agesic</visua.ga.agesic.liquibase.reference-driver>
+                <visua.ga.agesic.liquibase.user>root</visua.ga.agesic.liquibase.user>
+                <visua.ga.agesic.liquibase.pass>siges.db.2016</visua.ga.agesic.liquibase.pass>
+                <visua.ga.agesic.liquibase.driver>com.mysql.jdbc.Driver</visua.ga.agesic.liquibase.driver>
+                <visua.ga.agesic.liquibase.reference-url>jdbc:mysql://localhost:3307/siges_visua_ga</visua.ga.agesic.liquibase.reference-url>
+                <visua.ga.agesic.liquibase.reference-user>root</visua.ga.agesic.liquibase.reference-user>
+                <visua.ga.agesic.liquibase.reference-pass>siges</visua.ga.agesic.liquibase.reference-pass>
+                <visua.ga.agesic.liquibase.reference-driver>com.mysql.jdbc.Driver</visua.ga.agesic.liquibase.reference-driver>
+
+                <!-- liquibase para visualizador imm -->
+                <!--cambiar url de la base de datos testing-->
+                <siges.imm.liquibase.url>jdbc:postgres://siges-db-postgres.ambientes.sofis:5432/siges_agesic_prod_20170810</siges.imm.liquibase.url>
+                <siges.imm.liquibase.user>sigesfcusr</siges.imm.liquibase.user>
+                <siges.imm.liquibase.pass>siges.db.2016</siges.imm.liquibase.pass>
+                <siges.imm.liquibase.driver>org.postgresql.Driver</siges.imm.liquibase.driver>
+                <siges.imm.liquibase.reference-url>jdbc:postgres://localhost:5433/siges_imm</siges.imm.liquibase.reference-url>
+                <siges.imm.liquibase.reference-user>sigesfcusr</siges.imm.liquibase.reference-user>
+                <siges.imm.liquibase.reference-pass>siges</siges.imm.liquibase.reference-pass>
+                <siges.imm.liquibase.reference-driver>org.postgresql.Driver</siges.imm.liquibase.reference-driver>
+
+                <!--cambiar url de la base de datos testing-->
+                <visua.imm.agesic.liquibase.url>jdbc:postgres://siges-db-postgres.ambientes.sofis:5432/siges_agesic_prod_20170810</visua.imm.agesic.liquibase.url>
+                <visua.imm.agesic.liquibase.user>root</visua.imm.agesic.liquibase.user>
+                <visua.imm.agesic.liquibase.pass>siges.db.2016</visua.imm.agesic.liquibase.pass>
+                <visua.imm.agesic.liquibase.driver>org.postgresql.Driver</visua.imm.agesic.liquibase.driver>
+                <visua.imm.agesic.liquibase.reference-url>jdbc:postgres://localhost:5433/siges_visua_imm</visua.imm.agesic.liquibase.reference-url>
+                <visua.imm.agesic.liquibase.reference-user>sigesfcusr</visua.imm.agesic.liquibase.reference-user>
+                <visua.imm.agesic.liquibase.reference-pass>siges</visua.imm.agesic.liquibase.reference-pass>
+                <visua.imm.agesic.liquibase.reference-driver>org.postgresql.Driver</visua.imm.agesic.liquibase.reference-driver>
+                
+                <siges.agesic.liquibase.verbose>false</siges.agesic.liquibase.verbose>
+                <siges.agesic.liquibase.logging>info</siges.agesic.liquibase.logging>
+                <!-- liquibase -->
+
+            </properties>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>siges-dev</activeProfile>
+    </activeProfiles>
+</settings>

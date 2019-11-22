@@ -90,6 +90,9 @@ public class DocFile implements Serializable {
     @Transient
     private String docfileNombreHist;
     
+    @Transient
+    private Integer rev;
+    
     public DocFile() {
     }
 
@@ -297,6 +300,20 @@ public class DocFile implements Serializable {
      */
     public void setDocfileNombreHist(String docfileNombreHist) {
 	this.docfileNombreHist = docfileNombreHist;
+    }
+
+    /**
+     * @return the rev
+     */
+    public Integer getRev() {
+        return rev;
+    }
+
+    /**
+     * @param rev the rev to set
+     */
+    public void setRev(Integer rev) {
+        this.rev = rev;
     }
 
 

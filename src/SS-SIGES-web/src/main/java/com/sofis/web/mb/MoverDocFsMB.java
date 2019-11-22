@@ -26,7 +26,7 @@ import javax.inject.Inject;
 public class MoverDocFsMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstantesEstandares.LOGGER);
+    private static final Logger logger = Logger.getLogger(MoverDocFsMB.class.getName());
 
     private Boolean renderProcesar = true;
 

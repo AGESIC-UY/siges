@@ -1,0 +1,20 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-generate-siges-visua-client</actionName>
+        <displayName>generate-siges-visua-client</displayName>
+        <goals>
+            <goal>org.codehaus.mojo:jaxws-maven-plugin:2.5:wsimport</goal>
+        </goals>
+        <properties>
+            <executable>wsimport</executable>
+            <packageName>org.agesic.siges.visualizador.web.ws</packageName>
+            <sourceDestDir>${project.build.directory}/src/main/java</sourceDestDir>
+            <wsdlDirectory>${siges.agesic.sources}</wsdlDirectory>
+            <xnocompile>true</xnocompile>
+            <extension>false</extension>
+            <keep>true</keep>
+            <verbose>true</verbose>
+        </properties>
+    </action>
+</actions>-->

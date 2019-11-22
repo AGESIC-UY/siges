@@ -29,7 +29,7 @@ import javax.persistence.Query;
 public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AdquisicionDAO.class.getName());
 
     public AdquisicionDAO(EntityManager em) {
         super(em);
@@ -50,8 +50,23 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
             adqTO.setImportePlan(0d);
             adqTO.setImporteReal(0d);
             adqTO.setImporteSaldo(0d);
-            adqTO.setProcCompra(a.getAdqProcCompra());
-            adqTO.setProcCompraGrp(a.getAdqProcCompraGrp());
+            
+            
+            /*
+            *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
+            *           se maneja como una entidad nueva.
+            */             
+            
+//            adqTO.setProcCompra(a.getAdqProcCompra());            
+            
+            if(a.getAdqProcedimientoCompra() != null){
+                 adqTO.setProcCompra(a.getAdqProcedimientoCompra().getProcCompNombre());
+            }else{
+                 adqTO.setProcCompra(null);
+            }
+            
+            
+            adqTO.setProcCompraGrp(a.getAdqIdGrpErpFk() != null ? a.getAdqIdGrpErpFk().getIdGrpErpNombre() : null);
 
             resultado.add(adqTO);
 
@@ -82,6 +97,7 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                     }
 
                     pago.setAdqNombre(StringsUtils.concat(p.getEntregables().getEntNombre(), dateS));
+                    pago.setAdqPk(p.getPagAdqFk().getAdqPk());
                 }
                 pago.setImportePlan(p.getPagImportePlanificado());
                 pago.setImporteReal(p.getPagImporteReal());
@@ -111,7 +127,7 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                 pago.setReferencia(p.getPagTxtReferencia());
                 pago.setConfirmado(p.isPagConfirmado());
                 //pago.setPagoDoc(p.getDocumento());
-
+                pago.setOrgaNombre(p.getPagProveedorFk() != null ? p.getPagProveedorFk().getOrgaNombre() : null);
                 resultado.add(pago);
             }
         }
@@ -201,5 +217,27 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
             return 0d;
         }
         return reutValue;
+    }
+    
+    public Pagos obtenerUltimoPago(Integer adqPk){
+        String query = "SELECT p"
+                + " FROM Adquisicion a JOIN a.pagosSet p"
+                + " WHERE a.adqPk = :adqPk"
+                + " ORDER BY p.pagPk DESC";
+               
+        Query q = super.getEm().createQuery(query);
+        q.setParameter("adqPk", adqPk);
+        
+        List<Pagos> retorno = q.getResultList();
+        
+        Pagos pagoRetorno;
+        
+        if(!retorno.isEmpty()){
+            pagoRetorno = retorno.get(0);
+        }else{
+            pagoRetorno = new Pagos();
+        }
+        
+        return pagoRetorno;
     }
 }

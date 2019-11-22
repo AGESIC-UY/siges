@@ -45,25 +45,40 @@
 
                     <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.replan_generar_nueva_linea_base}:"/>
-                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}"
-                                            valueChangeListener="#{ProgramasProyectosMB.replanificacionGenerarLineaBaseChange}">
-                            <ace:ajax/>
+                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}">
+<!--                                            valueChangeListener="#{ProgramasProyectosMB.replanificacionGenerarLineaBaseChange}">
+                            <ace:ajax/>-->
+                        </ace:checkboxButton>
+                        
+                        <ice:outputLabel value="#{labels.replan_no_permit_editar}:"/>
+                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanPermitEditar}" >
+<!--                                            disabled="#{not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}">-->
+                        </ace:checkboxButton>                        
+                        
+                        <ice:outputLabel value="#{labels.replan_generar_nuevo_presupuesto}:"/>
+                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanGenerarPresupuesto}">
+<!--                                            disabled="#{not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}">-->
                         </ace:checkboxButton>
 
-                        <ice:outputLabel value="#{labels.replan_mantener_historico_popup}:"/>
-                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanHistorial}"
+<!--                        <ice:outputLabel value="#{labels.replan_generar_nuevo_producto}:"/>
+                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanGenerarProducto}"
+                                            disabled="#{not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}">
+                        </ace:checkboxButton>                           -->
+                                                 
+<!--                        <ice:outputLabel value="#{labels.replan_mantener_historico_popup}:"/>
+                        <ace:checkboxButton value="#{ProgramasProyectosMB.replanificacion.proyreplanHistorial}">
                                             disabled="#{not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}"
                                             valueChangeListener="#{ProgramasProyectosMB.replanificacionProyreplanHistorialChange}">
                             <ace:ajax/>
-                        </ace:checkboxButton>
+                        </ace:checkboxButton> -->
                     </ice:panelGrid>
                     <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.replan_desc_popup}:" />
                         <ice:inputTextarea value="#{ProgramasProyectosMB.replanificacion.proyreplanDesc}" 
-                                           styleClass="textoMedioLargo"
-                                           disabled="#{inicioMB.fieldDisabled('replanDesc', (ProgramasProyectosMB.replanificacion!=null?ProgramasProyectosMB.replanificacion.item:null)) or  
+                                           styleClass="textoMedioLargo" />
+<!--                                           disabled="#{inicioMB.fieldDisabled('replanDesc', (ProgramasProyectosMB.replanificacion!=null?ProgramasProyectosMB.replanificacion.item:null)) or  
                                                        not ProgramasProyectosMB.replanificacion.proyreplanHistorial or
-                                                       not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}" />
+                                                       not ProgramasProyectosMB.replanificacion.proyreplanGenerarLineaBase}" />-->
                     </ice:panelGrid>
 
 
@@ -79,7 +94,8 @@
                                         styleClass="boton principal guardar"/>
                         <ace:linkButton value="#{labels.replan_cancelar}" 
                                         action="#{ProgramasProyectosMB.cancelarReplanificacion()}"
-                                        styleClass="boton secundario" />
+                                        styleClass="boton secundario"
+                                        rendered="#{ProgramasProyectosMB.replanificacion.getProyreplanPk() != null}"/>
                         <ace:linkButton value="#{labels.cerrar}" 
                                         action="#{ProgramasProyectosMB.cerrarPopupReplanificacion()}"/>
                     </ice:panelGroup>

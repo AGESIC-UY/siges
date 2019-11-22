@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class PlantillaCroValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PlantillaCroValidacion.class.getName());
 
     public static boolean validarGenerar(PlantillaCronograma plantillaCro, Date plantillaFechaInicio) throws BusinessException {
         logger.finest("Validar Generar Plantilla Cronograma.");

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup id="panelLocalizaciones"
+                    styleClass="cuadro"
+                    rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 9) and fichaMB.fieldRendered('panelLocalizaciones')}">
+
+        <ice:panelGroup id="cabezalLocalizaciones" styleClass="cabezal" >
+            <ice:outputText value="#{labels.localizaciones}"/>
+            <ace:pushButton value=""
+                            action="#{fichaMB.miMostrar(9)}" 
+                            styleClass="#{fichaMB.selectedMostrar == 9 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{not fichaMB.mostrar[9]}" styleClass="cuerpo">
+            <ice:panelGroup >
+                <h:outputText value="Cantidad de localizaciones: #{fichaMB.fichaTO.latLngProyList.size()}" />
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{fichaMB.mostrar[9]}" styleClass="cuerpo">
+
+            <!-- Formulario de alta -->
+            <ice:panelGroup id="localizacionesForm" styleClass="formularioPopup formulario">
+
+                <h:panelGrid columns="1">
+                    <h:commandButton value="#{labels.agregarLocalizacion}" 
+                                     action="#{fichaMB.abrirLocalizacionAction()}"
+                                     rendered="#{fichaMB.fieldRendered('agregarLocalizacion')}"                                     
+                                     styleClass="boton principal botonAgregar" />
+                </h:panelGrid>
+
+                <ice:panelPopup draggable="false" 
+                                positionOnLoadOnly="true"
+                                modal="true"
+                                rendered="#{fichaMB.renderPopupLocalizacion}">
+
+                    <f:facet name="header">
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{labels.mapa_ubica_title}"/>
+                            <ice:commandButton styleClass="botonCerrar" title="#{labels.cerrar}" immediate="true"
+                                               action="#{fichaMB.cerrarPopupLocalizacion()}"/>
+                        </ice:panelGroup>
+                    </f:facet>
+
+                    <f:facet name="body">
+                        <ice:panelGroup >
+                            <div id="localizaciones-map-canvas" style="width:850px; height:400px"></div>
+                            <ace:messages id="mapaLocalizacionMsg"/>
+                            <div class="form-inline datosMapa">
+                                <ice:panelGrid columns="2">
+
+                                    <ice:outputLabel value="#{labels.mapa_latitud_title}"/>
+                                    <ace:textEntry id="locLatAux" required="true" requiredIndicator="*"
+                                                   requiredMessage="Debe ingresar una latitud." 
+                                                   value="#{fichaMB.latlngProyectosAux.latlngLat}" 
+                                                   styleClass="textoMedio" />
+
+                                    <ice:outputLabel value="#{labels.mapa_longitud_title}"/>
+                                    <ace:textEntry id="locLngAux" required="true" requiredIndicator="*"
+                                                   requiredMessage="Debe ingresar una longitud."
+                                                   value="#{fichaMB.latlngProyectosAux.latlngLng}"
+                                                   styleClass="textoMedio" />
+
+                                    <ice:outputLabel value="#{labels.mapa_localidad_title}"/>
+                                    <ace:textEntry id="locLocalidad" value="#{fichaMB.latlngProyectosAux.latlangLoc}" styleClass="textoMedio"/>
+
+                                    <ice:outputLabel value="#{labels.mapa_barrio_title}"/>
+                                    <ace:textEntry id="locBarrio" value="#{fichaMB.latlngProyectosAux.latlangBarrio}" styleClass="textoMedio"/>
+
+                                    <ice:outputLabel value="#{labels.mapa_departamento_title}"/>
+                                    <ace:textEntry styleClass="textoMedio" required="true" requiredIndicator="*"
+                                                   requiredMessage="Debe ingresar un departamento." id="deptoAux"
+                                                   value="#{fichaMB.latlngProyectosAux.latlangDepFk.depNombre}"/>
+                                </ice:panelGrid>
+                            </div>
+
+                            <ice:panelGroup styleClass="panelBotones">
+                                <ace:messages for="ficha:btnAgregar"/>
+                                <ace:messages globalOnly="true" />
+                                <ice:commandButton value="#{labels.guardar}"
+                                                   action="#{fichaMB.guardarLocalizacionAction()}"
+                                                   styleClass="boton principal guardar"/>
+                                <ace:linkButton value="#{labels.cerrar}" immediate="true" 
+                                                action="#{fichaMB.cerrarPopupLocalizacion()}"/>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+                    </f:facet>
+
+                </ice:panelPopup>
+            </ice:panelGroup>
+
+            <ace:panel id="localizacionesList" styleClass="resultado recuadro" >
+
+                <ace:dataTable id="locTable"
+                               value="#{fichaMB.fichaTO.latLngProyList}"
+                               var="loc" 
+                               binding="#{fichaMB.latLngProyListDataTable}"
+                               emptyMessage="#{label.noHayLocalizaciones}">
+
+
+                    <ace:column headerText="#{labels.mapa_id_title}" >
+                        <ice:outputText value="#{loc.latlngPk != null ? loc.latlngPk : ''}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.mapa_latitud_title}" >
+                        <ice:outputText value="#{loc.latlngLat != null ? loc.latlngLat : ''}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.mapa_longitud_title}" >
+                        <ice:outputText value="#{loc.latlngLng != null ? loc.latlngLng : ''}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.mapa_departamento_title}" >
+                        <ice:outputText value="#{loc.latlangDepFk != null ? loc.latlangDepFk.depNombre : ''}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.mapa_localidad_title}" >
+                        <ice:outputText value="#{loc.latlangLoc != null ? loc.latlangLoc : ''}"/>
+                    </ace:column>
+
+                    <ace:column headerText="#{labels.mapa_barrio_title}" >
+                        <ice:outputText value="#{loc.latlangBarrio != null ? loc.latlangBarrio : ''}"/>
+                    </ace:column>
+
+                    <ace:column styleClass="columnaBoton"
+                                rendered="#{loc.latlngPk != null and loc.latlngPk gt 0 and fichaMB.fieldRendered('editarLocalizacion')}">
+                        <ace:tooltip id="tooltipEditar" for="btnEditar">
+                            <ice:outputText value="#{labels.editarTooltip}" />
+                        </ace:tooltip>
+                        <ace:pushButton id="btnEditar" styleClass="botonEditar iconoTabla" 
+                                        action="#{fichaMB.editarLocalizacionAction(loc)}"/>
+                    </ace:column>
+
+                    <ace:column styleClass="columnaBoton"
+                                rendered="#{loc.latlngPk != null and loc.latlngPk gt 0 and fichaMB.fieldRendered('eliminarLocalizacion')}">
+                        <h:commandButton id="btnEliminarLoc"
+                                         styleClass="botonEliminar iconoTabla"
+                                         title="#{labels.eliminarTooltip}:&#13;#{loc.latlngPk}"
+                                         rendered="#{fichaMB.fieldRendered('editarLocalizacion')}"
+                                         onclick="confirmationEliminarLoc#{loc.latlngPk}.show();" 
+                                         type="button"/>
+                        <ace:confirmationDialog widgetVar="confirmationEliminarLoc#{loc.latlngPk}" 
+                                                message="#{labels.eliminar}: &#13;#{loc.latlngPk}"
+                                                header="#{labels.hConfirmacion}"
+                                                closable="true"
+                                                closeOnEscape="true"
+                                                severity="info"
+                                                modal="true"
+                                                position="center">
+                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                <h:commandButton value="#{labels.si}"
+                                                 styleClass="boton principal botonContinuar"
+                                                 onclick="confirmationEliminarLoc#{loc.latlngPk}.hide();" 
+                                                 actionListener="#{fichaMB.eliminarLocalizacionAction(loc)}"/>
+                                <h:commandButton value="#{labels.no}"
+                                                 styleClass="boton principal botonEliminar"
+                                                 onclick="confirmationEliminarLoc#{loc.latlngPk}.hide();"/>
+                            </h:panelGrid>
+                        </ace:confirmationDialog>
+                    </ace:column>
+
+
+                </ace:dataTable>
+            </ace:panel>
+        </ice:panelGroup>
+    </ice:panelGroup>
+</ui:composition>

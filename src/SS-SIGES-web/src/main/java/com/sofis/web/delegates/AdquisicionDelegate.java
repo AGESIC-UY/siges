@@ -2,6 +2,7 @@ package com.sofis.web.delegates;
 
 import com.sofis.business.ejbs.AdquisicionBean;
 import com.sofis.entities.data.Adquisicion;
+import com.sofis.entities.data.Pagos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.AdqPagosTO;
 import com.sofis.exceptions.GeneralException;
@@ -51,5 +52,9 @@ public class AdquisicionDelegate {
 
     public Double costoTotal(Integer adqPk) {
         return adquisicionBean.costoTotal(adqPk);
+    }
+       
+    public Pagos obtenerUltimoPago(Integer adqPk){
+        return adquisicionBean.obtenerUltimoPago(adqPk);
     }
 }

@@ -11,9 +11,8 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ice:panelGroup id="panelCalidad" 
-                    style="#{fichaMB.selectedMostrar == 7 ? 'width: 100%; padding-right:25px' : ''}" 
-                    styleClass="col-sm-6 cuadro" 
+    <ice:panelGroup id="panelCalidad"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 7) and fichaMB.fieldRendered('panelCalidad')}">
         <ice:panelGroup id="cabezalCalidad" styleClass="cabezal">
             <ice:outputText value="#{labels.cal_titulo}"/>

@@ -30,25 +30,41 @@
                 <ice:panelGroup id="formUsuario">
                     <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.replan_generar_nueva_linea_base}:"/>
-                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarLineaBase}"
-                                            valueChangeListener="#{fichaMB.replanificacionGenerarLineaBaseChange}">
-                            <ace:ajax/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarLineaBase}" >
+<!--                                            valueChangeListener="#{fichaMB.replanificacionGenerarLineaBaseChange}">
+                            <ace:ajax/> -->
                         </ace:checkboxButton>
 
-                        <ice:outputLabel value="#{labels.replan_mantener_historico_popup}:"/>
-                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanHistorial}"
-                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}"
+                        
+                        <ice:outputLabel value="#{labels.replan_no_permit_editar}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanPermitEditar}" >
+<!--                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}">-->
+                        </ace:checkboxButton>                        
+                        
+                        <ice:outputLabel value="#{labels.replan_generar_nuevo_presupuesto}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarPresupuesto}" >
+<!--                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}">-->
+                        </ace:checkboxButton>
+
+<!--                        <ice:outputLabel value="#{labels.replan_generar_nuevo_producto}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarProducto}"
+                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}">
+                        </ace:checkboxButton>                        -->                        
+
+<!--                        <ice:outputLabel value="#{labels.replan_mantener_historico_popup}:"/>
+                        <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanHistorial}" >
+                                           disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}"
                                             valueChangeListener="#{fichaMB.replanificacionProyreplanHistorialChange}">
                             <ace:ajax/>
-                        </ace:checkboxButton>
+                        </ace:checkboxButton> -->
                     </ice:panelGrid>
                     <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.replan_desc_popup}:" />
                         <ice:inputTextarea value="#{fichaMB.replanificacion.proyreplanDesc}" 
-                                           styleClass="textoMedioLargo"
-                                           disabled="#{fichaMB.fieldDisabled('replanDesc') or  
+                                           styleClass="textoMedioLargo" />
+<!--                                           disabled="#{fichaMB.fieldDisabled('replanDesc') or  
                                                        not fichaMB.replanificacion.proyreplanHistorial or
-                                                       not fichaMB.replanificacion.proyreplanGenerarLineaBase}" />
+                                                       not fichaMB.replanificacion.proyreplanGenerarLineaBase}" />-->
                     </ice:panelGrid>
 
                     <ice:panelGroup styleClass="panelBotones">

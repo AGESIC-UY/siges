@@ -38,7 +38,7 @@ public class ValorHoraBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ValorHoraBean.class.getName());
     @Inject
     private DatosUsuario du;
     

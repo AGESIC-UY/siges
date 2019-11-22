@@ -20,7 +20,7 @@ import javax.persistence.Query;
 public class ConfiguracionDAO extends HibernateJpaDAOImp<Configuracion, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ConfiguracionDAO.class.getName());        
 
     public ConfiguracionDAO(EntityManager em) {
         super(em);

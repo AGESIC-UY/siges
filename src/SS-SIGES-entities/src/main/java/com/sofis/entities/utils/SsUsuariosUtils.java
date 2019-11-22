@@ -7,11 +7,14 @@ import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.entities.tipos.FiltroInicioItem;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.generico.utils.generalutils.EmailValidator;
 import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -51,8 +54,11 @@ public class SsUsuariosUtils {
             String[] arrUsuarios = new String[list.size()];
             int ind = 0;
             for (SsUsuario usu : list) {
-                if (usu != null && usu.getUsuCorreoElectronico() != null) {
+                if (usu != null && usu.getUsuCorreoElectronico() != null && EmailValidator.validateEmail(usu.getUsuCorreoElectronico())) {
                     arrUsuarios[ind++] = usu.getUsuCorreoElectronico();
+                } else {
+                    Logger.getLogger(SsUsuariosUtils.class.getName()).log(Level.INFO,
+                            "Email inv\u00e0lido del usuario id={0}, email: {1}", new Object[]{usu.getUsuId(), usu.getUsuCorreoElectronico()});
                 }
             }
             return arrUsuarios;

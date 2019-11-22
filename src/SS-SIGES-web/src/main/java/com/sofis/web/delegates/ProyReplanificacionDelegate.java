@@ -26,7 +26,6 @@ public class ProyReplanificacionDelegate {
         return proyReplanificacionBean.obtenerUltimaSolicitud(fichaFk);
     }
     
-    
     public ProyReplanificacion guardar(ProyReplanificacion proyReplan) {
         return proyReplanificacionBean.guardar(proyReplan);
     }

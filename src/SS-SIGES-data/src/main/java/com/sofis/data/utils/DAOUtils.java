@@ -1,6 +1,5 @@
 package com.sofis.data.utils;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.ConstantesErrores;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.StringsUtils;
@@ -18,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class DAOUtils {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(DAOUtils.class.getName()); 
 
     /**
      * Para las query que retornan un objeto, en vez de usar getSingleResult
@@ -66,8 +65,11 @@ public class DAOUtils {
 		CriteriaTO criteria;
 		List<MatchCriteriaTO> criterios = new ArrayList<>();
 		for (String word : valorParse) {
-		    MatchCriteriaTO matchWord = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, property, word.trim());
-		    criterios.add(matchWord);
+
+                    if (!StringsUtils.isEmpty(word)) {
+                        MatchCriteriaTO matchWord = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, property, word.trim());
+                        criterios.add(matchWord);
+                    }
 		}
 
 		if (criterios.size() == 1) {

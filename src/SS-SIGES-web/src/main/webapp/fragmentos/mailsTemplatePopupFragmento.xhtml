@@ -42,7 +42,8 @@
                                            value="#{mailsTemplateMB.mailEnEdicion.mailTmpMensaje}" 
                                            toolbar="Basic" immediate="true" language="es"
                                            skin="kama" saveOnSubmit="true"
-                                           styleClass="ancho100" height="80px" />
+                                           styleClass="ancho100" height="80px" 
+                                           converter="SanitizerAceRichTextConverter"/>
                     </ice:panelGrid>
 
                     <ice:panelGroup styleClass="panelBotones">

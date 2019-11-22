@@ -45,7 +45,7 @@ import javax.inject.Inject;
 public class FichaCalidadMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaCalidadMB.class.getName());
     private static final String MSG_FORMULARIO = "msgCalidad";
     private static final String MSG_BTN_GUARDAR = "msgCalidad";
     private static final String MSG_CALIDAD = "msgCalidad";
@@ -211,7 +211,17 @@ public class FichaCalidadMB implements Serializable {
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage(), be);
-                JSFUtils.agregarMsgs(MSG_FORMULARIO, be.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(MSG_FORMULARIO, be.getErrores());
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError(MSG_FORMULARIO, Labels.getValue(iterStr), null);                
+                }                
+
             }
         }
         return cal;
@@ -268,7 +278,17 @@ public class FichaCalidadMB implements Serializable {
                 JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_ELIMINADO, null);
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage(), be);
-                JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
+                }                
+                
             }
         }
         return null;
@@ -282,7 +302,17 @@ public class FichaCalidadMB implements Serializable {
                 JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, null, be);
-                JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
+                }                    
+
             }
         }
         return null;

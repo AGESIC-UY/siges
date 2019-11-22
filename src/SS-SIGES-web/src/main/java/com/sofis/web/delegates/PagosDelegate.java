@@ -30,4 +30,8 @@ public class PagosDelegate {
     public Pagos obtenerPagosPorId(Integer pagPk) {
         return pagosBean.obtenerPagosPorId(pagPk);
     }
+    
+    public Double getImportePlanificado(Integer pagPk) {
+        return pagosBean.obtenerImportePlanificado(pagPk);
+    }
 }

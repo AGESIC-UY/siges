@@ -3,9 +3,11 @@ package com.sofis.business.ejbs;
 import com.sofis.business.interceptors.LoggedInterceptor;
 import com.sofis.business.validations.PagoValidacion;
 import com.sofis.data.daos.PagosDAO;
+import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
+import com.sofis.entities.data.Configuracion;
 import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.Pagos;
 import com.sofis.exceptions.BusinessException;
@@ -43,7 +45,7 @@ import javax.persistence.PersistenceContext;
 @Interceptors({LoggedInterceptor.class})
 public class PagosBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Pagos.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
     @Inject
@@ -54,16 +56,17 @@ public class PagosBean {
     private ProyectosBean proyectosBean;
     @EJB
     private NotificacionEnvioBean notificacionEnvioBean;
+    @Inject
+    private ConfiguracionBean configuracionBean;
 
     //private String usuario;
     //private String origen;
-    
     @PostConstruct
-    public void init(){
+    public void init() {
         //usuario = du.getCodigoUsuario();
         //origen = du.getOrigen();
     }
-    
+
     /**
      * Obtener la lista de los pagos deacuerdo a la ficha aportada.
      *
@@ -78,11 +81,27 @@ public class PagosBean {
     }
 
     private Pagos guardar(Pagos pago, Integer proyPk, Integer orgPk) {
-        PagoValidacion.validar(pago);
+        
+        Boolean exigeProveedorEnPago = false;
+        Configuracion cnfExigeProveedorEnPago = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_PAGO, orgPk);
+        if (cnfExigeProveedorEnPago != null && cnfExigeProveedorEnPago.getCnfValor().equalsIgnoreCase("true")) {
+            exigeProveedorEnPago = true;
+        }     
+        
+        //validación de cliente en pago
+        Boolean exigeClienteEnPago = false;
+        Configuracion cnfExigeClienteEnPago = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.CLIENTE_ES_EXIGIDO_EN_PAGO, orgPk);
+        if (cnfExigeClienteEnPago != null && cnfExigeClienteEnPago.getCnfValor().equalsIgnoreCase("true")) {
+            exigeClienteEnPago = true;
+        }
+        
+        PagoValidacion.validar(pago, exigeProveedorEnPago, exigeClienteEnPago);
+        
+        
         PagosDAO pagoDao = new PagosDAO(em);
 
         try {
-            pago = pagoDao.update(pago, du.getCodigoUsuario(),du.getOrigen());
+            pago = pagoDao.update(pago, du.getCodigoUsuario(), du.getOrigen());
             proyectosBean.guardarIndicadores(proyPk, orgPk);
 
         } catch (TechnicalException te) {
@@ -102,7 +121,6 @@ public class PagosBean {
 
     private void eliminarPago(Integer pagPk) throws GeneralException {
         PagosDAO pagoDao = new PagosDAO(em);
-
         try {
             pagoDao.deletePagos(pagPk);
         } catch (Exception ex) {
@@ -181,8 +199,6 @@ public class PagosBean {
         }
         return null;
     }
-    
-    
 
     public Set<Pagos> copiarProyPagos(Set<Pagos> pagosSet, Adquisicion nvaAdq, Set<Entregables> entSet, int desfasajeDias) {
         if (pagosSet != null && nvaAdq != null) {
@@ -210,6 +226,11 @@ public class PagosBean {
                 nvoPago.setPagObservacion(pago.getPagObservacion());
                 nvoPago.setPagTxtReferencia(pago.getPagTxtReferencia());
 
+                nvoPago.setPagGasto(pago.getPagGasto());
+                nvoPago.setPagInversion(pago.getPagInversion());
+                nvoPago.setPagContrOrganizacionFk(pago.getPagContrOrganizacionFk());
+                nvoPago.setPagContrPorcentaje(pago.getPagContrPorcentaje());
+
                 Date datePlanificada;
                 if (pago.getPagFechaPlanificada() != null) {
                     Date date = DatesUtils.incrementarDias(pago.getPagFechaPlanificada(), desfasajeDias);
@@ -218,8 +239,7 @@ public class PagosBean {
                     datePlanificada = new Date();
                 }
                 nvoPago.setPagFechaPlanificada(datePlanificada);
-                
-                
+
 //                Date dateReal;
 //                if (pago.getPagFechaReal() != null) {
 //                    Date date = DatesUtils.incrementarDias(pago.getPagFechaReal(), desfasajeDias);
@@ -228,7 +248,6 @@ public class PagosBean {
 //                    dateReal = new Date();
 //                }
 //                nvoPago.setPagFechaReal(dateReal);
-
                 result.add(nvoPago);
             }
             return result;
@@ -239,5 +258,10 @@ public class PagosBean {
     public List<Pagos> obtenerPagosDiasVenc(Integer proyPk, int diasVencido) {
         PagosDAO dao = new PagosDAO(em);
         return dao.obtenerPagosDiasVenc(proyPk, diasVencido);
+    }
+    
+    public Double obtenerImportePlanificado(Integer pagPk) {
+        PagosDAO dao = new PagosDAO(em);
+        return dao.obtenerImportePlanificado(pagPk);
     }
 }

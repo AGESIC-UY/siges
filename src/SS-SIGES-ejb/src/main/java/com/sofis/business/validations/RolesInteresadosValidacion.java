@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class RolesInteresadosValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RolesInteresadosValidacion.class.getName());
 
     public static boolean validar(RolesInteresados rol) throws BusinessException {
         BusinessException be = new BusinessException();

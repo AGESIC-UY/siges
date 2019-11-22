@@ -2,13 +2,15 @@ package com.sofis.data.daos;
 
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.codigueras.EstadosCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.ProyIndices;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.tipos.IdNombreTO;
 import com.sofis.entities.tipos.ProyectoTO;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -24,7 +26,7 @@ import javax.persistence.Query;
 public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProyectosDAO.class.getName());
 
     public ProyectosDAO(EntityManager em) {
         super(em);
@@ -179,7 +181,7 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
 
             Query query = getEm().createQuery(queryStr);
             query.setParameter("progPk", progPk);
-            query.setParameter("codigos", Arrays.asList("INICIO", "PLANIFICACION", "EJECUCION", "FINALIZADO"));
+            query.setParameter("codigos", Arrays.asList("INICIO", "PLANIFICACION", "EJECUCION", "FINALIZADO", "PENDIENTE_PMOT", "PENDIENTE_PMOF"));
             
             return !query.getResultList().isEmpty();
         }
@@ -275,5 +277,76 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
             query.setParameter("dateNow", new Date());
             query.executeUpdate();
         }
+    }
+    
+    public Double obtenerPorcPesoTotalProy(Integer proyPk)throws DAOGeneralException{
+        Double resultadoFinal = 0d;
+        
+//        String[] listEstadosProy = {"INICIO", "EJECUCION", "PLANIFICACION"};
+//        String queryStr =   "SELECT (proyConsultado.proyPeso*100)/TablaPesoTotal.pesoTotal" +
+//                            " FROM Proyectos proyConsultado" +
+//                                " INNER JOIN proy.proyEstFk estProyConsultado," +
+//                                    " (SELECT SUM(proy.proyPeso) AS pesoTotal" +
+//                                    " FROM Proyectos proy" +
+//                                    " INNER JOIN proy.proyProgFk prog" +
+//                                    " INNER JOIN proy.proyEstFk estProy" +
+//                                    " WHERE prog.progPk =" +
+//                                            " (SELECT progIn.progPk" +
+//                                            " FROM Proyectos proyIn" +
+//                                                " INNER JOIN proy.proyProgFk progIn" +
+//                                            " WHERE proyIn.proyPk = :proyPk)" +
+//                                        " AND estProy.estCodigo IN :listEstadosProy" +
+//                                        " AND proy.activo = TRUE) TablaPesoTotal"     +
+//                            " WHERE proyConsultado.proyPk = :proyPk" +
+//                                " AND estProyConsultado.estCodigo IN :listEstadosProy" +
+//                                " AND proyConsultado.activo = TRUE";
+//        
+//        Query query = getEm().createQuery(queryStr);
+//        query.setParameter("proyPk", proyPk);
+//        query.setParameter("listEstadosProy", listEstadosProy);
+
+        String queryStr = "SELECT (proyConsultado.proy_peso*100)/tablaPesoTotal.pesoTotal" + 
+                          " FROM proyectos proyConsultado" + 
+                          " INNER JOIN estados estProyConsultado ON proyConsultado.proy_est_fk = estProyConsultado.est_pk," +                
+                            " (SELECT SUM(proy.proy_peso) AS pesoTotal" +
+                            " FROM proyectos proy" + 
+                                " INNER JOIN programas prog ON proy.proy_prog_fk = prog.prog_pk" + 
+                                " INNER JOIN estados estProy ON proy.proy_est_fk = estProy.est_pk" + 
+                            " WHERE prog.prog_pk =" +  
+                                " (SELECT progIn.prog_pk" +
+                                " FROM proyectos proyIn" + 
+				" INNER JOIN programas progIn ON proyIn.proy_prog_fk = progIn.prog_pk" +
+                                " WHERE proyIn.proy_pk = :proyPk)" + 
+                            " AND estProy.est_codigo IN ('INICIO', 'EJECUCION', 'PLANIFICACION')" +
+                            " AND proy.proy_activo = TRUE)tablaPesoTotal" +
+                        " WHERE proyConsultado.proy_pk = :proyPk" +
+                        " AND estProyConsultado.est_codigo IN ('INICIO', 'EJECUCION', 'PLANIFICACION')" + 
+                        " AND proyConsultado.proy_activo = TRUE";
+
+        Query query = getEm().createNativeQuery(queryStr);
+        query.setParameter("proyPk", proyPk);
+        
+        List<Object> results = (List<Object>) query.getResultList();
+        
+        if((results != null) && !(results.isEmpty())){
+            if(results.get(0) instanceof BigDecimal){
+
+                BigDecimal resultadoConsulta = (BigDecimal) results.get(0);
+
+                if(resultadoConsulta != null){
+                    resultadoFinal = Double.parseDouble(resultadoConsulta.toString());
+                }
+            
+            }else if (results.get(0) instanceof BigInteger){
+                
+                BigInteger resultadoConsulta = (BigInteger) results.get(0);
+                if(resultadoConsulta != null){
+                    resultadoFinal = Double.parseDouble(resultadoConsulta.toString());
+                }                
+            
+            }   
+        }
+        
+        return resultadoFinal;
     }
 }

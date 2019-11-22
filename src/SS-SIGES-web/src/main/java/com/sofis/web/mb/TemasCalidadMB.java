@@ -6,6 +6,7 @@ import com.sofis.entities.data.TemasCalidad;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.TemasCalidadDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ import javax.inject.Inject;
 public class TemasCalidadMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "frmTemaCalidad:btnBuscar";
+    private static final Logger logger = Logger.getLogger(TemasCalidadMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "frmTemaCalidad:btnBuscar";
     private static final String POPUP_MSG = "frmPopup:btnGuardar";
 
     @ManagedProperty("#{inicioMB}")
@@ -50,9 +51,6 @@ public class TemasCalidadMB implements Serializable {
     private TemasCalidad entidadEnEdicion;
 
     public TemasCalidadMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        entidadEnEdicion = new TemasCalidad();
     }
 
     public SofisPopupUI getRenderPopupEdicion() {
@@ -117,6 +115,15 @@ public class TemasCalidadMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */             
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<TemasCalidad>();
+        entidadEnEdicion = new TemasCalidad();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -149,11 +156,20 @@ public class TemasCalidadMB implements Serializable {
                         break;
                     }
                 }
-                JSFUtils.agregarMsg(BUSQUEDA_MSG, "info_tca_eliminado", null);
-
+                JSFUtils.agregarMsg("", "info_tca_eliminado", null);
+                inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+         
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                 
+
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -166,7 +182,7 @@ public class TemasCalidadMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put(ConstantesEntities.TCA_ATT_NOMBRE, filtroNombre);
         listaResultado = entidadDelegate.busquedaPorFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
 
@@ -178,7 +194,15 @@ public class TemasCalidadMB implements Serializable {
             entidadEnEdicion = entidadDelegate.obtenerPorId(tcaPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }             
         }
 
         renderPopupEdicion.abrir();
@@ -190,7 +214,8 @@ public class TemasCalidadMB implements Serializable {
 
         try {
             entidadEnEdicion = entidadDelegate.guardar(entidadEnEdicion);
-            JSFUtils.agregarMsg(BUSQUEDA_MSG, "info_tca_agregado", null);
+            JSFUtils.agregarMsg("", "info_tca_agregado", null);
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
             if (entidadEnEdicion != null) {
                 renderPopupEdicion.cerrar();
@@ -198,7 +223,15 @@ public class TemasCalidadMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(POPUP_MSG, be.getErrores());
+            
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(POPUP_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }            
         }
         return null;
     }

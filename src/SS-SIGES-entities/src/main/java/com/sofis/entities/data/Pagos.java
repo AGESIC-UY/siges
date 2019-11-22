@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -29,15 +32,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "pagos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pagos.findAll", query = "SELECT p FROM Pagos p"),
-    @NamedQuery(name = "Pagos.findByPagPk", query = "SELECT p FROM Pagos p WHERE p.pagPk = :pagPk"),
-    @NamedQuery(name = "Pagos.findByPagObservacion", query = "SELECT p FROM Pagos p WHERE p.pagObservacion = :pagObservacion"),
-    @NamedQuery(name = "Pagos.findByPagFechaPlanificada", query = "SELECT p FROM Pagos p WHERE p.pagFechaPlanificada = :pagFechaPlanificada"),
-    @NamedQuery(name = "Pagos.findByPagImportePlanificado", query = "SELECT p FROM Pagos p WHERE p.pagImportePlanificado = :pagImportePlanificado"),
-    @NamedQuery(name = "Pagos.findByPagFechaReal", query = "SELECT p FROM Pagos p WHERE p.pagFechaReal = :pagFechaReal"),
+    @NamedQuery(name = "Pagos.findAll", query = "SELECT p FROM Pagos p")
+    ,
+    @NamedQuery(name = "Pagos.findByPagPk", query = "SELECT p FROM Pagos p WHERE p.pagPk = :pagPk")
+    ,
+    @NamedQuery(name = "Pagos.findByPagObservacion", query = "SELECT p FROM Pagos p WHERE p.pagObservacion = :pagObservacion")
+    ,
+    @NamedQuery(name = "Pagos.findByPagFechaPlanificada", query = "SELECT p FROM Pagos p WHERE p.pagFechaPlanificada = :pagFechaPlanificada")
+    ,
+    @NamedQuery(name = "Pagos.findByPagImportePlanificado", query = "SELECT p FROM Pagos p WHERE p.pagImportePlanificado = :pagImportePlanificado")
+    ,
+    @NamedQuery(name = "Pagos.findByPagFechaReal", query = "SELECT p FROM Pagos p WHERE p.pagFechaReal = :pagFechaReal")
+    ,
     @NamedQuery(name = "Pagos.findByPagImporteReal", query = "SELECT p FROM Pagos p WHERE p.pagImporteReal = :pagImporteReal")})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pagos implements Serializable {
-    
+
     public static final int OBSERVACION_LENGHT = 3000;
 
     private static final long serialVersionUID = 1L;
@@ -69,11 +81,22 @@ public class Pagos implements Serializable {
     @Column(name = "pag_confirmar")
     private Boolean pagConfirmar;
 
+    @Column(name = "pag_gasto")
+    private Integer pagGasto;
+    @Column(name = "pag_inversion")
+    private Integer pagInversion;
+    @JoinColumn(name = "pag_contr_organizacion_fk", referencedColumnName = "orga_pk")
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private OrganiIntProve pagContrOrganizacionFk;
+    @Column(name = "pag_contr_porcentaje")
+    private Integer pagContrPorcentaje;
+
+    @JoinColumn(name = "pag_proveedor_fk", referencedColumnName = "orga_pk")
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private OrganiIntProve pagProveedorFk;    
+
     //@OneToOne(mappedBy = "docsPagoFk", fetch = FetchType.EAGER)
     //private Documentos documento;
-
-    public Pagos() {
-    }
 
     public Pagos(Integer pagPk) {
         this.pagPk = pagPk;
@@ -161,14 +184,13 @@ public class Pagos implements Serializable {
         return pagConfirmar != null ? pagConfirmar : false;
     }
 
-   /* public Documentos getDocumento() {
+    /* public Documentos getDocumento() {
         return documento;
     }
 
     public void setDocumento(Documentos documento) {
         this.documento = documento;
     }*/
-
     public Entregables getEntregables() {
         return entregables;
     }
@@ -186,7 +208,7 @@ public class Pagos implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Pagos)) {
             return false;
         }
@@ -213,7 +235,10 @@ public class Pagos implements Serializable {
      * @return Saldo
      */
     public Double getImporteSaldo() {
-        return (pagImportePlanificado - pagImporteReal);
+        Double auxImportePlanificado = pagImportePlanificado != null ? pagImportePlanificado : 0d;
+        Double auxImporteReal = pagImporteReal != null ? pagImporteReal : 0d;
+
+        return (auxImportePlanificado - auxImporteReal);
     }
 
     /**
@@ -241,4 +266,71 @@ public class Pagos implements Serializable {
                 .append(df.format(getPagImportePlanificado()))
                 .toString();
     }
+
+    @Override
+    public Pagos clone() {
+        Pagos copy = new Pagos();
+        copy.setEntregables(this.getEntregables());
+        copy.setPagAdqFk(this.getPagAdqFk());
+        copy.setPagConfirmar(this.getPagConfirmar());
+        copy.setPagFechaPlanificada(this.getPagFechaPlanificada());
+        copy.setPagFechaReal(this.getPagFechaReal());
+        copy.setPagImportePlanificado(this.getPagImportePlanificado());
+        copy.setPagImporteReal(this.getPagImporteReal());
+        copy.setPagObservacion(this.getPagObservacion());
+        copy.setPagTxtReferencia(this.getPagTxtReferencia());
+
+        /*
+                * 14-03-18 Nico: Se agregan estos atributos a la clase 
+                *       porque fallaba al copiar un pago.
+         */
+        copy.setPagGasto(this.getPagGasto());
+        copy.setPagInversion(this.getPagInversion());
+        copy.setPagContrOrganizacionFk(this.getPagContrOrganizacionFk());
+        copy.setPagContrPorcentaje(this.getPagContrPorcentaje());
+        copy.setPagProveedorFk(this.getPagProveedorFk());
+
+        return copy;
+    }
+
+    public Integer getPagGasto() {
+        return pagGasto;
+    }
+
+    public void setPagGasto(Integer pagGasto) {
+        this.pagGasto = pagGasto;
+    }
+
+    public Integer getPagInversion() {
+        return pagInversion;
+    }
+
+    public void setPagInversion(Integer pagInversion) {
+        this.pagInversion = pagInversion;
+    }
+
+    public OrganiIntProve getPagContrOrganizacionFk() {
+        return pagContrOrganizacionFk;
+    }
+
+    public void setPagContrOrganizacionFk(OrganiIntProve pagContrOrganizacionFk) {
+        this.pagContrOrganizacionFk = pagContrOrganizacionFk;
+    }
+
+    public Integer getPagContrPorcentaje() {
+        return pagContrPorcentaje;
+    }
+
+    public void setPagContrPorcentaje(Integer pagContrPorcentaje) {
+        this.pagContrPorcentaje = pagContrPorcentaje;
+    }
+
+    public OrganiIntProve getPagProveedorFk() {
+        return pagProveedorFk;
+    }
+
+    public void setPagProveedorFk(OrganiIntProve pagProveedorFk) {
+        this.pagProveedorFk = pagProveedorFk;
+    }
+ 
 }

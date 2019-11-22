@@ -16,9 +16,8 @@
             background-color: white !important;
         }
     </style>
-    <ice:panelGroup id="panelMultimedia" 
-                    style="#{fichaMB.selectedMostrar == 8 ? 'width: 100%; padding-right:25px' : ''}" 
-                    styleClass="col-sm-6 cuadro" 
+    <ice:panelGroup id="panelMultimedia"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 8) and fichaMB.fieldRendered('panelMultimedia')}">
         <ice:panelGroup id="cabezalMultimedia" styleClass="cabezal">
             <ice:outputText value="#{labels.multimedia}"/>
@@ -57,75 +56,95 @@
         <ice:panelGroup rendered="#{fichaMB.mostrar[8]}" styleClass="cuerpo">
 
             <!-- Formulario de alta -->
-            <ice:panelGroup id="multiForm">
-                <ice:panelCollapsible expanded="#{fichaMB.multiFormDataExpanded}" >
+
+            <ice:panelGroup styleClass="formulario formularioPopup">
+
+                <h:panelGrid columns="1">
+                    <h:commandButton value="#{labels.multi_agregar}" 
+                                     action="#{fichaMB.abrirMediaAction()}"
+                                     rendered="#{!fichaMB.multiFormDataExpanded and fichaMB.fieldRendered('agregarMultimedia')}"
+                                     styleClass="boton principal botonAgregar" />
+                </h:panelGrid>
+
+                <ice:panelPopup id="popupMediaForm"
+                                visible="#{fichaMB.multiFormDataExpanded}"
+                                rendered="#{fichaMB.multiFormDataExpanded}"
+                                draggable="true"
+                                positionOnLoadOnly="true"
+                                modal="true">
                     <f:facet name="header">
-                        <h:panelGrid columns="1">
-                            <h:commandButton value="#{fichaMB.mediaProy.mediaPk ne null ? labels.multi_editar : labels.multi_agregar}" 
-                                             rendered="#{!fichaMB.multiFormDataExpanded and fichaMB.fieldRendered('agregarMultimedia')}"
-                                             styleClass="boton principal #{fichaMB.mediaProy.mediaPk ne null ? 'botonEditar' : 'botonAgregar'}" />
-                        </h:panelGrid>
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{fichaMB.mediaProy.mediaPk ne null ? labels.multi_editar : labels.multi_agregar}"/>
+                            <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                               action="#{fichaMB.cerrarFormCollapsable()}"/>
+                        </ice:panelGroup>
                     </f:facet>
+                    <f:facet name="body">            
 
-                    <ice:panelGrid styleClass="formulario " columns="2">
-                        <ice:outputLabel value="#{labels.multi_form_desc}:"/>
-                        <ace:textEntry value="#{fichaMB.mediaProy.mediaComentario}" />
+                        <ice:panelGroup id="multiForm">
 
-                        <ice:outputLabel value="#{labels.multi_form_publicable}:"/>
-                        <ace:checkboxButton value="#{fichaMB.mediaProy.mediaPublicable}" />
+                            <ice:panelGrid styleClass="formulario " columns="2">
+                                <ice:outputLabel value="#{labels.multi_form_desc}:"/>
+                                <ace:textEntry value="#{fichaMB.mediaProy.mediaComentario}" />
 
-                        <ice:outputLabel value="#{labels.multi_form_principal}:"/>
-                        <ace:checkboxButton value="#{fichaMB.mediaProy.mediaPrincipal}" />
+                                <ice:outputLabel value="#{labels.multi_form_publicable}:"/>
+                                <ace:checkboxButton value="#{fichaMB.mediaProy.mediaPublicable}" />
 
-                        <ice:outputLabel value="#{labels.multi_form_media}:"/>
-                        <ice:selectOneMenu id="comboTipoMedia" 
-                                           value="#{fichaMB.listaTipoMediaCombo.selected}"
-                                           valueChangeListener="#{fichaMB.tipoMediaValueChangeListener}"
-                                           partialSubmit="true">
-                            <f:selectItems value="#{fichaMB.listaTipoMediaCombo.items}" />
-                        </ice:selectOneMenu>
+                                <ice:outputLabel value="#{labels.multi_form_principal}:"/>
+                                <ace:checkboxButton value="#{fichaMB.mediaProy.mediaPrincipal}" />
 
-                        <c:set var="isImagen" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.IMG}" />
-                        <ice:outputLabel value="#{labels.multi_form_archivo}:" rendered="#{isImagen}"/>
-                        <ice:panelGroup rendered="#{isImagen}">
-                            <ace:fileEntry id="fileEntryMedia"
-                                           label="#{labels.fileDocumento}"
-                                           callback=""
-                                           relativePath="/files/"
-                                           maxFileCount="1" 
-                                           maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
-                                           fileEntryListener="#{fichaMB.subirArchivoMediaAction}" 
-                                           maxFileSize="#{configuracionMB.tamanioMaxArchivoMultimedia.cnfValor}"
-                                           maxFileSizeMessage="#{labels.tamanioMaxArchivoMultimedia}" 
-                                           useOriginalFilename="true" 
-                                           useSessionSubdir="true"
-                                           style="width: 280px;"/>
-                            <h:commandButton id="btnSubmitMedia" type="submit"
-                                             styleClass="iconoTabla subir" />
-                            <ace:messages for="fileEntryMedia"/>
+                                <ice:outputLabel value="#{labels.multi_form_media}:"/>
+                                <ice:selectOneMenu id="comboTipoMedia" 
+                                                   value="#{fichaMB.listaTipoMediaCombo.selected}"
+                                                   valueChangeListener="#{fichaMB.tipoMediaValueChangeListener}"
+                                                   partialSubmit="true">
+                                    <f:selectItems value="#{fichaMB.listaTipoMediaCombo.items}" />
+                                </ice:selectOneMenu>
 
-                            <ice:graphicImage value="#{fichaMB.mediaProy.mediaBytes}" 
-                                              styleClass="imagenMiniatura"
-                                              rendered="#{not empty fichaMB.mediaProy.mediaBytes}"/>
+                                <c:set var="isImagen" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.IMG}" />
+                                <ice:outputLabel value="#{labels.multi_form_archivo}:" rendered="#{isImagen}"/>
+                                <ice:panelGroup styleClass="panelFileEntry" rendered="#{isImagen}">
+                                    <ace:fileEntry id="fileEntryMedia"
+                                                   label="#{labels.fileDocumento}"
+                                                   callback=""
+                                                   relativePath="/files/"
+                                                   maxFileCount="1" 
+                                                   maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                                                   fileEntryListener="#{fichaMB.subirArchivoMediaAction}" 
+                                                   maxFileSize="#{configuracionMB.tamanioMaxArchivoMultimedia.cnfValor}"
+                                                   maxFileSizeMessage="#{labels.tamanioMaxArchivoMultimedia}" 
+                                                   useOriginalFilename="true" 
+                                                   useSessionSubdir="true"
+                                                   style="width: 280px;"
+                                                   immediate="true"
+                                                   />
+
+                                    <ace:messages for="fileEntryMedia"/>
+                                    <img alt="" class="iceGphImg imagenMiniatura" id="imagenFileEntry" src="" />
+                                    <h:outputScript library="js" name="siges.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" />
+
+                                </ice:panelGroup>
+
+                                <c:set var="isVideoCam" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.CAM}" />
+                                <ice:outputLabel value="#{labels.multi_form_url}:" rendered="#{isVideoCam}"/>
+                                <ace:textEntry value="#{fichaMB.mediaProy.mediaLink}" rendered="#{isVideoCam}" />
+
+                            </ice:panelGrid>
+
+                            <ice:panelGroup styleClass="panelBotones">
+                                <ace:messages for="multiForm" />
+                                <h:commandButton value="#{labels.guardar}" 
+                                                 styleClass="boton principal botonGuardar" 
+                                                 action="#{fichaMB.agregarMediaAction()}"
+                                                 type="submit"/>
+                                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                                 action="#{fichaMB.cerrarFormCollapsable()}"/>
+                            </ice:panelGroup>
                         </ice:panelGroup>
 
-                        <c:set var="isVideoCam" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.CAM}" />
-                        <ice:outputLabel value="#{labels.multi_form_url}:" rendered="#{isVideoCam}"/>
-                        <ace:textEntry value="#{fichaMB.mediaProy.mediaLink}" rendered="#{isVideoCam}" />
+                    </f:facet>
+                </ice:panelPopup>
 
-                    </ice:panelGrid>
-
-                    <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages id="multimediaMsg"/>
-                        <ace:pushButton value="#{fichaMB.mediaProy.mediaPk ne null ? labels.editar : labels.agregar}" 
-                                        styleClass="boton principal #{fichaMB.mediaProy.mediaPk ne null ? 'editar' : 'agregar'}" 
-                                        action="#{fichaMB.agregarMediaAction()}"/>
-                        <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.limpiarMedia()}"/>
-                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.cerrarFormCollapsable()}"/>
-                    </ice:panelGroup>
-                </ice:panelCollapsible>
             </ice:panelGroup>
 
             <!-- Lista de Multimedias-->
@@ -152,7 +171,7 @@
                                           rendered="#{mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.CAM}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.multi_head_comentario}" >
+                        <ace:column headerText="#{labels.multi_head_desc}" >
                             <h:outputText value="#{mp.mediaComentario}"/>
                         </ace:column>
 
@@ -172,6 +191,12 @@
                             <ace:checkboxButton value="#{mp.mediaPublicable}" disabled="true"/>
                         </ace:column>
 
+                        <ace:column headerText="#{labels.multi_head_modificado}" >
+                            <h:outputText value="#{mp.mediaModFecha}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" />
+                            </h:outputText>
+                        </ace:column>
+
                         <ace:column styleClass="columnaBoton"
                                     rendered="#{fichaMB.fieldRendered('editarMultimedia')}">
                             <ace:tooltip id="tooltipEditar" for="btnEditar">
@@ -187,7 +212,7 @@
 
                             <h:commandButton id="btnEliminarMedia"
                                              styleClass="botonEliminar iconoTabla"
-                                             title="#{labels.eliminar_riesgo}"
+                                             title="#{labels.eliminarTooltip}"
                                              onclick="confirmationEliminarMedia#{mp.mediaPk}.show();" />
                             <ace:confirmationDialog widgetVar="confirmationEliminarMedia#{mp.mediaPk}" 
                                                     message="#{labels.eliminar}: &#13;#{risk.riskNombre}"

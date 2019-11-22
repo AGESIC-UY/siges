@@ -17,71 +17,84 @@
         <ice:panelGroup id="filtroExpVisuaPanel" styleClass="buscador recuadro">
             <ice:outputText value="#{labels.exp_visua_filtro}" styleClass="subtitulo"/>
 
-            <h:panelGroup layout="block" id="filtroPanel" styleClass="formulario formulario-resp">
-                <c:set var="colFiltro" value="col-sm-6" />
-                <c:set var="colNombre" value="col-sm-3" />
-                <c:set var="colInput" value="col-sm-9" />
+            <c:set var="colFiltro" value="col-sm-12" />
+            <c:set var="colNombre" value="col-sm-3" />
+            <c:set var="colInput" value="col-sm-9" />
 
-                <ice:panelGroup  styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.exp_visua_filtro_nombre}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <ace:textEntry value="#{exportarVisualizadorMB.filtro.nombre}" />
-                    </ice:panelGroup>
-                </ice:panelGroup>
+            <!--<h:panelGrid columns="2" columnClasses="col-sm-6,col-sm-6">-->
 
-                <ice:panelGroup  styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.exp_visua_filtro_est_publica}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <ice:selectOneMenu id="comboEstPublicacion" 
-                                           value="#{exportarVisualizadorMB.listaEstPublicacionCombo.selected}">
-                            <f:selectItems value="#{exportarVisualizadorMB.listaEstPublicacionCombo.items}" />
-                        </ice:selectOneMenu>
-                    </ice:panelGroup>
-                </ice:panelGroup>
 
-                <ice:panelGroup styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.fechaDesde}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaDesde}"
-                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
-                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
-                    </ice:panelGroup>
-                </ice:panelGroup>
+            <h:panelGroup layout="block" styleClass="col-sm-12 formulario-resp">
 
-                <ice:panelGroup  styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.fechaHasta}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaHasta}"
-                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true" 
-                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
-                    </ice:panelGroup>
-                </ice:panelGroup>
+                <h:panelGroup layout="block" id="filtroPanelIzq" styleClass="formulario col-sm-6">
 
-                <ice:panelGroup styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.exp_visua_filtro_area}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <ice:selectOneMenu value="#{exportarVisualizadorMB.listaAreasCombo.selected}" 
-                                           styleClass="textoMedio">
-                            <f:selectItems value="#{exportarVisualizadorMB.listaAreasCombo.items}" />
-                        </ice:selectOneMenu>
+                    <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.exp_visua_filtro_nombre}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <ace:textEntry value="#{exportarVisualizadorMB.filtro.nombre}" />
+                        </ice:panelGroup>
                     </ice:panelGroup>
-                </ice:panelGroup>
 
-                <ice:panelGroup  styleClass="form-group #{colFiltro}">
-                    <ice:outputLabel value="#{labels.exp_visua_filtro_actualizados}:"
-                                     styleClass="#{colNombre} control-label"/>
-                    <ice:panelGroup styleClass="#{colInput}" >
-                        <h:selectBooleanCheckbox value="#{exportarVisualizadorMB.filtro.actualizados}" 
-                                                 styleClass="formulario"/>
+                    <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.exp_visua_filtro_est_publica}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <ice:selectOneMenu id="comboEstPublicacion" 
+                                               value="#{exportarVisualizadorMB.listaEstPublicacionCombo.selected}">
+                                <f:selectItems value="#{exportarVisualizadorMB.listaEstPublicacionCombo.items}" />
+                            </ice:selectOneMenu>
+                        </ice:panelGroup>
                     </ice:panelGroup>
-                </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.exp_visua_filtro_area}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <ice:selectOneMenu value="#{exportarVisualizadorMB.listaAreasCombo.selected}">
+                                <f:selectItems value="#{exportarVisualizadorMB.listaAreasCombo.items}" />
+                            </ice:selectOneMenu>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" id="filtroPanelDer" styleClass="formulario col-sm-6">
+
+                    <ice:panelGroup styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.fechaDesde}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaDesde}"
+                                               pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
+                                               timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.fechaHasta}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <ace:dateTimeEntry value="#{exportarVisualizadorMB.filtro.fechaHasta}"
+                                               pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true" 
+                                               timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup  styleClass="form-group #{colFiltro}">
+                        <ice:outputLabel value="#{labels.exp_visua_filtro_actualizados}:"
+                                         styleClass="#{colNombre} control-label"/>
+                        <ice:panelGroup styleClass="#{colInput}" >
+                            <h:selectBooleanCheckbox value="#{exportarVisualizadorMB.filtro.actualizados}" 
+                                                     styleClass="formulario"/>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+
+                </h:panelGroup>
 
             </h:panelGroup>
+
+            <!--</h:panelGrid>-->
 
             <h:panelGroup id="filtroBotonesPanel" styleClass="panelAcciones">
                 <ice:panelGroup styleClass="panelBotones" >
@@ -118,6 +131,12 @@
             </ice:panelGroup>
 
             <ice:panelGroup styleClass="panelBotones">
+                <ice:outputText value="Exportar todo el contenido" styleClass="exportarTodoContenido"
+                                rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"/>
+                <h:selectBooleanCheckbox value="#{exportarVisualizadorMB.fullContent}" 
+                                         styleClass="formulario"
+                                         rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
+                                         title="Exportar todo el contenido" />                
                 <ace:pushButton value="#{labels.exportar}" 
                                 styleClass="boton principal exportar" 
                                 rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}"
@@ -150,6 +169,17 @@
                                      title="#{labels.inicio_link_nombre}">
                         <ice:graphicImage value="../img/nueva_ventana.png" />
                     </ice:commandLink>
+
+<!--                    <h:link id="linkEditarFicha2"
+                            styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
+                            outcome="IR_A_EDITAR_FICHA" 
+                            rendered="#{item.proyProgId != null}"
+                            title="#{labels.inicio_link_nombre}"
+                            target="_newtab">
+                        <o:param name="programaProyectoId" value="#{item.proyProgId}" />
+                        <ice:graphicImage value="../img/nueva_ventana.png" />
+                    </h:link>-->
+
                 </ace:column>
 
                 <ace:column headerText="#{labels.proyecto}" sortBy="#{item.nombre}"
@@ -169,14 +199,16 @@
                     <ice:outputText value="#{inicioMB.estadoLabel(item.estado.estCodigo)}"/>
                 </ace:column>
 
-                <ace:column headerText="#{labels.actualizacionFicha}" sortBy="#{item.fechaAct}">
-                    <ice:outputText value="#{item.fechaAct}"
-                                    converter="fechaConverter"/>
+                <ace:column headerText="#{labels.actualizacionFichaPub}" sortBy="#{item.fechaActPub}">
+                    <ice:outputText value="#{item.fechaActPub}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="both" />
+                    </ice:outputText>
                 </ace:column>
 
                 <ace:column headerText="#{labels.ultPubFicha}" sortBy="#{item.fechaPublicacion}">
-                    <ice:outputText value="#{item.fechaPublicacion}"
-                                    converter="fechaConverter"/>
+                    <ice:outputText value="#{item.fechaPublicacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="both" />
+                    </ice:outputText>
                 </ace:column>
 
                 <ace:column headerText="#{labels.exp_visua_sel}" sortBy="#{item.seleccionado}" 
@@ -184,7 +216,7 @@
                     <h:selectBooleanCheckbox value="#{item.seleccionado}" 
                                              styleClass="formulario"
                                              title="#{item.publicable ? labels.exp_visua_check_pub : labels.exp_visua_no_pub}"
-					     rendered="#{item.publicable}"/>
+                                             rendered="#{item.publicable}"/>
                 </ace:column>
 
                 <ace:column >

@@ -93,4 +93,8 @@ public class EntregablesDelegate {
     public boolean entregableTieneClave(Integer entPk, Integer tipo) {
         return entregablesBean.entregableTieneClave(entPk, tipo);
     }
+    
+    public boolean entregableEsHito(Integer entPk) {
+        return entregablesBean.entregableEsHito(entPk);
+    }
 }

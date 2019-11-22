@@ -11,58 +11,7 @@
                 xmlns:of="http://omnifaces.org/functions">
 
     <o:form id="frmFichaDocumentosHistoricoPopup">
-        <ice:panelPopup draggable="true" autoCentre="true" modal="true" rendered="#{fichaMB.renderPopupDocumentoHistorico}">
-
-            <f:facet name="header">
-                <ice:panelGroup styleClass="cabezalPopup">
-                    <ice:outputText value="#{labels.docHistoricoPopup}"/>
-                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
-                                       action="#{fichaMB.cerrarPopupDocumentoHistorico()}"/>
-                </ice:panelGroup>
-            </f:facet>
-
-            <f:facet name="body">
-                <ice:panelGroup>
-
-                    <ice:panelGroup id="historicoFormData">
-                        <ace:dataTable id="tblHistoricoResultados" 
-                                       value="#{fichaMB.documento.docFileHistorico}" 
-                                       var="df" 
-                                       styleClass="tablaResultados table-responsive"
-                                       paginator="true" pageCount="5" 
-                                       rows="5">
-
-                            <ace:column headerText="#{labels.docHistoriocNombre}" >
-                                <h:outputText value="#{df.docfileNombre}"/>
-                            </ace:column>
-
-                            <ace:column headerText="#{labels.docHistoricoVersion}" >
-                                <h:outputText value="#{df.docfileVersion}"/>
-                            </ace:column>
-
-                            <ace:column headerText="#{labels.docHistoricoModificado}">
-                                <h:outputText value="#{df.docfileUltMod}">
-                                    <f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss" type="both"/>
-                                </h:outputText>
-                            </ace:column>
-
-                            <ace:column headerText="#{labels.docHistoricoUsuario}">
-                                <h:outputText value="#{df.docfileUltUsuario}"/>
-                            </ace:column>
-
-                            <ace:column>
-                                <ice:outputResource 
-                                    resource="#{fichaMB.docHistDownloadFile[df.docfileVersion]}"
-                                    label="#{labels.descargar_archivo}"
-                                    fileName="#{fichaMB.docHistDownloadFile[df.docfileVersion].docFile.docfileNombreHist}"/>
-                            </ace:column>
-
-                        </ace:dataTable>
-
-                    </ice:panelGroup> 
-                </ice:panelGroup>
-
-            </f:facet>
-        </ice:panelPopup>
+        
+        
     </o:form>
 </ui:composition>

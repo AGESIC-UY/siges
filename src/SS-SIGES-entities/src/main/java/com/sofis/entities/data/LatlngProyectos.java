@@ -1,5 +1,6 @@
 package com.sofis.entities.data;
 
+import com.sofis.web.ws.gestion.data.LocalizacionTO;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Basic;
@@ -41,7 +42,6 @@ public class LatlngProyectos implements Serializable {
     @Basic(optional = false)
     @Column(name = "latlng_pk")
     private Integer latlngPk;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latlng_lat")
     private BigDecimal latlngLat;
     @Column(name = "latlng_lng")
@@ -60,7 +60,24 @@ public class LatlngProyectos implements Serializable {
     @JoinColumn(name = "latlang_dep_fk", referencedColumnName = "dep_pk")
     @ManyToOne(fetch = FetchType.EAGER)
     private Departamentos latlangDepFk;
-
+	
+	@JoinColumn(name = "latlng_proy_fk", referencedColumnName = "proy_pk")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Proyectos proyecto;
+	
+        
+    /*
+    * 12-03-18 Nico: Construcctor para servicio "guardarProyeto"    
+    */
+    public LatlngProyectos(LocalizacionTO locTo, Departamentos depInsert){
+        this.latlngLat = locTo.getLatlngLat();
+        this.latlngLng = locTo.getLatlngLng();
+        this.latlangLoc = locTo.getLatlangLoc();
+        this.latlangBarrio = locTo.getLatlangBarrio();
+        
+        this.latlangDepFk = depInsert;
+    }
+        
     public LatlngProyectos() {
         latlngLat = new BigDecimal(0);
         latlngLng = new BigDecimal(0);
@@ -158,5 +175,13 @@ public class LatlngProyectos implements Serializable {
     public void setLatlangDepFk(Departamentos latlangDepFk) {
         this.latlangDepFk = latlangDepFk;
     }
+
+	public Proyectos getProyecto() {
+		return proyecto;
+	}
+
+	public void setProyecto(Proyectos proyecto) {
+		this.proyecto = proyecto;
+	}
 
 }

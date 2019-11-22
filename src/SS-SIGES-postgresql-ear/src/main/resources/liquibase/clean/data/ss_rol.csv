@@ -1,0 +1,20 @@
+rol_id|rol_cod|rol_descripcion|rol_nombre|rol_label|rol_origen|rol_user_code|rol_version|rol_vigente|rol_tipo_usuario
+24|REGISTRO_HORAS|Externo (solo carga de horas)|Externo (solo carga de horas)|rol_registro_horas|SIGES_WEB|0|NULL|t|t
+0|ADMINISTRADOR|Usuario Administrador de la aplicacion|Usuario Administrador|a|SIGES_WEB|0|NULL|t|f
+1|PMOT|PMO Transversal|PMO Transversal|a|SIGES_WEB|0|NULL|t|t
+2|PMOF|PMO Federada|PMO Federada|a|SIGES_WEB|0|NULL|t|t
+3|DIR|Director|Director|a|SIGES_WEB|0|NULL|t|t
+4|USU|Usuario|Usuario|a|SIGES_WEB|0|NULL|t|t
+5|ADMINIS|NULL|ADMINIS|a|SIGES_WEB|0|NULL|t|f
+6|ADMIN_TDO|NULL|ADMIN_TDO|a|SIGES_WEB|0|NULL|t|f
+7|ADMIN_ERR|NULL|ADMIN_ERR|a|SIGES_WEB|0|NULL|t|f
+8|ADM_CONF|NULL|ADM_CONF|a|SIGES_WEB|0|NULL|t|f
+9|ADMIN_NUEVOFICHA|NULL|ADMIN_NUEVOFICHA|a|SIGES_WEB|0|NULL|t|f
+10|CONF_ADD|NULL|CONF_ADD|a|SIGES_WEB|0|NULL|t|f
+11|CONF_EDIT|NULL|CONF_EDIT|a|SIGES_WEB|0|NULL|t|f
+12|CONF_HIST|NULL|CONF_HIST|a|SIGES_WEB|0|NULL|t|f
+13|MIGRACION|Acceso a la migración|MIGRACION|a|SIGES_WEB|0|NULL|t|f
+14|MIGRA_CALC_INDICA|Acceso a los callculos de la migración|MIGRA_CALC_INDICA|a|SIGES_WEB|0|NULL|t|f
+15|ADMIN_USU|Administración de los Usuarios|ADMIN_USU|a|SIGES_WEB|0|NULL|t|f
+16|USU_HORAS|Externo (solo carga de horas)|Externo (solo carga de horas)|a|SIGES_WEB|0|NULL|t|f
+17|EDITOR_GRAL|Editor General|Editor General|a|SIGES_WEB|0|NULL|t|t

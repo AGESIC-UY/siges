@@ -21,6 +21,10 @@ public class CronogramaDelegate {
     public Cronogramas guardar(Cronogramas cro) throws GeneralException {
         return cronogramasBean.guardar(cro);
     }
+    
+    public Cronogramas guardarDespuesDeCheck(Cronogramas cro) throws GeneralException {
+        return cronogramasBean.guardarDespuesDeCheck(cro);
+    }
 
     public Object guardarCronograma(Cronogramas cro, Integer fichaFk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) {
         return cronogramasBean.guardarCronograma(cro, fichaFk, tipoFicha, usuario, orgPk);

@@ -42,17 +42,17 @@
                                            renderAsPopup="true" navigator="true"
                                            timeZone="#{inicioMB.calendarTimeZone}"/>
                     </ice:panelGrid>
-                    
+
                     <ice:panelGroup>
                         <ice:outputLabel value="#{labels.plaCrono_popup_advertencia}"
-                                             styleClass="comentario"/>
+                                         styleClass="comentario"/>
                     </ice:panelGroup>
 
                     <ice:panelGroup styleClass="panelBotones">
                         <ace:messages id="plantCroPopupMsg"/>
-                        <ace:pushButton value="#{labels.guardar}" 
-                                        action="#{fichaMB.generarCroDesdePlantilla()}" 
-                                        styleClass="boton principal guardar"/>
+                        <ice:commandButton value="#{labels.guardar}" 
+                                           action="#{fichaMB.generarCroDesdePlantilla()}" 
+                                           styleClass="boton principal guardar"/>
                         <ace:linkButton value="#{labels.cerrar}" 
                                         action="#{fichaMB.cerrarPlantillaCroPopup()}"/>
                     </ice:panelGroup>

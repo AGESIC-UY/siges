@@ -32,9 +32,11 @@
                             <f:selectItems value="#{fichaMB.listaCategoriaCombo.items}"/>
                         </ice:selectOneMenu>
 
-                        <ice:outputLabel value="#{labels.ficha_otros_datos_cat_secundarias}:"/>
+                        <ice:outputLabel value="#{labels.ficha_otros_datos_cat_secundarias}:"
+                                         rendered="#{fichaMB.listaCategoriaSecCombo != null and fichaMB.listaCategoriaSecCombo.items.size() > 0}"/>
                         <h:selectManyListbox value="#{fichaMB.listaCategoriaSecundaria}"
                                              size="5"
+                                             rendered="#{fichaMB.listaCategoriaSecCombo != null and fichaMB.listaCategoriaSecCombo.items.size() > 0}"
                                              disabled="#{fichaMB.fieldDisabled('editarOtrosDatos')}">
                             <f:selectItems value="#{fichaMB.listaCategoriaSecCombo.items}"/>
                         </h:selectManyListbox>
@@ -71,10 +73,10 @@
                             <f:selectItems value="#{fichaMB.listaInicioProdCombo.items}"/>
                         </ice:selectOneMenu>
 
-                        <ice:outputLabel value="#{labels.ficha_otros_datos_duracion}:" />
+<!--                        <ice:outputLabel value="#{labels.ficha_otros_datos_duracion}:" />
                         <ace:textEntry value="#{fichaMB.fichaTO.otrosDatos.proyOtrPlazo}"
                                        converter="ImporteFormatConverter"
-                                       disabled="#{fichaMB.fieldDisabled('editarOtrosDatos')}"/>
+                                       disabled="#{fichaMB.fieldDisabled('editarOtrosDatos')}"/>-->
                     </ice:panelGrid>
 
                     <ice:panelGroup styleClass="panelBotones">

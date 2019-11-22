@@ -6,6 +6,7 @@ import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.SqlExecuted;
 import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import java.util.Date;
+import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
@@ -24,6 +25,7 @@ import javax.persistence.PersistenceContext;
 public class SqlExecutedBean {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(SqlExecutedBean.class.getName());
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;

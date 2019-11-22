@@ -33,7 +33,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaMsg" />
+<!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{ambitoMB.buscar()}"/>
@@ -95,14 +95,14 @@
                             <h:outputText value="#{ambito.ambNombre}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{ambitoMB.editar(ambito.ambPk)}" />
                             </ice:panelGroup>
                         </ace:column>
                         <ace:column headerText="" styleClass="columnaBoton">
-                            <ice:panelGroup title="#{labels.elilminar_ambito}">
+                            <ice:panelGroup title="#{labels.ambito_eliminar}">
                                 <h:commandButton onclick="confirmationEliminar#{ambito.ambPk}.show()"
                                                  styleClass="botonEliminar iconoTabla" 
                                                  type="button"/>

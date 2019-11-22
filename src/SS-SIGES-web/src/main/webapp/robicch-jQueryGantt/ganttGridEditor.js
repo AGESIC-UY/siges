@@ -63,7 +63,7 @@ GridEditor.prototype.fillEmptyLines = function (moreRows) {
                     level = master.tasks[0].level + 1;
                 }
 
-//fill all empty previouses
+                //fill all empty previouses
                 emptyRow.prevAll(".emptyRow").andSelf().each(function () {
                     var ch = factory.build("tmp_fk" + new Date().getTime(), "", "", level, start, 1, null, master.usuarioId);
                     var task = master.addTask(ch);
@@ -89,7 +89,7 @@ function setParentTask(task, tasks) {
     if (pos < tasks.length - 1 && tasks[pos + 1].level > task.level) {
         task.parent = true;
         task.progress = 0;
-        task.esfuerzo = 0;
+        task.esfuerzo = 1;
     }
 }
 
@@ -165,7 +165,10 @@ GridEditor.prototype.refreshTaskRow = function (task, coordinadores, master) {
     row.find("[name=end]").val(new Date(task.end).format()).updateOldValue();
     row.find("[name=depends]").val(task.depends);
     row.find("[name=horasEstimadas]").val(task.horasEstimadas);
+    row.find("[name=endIsMilestone]").val(task.endIsMilestone);
+    row.find("[name=progress]").val(task.progress);
     row.find(".taskAssigs").html(task.getAssigsString());
+    console.log(row);
     //profiler.stop();
 };
 GridEditor.prototype.redraw = function () {
@@ -475,7 +478,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         taskEditor.find("#inicioPeriodoDivRow").remove()
     }
 
-    console.log("self.master.periodoEntregable: " + self.master.periodoEntregable);
+    //console.log("self.master.periodoEntregable: " + self.master.periodoEntregable);
 
     //taskEditor.find("[name=depends]").val(task.depends);
 
@@ -582,8 +585,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
             if (taskFinPeriodo != null && taskEditor.find("#periodo_fin").is(":checked") && taskFinPeriodo.id != taskId) {
                 console.log("self.master.getTaskFinPeriodoCheck(" + taskId + ") : " + true);
-                $('<div class="col-sm-12"><span style="color: red;">El entregable "' + taskFinPeriodo.name + '" ya está definido como fin del proyecto</span></div>')
-                        .insertAfter("#inicioPeriodoDivRow");
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12"><span style="color: red;">El entregable "' + taskFinPeriodo.name + '" ya está definido como fin del proyecto</span></div>')
+                        .insertBefore("#taskDiv");
                 error = true;
             } else {
                 console.log("self.master.getTaskFinPeriodoCheck(" + taskId + ") : " + false);
@@ -591,8 +595,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
             if (taskInicioPeriodo != null && taskEditor.find("#periodo_inicio").is(":checked") && taskInicioPeriodo.id != taskId) {
                 console.log("self.master.getTaskInicioPeriodoCheck(" + taskId + ") : " + true);
-                $('<div class="col-sm-12"><span style="color: red;">El entregable "' + taskInicioPeriodo.name + '" ya está definido como inicio del proyecto</span></div>')
-                        .insertAfter("#inicioPeriodoDivRow");
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12"><span style="color: red;">El entregable "' + taskInicioPeriodo.name + '" ya está definido como inicio del proyecto</span></div>')
+                        .insertBefore("#taskDiv");
                 error = true;
             } else {
                 console.log("self.master.getTaskInicioPeriodoCheck(" + taskId + ") : " + false);
@@ -600,12 +605,38 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
             if (task.isParent() && taskEditor.find("#endIsMilestone").is(":checked")) {
                 console.log("self.master.getTaskInicioPeriodoCheck(" + taskId + ") : " + true);
-                $('<div class="col-sm-12"><span style="color: red;">El entregable "' + task.name + '" no puede convertirse en hito, ya que tiene otros entregables que dependen de él.</span></div>')
-                        .insertAfter("#inicioPeriodoDivRow");
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12"><span style="color: red;">El entregable "' + task.name + '" no puede convertirse en hito, ya que tiene otros entregables que dependen de él.</span></div>')
+                        .insertBefore("#taskDiv");
                 error = true;
             } else {
                 console.log("self.master.getTaskInicioPeriodoCheck(" + taskId + ") : " + false);
             }
+
+                var progress = Number(taskEditor.find("#progress").val());
+                if (!taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || progress < 0 || progress > 100)) {
+                       console.log("self.master.getProgress(" + taskId + ") : " + true);
+                       $('#error_msg').remove();
+                       $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del entregable "' + task.name + '" tiene que ser un número entero entre 0 y 100.</span></div>')
+                                       .insertBefore("#saveButton");
+                       error = true;
+                }else if(taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || (progress !== 0 && progress !== 100))){
+                       console.log("self.master.getProgress(" + taskId + ") : " + true);
+                       $('#error_msg').remove();
+                       $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del hito "' + task.name + '" tiene que ser 0 o 100.</span></div>')
+                                       .insertBefore("#saveButton");
+                       error = true;
+                }
+                
+                var esfuerzo = Number(taskEditor.find("#esfuerzo").val());
+                if(!(Number.isInteger(esfuerzo)) || esfuerzo < 0 ){
+                    console.log("self.master.getProgress(" + taskId + ") : " + true);
+                    $('#error_msg').remove();
+                    $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El esfuerzo del entregable "' + task.name + '" tiene que ser un número entero positivo.</span></div>')
+                                    .insertBefore("#saveButton");
+                    error = true;                    
+                }
+
 
 
             if (error == true) {
@@ -615,7 +646,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
             task.name = taskEditor.find("#name").val();
             task.description = taskEditor.find("#description").val();
             task.code = taskEditor.find("#code").val();
-            task.progress = parseFloat(taskEditor.find("#progress").val());
+            task.progress = parseInt(taskEditor.find("#progress").val());
             task.duration = parseInt(taskEditor.find("#duration").val());
             task.startIsMilestone = taskEditor.find("#startIsMilestone").is(":checked");
             task.endIsMilestone = taskEditor.find("#endIsMilestone").is(":checked");
@@ -740,12 +771,12 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
                 difEnd = difEnd * -1;
             }
 
-            if (dateStart.getFullYear() != dateEditorStart.getFullYear()
-                    || dateStart.getMonth() != dateEditorStart.getMonth()
-                    || dateStart.getDate() != dateEditorStart.getDate()
-                    || dateEnd.getFullYear() != dateEditorEnd.getFullYear()
-                    || dateEnd.getMonth() != dateEditorEnd.getMonth()
-                    || dateEnd.getDate() != dateEditorEnd.getDate()
+            if (dateStart.getFullYear() !== dateEditorStart.getFullYear()
+                    || dateStart.getMonth() !== dateEditorStart.getMonth()
+                    || dateStart.getDate() !== dateEditorStart.getDate()
+                    || dateEnd.getFullYear() !== dateEditorEnd.getFullYear()
+                    || dateEnd.getMonth() !== dateEditorEnd.getMonth()
+                    || dateEnd.getDate() !== dateEditorEnd.getDate()
                     ) {
 
 //                //console.log("Cambiar Periodo.");
@@ -772,6 +803,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     // Carga el combo de Coordinadores
     selectCoord = document.getElementById("coordinador");
     var coord = this.master.coordinadores;
+    
+    //console.log("imprimo coord a ver que sale");
+    //console.log(coord);
+    
     for (var i = 0; i < coord.length; i++) {
         var arrSplit = coord[i].split(":");
         try {
@@ -790,6 +825,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     }
 
     // Carga el combo de Progreso
+    /*
     selectProgress = document.getElementById("progress");
     var progressValues;
     if (task.endIsMilestone) {
@@ -797,8 +833,8 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     } else {
         progressValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     }
-
-    for (var i = 0; i < progressValues.length; i++) {
+*/
+/*    for (var i = 0; i < progressValues.length; i++) {
         var value = progressValues[i];
         var opt = document.createElement('option');
         opt.value = value;
@@ -808,23 +844,32 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         }
         selectProgress.add(opt);
     }
+  */  
     if (task.tieneProd && task.progress % 10 != 0) {
         var opt = document.createElement('option');
         opt.value = task.progress;
         opt.text = task.progress;
         opt.setAttribute('selected', true);
-        selectProgress.add(opt);
+        //selectProgress.add(opt);
     }
 
-    if (task.parent) {
+    /*
+     *  12-06-2018 Nico: Se agrega como condición de todos los if que el estado del proyecto sea finalizado,
+     *          de esta manera, no se le permite editar el cronograma al usuario cuando el proyecto se encuentra
+     *          en estado "FINALIZADO".
+    */
+
+    if (task.parent || this.master.estado == 5) {
         document.getElementById("esfuerzo").setAttribute('disabled', 'true');
         document.getElementById("progress").setAttribute('disabled', 'true');
     }
 
-    if (this.master.estado == 4) {
+    if (this.master.estado == 4 || this.master.estado == 5) {
         document.getElementById("name").setAttribute('disabled', 'true');
         document.getElementById("esfuerzo").setAttribute('disabled', 'true');
     }
+
+    //console.log("task.tieneProd: ----> " + task.tieneProd);
 
     if (task.tieneProd) {
         document.getElementById("progress").setAttribute('disabled', 'true');
@@ -833,7 +878,8 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     var isCoord = (task.coordinador == this.master.usuarioId);
     var isPM = this.master.isPM;
     var disable = !(isPM || isCoord);
-    if (disable) {
+   
+    if (disable || this.master.estado == 5) {
         document.getElementById("name").setAttribute('disabled', 'true');
         document.getElementById("description").setAttribute('disabled', 'true');
         document.getElementById("coordinador").setAttribute('disabled', 'true');
@@ -847,14 +893,14 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     }
 
     var isPMO = (this.master.isPMO);
-    if (!isPMO) {
+    if (!isPMO || this.master.estado == 5) {
         document.getElementById("relevantePMO").setAttribute('disabled', 'true');
     } else {
         document.getElementById("relevantePMO").removeAttribute('disabled');
         document.getElementById("relevantePMO").removeAttribute('readonly');
     }
 
-    if (!isPM) {
+    if (!isPM || this.master.estado == 5) {
         //alert("No es PM y desactivo botones");
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');
         document.getElementById("addBelowBtn").setAttribute('disabled', 'true');
@@ -865,7 +911,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         document.getElementById("deleteBtn").setAttribute('disabled', 'true');
     }
 
-    if (disable && !isPMO) {
+    if ((disable && !isPMO) || this.master.estado == 5) {
         document.getElementById("saveButton").setAttribute('disabled', 'true');
     }
 };

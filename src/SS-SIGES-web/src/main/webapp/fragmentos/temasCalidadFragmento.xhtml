@@ -33,7 +33,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages for="btnBuscar" />
+<!--                    <ace:messages for="btnBuscar" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     id="btnBuscar"
                                     styleClass="boton principal buscar" 
@@ -97,7 +97,7 @@
                             <h:outputText value="#{item.tcaNombre}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{temasCalidadMB.editar(item.tcaPk)}" />

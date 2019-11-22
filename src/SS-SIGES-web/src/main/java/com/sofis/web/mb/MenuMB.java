@@ -38,6 +38,11 @@ public class MenuMB implements Serializable {
 
 
     public String fireAction(String codigo) {
+        if(codigo.equals("IR_A_INICIO")){
+            inicioMB.cargarCombosFiltro();
+            inicioMB.inicializarFiltro();
+        }
+        
         return codigo;
     }
 

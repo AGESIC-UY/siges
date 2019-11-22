@@ -63,7 +63,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ReporteProyectoMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ReporteProyectoMB.class.getName());
     private static final String REPORTE_PROY_PK = "reporteProyPk";
     private static final String REPORTE_TIPO = "reporteTipo";
     private static final int INICIO_REPORTE_GANTT = 5;
@@ -126,12 +126,6 @@ public class ReporteProyectoMB implements Serializable {
     private Map<String, Integer> graficasTotales;
 
     public ReporteProyectoMB() {
-	this.listaAcumuladosAlcance = new ArrayList<>();
-	this.listaAcumuladosProductos = new ArrayList<>();
-	this.listaAcumuladosPresupuesto = new ArrayList<>();
-	cronoHistorico = false;
-
-	graficasTotales = new HashMap<>();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -288,6 +282,18 @@ public class ReporteProyectoMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */          
+        
+	this.listaAcumuladosAlcance = new ArrayList<ReporteAcumuladoTO>();
+	this.listaAcumuladosProductos = new ArrayList<ReporteAcumuladoTO>();
+	this.listaAcumuladosPresupuesto = new ArrayList<ReporteAcumuladoTO>();
+	cronoHistorico = false;
+
+	graficasTotales = new HashMap<String, Integer>();        
+        
 	tipoAlcance = 0;
 
 	proyPk = (Integer) WebUtils.getFlashContext(REPORTE_PROY_PK);

@@ -86,7 +86,7 @@
                 </ice:panelGroup>
               
               <ice:panelGrid columns="1">
-                <ace:messages id="busquedaPersonasMsg" />
+<!--                <ace:messages id="busquedaPersonasMsg" />-->
               </ice:panelGrid>
 
                 <ice:panelGroup rendered="#{personasMB.listaResultado != null and not empty personasMB.listaResultado}" styleClass="cuerpo">
@@ -121,7 +121,7 @@
                             <h:outputText value="#{pers.persMail}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{personasMB.editar(pers.persPk)}" />

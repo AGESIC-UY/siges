@@ -7,6 +7,7 @@ import com.sofis.entities.data.SsUsuario;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.genericos.constantes.ConstantesNavegacion;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -26,7 +27,7 @@ import javax.inject.Inject;
 @ViewScoped
 public class CambioContraseniaMB implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(CambioContraseniaMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     InicioMB inicioMB;
@@ -71,7 +72,17 @@ public class CambioContraseniaMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.WARNING, be.getMessage());
-            JSFUtils.agregarMsgs("", be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs("", be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }             
+
         }
         return null;
     }

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class AreaConocimientoValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AreaConocimientoValidacion.class.getName());
 
     public static boolean validar(AreaConocimiento area) throws BusinessException {
         BusinessException be = new BusinessException();

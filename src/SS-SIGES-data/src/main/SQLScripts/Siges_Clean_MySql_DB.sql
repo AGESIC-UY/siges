@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `siges_clean` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `siges_clean`;
--- MySQL dump 10.13  Distrib 5.6.17, for Win32 (x86)
+-- MySQL dump 10.13  Distrib 5.6.27, for Win32 (x86)
 --
 -- Host: localhost    Database: siges_clean
 -- ------------------------------------------------------
--- Server version	5.6.15-log
+-- Server version	5.6.25-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

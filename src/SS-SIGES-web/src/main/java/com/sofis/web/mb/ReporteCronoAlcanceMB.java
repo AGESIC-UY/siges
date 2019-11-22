@@ -59,7 +59,7 @@ import org.icefaces.ace.model.tree.NodeStateMap;
 public class ReporteCronoAlcanceMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ReporteCronoAlcanceMB.class.getName());
     private static final String REPORTE_CRONO_MSG = "reporteCronoMsg";
 
     @ManagedProperty("#{inicioMB}")
@@ -236,7 +236,7 @@ public class ReporteCronoAlcanceMB implements Serializable {
     private void cargarCombosFiltro() {
         Integer orgPk = inicioMB.getOrganismo().getOrgPk();
 
-        listaEstados = new ArrayList<>();
+        listaEstados = new ArrayList<SelectItem>();
         listaEstados.add(new SelectItem(Estados.ESTADOS.INICIO.estado_id, Labels.getValue("estado_Inicio")));
         listaEstados.add(new SelectItem(Estados.ESTADOS.PLANIFICACION.estado_id, Labels.getValue("estado_Planificacion")));
         listaEstados.add(new SelectItem(Estados.ESTADOS.EJECUCION.estado_id, Labels.getValue("estado_Ejecucion")));
@@ -303,7 +303,7 @@ public class ReporteCronoAlcanceMB implements Serializable {
         }
         int ultimoAnio = calUltima != null && calUltima.get(Calendar.YEAR) > cal.get(Calendar.YEAR) ? calUltima.get(Calendar.YEAR) : cal.get(Calendar.YEAR);
 
-        List<SelectItem> listaAnios = new ArrayList<>();
+        List<SelectItem> listaAnios = new ArrayList<SelectItem>();
         SelectItem itemActual = null;
         for (int i = primerAnio; i <= ultimoAnio; i++) {
             SelectItem item = new SelectItem(i, "" + i);

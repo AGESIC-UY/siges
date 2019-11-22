@@ -33,7 +33,7 @@
             
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaMsg" />
+<!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{rolesInteresadosMB.buscar()}"/>
@@ -95,14 +95,14 @@
                             <h:outputText value="#{rol.rolintNombre}"/>
                         </ace:column>
                         
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{rolesInteresadosMB.editar(rol.rolintPk)}" />
                             </ice:panelGroup>
                         </ace:column>
                         <ace:column headerText="" styleClass="columnaBoton">
-                            <ice:panelGroup title="#{labels.rol_int_elilminar}">
+                            <ice:panelGroup title="#{labels.rol_int_eliminar}">
                                 <h:commandButton onclick="confirmationEliminar#{rol.rolintPk}.show()"
                                                  styleClass="botonEliminar iconoTabla" 
                                                  type="button"/>

@@ -10,19 +10,18 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ice:panelGroup id="panelParticipantes" 
-                    style="#{fichaMB.selectedMostrar == 6 ? 'width: 100%; padding-right:25px;' : 'clear: both;'}" 
-                    styleClass="col-sm-6 cuadro" 
+    <ice:panelGroup id="panelParticipantes"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 6) and fichaMB.fieldRendered('panelInteresados')}">
 
-        <ice:panelGroup id="cabezalParticipantes" styleClass="cabezal">
+        <ice:panelGroup id="cabezalParticipantes" styleClass="cabezal" rendered = "#{fichaMB.fichaTO.isProyecto()}">
             <ice:outputText value="#{labels.participantes}"/>
             <ace:pushButton value="" action="#{revisionHorasMB.mostrarFramePart()}" 
                             styleClass="#{fichaMB.selectedMostrar == 6 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
         </ice:panelGroup>
 
         <!--El panel con el resumen de participantes -->
-        <ice:panelGroup  styleClass="cuerpo" rendered="#{not fichaMB.mostrar[6]}">
+        <ice:panelGroup  styleClass="cuerpo" rendered="#{not fichaMB.mostrar[6] and fichaMB.fichaTO.isProyecto()}" >
             <ice:panelGroup>
                 <ace:dataTable id="participantesSumaTable"
                                value="#{fichaMB.listaParticipanteResumenMonedaConsolidado}"
@@ -83,49 +82,77 @@
         <!--El panel con el modulo Participantes -->
         <ice:panelGroup rendered="#{fichaMB.mostrar[6]}" styleClass="cuerpo">
 
-            <ice:panelGroup id="participantesForm">
-                <ice:panelCollapsible expanded="#{fichaMB.partFormDataExpanded}" 
-                                      rendered="#{revisionHorasMB.renderedHorasGastos == 0}">
+            <ice:panelGroup styleClass="formulario formularioPopup">
+
+                <h:panelGrid columns="1">
+                    <h:commandButton value="#{labels.agregarParticipante}" 
+                                     action="#{revisionHorasMB.abrir()}"
+                                     rendered="#{revisionHorasMB.renderedHorasGastos == 0 and !fichaMB.partFormDataExpanded and fichaMB.fieldRendered('agregarParticipante')}"
+                                     styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'botonEditar' : 'botonAgregar'}" />
+                </h:panelGrid>
+
+                <ice:panelPopup id="popupParticipantesForm"
+                                visible="#{fichaMB.partFormDataExpanded}"
+                                rendered="#{fichaMB.partFormDataExpanded}"
+                                draggable="true"
+                                positionOnLoadOnly="true"
+                                modal="true">
+
                     <f:facet name="header">
-                        <h:panelGrid columns="1">
-                            <h:commandButton value="#{labels.agregarParticipante}" 
-                                             rendered="#{!fichaMB.partFormDataExpanded and fichaMB.fieldRendered('agregarParticipante')}"
-                                             styleClass="boton principal #{revisionHorasMB.participante.partPk ne null ? 'botonEditar' : 'botonAgregar'}" />
-                        </h:panelGrid>
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{revisionHorasMB.participante.partPk ne null ? labels.editarParticipante : labels.agregarParticipante}"/>
+                            <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                               action="#{revisionHorasMB.cerrarFormCollapsable()}"/>
+                        </ice:panelGroup>
                     </f:facet>
+                    <f:facet name="body">
 
-                    <ice:panelGroup id="participantesFormData">
-                        <ice:panelGrid styleClass="formulario" columns="4">
+                        <ice:panelGroup id="participantesForm">
+                            <f:facet name="header">
+                                <h:panelGrid columns="1">
+                                    <h:commandButton value="#{labels.agregarParticipante}" 
+                                                     rendered="#{!fichaMB.partFormDataExpanded and fichaMB.fieldRendered('agregarParticipante')}"
+                                                     styleClass="boton principal #{revisionHorasMB.participante.partPk ne null ? 'botonEditar' : 'botonAgregar'}" />
+                                </h:panelGrid>
+                            </f:facet>
 
-                            <ice:outputLabel value="#{labels.revisionHoras_part_usuario}:" />
-                            <ice:selectOneMenu value="#{revisionHorasMB.listaUsuariosCombo.selected}"
-                                               disabled="#{revisionHorasMB.participante.partPk != null}">
-                                <f:selectItems value="#{revisionHorasMB.listaUsuariosCombo.items}" />
-                            </ice:selectOneMenu>
+                            <ice:panelGroup id="participantesFormData">
+                                <ice:panelGrid styleClass="formulario" columns="2">
 
-                            <ice:outputLabel value="#{labels.revisionHoras_entregable}:" />
-                            <ice:selectOneMenu value="#{revisionHorasMB.listaEntregablesCombo.selected}">
-                                <f:selectItems value="#{revisionHorasMB.listaEntregablesCombo.items}" />
-                            </ice:selectOneMenu>
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_usuario}:" />
+                                    <ice:selectOneMenu value="#{revisionHorasMB.listaUsuariosCombo.selected}"
+                                                       disabled="#{revisionHorasMB.participante.partPk != null}">
+                                        <f:selectItems value="#{revisionHorasMB.listaUsuariosCombo.items}" />
+                                    </ice:selectOneMenu>
 
-                            <ice:outputLabel value="#{labels.revisionHoras_part_activo}:" />
-                            <ace:checkboxButton value="#{revisionHorasMB.participante.participanteActivo}" />
+                                    <ice:outputLabel value="#{labels.revisionHoras_entregable}:" />
+                                    <ice:selectOneMenu value="#{revisionHorasMB.listaEntregablesCombo.selected}">
+                                        <f:selectItems value="#{revisionHorasMB.listaEntregablesCombo.items}" />
+                                    </ice:selectOneMenu>
 
-                            <ice:outputLabel value="#{labels.revisionHoras_part_horas_plan}:" />
-                            <ice:inputText value="#{revisionHorasMB.participante.partHorasPlan}" styleClass="textoCorto" />
-                        </ice:panelGrid>
-                    </ice:panelGroup> 
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_activo}:" />
+                                    <ace:checkboxButton value="#{revisionHorasMB.participante.participanteActivo}" />
 
-                    <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages for="ficha:guardarPart"/>
-                        <ace:pushButton value="#{labels.guardar}"
-                                        id="guardarPart"
-                                        styleClass="boton principal guardar"
-                                        action="#{revisionHorasMB.guardarParticipanteAction()}"/>
-                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                         action="#{revisionHorasMB.cerrarFormCollapsable()}"/>
-                    </ice:panelGroup>
-                </ice:panelCollapsible>
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_horas_plan}:" />
+                                    <ice:inputText value="#{revisionHorasMB.participanteHoras}" styleClass="textoCorto" />
+                                </ice:panelGrid>
+                            </ice:panelGroup> 
+
+                            <ice:panelGroup styleClass="panelBotones">
+                                <ace:messages for="ficha:guardarPart"/>
+                                <ace:messages globalOnly="true"/>
+                                <ace:pushButton value="#{labels.guardar}"
+                                                id="guardarPart"
+                                                styleClass="boton principal guardar"
+                                                action="#{revisionHorasMB.guardarParticipanteAction()}"/>
+                                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                                 action="#{revisionHorasMB.cerrarFormCollapsable()}" />
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                    </f:facet>
+                </ice:panelPopup>
+
             </ice:panelGroup>
 
 
@@ -201,8 +228,7 @@
                             <h:commandButton id="btnEliminarParticipante"
                                              styleClass="botonEliminar iconoTabla" 
                                              title="#{labels.revisionHoras_eliminar_part}"
-                                             onclick="confirmationEliminarPart#{part.partPk}.show();"
-                                             rendered="#{part.participanteActivo}"/>
+                                             onclick="confirmationEliminarPart#{part.partPk}.show();"/>
                             <ace:confirmationDialog widgetVar="confirmationEliminarPart#{part.partPk}" 
                                                     message="#{labels.confirmacionEliminacion}"
                                                     header="#{labels.hConfirmacion}"

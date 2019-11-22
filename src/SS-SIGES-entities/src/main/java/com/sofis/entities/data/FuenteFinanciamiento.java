@@ -46,6 +46,9 @@ public class FuenteFinanciamiento implements Serializable {
     @ManyToOne(optional = false)
     private Organismos fueOrgFk;
 
+    @Column(name = "fue_habilitada")
+    private Boolean fueHabilitada;
+
     public FuenteFinanciamiento() {
     }
 
@@ -80,6 +83,14 @@ public class FuenteFinanciamiento implements Serializable {
 
     public void setFueOrgFk(Organismos fueOrgFk) {
         this.fueOrgFk = fueOrgFk;
+    }
+
+    public Boolean getFueHabilitada() {
+        return fueHabilitada;
+    }
+
+    public void setFueHabilitada(Boolean fueHabilitada) {
+        this.fueHabilitada = fueHabilitada;
     }
 
     @Override

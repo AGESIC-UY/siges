@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class ProgramaValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProgramaValidacion.class.getName());
 
     public static boolean validar(Programas prog, SsUsuario usuario, Integer orgPk) throws BusinessException {
 

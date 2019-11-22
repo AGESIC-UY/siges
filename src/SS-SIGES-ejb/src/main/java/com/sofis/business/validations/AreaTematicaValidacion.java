@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class AreaTematicaValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AreaTematicaValidacion.class.getName());
 
     public static boolean validar(AreasTags at) throws BusinessException {
         BusinessException be = new BusinessException();

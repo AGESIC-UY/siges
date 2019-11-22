@@ -41,7 +41,7 @@ public class TipoTelefonoBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<TipoTelefono> ch;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoTelefonoBean.class.getName());
     
     //private String usuario;
     //private String origen;

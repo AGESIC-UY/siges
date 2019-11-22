@@ -19,8 +19,10 @@
         
     </application>
     
-<!--    <factory>
-        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
-    </factory>-->
+    <render-kit>
+        <render-kit-id>HTML_BASIC</render-kit-id>
+        <render-kit-class>org.icefaces.impl.renderkit.DOMRenderKit</render-kit-class>
+    </render-kit>
+    
     
 </faces-config>

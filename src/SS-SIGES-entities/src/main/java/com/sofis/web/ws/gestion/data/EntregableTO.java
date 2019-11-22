@@ -47,9 +47,9 @@ public class EntregableTO {
     private Long entFinLineaBase;
     @XmlElement (name = "entParentFk", required = false)
     private Integer entParentFk; //se puede calcular
-    @XmlElement (name = "inicioPeriodo", required = true)
+    @XmlElement (name = "inicioPeriodo", required = false)
     private Boolean inicioPeriodo;
-    @XmlElement (name = "finPeriodo", required = true)
+    @XmlElement (name = "finPeriodo", required = false)
     private Boolean finPeriodo;
     @XmlElement (name = "entPredecesorFk", required = false)
     private String entPredecesorFk;

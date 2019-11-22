@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class OrganiIntProveValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(OrganiIntProveValidacion.class.getName());   
 
     public static boolean validar(OrganiIntProve orga) throws BusinessException {
         BusinessException be = new BusinessException();

@@ -46,7 +46,7 @@ public class PersonasBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<Areas> ch;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PersonasBean.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
     

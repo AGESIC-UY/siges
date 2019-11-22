@@ -30,7 +30,7 @@ import javax.persistence.EntityManager;
 public class LeccionesAprendidasDAO extends HibernateJpaDAOImp<LeccionesAprendidas, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(LeccionesAprendidasDAO.class.getName());  
 
     public LeccionesAprendidasDAO(EntityManager em) {
         super(em);
@@ -40,21 +40,30 @@ public class LeccionesAprendidasDAO extends HibernateJpaDAOImp<LeccionesAprendid
         // Organismo
         CriteriaTO criteriaOrga = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprOrgFk.orgPk", orgPk);
         // Activos
-        CriteriaTO criteriaActivoTrue = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "activo", Boolean.TRUE);
-        CriteriaTO criteriaActivoNull = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "activo", 1);
-        OR_TO criteriaActivo = new OR_TO(criteriaActivoTrue, criteriaActivoNull);
+//        CriteriaTO criteriaActivoTrue = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "activo", Boolean.TRUE);
+//        CriteriaTO criteriaActivoNull = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "activo", 1);
+//        OR_TO criteriaActivo = new OR_TO(criteriaActivoTrue, criteriaActivoNull);
 
         CriteriaTO criteriaFiltroProg = null;
         if (filtro != null) {
             criteriaFiltroProg = crearFiltroLeccAprendidas(filtro);
         }
 
+//        CriteriaTO criteria;
+//        if (criteriaFiltroProg != null) {
+//            criteria = CriteriaTOUtils.createANDTO(criteriaOrga, criteriaActivo, criteriaFiltroProg);
+//        } else {
+//            criteria = CriteriaTOUtils.createANDTO(criteriaOrga, criteriaActivo);
+//        }
+//        
+        
         CriteriaTO criteria;
         if (criteriaFiltroProg != null) {
-            criteria = CriteriaTOUtils.createANDTO(criteriaOrga, criteriaActivo, criteriaFiltroProg);
+            criteria = CriteriaTOUtils.createANDTO(criteriaOrga, criteriaFiltroProg);
         } else {
-            criteria = CriteriaTOUtils.createANDTO(criteriaOrga, criteriaActivo);
+            criteria = CriteriaTOUtils.createANDTO(criteriaOrga);
         }
+
 
         List<LeccionesAprendidas> result;
         try {
@@ -135,11 +144,13 @@ public class LeccionesAprendidasDAO extends HibernateJpaDAOImp<LeccionesAprendid
             }
 
             if (filtro.getProveedor() != null) {
-                MatchCriteriaTO proveedor = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.interesadosList.intOrgaFk.orgaPk", filtro.getProveedor().getOrgaPk());
-                MatchCriteriaTO isProveedor = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.interesadosList.intOrgaFk.orgaProveedor", Boolean.TRUE);
-                AND_TO provAnd = new AND_TO(proveedor, isProveedor);
-                criterias.add(provAnd);
-            }
+//                MatchCriteriaTO proveedor = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.interesadosList.intOrgaFk.orgaPk", filtro.getProveedor().getOrgaPk());
+//                MatchCriteriaTO isProveedor = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.interesadosList.intOrgaFk.orgaProveedor", Boolean.TRUE);
+//                AND_TO provAnd = new AND_TO(proveedor, isProveedor);
+//                criterias.add(provAnd);
+                MatchCriteriaTO proveedor = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.proyPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getProveedor().getOrgaPk());
+                criterias.add(proveedor);
+             }
 
             if (filtro.getProyPk() != null) {
                 MatchCriteriaTO nombre = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprProyFk.proyPk", filtro.getProyPk());

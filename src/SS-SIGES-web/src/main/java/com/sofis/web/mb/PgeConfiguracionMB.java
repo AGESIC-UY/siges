@@ -42,11 +42,11 @@ public class PgeConfiguracionMB implements Serializable {
     private String bCodigo;
     private String bDescripcion;
     private SofisCombo comboCategoria = new SofisCombo();
-    private List<EntityReference<Integer>> listaResultado = new ArrayList();
+    private List<EntityReference<Integer>> listaResultado = new ArrayList<EntityReference<Integer>>();
     private Boolean renderResultado = false;
     private PgeConfiguraciones cnfEnEdicion = new PgeConfiguraciones();
     private Boolean renderPopupEdicion = false;
-    private List<PgeConfiguraciones> listaHitorial = new ArrayList();
+    private List<PgeConfiguraciones> listaHitorial = new ArrayList<PgeConfiguraciones>();
     private Boolean renderPopupHistorial = false;
     private String cantElementosPorPagina = "25";
     private String elementoOrdenacion = "cnfClave";
@@ -61,7 +61,7 @@ public class PgeConfiguracionMB implements Serializable {
     private void reset() {
         bCodigo = "";
         bDescripcion = "";
-        listaResultado = new ArrayList();
+        listaResultado = new ArrayList<EntityReference<Integer>>();
         renderResultado = false;
     }
 

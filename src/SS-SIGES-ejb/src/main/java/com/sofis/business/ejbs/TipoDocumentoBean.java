@@ -38,7 +38,7 @@ public class TipoDocumentoBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoDocumentoBean.class.getName());
     @Inject
     private DatosUsuario du;
     
@@ -188,9 +188,12 @@ public class TipoDocumentoBean {
 		if (tipoDoc.getTipodocResumenEjecutivo()) {
 		    List<TipoDocumento> listTipoDoc = obtenerTodos(orgPk);
 		    for (TipoDocumento td : listTipoDoc) {
-			if (td.getTipodocResumenEjecutivo()
+
+                        if (td.getTipodocResumenEjecutivo() != null 
+                                && td.getTipodocResumenEjecutivo()
 				&& !td.getTipdocPk().equals(tipoDoc.getTipdocPk())) {
-			    td.setTipodocResumenEjecutivo(Boolean.FALSE);
+
+                            td.setTipodocResumenEjecutivo(Boolean.FALSE);
 			    guardar(td);
 			}
 		    }

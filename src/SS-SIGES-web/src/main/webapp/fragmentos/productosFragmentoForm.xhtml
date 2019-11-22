@@ -13,47 +13,67 @@
                 xmlns:of="http://omnifaces.org/functions">
 
     <!-- Formulario de alta -->
-    <ice:panelGroup id="productosForm">
-        <ice:panelCollapsible id="collapsibleProd" expanded="#{fichaMB.prodFormDataExpanded}" >
+    <ice:panelGroup id="productosForm" styleClass="formulario formularioPopup">
+
+        <h:panelGrid columns="1">
+            <ace:linkButton value="#{labels.cronograma}" action="#{fichaMB.miMostrar(3)}"/>
+            <ice:commandButton value="#{labels.prod_form_btn_agregar}"
+                               action="#{fichaMB.abrirProductoAction()}"
+                               styleClass="boton principal botonAgregar"
+                               rendered="#{fichaMB.fieldRendered('agregarProducto')}" />
+        </h:panelGrid>
+
+        <ice:panelPopup id="popuProductosForm"
+                        visible="#{fichaMB.prodFormDataExpanded}"
+                        rendered="#{fichaMB.prodFormDataExpanded}"
+                        draggable="true"
+                        positionOnLoadOnly="true"
+                        modal="true">
             <f:facet name="header">
-                <h:panelGrid columns="1">
-                    <ace:linkButton value="#{labels.cronograma}" action="#{fichaMB.miMostrar(3)}"/>
-                    <h:commandButton value="#{labels.prod_form_btn_agregar}" 
-                                     rendered="#{!fichaMB.prodFormDataExpanded and fichaMB.fieldRendered('agregarProducto', fichaMB.isCoordAlgunEntregable())}"
-                                     styleClass="boton principal botonAgregar" />
-                </h:panelGrid>
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.prod_form_btn_agregar}"/>
+                    <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" 
+                                       title="#{labels.cerrar}" 
+                                       action="#{fichaMB.cerrarFormCollapsable()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+
+                <ice:panelGroup id="productosFormData">
+
+                    <ice:panelGrid  styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.prod_form_nombre}"/>
+                        <ace:textEntry value="#{fichaMB.producto.prodDesc}" />
+
+                        <ice:outputLabel value="#{labels.prod_form_entregable}:"/>
+                        <ace:simpleSelectOneMenu id="comboEntProd"
+                                                 value="#{fichaMB.listaEntProdCombo.selected}">
+                            <f:selectItems value="#{fichaMB.listaEntProdCombo.items}"/>
+                        </ace:simpleSelectOneMenu>
+
+                        <ice:outputLabel value="#{labels.prod_form_peso}:"/>
+                        <ace:textEntry value="#{fichaMB.producto.prodPeso}" 
+                                       styleClass="textoCorto"
+                                       converter="ImporteFormatConverter"/>
+
+                        <ice:outputLabel value="#{labels.prod_form_inidad_medida}:"/>
+                        <ace:textEntry value="#{fichaMB.producto.prodUndMedida}" styleClass="textoCorto"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="productosFormMsg"/>
+                        <ace:pushButton  value="#{labels.prod_form_btn_guardar}" 
+                                         styleClass="boton principal guardar" 
+                                         action="#{fichaMB.agregarProductoAction()}" />
+                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                         action="#{fichaMB.cerrarFormCollapsable()}"/>
+                    </ice:panelGroup>
+
+                </ice:panelGroup>
+
             </f:facet>
 
-            <ice:panelGrid  styleClass="formulario" columns="8">
-                <ice:outputLabel value="#{labels.prod_form_nombre}"/>
-                <ace:textEntry value="#{fichaMB.producto.prodDesc}" />
-
-                <ice:outputLabel value="#{labels.prod_form_entregable}:"/>
-                <ace:simpleSelectOneMenu id="comboEntProd"
-                                         value="#{fichaMB.listaEntProdCombo.selected}">
-                    <f:selectItems value="#{fichaMB.listaEntProdCombo.items}"/>
-                </ace:simpleSelectOneMenu>
-
-                <ice:outputLabel value="#{labels.prod_form_peso}:"/>
-                <ace:textEntry value="#{fichaMB.producto.prodPeso}" 
-                               styleClass="textoCorto"
-                               converter="ImporteFormatConverter"/>
-
-                <ice:outputLabel value="#{labels.prod_form_inidad_medida}:"/>
-                <ace:textEntry value="#{fichaMB.producto.prodUndMedida}" styleClass="textoCorto"/>
-            </ice:panelGrid>
-
-            <ice:panelGroup styleClass="panelBotones">
-                <ace:messages id="productosFormMsg"/>
-                <ace:pushButton  value="#{labels.prod_form_btn_guardar}" 
-                                 styleClass="boton principal guardar" 
-                                 action="#{fichaMB.agregarProductoAction()}" />
-                <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
-                                  action="#{fichaMB.limpiarProducto()}"/>
-                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                 action="#{fichaMB.cerrarFormCollapsable()}"/>
-            </ice:panelGroup>
-
-        </ice:panelCollapsible>
+        </ice:panelPopup>
     </ice:panelGroup>
+
 </ui:composition>

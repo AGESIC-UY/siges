@@ -62,7 +62,6 @@
             </f:facet>
             <f:facet name="body">
                 <ice:panelGrid>
-                    <ace:messages />
                     <ice:panelGrid columns="2" rowClasses="fila0,fila1">
                         <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
                         <ace:textEntry value="#{configuracionMB.confEnEdicion.cnfCodigo}" 
@@ -70,13 +69,16 @@
                                        disabled="#{configuracionMB.confEnEdicion.id != null}"/>
                         
                         <ice:outputLabel value="#{labels.esHTML}" />
-                        <ace:checkboxButton value="#{configuracionMB.confEnEdicion.cnfHtml}" />
+                        <ace:checkboxButton value="#{configuracionMB.confEnEdicion.cnfHtml}" 
+                                            valueChangeListener="#{configuracionMB.cnfHtmlChange}">
+                            <ace:ajax execute="@this" render="@form"/>
+                        </ace:checkboxButton>
                         
                         <ice:outputLabel value="#{labels.valor}" styleClass="obligatorio"/>
                         <ace:textEntry value="#{configuracionMB.confEnEdicion.cnfValor}" styleClass="obligatorio" rendered="#{not configuracionMB.confEnEdicion.cnfHtml}"/>
-                        <ace:richTextEntry saveOnSubmit="true" toolbar="Basic" value="#{configuracionMB.confEnEdicion.cnfValor}" rendered="#{configuracionMB.confEnEdicion.cnfHtml}"/>
+                        <ace:richTextEntry saveOnSubmit="true" toolbar="Basic" value="#{configuracionMB.confEnEdicion.cnfValor}" rendered="#{configuracionMB.confEnEdicion.cnfHtml}" converter="SanitizerAceRichTextConverter"/>
                         
-                        <ice:outputLabel value="#{labels.descripcion}"  styleClass="obligatorio"/>
+                        <ice:outputLabel value="#{labels.descripcion}"  />
                         <ace:textEntry value="#{configuracionMB.confEnEdicion.cnfDescripcion}" styleClass="textoLargo"/>
                         
                         <ice:outputLabel value="#{labels.organismo_titulo_form}"  styleClass="obligatorio"/>
@@ -86,6 +88,7 @@
                             <f:selectItems value="#{inicioMB.organismosUsuario.items}"/>
                         </ice:selectOneMenu>
                         <ice:panelGrid/>
+                        <ace:messages id="confMsgs" />
                         <ice:panelGroup styleClass="panelBotones">
                             <ace:pushButton value="#{labels.guardar}" action="#{configuracionMB.guardar}"  styleClass="boton principal guardar"/>
                             <ace:linkButton value="#{labels.cancelar}" action="#{configuracionMB.cancelar()}"/>

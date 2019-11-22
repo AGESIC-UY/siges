@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public class ValorHoraMB implements Serializable{
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ValorHoraMB.class.getName());
     private static final String VALOR_HORA_MSG = "valHoraPopupMsg";
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
@@ -48,9 +48,6 @@ public class ValorHoraMB implements Serializable{
     private List<Moneda> listaMoneda;
 
     public ValorHoraMB() {
-        renderPopupValorHora = new SofisPopupUI();
-        listaMonedaCombo = new SofisCombo();
-        valHoraEnEdicion = new ValorHora();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -99,6 +96,9 @@ public class ValorHoraMB implements Serializable{
 
     @PostConstruct
     public void init() {
+        renderPopupValorHora = new SofisPopupUI();
+        listaMonedaCombo = new SofisCombo();
+        valHoraEnEdicion = new ValorHora();        
     }
 
     private void cargarPopup(SsUsuario usu) {
@@ -147,7 +147,15 @@ public class ValorHoraMB implements Serializable{
             cargarPopup(usu);
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, null, be);
-            JSFUtils.agregarMsgs(null, be.getErrores());
+            
+           /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(null, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }                
         }
 
         return null;

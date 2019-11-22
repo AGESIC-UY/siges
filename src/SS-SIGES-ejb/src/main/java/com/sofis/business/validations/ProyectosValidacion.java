@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class ProyectosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProyectosValidacion.class.getName());
 
     public static boolean validar(Proyectos proy, SsUsuario usuario, Integer orgPk) throws BusinessException {
 
@@ -32,9 +32,15 @@ public class ProyectosValidacion {
             boolean isAlta = proy.getProyPk() == null;
 
             if (proy.isActivo()) {
-                if (proy.getProyProgFk() != null && (proy.getProyProgFk().getProgEstFk().isPendientes())) {
-                    be.addError(MensajesNegocio.ERROR_FICHA_PROG_HABILITADO);
-                }
+                /**
+                 * 2019-07-05: se elimina esta validación, ya que no permite
+                 * guardar proyectos si el programa está en estado pendiente
+                 */
+//                if (	proy.getProyProgFk() != null && 
+//						proy.getProyProgFk().getProgEstFk() != null &&
+//						proy.getProyProgFk().getProgEstFk().isPendientes()) {
+//                    be.addError(MensajesNegocio.ERROR_FICHA_PROG_HABILITADO);
+//                }
                 if (proy.getProyOrgFk() == null) {
                     be.addError(MensajesNegocio.ERROR_FICHA_ORGANISMO);
                 }
@@ -71,8 +77,8 @@ public class ProyectosValidacion {
                 }
 
                 if (!StringsUtils.isEmpty(proy.getProySituacionActual())
-                        && proy.getProySituacionActual().length() > 4000) {
-                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", 4000));
+                        && proy.getProySituacionActual().length() > 20000) {
+                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", 20000));
                 }
 
                 if (proy.getProyPreFk() != null) {

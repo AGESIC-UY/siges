@@ -5,6 +5,7 @@ import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.exceptions.GeneralException;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.inject.Named;
@@ -27,6 +28,8 @@ public class ConsultaHistorico<T> {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
+    
+    private static final Logger logger = Logger.getLogger(ConsultaHistorico.class.getName());
 
     public List<Configuracion> obtenerConfiguracion(Integer id) throws GeneralException {
         AuditReader reader = AuditReaderFactory.get(em);

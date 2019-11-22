@@ -67,6 +67,10 @@ public class NoticiaMB implements Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="eventos">
     public String buscar() {
+        if(notEnEdicion.getNotContenido() == null || notEnEdicion.getNotContenido().equals("")){
+            notEnEdicion.setNotContenido("<p></p>");
+        }
+        
         renderResultado = true;
         List<CriteriaTO> criterios = new ArrayList<CriteriaTO>();
 
@@ -121,6 +125,9 @@ public class NoticiaMB implements Serializable {
     public String editar(Integer id) {
         try {
             notEnEdicion = natDelegate.obtenerNoticiaPorId(id);
+        if(notEnEdicion.getNotContenido() == null || notEnEdicion.getNotContenido().equals("")){
+            notEnEdicion.setNotContenido("<p></p>");
+        }            
             renderPopupEdicion = true;
         } catch (GeneralException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

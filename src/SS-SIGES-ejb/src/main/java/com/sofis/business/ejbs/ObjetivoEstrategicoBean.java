@@ -38,7 +38,7 @@ public class ObjetivoEstrategicoBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ObjetivoEstrategicoBean.class.getName());
     @Inject
     private DatosUsuario du;
 
@@ -111,9 +111,9 @@ public class ObjetivoEstrategicoBean {
                     du.getOrigen());
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
-            if (cause != null && cause instanceof PersistenceException) {
+            if (cause != null && cause.getCause() instanceof PersistenceException) {
                 cause = cause.getCause();
-                if (cause != null && cause instanceof ConstraintViolationException) {
+                if (cause != null && cause.getCause() instanceof ConstraintViolationException) {
                     throw new BusinessException(ex);
                 }
             }

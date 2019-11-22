@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="formIdGrpErpPopup" styleClass="formularioConTextarea">
+
+        <ice:panelPopup rendered="#{identificadorGrpErpMB.renderABMPopup}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hIdentificadorGrpErp}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{identificadorGrpErpMB.cerrarPopup()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formIdGrpErpPopupPanel">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.identificadorGrpErpFormNombre}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{identificadorGrpErpMB.identificador.idGrpErpNombre}" maxlength="100" style="width: 820px"/>
+
+                        <ice:outputLabel value="#{labels.identificadorGrpErpFormDescripcion}:"/>
+                        <ace:textAreaEntry value="#{identificadorGrpErpMB.identificador.idGrpErpDescripcion}" maxlength="300"/>
+
+                        <ice:outputLabel value="#{labels.habilitado}"/>
+                        <ace:checkboxButton value="#{identificadorGrpErpMB.identificador.idGrpErpHabilitado}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages for="formCauCom"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{identificadorGrpErpMB.guardar()}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{identificadorGrpErpMB.cerrarPopup()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

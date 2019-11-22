@@ -85,7 +85,7 @@
                         <ice:outputText value="#{cgo.propertyMap['cnfValor']}"/>
                     </ace:column>
                     
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ice:panelGrid title="#{labels.editar}">
                             <ace:pushButton styleClass="botonEditar  iconoTabla"   action="#{pgeConfiguracionMB.editar(cgo.propertyMap['cnfId'])}"
                                                rendered="#{menuMB.permisos['PGE_EDIT']}"/>

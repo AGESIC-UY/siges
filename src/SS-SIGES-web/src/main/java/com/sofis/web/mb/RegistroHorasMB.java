@@ -73,7 +73,7 @@ import javax.inject.Inject;
 public class RegistroHorasMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RegistroHorasMB.class.getName());
     private static final String REGISTRO_FORM_MSG = "registroFormMsg";
     private static final String MSG_CALIDAD = "calidadMsg";
 
@@ -149,13 +149,6 @@ public class RegistroHorasMB implements Serializable {
     private Boolean verHistorico = false;
 
     public RegistroHorasMB() {
-        tipoRegistro = 1;
-        gasto = new Gastos();
-        listaFiltroTipoGastoCombo = new SofisCombo();
-        verHistorico = false;
-        proyCalidad = new Proyectos();
-        productosList = new ArrayList<>();
-        listCalidad = new ArrayList<>();
     }
 
     public Boolean getVerHistorico() {
@@ -444,6 +437,18 @@ public class RegistroHorasMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */        
+        
+        tipoRegistro = 1;
+        gasto = new Gastos();
+        listaFiltroTipoGastoCombo = new SofisCombo();
+        verHistorico = false;
+        proyCalidad = new Proyectos();
+        productosList = new ArrayList<Productos>();
+        listCalidad = new ArrayList<Calidad>();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         Integer orgPk = inicioMB.getOrganismo().getOrgPk();
@@ -480,7 +485,7 @@ public class RegistroHorasMB implements Serializable {
 
     private void inicializarRegistroHoras() {
         avanceDisabled = true;
-        listaEntregablesFormCombo = new SofisComboG<>();
+        listaEntregablesFormCombo = new SofisComboG<Entregables>();
 
         //Obtener el usuario logueado
         SsUsuario usuario = inicioMB.getUsuario();
@@ -499,7 +504,7 @@ public class RegistroHorasMB implements Serializable {
         registroHoras.setRhProyectoFk(new Proyectos(proyPkSelected));
         registroHoras.setRhEntregableFk(new Entregables(0));
 
-        listaAvanceItems = new ArrayList<>();
+        listaAvanceItems = new ArrayList<ComboItemTO>();
         for (int i = 0; i <= 100; i = i + 10) {
             listaAvanceItems.add(new ComboItemTO(i, String.valueOf(i)));
         }
@@ -541,13 +546,13 @@ public class RegistroHorasMB implements Serializable {
         List<ComboItemTO> listaValor = valorCalidadCodigosDelegate.obtenerTodosParaCombo();
         listaValor = ComboItemTOUtils.sortByTextoCombo(listaValor, true);
         if (listaValor != null) {
-            listaValorCalidadCombo = new SofisComboG<>(listaValor, "itemNombre");
+            listaValorCalidadCombo = new SofisComboG<ComboItemTO>(listaValor, "itemNombre");
             listaValorCalidadCombo.addEmptyItem(Labels.getValue("comboTodos"));
 
             listaValorTablaCalidadCombo = new SofisComboG<>(listaValor, "itemNombre");
         }
 
-        List<ComboItemTO> listaTipoCal = new ArrayList<>();
+        List<ComboItemTO> listaTipoCal = new ArrayList<ComboItemTO>();
         listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.GENERAL.ordinal(), Labels.getValue("tca_general")));
         listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.ENTREGABLE.ordinal(), Labels.getValue("tca_entregable")));
         listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.PRODUCTO.ordinal(), Labels.getValue("tca_producto")));
@@ -586,7 +591,7 @@ public class RegistroHorasMB implements Serializable {
     }
 
     private void cargarEntregablesProyecto(Integer proyId) {
-        listaEntregables = new LinkedList<>();
+        listaEntregables = new LinkedList<Entregables>();
         if (proyId != null && proyId > 0) {
             Proyectos proy = proyectoDelegate.obtenerProyPorId(proyId);
             if (proy != null && proy.getProyCroFk() != null && proy.getProyCroFk().getEntregablesSet() != null) {
@@ -646,7 +651,16 @@ public class RegistroHorasMB implements Serializable {
                         }
                     } catch (BusinessException be) {
                         logger.log(Level.SEVERE, be.getMessage(), be);
-                        JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
+                        
+                        /*
+                        *  19-06-2018 Inspección de código.
+                        */
+
+                        //JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
+
+                        for(String iterStr : be.getErrores()){
+                            JSFUtils.agregarMsgError(REGISTRO_FORM_MSG, Labels.getValue(iterStr), null);                
+                        }                         
                     }
                 }
                 if (CollectionsUtils.isNotEmpty(productosList)) {
@@ -658,7 +672,16 @@ public class RegistroHorasMB implements Serializable {
                         }
                     } catch (BusinessException be) {
                         logger.log(Level.SEVERE, be.getMessage());
-                        JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
+                        
+                        /*
+                        *  19-06-2018 Inspección de código.
+                        */
+
+                        //JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
+
+                        for(String iterStr : be.getErrores()){
+                            JSFUtils.agregarMsgError(REGISTRO_FORM_MSG, Labels.getValue(iterStr), null);                
+                        }                         
                     }
                 }
 
@@ -683,7 +706,16 @@ public class RegistroHorasMB implements Serializable {
             }
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
-            JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, ex.getErrores());
+            
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(REGISTRO_FORM_MSG, Labels.getValue(iterStr), null);                
+            }             
         }
         buscarConFiltro();
         inicializarRegistroHoras();
@@ -900,7 +932,15 @@ public class RegistroHorasMB implements Serializable {
                 buscarCalidadAction();
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, null, be);
-                JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
+                }                 
             }
         }
         return null;
@@ -937,8 +977,18 @@ public class RegistroHorasMB implements Serializable {
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage());
-                JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
-//                inicioMB.setRenderPopupMensajes(true);
+                
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(REGISTRO_FORM_MSG, be.getErrores());
+
+                for(String iterStr : be.getErrores()){
+                    JSFUtils.agregarMsgError(REGISTRO_FORM_MSG, Labels.getValue(iterStr), null);                
+                }                  
+
+                //inicioMB.setRenderPopupMensajes(true);
                 return null;
             }
         }

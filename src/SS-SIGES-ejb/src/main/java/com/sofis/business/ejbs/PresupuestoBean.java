@@ -51,7 +51,7 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class PresupuestoBean {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PresupuestoBean.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
 
@@ -729,4 +729,4 @@ public class PresupuestoBean {
         }
         return result;
     }
-}
+        }

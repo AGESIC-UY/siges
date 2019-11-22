@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.jboss.org/ironjacamar/schema
+        http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+    <datasource jta="true" jndi-name="java:jboss/datasources/testDS" pool-name="testDS" enabled="true">
+        <connection-url>jdbc:mysql://SIGES-AGESIC-MYSQL:3306/test</connection-url>
+        <driver>com.mysql</driver>
+        <pool>
+            <min-pool-size>10</min-pool-size>
+            <max-pool-size>100</max-pool-size>
+        </pool>
+        <security>
+            <user-name>root</user-name>
+            <password>siges</password>
+        </security>
+        <validation>
+            <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+            <background-validation>true</background-validation>
+            <background-validation-millis>2000</background-validation-millis>
+        </validation>
+        <statement>
+            <share-prepared-statements>true</share-prepared-statements>
+        </statement>
+    </datasource>
+</datasources>

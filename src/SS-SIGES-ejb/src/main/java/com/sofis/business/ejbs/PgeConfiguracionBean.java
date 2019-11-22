@@ -42,7 +42,7 @@ public class PgeConfiguracionBean {
     @Inject
     private ConsultaHistorico<PgeConfiguraciones> ch;
     private static final Logger logger
-            = Logger.getLogger(ConstantesEstandares.LOGGER);
+            = Logger.getLogger(PgeConfiguracionBean.class.getName());
 
     
     //private String usuario;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class TipoDocumentoValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoDocumentoValidacion.class.getName());
 
     public static boolean validar(TipoDocumento tipoDoc) throws BusinessException {
         BusinessException be = new BusinessException();

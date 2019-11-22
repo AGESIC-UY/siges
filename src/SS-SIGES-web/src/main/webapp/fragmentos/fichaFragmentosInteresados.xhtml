@@ -19,9 +19,8 @@
         }
     </script>
 
-    <ice:panelGroup id="panelInteresados" 
-                    style="#{fichaMB.selectedMostrar == 1 ? 'width: 100%; padding-right:25px' : ''}" 
-                    styleClass="col-sm-6 cuadro" 
+    <ice:panelGroup id="panelInteresados"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 1) and fichaMB.fieldRendered('panelInteresados')}">
 
         <ice:panelGroup id="cabezalInteresados" styleClass="cabezal">
@@ -58,94 +57,112 @@
         </ice:panelGroup>
 
         <!--El panel con el modulo Interesados-->
-        <ice:panelGroup rendered="#{fichaMB.mostrar[1]}" styleClass="cuerpo">
+        <ice:panelGroup rendered="#{fichaMB.mostrar[1]}" styleClass="cuerpo" >
 
             <!-- Formulario de alta -->
-            <ice:panelGroup id="interesadosForm">
-                <ice:panelCollapsible expanded="#{fichaMB.intFormDataExpanded}">
-                    <f:facet name="header" >
-                        <h:panelGrid columns="1">
-                            <h:commandButton value="#{fichaMB.interesado.intPk ne null ? labels.editarInteresado : labels.agregarInteresado}" 
-                                             rendered="#{!fichaMB.intFormDataExpanded and fichaMB.fieldRendered('agregarInteresado')}"
-                                             onclick="limpiarCorreoAutocompletar()"
-                                             styleClass="boton principal #{fichaMB.interesado.intPk ne null ? 'botonEditar' : 'botonAgregar'}" />
-                        </h:panelGrid>
+            <ice:panelGroup id="interesadosForm" styleClass="formulario formularioPopup">
+
+                <h:panelGrid columns="1">
+                    <ace:linkButton value="#{labels.cronograma}" action="#{fichaMB.miMostrar(3)}" />
+                    <ice:commandButton value="#{labels.agregarInteresado}"
+                                       action="#{fichaMB.abrirInteresadosAction()}"
+                                       onclick="limpiarCorreoAutocompletar()"
+                                       styleClass="boton principal botonAgregar"
+                                       rendered="#{fichaMB.fieldRendered('agregarInteresado')}"/>
+                </h:panelGrid>
+
+                <ice:panelPopup id="popupInteresadosForm"
+                                visible="#{fichaMB.intFormDataExpanded}"
+                                rendered="#{fichaMB.intFormDataExpanded}"
+                                draggable="true"
+                                positionOnLoadOnly="true"
+                                modal="true">
+
+                    <f:facet name="header">
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{fichaMB.interesado.intPk ne null ? labels.editarInteresado : labels.agregarInteresado}"/>
+                            <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" 
+                                               title="#{labels.cerrar}" 
+                                               action="#{fichaMB.cerrarFormCollapsable()}"/>
+                        </ice:panelGroup>
                     </f:facet>
 
-                    <ice:panelGroup id="interesadosFormData">
-                        <ice:panelGrid  styleClass="formulario " columns="4">
-                            <ice:outputLabel value="#{labels.organizacion}"/>
-                            <ice:selectOneMenu id="comboOrganizacion"
-                                               value="#{fichaMB.listaOrganizacionCombo.selected}"
-                                               valueChangeListener="#{fichaMB.cargarInteresadosRolSelectAction}"
-                                               partialSubmit="true">
-                                <f:selectItems value="#{fichaMB.listaOrganizacionCombo.items}"/>
-                            </ice:selectOneMenu>
+                    <f:facet name="body">
+                        <ice:panelGroup>
+                            <ice:panelGroup id="interesadosFormData">
+                                <ice:panelGrid  styleClass="formulario" columns="2">
+                                    <ice:outputLabel value="#{labels.organizacion}"/>
+                                    <ice:selectOneMenu id="comboOrganizacion"
+                                                       value="#{fichaMB.listaOrganizacionCombo.selected}"
+                                                       valueChangeListener="#{fichaMB.cargarInteresadosRolSelectAction}"
+                                                       partialSubmit="true">
+                                        <f:selectItems value="#{fichaMB.listaOrganizacionCombo.items}"/>
+                                    </ice:selectOneMenu>
 
-                            <ice:outputLabel value=""/>
-                            <ice:outputLabel value=""/>
+                                    <ice:outputLabel value=""/>
+                                    <ice:outputLabel value=""/>
 
-                            <ice:outputLabel value="#{labels.correo}"/>
-                            <ace:autoCompleteEntry id="autoCompleteInteresadoCorreo" 
-                                                   value="#{fichaMB.interesado.intPersonaFk.persMail}"
-                                                   rows="20" width="400"
-                                                   styleClass="autocompletar" 
-                                                   filterMatchMode="startsWith" 
-                                                   filterBy="#{personas.persMail}"
-                                                   binding="#{fichaMB.autoCompletePersonasComponent}"
-                                                   listVar="personas"
-                                                   listValue="#{fichaMB.autoCompletePersonasList}"
-                                                   valueChangeListener="#{fichaMB.autoCompleteInteresadoCorreoValueChangeListener}">
-                                <ace:ajax />
-                                <f:facet name="row">
-                                    <h:panelGrid columns="2" width="100%" >
-                                        <h:outputText value="#{personas.persNombre}" />
-                                        <h:outputText value="#{personas.persCargo}" />
-                                    </h:panelGrid>
-                                </f:facet>
-                            </ace:autoCompleteEntry>
+                                    <ice:outputLabel value="#{labels.correo}"/>
+                                    <ace:autoCompleteEntry id="autoCompleteInteresadoCorreo" 
+                                                           value="#{fichaMB.interesado.intPersonaFk.persMail}"
+                                                           rows="20"
+                                                           styleClass="autocompletar autocompletarCorreo" 
+                                                           filterMatchMode="startsWith" 
+                                                           filterBy="#{personas.persMail}"
+                                                           binding="#{fichaMB.autoCompletePersonasComponent}"
+                                                           listVar="personas"
+                                                           listValue="#{fichaMB.autoCompletePersonasList}"
+                                                           valueChangeListener="#{fichaMB.autoCompleteInteresadoCorreoValueChangeListener}">
+                                        <ace:ajax />
+                                        <f:facet name="row">
+                                            <h:panelGrid columns="2" width="100%" >
+                                                <h:outputText value="#{personas.persNombre}" />
+                                                <h:outputText value="#{personas.persCargo}" />
+                                            </h:panelGrid>
+                                        </f:facet>
+                                    </ace:autoCompleteEntry>
 
-                            <ice:outputLabel value="#{labels.nombre}"/>
-                            <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persNombre}"/>
+                                    <ice:outputLabel value="#{labels.nombre}"/>
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persNombre}"/>
 
-                            <ice:outputLabel value="#{labels.telefono}"/>
-                            <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persTelefono}" />
+                                    <ice:outputLabel value="#{labels.telefono}"/>
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persTelefono}" />
 
-                            <ice:outputLabel value="#{labels.cargo}"/>
-                            <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persCargo}" />
+                                    <ice:outputLabel value="#{labels.cargo}"/>
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persCargo}" />
 
-                            <ice:outputLabel value="" styleClass="separador"/>
-                            <ice:outputLabel value="" styleClass="separador"/>
-                            <ice:outputLabel value="" styleClass="separador"/>
-                            <ice:outputLabel value="" styleClass="separador"/>
+                                    <ice:outputLabel value="" styleClass="separador"/>
+                                    <ice:outputLabel value="" styleClass="separador"/>
 
-                            <ice:outputLabel value="#{labels.rol}"/>
-                            <ace:simpleSelectOneMenu id="comboRolesInteresados"
-                                                     value="#{fichaMB.listaRolesInteresadosCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaRolesInteresadosCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
+                                    <ice:outputLabel value="#{labels.rol}"/>
+                                    <ace:simpleSelectOneMenu id="comboRolesInteresados"
+                                                             value="#{fichaMB.listaRolesInteresadosCombo.selected}">
+                                        <f:selectItems value="#{fichaMB.listaRolesInteresadosCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
 
-                            <ice:outputLabel value="#{labels.observaciones}"/>
-                            <ace:textAreaEntry value="#{fichaMB.interesado.intObservaciones}" />
+                                    <ice:outputLabel value="#{labels.observaciones}"/>
+                                    <ace:textAreaEntry value="#{fichaMB.interesado.intObservaciones}" />
 
-                            <ice:outputLabel value="#{labels.entregables}"/>
-                            <ice:selectOneMenu value="#{fichaMB.listaIntEntregablesCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaIntEntregablesCombo.items}"/>
-                            </ice:selectOneMenu>
-                        </ice:panelGrid>
+                                    <ice:outputLabel value="#{labels.entregables}"/>
+                                    <ice:selectOneMenu value="#{fichaMB.listaIntEntregablesCombo.selected}">
+                                        <f:selectItems value="#{fichaMB.listaIntEntregablesCombo.items}"/>
+                                    </ice:selectOneMenu>
+                                </ice:panelGrid>
 
-                    </ice:panelGroup> 
-                    <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages id="interesadosMsg"/>
-                        <ace:pushButton value="#{fichaMB.interesado.intPk ne null ? labels.editarInteresado : labels.agregarInteresado}" 
-                                        styleClass="boton principal #{fichaMB.interesado.intPk ne null ? 'editar' : 'agregar'}" 
-                                        action="#{fichaMB.agregarInteresadoAction()}"/>
-                        <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.limpiarInteresado()}"/>
-                        <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                         action="#{fichaMB.cerrarFormIntCollapsable()}"/>
-                    </ice:panelGroup>
-                </ice:panelCollapsible>
+                            </ice:panelGroup> 
+                            <ice:panelGroup styleClass="panelBotones">
+                                <ace:messages id="interesadosMsg"/>
+                                <ace:pushButton value="#{labels.guardar}" 
+                                                styleClass="boton principal guardar" 
+                                                action="#{fichaMB.agregarInteresadoAction()}"/>
+                                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                                 action="#{fichaMB.cerrarFormIntCollapsable()}"/>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+
+                    </f:facet>
+                </ice:panelPopup>
+
             </ice:panelGroup>
 
             <!-- Lista de interesados-->
@@ -154,7 +171,7 @@
                     <ice:panelGroup  styleClass="funcionalidadesResultado"  >
                         <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
                                           type="xls" fileName="#{labels.exportarPlanillaInteresados}"
-                                          includeHeaders="true" excludeColumns="4,5"  />
+                                          includeHeaders="true" excludeColumns="5,6"  />
                     </ice:panelGroup>
                     <ace:dataTable id="tblResultados" 
                                    value="#{fichaMB.fichaTO.interesados}" var="int"

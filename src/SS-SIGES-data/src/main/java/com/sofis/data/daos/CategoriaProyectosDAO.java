@@ -14,9 +14,10 @@ import javax.persistence.EntityManager;
 public class CategoriaProyectosDAO extends HibernateJpaDAOImp<CategoriaProyectos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(CategoriaProyectosDAO.class.getName());
 
     public CategoriaProyectosDAO(EntityManager em) {
         super(em);
     }
+    
 }

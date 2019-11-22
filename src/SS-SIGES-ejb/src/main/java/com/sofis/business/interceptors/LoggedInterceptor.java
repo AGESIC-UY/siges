@@ -19,7 +19,7 @@ public class LoggedInterceptor implements Serializable {
 //    private DatosUsuario datUsuario;
 
     private static final Logger logger
-            = Logger.getLogger(ConstantesEstandares.LOGGER);
+            = Logger.getLogger(LoggedInterceptor.class.getName());
 
     public LoggedInterceptor() {
     }

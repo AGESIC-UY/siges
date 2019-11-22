@@ -15,30 +15,34 @@
     <ui:define name="content">
         <ice:panelGroup id="panel" styleClass="cuadro panelLogin">
             <ice:panelGroup styleClass="cabezal">
-                <ice:outputText value="Acceso" />
+                <ice:outputText value="#{labels.login_title}" />
             </ice:panelGroup>
             <ice:panelGroup styleClass="cuerpo">
-                
+
                 <ice:panelGroup rendered="#{!LoginMB.ingresarMailParaResetearContrasenia}">
                     <form method="post" action="j_security_check" name="frmLogin" >
-                        <h:outputLabel value="Código de usuario:" />
+                        <h:outputLabel value="#{labels.login_usuario}:" />
                         <input type="text" name="j_username" size="25" autofocus="autofocus"/>
 
-                        <h:outputLabel value="Contraseña:" />
+                        <h:outputLabel value="#{labels.login_password}:" />
                         <input type="password" size="15" name="j_password"/>
 
                         <ice:outputText value="#{param.code!=null?labels.error_usuario_invalido_login:''}" />
                         <ace:messages id="loginMsg" />
-                        
-                        <input type="submit" value="Ingresar" class="boton principal ingresar"/>   
+
+                        <input type="submit" value="Ingresar" class="boton principal botonLogin"/>   
                     </form>
                 </ice:panelGroup>
 
                 <o:form>
                     <ice:panelGroup styleClass="recordatorioContrasenia" 
-                                    rendered="#{not seguridadMB.conControlDeAcceso}">
+                                    rendered="#{not seguridadMB.conControlDeAcceso and 
+                                                not LoginMB.authLdapEnable and
+                                                not LoginMB.ingresarMailParaResetearContrasenia}">
+                        <h:outputText value="#{labels.olvidaste_la_contrasenia} " />
                         <ace:linkButton value="#{labels.recordar_contrasenia}" 
-                                        action="#{LoginMB.recordarContrasenia}" />
+                                        action="#{LoginMB.recordarContrasenia}" 
+                                        rendered="#{not LoginMB.authLdapEnable}"/>
                     </ice:panelGroup>
                     <ice:panelGrid columns="1" rendered="#{LoginMB.ingresarMailParaResetearContrasenia}" >
                         <h:outputLabel value="#{labels.recordar_contrasenia_info}" />

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class FuenteFinanciamientoValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FuenteFinanciamientoValidacion.class.getName());
 
     public static boolean validar(FuenteFinanciamiento fuente) throws BusinessException {
         BusinessException be = new BusinessException();

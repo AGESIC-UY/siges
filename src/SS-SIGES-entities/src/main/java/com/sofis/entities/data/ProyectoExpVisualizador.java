@@ -88,8 +88,13 @@ public class ProyectoExpVisualizador implements Serializable {
     private Boolean activo;
 
     @Column(name = "proy_fecha_act")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date proyFechaAct;
+	
+	@Column(name = "proy_fecha_act_pub")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date proyFechaActPub;
+	
 
     /**
      * 14-12-2016
@@ -207,4 +212,12 @@ public class ProyectoExpVisualizador implements Serializable {
 	}
 	return null;
     }
+
+	public Date getProyFechaActPub() {
+		return proyFechaActPub;
+	}
+
+	public void setProyFechaActPub(Date proyFechaActPub) {
+		this.proyFechaActPub = proyFechaActPub;
+	}
 }

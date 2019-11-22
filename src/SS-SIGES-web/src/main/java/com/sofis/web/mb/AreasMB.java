@@ -37,8 +37,8 @@ import javax.inject.Inject;
 public class AreasMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(AreasMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String AREAS_NOMBRE = "areaNombre";
     private static final String USU_NOMBRE = "nombreApellido";
@@ -70,14 +70,6 @@ public class AreasMB implements Serializable {
     private SofisCombo listaDirectorPopupCombo;
 
     public AreasMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        areaEnEdicion = new Areas();
-        listAreas = new ArrayList<>();
-        listDirector = new ArrayList<>();
-        listaAreasCombo = new SofisCombo();
-        listaDirectorCombo = new SofisCombo();
-        listaDirectorPopupCombo = new SofisCombo();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -90,6 +82,21 @@ public class AreasMB implements Serializable {
 
     @PostConstruct
     public void init() {
+      
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */
+        
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<Areas>();
+        areaEnEdicion = new Areas();
+        listAreas = new ArrayList<Areas>();
+        listDirector = new ArrayList<SsUsuario>();
+        listaAreasCombo = new SofisCombo();
+        listaDirectorCombo = new SofisCombo();
+        listaDirectorPopupCombo = new SofisCombo();        
+        
         inicioMB.cargarOrganismoSeleccionado();
         //listDirector = ssUsuarioDelegate.obtenerTodosPorOrganismo(inicioMB.getOrganismo().getOrgPk());
         listDirector = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismo().getOrgPk());
@@ -107,9 +114,20 @@ public class AreasMB implements Serializable {
             areasDelegate.guardarArea(area);
             buscar();
             JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, ex.getErrores());
+
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+            }            
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
     }
 
@@ -262,7 +280,17 @@ public class AreasMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                 
+                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -277,7 +305,7 @@ public class AreasMB implements Serializable {
     public String buscar() {
         filtroDirector = (SsUsuario) listaDirectorCombo.getSelectedObject();
 
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put("nombre", filtroNombre);
         mapFiltro.put("director", filtroDirector);
         mapFiltro.put("activo", true);
@@ -292,7 +320,17 @@ public class AreasMB implements Serializable {
             areaEnEdicion = areasDelegate.obtenerAreaPorPk(aPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+
+                //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+                for(String iterStr : ex.getErrores()){
+                    JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+                }                 
+                
         }
 
         //listDirector = ssUsuarioDelegate.obtenerTodosPorOrganismo(org.getOrgPk());
@@ -322,7 +360,16 @@ public class AreasMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }
         }
         aplicacionMB.cargarAreasPorOrganismo(inicioMB.getOrganismo().getOrgPk());
         return null;

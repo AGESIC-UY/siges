@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class PresupuestoValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(PresupuestoValidacion.class.getName());
 
     public static boolean validar(Presupuesto pre) throws BusinessException {
         logger.finest("Validar Presupuesto.");

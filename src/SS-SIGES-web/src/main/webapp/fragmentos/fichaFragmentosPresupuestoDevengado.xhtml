@@ -18,7 +18,7 @@
                     style="width: 600px;">
         <f:facet name="header">
             <ice:panelGroup styleClass="cabezalPopup">
-                <ice:outputText value="#{labels.adquisicion_titulo}"/>
+                <ice:outputText value="#{labels.devengado_titulo}"/>
                 <ice:commandButton styleClass="botonCerrar" 
                                    action="#{fichaMB.cancelarAdqDevPopup()}"/>
             </ice:panelGroup>
@@ -51,7 +51,7 @@
         </f:facet>
     </ice:panelPopup>
 
-    <ice:panelGroup styleClass="margen-sup">
+    <ice:panelGroup styleClass="margen-sup" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}">
         <ice:panelGroup styleClass="controles" rendered="#{fichaMB.listAdqDev != null}">
             <ice:outputText value="#{labels.adquisicion_devengado_titulo}" styleClass="subtitulo"/>
 
@@ -71,9 +71,10 @@
                                  title="#{labels.adquisicion_devengado_editar}"
                                  rendered="#{fichaMB.fieldRendered('editarDevengado') and not fichaMB.editDev and (fichaMB.listAdqDev != null and fichaMB.listAdqDev.size()>0)}"
                                  action="#{fichaMB.editarDevengado()}" />
-                
+
                 <ace:linkButton value="#{labels.adquisicion_devengado_cancelar}" 
                                 action="#{fichaMB.editarDevengado()}"
+                                immediate="true"
                                 rendered="#{fichaMB.fieldRendered('cancelarDevengado') and fichaMB.editDev and (fichaMB.listAdqDev != null and fichaMB.listAdqDev.size()>0)}"
                                 styleClass="" />
 
@@ -87,8 +88,13 @@
                                  styleClass="botonAgregar iconoTabla" 
                                  title="#{labels.adquisicion_devengado_agregar}"
                                  rendered="#{fichaMB.fieldRendered('agregarDevengado')}"
-                                 action="#{fichaMB.agregarAdqDevPopup()}" />
+                                 action="#{fichaMB.agregarAdqDevPopup()}" />                
             </ice:panelGroup>
+        </ice:panelGroup>
+        
+        <!-- Se agrega un panel con un render para poder activar los mensajes solo para el devengado-->
+        <ice:panelGroup rendered="#{fichaMB.devengadoMsgs}">
+                <ace:messages id="devengadoMsg"/>
         </ice:panelGroup>
 
         <ice:panelSeries value="#{fichaMB.listAdqDev}" 
@@ -157,7 +163,7 @@
                         </ace:confirmationDialog>
                     </div>
                 </ice:panelGroup>
-                
+
                 <ice:panelGroup rendered="#{adq.devengadoList == null or adq.devengadoList.size() le 0}">
                     <ice:outputText value="#{labels.adquisicion_devengado_vacio}" />
                 </ice:panelGroup>

@@ -2,7 +2,6 @@ package com.sofis.business.timer;
 
 import com.sofis.business.ejbs.NotificacionEnvioBean;
 import com.sofis.business.properties.ConfigApp;
-import com.sofis.entities.constantes.ConstanteApp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,7 +25,7 @@ import javax.inject.Named;
 @LocalBean
 public class TimerSchedulerBean implements ITimerScheduler {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TimerSchedulerBean.class.getName());
     /**
      * Injección del TimerService
      */

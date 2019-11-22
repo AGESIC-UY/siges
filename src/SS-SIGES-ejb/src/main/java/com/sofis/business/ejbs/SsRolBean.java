@@ -33,7 +33,7 @@ public class SsRolBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(SsRolBean.class.getName());
 
     @Inject
     private DatosUsuario du;

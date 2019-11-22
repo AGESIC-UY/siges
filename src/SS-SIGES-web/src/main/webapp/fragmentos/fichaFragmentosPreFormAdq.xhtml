@@ -12,50 +12,155 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ice:panelGroup id="presupuestoAdqForm" rendered="#{fichaMB.formPreRendered == 2}">
-        <ice:outputText value="#{labels.adquisicion_titulo}" styleClass="subtitulo"/>
-        <ice:panelGrid styleClass="formulario" columns="4">
-            <ice:outputLabel value="#{labels.adquisicion_nombre}"/>
-            <ace:textEntry value="#{fichaMB.adquisicion.adqNombre}"
-                           disabled="#{fichaMB.fieldDisabled('preAdqNombre')}"/>
 
-            <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
-            <ace:simpleSelectOneMenu id="comboProveedorAdq"  disabled="#{fichaMB.fieldDisabled('preAdqProveedor')}"
-                                     value="#{fichaMB.listaOrganizacionCombo.selected}">
-                <f:selectItems value="#{fichaMB.listaOrganizacionCombo.items}"/>
-            </ace:simpleSelectOneMenu>
+    <ice:panelPopup id="popupPresupuestoAdqForm"
+                    visible="#{fichaMB.formPreRendered == 2}"
+                    rendered="#{fichaMB.formPreRendered == 2}"
+                    draggable="true" 
+                    positionOnLoadOnly="true"
+                    modal="true">
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{fichaMB.adquisicion ne null and fichaMB.adquisicion.adqPk ne null ? labels.editarAdquisicion : labels.agregarAdquisicion}"/>
+                <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                   action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+            </ice:panelGroup>
+        </f:facet>
+        <f:facet name="body">
+            <ice:panelGroup id="presupuestoAdqForm" rendered="#{fichaMB.formPreRendered == 2}">
+                <ice:panelGrid styleClass="formulario" columns="2">
+                    <ice:outputLabel value="#{labels.adquisicion_nombre}*"/>
+                    <ace:textEntry value="#{fichaMB.adquisicion.adqNombre}"
+                                   disabled="#{fichaMB.fieldDisabled('preAdqNombre')}"/>
 
-            <ice:outputLabel value="#{labels.adquisicion_fuente}"/>
-            <ace:simpleSelectOneMenu id="comboFuenteAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
-                                     value="#{fichaMB.listaFuentesCombo.selected}">
-                <f:selectItems value="#{fichaMB.listaFuentesCombo.items}"/>
-            </ace:simpleSelectOneMenu>
+                    <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
+                    <ace:simpleSelectOneMenu id="comboProveedorAdq"  disabled="#{fichaMB.fieldDisabled('preAdqProveedor')}"
+                                             value="#{fichaMB.listaProveedoresCombo.selected}">
+                        <f:selectItems value="#{fichaMB.listaProveedoresCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
 
-            <ice:outputLabel value="#{labels.moneda}"/>
-            <ace:simpleSelectOneMenu id="comboMonedaAdq"  disabled="#{fichaMB.fieldDisabled('preAdqMoneda')}"
-                                     value="#{fichaMB.listaMonedaCombo.selected}">
-                <f:selectItems value="#{fichaMB.listaMonedaCombo.items}"/>
-            </ace:simpleSelectOneMenu>
-            
-            <ice:outputLabel value="#{labels.adquisicion_proc_compra}"/>
-            <ace:textEntry value="#{fichaMB.adquisicion.adqProcCompra}"
-                           disabled="#{fichaMB.fieldDisabled('preAdqProcCompra')}"/>
-            
-            <ice:outputLabel value="#{labels.adquisicion_proc_compra_grp}"/>
-            <ace:textEntry value="#{fichaMB.adquisicion.adqProcCompraGrp}"
-                           disabled="#{fichaMB.fieldDisabled('preAdqProcCompraGRP')}"/>
-        </ice:panelGrid>
+                    <ice:outputLabel value="#{labels.adquisicion_fuente}*"/>
+                    <ace:simpleSelectOneMenu id="comboFuenteAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                                             value="#{fichaMB.listaFuentesCombo.selected}"
+                                             valueChangeListener="#{fichaMB.cambioFuente}">
+                        <f:selectItems value="#{fichaMB.listaFuentesCombo.items}"/>
+                        <ace:ajax render="comboCausalCompraLabel comboCausalCompraCombo" />
+                    </ace:simpleSelectOneMenu>
 
-        <ice:panelGroup styleClass="panelBotones">
-            <ace:messages id="formAdqMsg"/>
-            <ace:pushButton  value="#{fichaMB.adquisicion ne null and fichaMB.adquisicion.adqPk ne null ? labels.editarAdquisicion : labels.agregarAdquisicion}" 
-                             styleClass="boton principal #{fichaMB.adquisicion ne null and fichaMB.adquisicion.adqPk ne null ? 'editar' : 'agregar'}" 
-                             action="#{fichaMB.agregarAdquisicionAction()}" />
-            <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
-                              action="#{fichaMB.limpiarAdquisicion()}"/>
-            <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                             action="#{fichaMB.cerrarFormPreCollapsable()}"/>
-        </ice:panelGroup>
-    </ice:panelGroup>
+                    <ice:outputLabel value="#{labels.moneda}*" />
+                    <ace:simpleSelectOneMenu id="comboMonedaAdq"  disabled="#{fichaMB.fieldDisabled('preAdqMoneda')}"
+                                             value="#{fichaMB.listaMonedaCombo.selected}">
+                        <f:selectItems value="#{fichaMB.listaMonedaCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
 
+                    <ice:outputLabel value="#{labels.procedimientoCompra}"/>
+                    <ace:simpleSelectOneMenu id="comboProcedimientoCompraAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                                             value="#{fichaMB.listaProcedimientoCompraCombo.selected}" 
+                                             valueChangeListener="#{fichaMB.cambioProcedimientoCompra}">
+                        <f:selectItems value="#{fichaMB.listaProcedimientoCompraCombo.items}"/>
+                        <ace:ajax render="comboCausalCompraLabel comboCausalCompraCombo" />
+                    </ace:simpleSelectOneMenu>
+
+                    <h:panelGroup id="comboCausalCompraLabel">
+                        <ice:outputLabel value="#{labels.causalCompra}" rendered="#{fichaMB.fieldRendered('preAdqCausal')}"/>
+                    </h:panelGroup>
+                    <h:panelGroup id="comboCausalCompraCombo">
+                        <ace:simpleSelectOneMenu value="#{fichaMB.listaCausalCompraCombo.selected}" 
+                                                 disabled="#{fichaMB.fieldDisabled('preAdqCausal')}"
+                                                 rendered="#{fichaMB.fieldRendered('preAdqCausal')}">
+                            <f:selectItems value="#{fichaMB.listaCausalCompraCombo.items}"/>
+                        </ace:simpleSelectOneMenu>
+                    </h:panelGroup>
+
+                    <ice:outputLabel value="#{labels.adquisicion_identificador_grp}"/>
+                    <ace:simpleSelectOneMenu value="#{fichaMB.listaIdentificadorGrpErpCombo.selected}" 
+                                             disabled="#{fichaMB.fieldDisabled('preAdqIdGrpErp')}"
+                                             rendered="#{fichaMB.fieldRendered('preAdqIdGrpErp')}">
+                        <f:selectItems value="#{fichaMB.listaIdentificadorGrpErpCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.adquisicion_componente_producto}"/>
+                    <ace:simpleSelectOneMenu id="comboComponenteProductoAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                                             value="#{fichaMB.listaComponenteProductoCombo.selected}" immediate="true">
+                        <f:selectItems value="#{fichaMB.listaComponenteProductoCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.adquisicion_compartida}"/>
+                    <ace:checkboxButton value="#{fichaMB.adquisicion.adqCompartida}"
+                                        disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                                        valueChangeListener="#{fichaMB.adquisicionCompartidaValueChange}">
+                        <ace:ajax execute="@this" render="comboCompartidaUsuario"/>
+                    </ace:checkboxButton>
+
+
+                    <ice:outputLabel value="#{labels.adquisicion_compartida_usuario}"/>
+                    <ace:simpleSelectOneMenu id="comboCompartidaUsuario" disabled="#{fichaMB.fieldDisabled('preAdqFuente') or !fichaMB.adquisicion.adqCompartida}"
+                                             value="#{fichaMB.ssUsuarioCompartidaId}" 
+                                             immediate="true"
+                                             rendered="true">
+                        <f:selectItems value="#{fichaMB.listaUsuariosAdqCompartidaCombo}"/>
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.tipoRegistroAdquisicion}*"/>
+                    <ace:simpleSelectOneMenu id="comboTipoRegistroCompra" 
+                                             value="#{fichaMB.listaTipoRegistroCompraCombo.selected}" 
+                                             immediate="true"
+                                             rendered="true">
+                        <f:selectItems value="#{fichaMB.listaTipoRegistroCompraCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.arrastreAdquisicion}"/>
+                    <ace:checkboxButton id="checkboxAdqArrastre"
+                                        value="#{fichaMB.adquisicion.adqArrastre}"
+                                        valueChangeListener="#{fichaMB.adquisicionArrastreValueChange}">
+                        <ace:ajax execute="@this" render="@this"/>
+                    </ace:checkboxButton>
+
+                    <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}"/>
+                    <ice:panelGroup styleClass="col-sm-9">
+                        <ace:dateTimeEntry value="#{fichaMB.adquisicion.adqFechaEstimadaInicioCompra}"
+                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
+                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                    </ice:panelGroup>
+
+                    <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}"/>
+                    <ice:panelGroup styleClass="col-sm-9">
+                        <ace:dateTimeEntry value="#{fichaMB.adquisicion.adqFechaEsperadaInicioEjecucion}"
+                                           pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
+                                           timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
+                    </ice:panelGroup>
+
+                    <ice:outputLabel value="#{labels.tipoAdquisicion.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
+                    <ace:simpleSelectOneMenu id="comboTipoAdquisicion" 
+                                             value="#{fichaMB.listaTipoAdquisicionCombo.selected}" 
+                                             rendered="true">
+                        <f:selectItems value="#{fichaMB.listaTipoAdquisicionCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.adquisicionIdAdquisicion.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
+                    <ace:textEntry maxlength="#{fichaMB.largoMaximoIdAdquisicion}" 
+                                   value="#{fichaMB.adquisicion.adqIdAdquisicion}"
+                                   converter="IdAdquisicionFormatConverter"
+                                   disabled="#{fichaMB.fieldDisabled('preAdqProcCompraGRP')}"/>            
+
+                    <ice:outputLabel value="#{labels.centroCosto.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
+                    <ace:simpleSelectOneMenu id="comboCentroCosto" 
+                                             value="#{fichaMB.listaCentroCostoCombo.selected}" 
+                                             rendered="true">
+                        <f:selectItems value="#{fichaMB.listaCentroCostoCombo.items}"/>
+                    </ace:simpleSelectOneMenu>
+
+                </ice:panelGrid>
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages id="formAdqMsg"/>
+                    <ace:pushButton  id="btnGuardarAdq" value="#{labels.guardar}" 
+                                     styleClass="boton principal guardar" 
+                                     action="#{fichaMB.agregarAdquisicionAction()}" />
+                    <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                     action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </f:facet>
+    </ice:panelPopup>
 </ui:composition>

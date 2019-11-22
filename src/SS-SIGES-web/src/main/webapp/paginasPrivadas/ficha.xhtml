@@ -14,23 +14,24 @@
     <ui:define name="content">
         
         <!-- Neceesario la inclusion aqui para el reporte de mis tareas.-->
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.min.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.min.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery-ui.min.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
 
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.livequery.min.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.timers.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/platform.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/date.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/i18nJs.js"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/dateField/jquery.dateField.js"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.livequery.min.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/jquery.timers.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/platform.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/date.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/i18nJs.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/dateField/jquery.dateField.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
 	
-        <script type="text/javascript" src="../robicch-jQueryGantt/libs/JST/jquery.JST.js?v=4_12"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/ganttUtilities.js?v=4_12"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/ganttTask.js?v=4_12"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/ganttDrawer.js?v=4_12"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/ganttGridEditor.js?v=4_12"></script>
-        <script type="text/javascript" src="../robicch-jQueryGantt/ganttMaster.js?v=4_12"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/libs/JST/jquery.JST.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/ganttUtilities.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/ganttTask.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/ganttDrawer.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/ganttGridEditor.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script type="text/javascript" src="../robicch-jQueryGantt/ganttMaster.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
         <ui:include src="./../fragmentos/fichaFragmento.xhtml" />
+        
     </ui:define>
 
     <ui:define name="popups">
@@ -40,7 +41,7 @@
         <ui:include src="./../fragmentos/fichaInteresadosPopupFragmento.xhtml" />
         <ui:include src="./../fragmentos/fichaMetodologiaPopupFragmento.xhtml" />
         <ui:include src="./../fragmentos/fichaRiesgosPopupFragmentos.xhtml" />
-        <ui:include src="./../fragmentos/fichaDocumentosPopupFragmentos.xhtml" />
+        <!--<ui:include src="./../fragmentos/fichaDocumentosPopupFragmentos.xhtml" />-->
         <ui:include src="./../fragmentos/fichaSitActHistoricoPopupFragmentos.xhtml" />
         <ui:include src="./../fragmentos/fichaReplanificacionPopup.xhtml" />
         <ui:include src="./../fragmentos/fichaNotificacionPopup.xhtml" />
@@ -49,8 +50,7 @@
         <ui:include src="./../fragmentos/fichaPlantillaCroPopup.xhtml" />
         <ui:include src="./../fragmentos/fichaFragmentosParticipantesGenerar.xhtml" />
         <ui:include src="./../fragmentos/fichaOtrosDatosPopupFragmento.xhtml" />
-        <ui:include src="./../fragmentos/fichaMapaUbicacionPopupFragmento.xhtml" />
-	<ui:include src="./../fragmentos/fichaDocumentoHistoricoPopupFragmentos.xhtml" />
+	<!--<ui:include src="./../fragmentos/fichaDocumentoHistoricoPopupFragmentos.xhtml" />-->
 	
     </ui:define>
 </ui:composition>

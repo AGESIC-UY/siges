@@ -1,3 +1,9 @@
+-- MySQL dump 10.13  Distrib 5.6.45, for Linux (x86_64)
+--
+-- Host: localhost    Database: siges
+-- ------------------------------------------------------
+-- Server version	5.6.45
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -8,6 +14,81 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `DATABASECHANGELOG`
+--
+
+DROP TABLE IF EXISTS `DATABASECHANGELOG`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DATABASECHANGELOG` (
+  `ID` varchar(255) NOT NULL,
+  `AUTHOR` varchar(255) NOT NULL,
+  `FILENAME` varchar(255) NOT NULL,
+  `DATEEXECUTED` datetime NOT NULL,
+  `ORDEREXECUTED` int(11) NOT NULL,
+  `EXECTYPE` varchar(10) NOT NULL,
+  `MD5SUM` varchar(35) DEFAULT NULL,
+  `DESCRIPTION` varchar(255) DEFAULT NULL,
+  `COMMENTS` varchar(255) DEFAULT NULL,
+  `TAG` varchar(255) DEFAULT NULL,
+  `LIQUIBASE` varchar(20) DEFAULT NULL,
+  `CONTEXTS` varchar(255) DEFAULT NULL,
+  `LABELS` varchar(255) DEFAULT NULL,
+  `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `DATABASECHANGELOG`
+--
+
+LOCK TABLES `DATABASECHANGELOG` WRITE;
+/*!40000 ALTER TABLE `DATABASECHANGELOG` DISABLE KEYS */;
+INSERT INTO `DATABASECHANGELOG` VALUES ('1535738429301-2','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:32',2,'EXECUTED','7:d886d5ae5de4e9f89a9ae1a70133fda3','addColumn tableName=procedimiento_compra','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-3','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:32',3,'EXECUTED','7:7e50b9356284560fbdde9251a02999af','addColumn tableName=plantilla_entregables','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-4','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:32',4,'EXECUTED','7:8c12ca2a7732ac96137dc03714a0d6f8','addColumn tableName=plantilla_entregables','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-5','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:32',5,'EXECUTED','7:e581b9f979a87020d8cc7c07d5b1e282','addColumn tableName=documentos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-6','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:33',6,'EXECUTED','7:a16bf39f67e717894fb126070bbaf3cd','addColumn tableName=documentos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-7','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:33',7,'EXECUTED','7:c0102e6b85d8ce715b21657966574a89','addColumn tableName=documentos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-8','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:33',8,'EXECUTED','7:82f367ca18eeaf2b909758656001e676','addColumn tableName=prog_indices','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-9','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:33',9,'EXECUTED','7:3d2adcd81f2f529bd28e9009a2c3eba2','addColumn tableName=proy_indices','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-10','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:33',10,'EXECUTED','7:c7067c4984276ca95274391dc8cb5826','addColumn tableName=programas','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-11','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',11,'EXECUTED','7:b00c1c4927bceadcc9a3f3767ec271aa','addColumn tableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-12','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',12,'EXECUTED','7:bf1eaf26927752775b74936637142d8d','addUniqueConstraint constraintName=usu_ldap_user_UNIQUE, tableName=ss_usuario','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-13','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',13,'EXECUTED','7:da7325b17945c27069d52deb8676571d','createIndex indexName=docs_docfile_fk_idx, tableName=documentos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-14','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',14,'EXECUTED','7:80e21b3b9d869d572c5a6db353dd72e8','createIndex indexName=enthist_replan_fk_idx, tableName=ent_hist_linea_base','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-15','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',15,'EXECUTED','7:551543684a1eb4fd1c43ef149e084caf','createIndex indexName=eta_org_fk_cod_idx, tableName=etapa','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-16','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:34',16,'EXECUTED','7:1cd52696c9c0fbb761d9c751bc88a8b7','createIndex indexName=notificacion_envio_proyectos_FK, tableName=notificacion_envio','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-17','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',17,'EXECUTED','7:a44b99b852d546afc455a6e4b9abf793','createIndex indexName=notificacion_not_org_fk_IDX, tableName=notificacion','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-18','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',18,'EXECUTED','7:a930d8a59ef6798551a16a376198de1c','createIndex indexName=plantilla_cronograma_activo_IDX, tableName=plantilla_cronograma','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-19','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',19,'EXECUTED','7:537c6e5ae9ba6309d2415595795b2707','createIndex indexName=plantilla_cronograma_organismos_FK, tableName=plantilla_cronograma','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-20','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',20,'EXECUTED','7:20c9f0ef30cfe236cdbd79c9f6aa984a','createIndex indexName=procedimiento_compra_proc_comp_habilitado_IDX, tableName=procedimiento_compra','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-21','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',21,'EXECUTED','7:ffd6aa284373dea19af18c4c92a7976b','createIndex indexName=prog_indices_pre_moneda_FK, tableName=prog_indices_pre','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-22','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',22,'EXECUTED','7:7919403b4f674c644fa712f010d6875d','createIndex indexName=prog_indices_pre_prog_indices_FK, tableName=prog_indices_pre','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-23','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',23,'EXECUTED','7:4753440fd2d9169b6ca7170a8172d395','createIndex indexName=proy_indices_pre_moneda_FK, tableName=proy_indices_pre','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-24','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',24,'EXECUTED','7:769dec79866a11837df120025265452a','createIndex indexName=proy_indices_pre_proy_indices_FK, tableName=proy_indices_pre','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-25','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',25,'EXECUTED','7:1f2d93666fcdb9afb8c5d24b4113ab2b','createIndex indexName=proy_sitact_historico_proy_sitact_usu_fk_IDX, tableName=proy_sitact_historico','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-26','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',26,'EXECUTED','7:cb0211709c5dfccdd2c71898b17039cf','createIndex indexName=ss_usuarios_datos_ss_usu_dat_area_fk_IDX, tableName=ss_usuarios_datos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-27','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',27,'EXECUTED','7:5f7323f8f2d4b8d88450e86b16dba811','createIndex indexName=ss_usuarios_datos_ss_usu_dat_usu_fk_IDX, tableName=ss_usuarios_datos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-28','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',28,'EXECUTED','7:7773b8c63b0f2f924a999e60aebc9d10','createIndex indexName=tipo_documento_instancia_estados_FK, tableName=tipo_documento_instancia','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-29','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',29,'EXECUTED','7:44e1eaf824e37d0d52fa6e658ac4c4c2','createIndex indexName=tipo_documento_instancia_programas_FK, tableName=tipo_documento_instancia','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-30','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',30,'EXECUTED','7:a0b2df1718ddcd2a0dc9284369951290','createIndex indexName=tipo_documento_instancia_proyectos_FK, tableName=tipo_documento_instancia','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-31','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:35',31,'EXECUTED','7:16389220e003dd5dee3aa46a3150bbf9','addForeignKeyConstraint baseTableName=componente_producto, constraintName=componente_producto_organismos_FK, referencedTableName=organismos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-32','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:36',32,'EXECUTED','7:468915315e75ba6f5569ffe1f2fbdeed','addForeignKeyConstraint baseTableName=documentos, constraintName=docs_docfile_fk, referencedTableName=doc_file','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-33','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:37',33,'EXECUTED','7:1f8ab8b4abd1f588e7e15d6df549f1ee','addForeignKeyConstraint baseTableName=ent_hist_linea_base, constraintName=enthist_replan_fk, referencedTableName=proy_replanificacion','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-34','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:37',34,'EXECUTED','7:86e54501763bcaa9c6d93d331b4ef627','addForeignKeyConstraint baseTableName=proyectos, constraintName=fk_PROYECTOS_USUARIOS5, referencedTableName=ss_usuario','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-36','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:37',36,'EXECUTED','7:01aedac2a7322a5d202461cb52798230','addForeignKeyConstraint baseTableName=notificacion_envio, constraintName=notificacion_envio_proyectos_FK, referencedTableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-37','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:37',37,'EXECUTED','7:3c6cce04fdeb53009b00164ecf641393','addForeignKeyConstraint baseTableName=notificacion, constraintName=notificacion_organismos_FK, referencedTableName=organismos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-38','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',38,'EXECUTED','7:37ae54ffa34f36d91f182e31796009e8','addForeignKeyConstraint baseTableName=personas, constraintName=personas_roles_interesados_FK, referencedTableName=roles_interesados','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-39','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',39,'EXECUTED','7:ac81db0fc094b1885fa86bb16c6be870','addForeignKeyConstraint baseTableName=plantilla_cronograma, constraintName=plantilla_cronograma_organismos_FK, referencedTableName=organismos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-40','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',40,'EXECUTED','7:3bca11e0003a4b47d9e3abe7d7f16903','addForeignKeyConstraint baseTableName=procedimiento_compra, constraintName=procedimiento_compra_organismos_FK, referencedTableName=organismos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-41','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',41,'EXECUTED','7:3071220ea9fae5d303bdb212fa49afb8','addForeignKeyConstraint baseTableName=prog_indices_pre, constraintName=prog_indices_pre_moneda_FK, referencedTableName=moneda','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-42','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',42,'EXECUTED','7:bd8d4bccc6fad880b8bc6d43a5e43c1b','addForeignKeyConstraint baseTableName=prog_indices_pre, constraintName=prog_indices_pre_prog_indices_FK, referencedTableName=prog_indices','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-43','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:38',43,'EXECUTED','7:64294bb9ad30ca51396f93f6abdf44b4','addForeignKeyConstraint baseTableName=proy_indices_pre, constraintName=proy_indices_pre_moneda_FK, referencedTableName=moneda','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-44','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:39',44,'EXECUTED','7:bfc182375efc98e0b72c0369ee70dd89','addForeignKeyConstraint baseTableName=proy_sitact_historico, constraintName=proy_sitact_historico_ss_usuario_FK, referencedTableName=ss_usuario','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-45','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:39',45,'EXECUTED','7:20fac8a2bce4837eed73fc685631eb81','addForeignKeyConstraint baseTableName=riesgos, constraintName=riesgos_proyectos_FK, referencedTableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-46','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:39',46,'EXECUTED','7:6365f0e8e1664a9a7b5e39872b2ae02f','addForeignKeyConstraint baseTableName=ss_configuraciones, constraintName=ss_configuraciones_organismos_FK, referencedTableName=organismos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-47','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:39',47,'EXECUTED','7:48a2b22d23b536555d8659fcc8bce6b3','addForeignKeyConstraint baseTableName=ss_usuarios_datos, constraintName=ss_usuarios_datos_areas_FK, referencedTableName=areas','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-48','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:39',48,'EXECUTED','7:30d57f61cebab9aad33b1b1ccd374ebb','addForeignKeyConstraint baseTableName=ss_usuarios_datos, constraintName=ss_usuarios_datos_ss_usuario_FK, referencedTableName=ss_usuario','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-49','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:40',49,'EXECUTED','7:0b934e89028b85470b462680e8291acf','addForeignKeyConstraint baseTableName=tipo_documento_instancia, constraintName=tipo_documento_instancia_estados_FK, referencedTableName=estados','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-50','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:41',50,'EXECUTED','7:0475c768ae96fe069647caeac64f6315','addForeignKeyConstraint baseTableName=tipo_documento_instancia, constraintName=tipo_documento_instancia_programas_FK, referencedTableName=programas','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-51','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',51,'EXECUTED','7:932c3e86a8decd0b147b33b287e26a46','addForeignKeyConstraint baseTableName=tipo_documento_instancia, constraintName=tipo_documento_instancia_proyectos_FK, referencedTableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-52','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',52,'EXECUTED','7:dd0908eefd3a80bb50c79735390b9539','dropForeignKeyConstraint baseTableName=proyectos, constraintName=proy_latlng_fk','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-54','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',54,'EXECUTED','7:92270d159fabf6be5a6cd51684fd4d07','dropTable tableName=categoria_proyectos_BORRAR','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-55','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',55,'EXECUTED','7:dcb10a1b572643865dccf31d58e7e45f','dropTable tableName=proyectos_BORRAR','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-62','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',62,'EXECUTED','7:3e913ac4642ba30f7edd0e2c7aaaffc4','modifyDataType columnName=cat_proy_codigo, tableName=categoria_proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-63','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:42',63,'EXECUTED','7:f33eae76288e14ed8e146918bd0f4835','modifyDataType columnName=com_nombre, tableName=componente_producto','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-64','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:43',64,'EXECUTED','7:da6efa6017949882582fd41608ced28d','modifyDataType columnName=docs_fecha, tableName=documentos; dropNotNullConstraint columnName=docs_fecha, tableName=documentos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-65','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:43',65,'EXECUTED','7:88506581d64a8811c07971d7368eee61','dropNotNullConstraint columnName=media_tipo_fk, tableName=media_proyectos; dropDefaultValue columnName=media_tipo_fk, tableName=media_proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-66','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:43',66,'EXECUTED','7:11387a04945c6ae9d58d274f732e8e70','modifyDataType columnName=prog_activo, tableName=programas; addNotNullConstraint columnName=prog_activo, tableName=programas; addDefaultValue columnName=prog_activo, tableName=programas','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-67','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:44',67,'EXECUTED','7:7c76f3f257cf348402410516c5271f1b','modifyDataType columnName=proy_fecha_act, tableName=proyectos; dropNotNullConstraint columnName=proy_fecha_act, tableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-68','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:45',68,'EXECUTED','7:8d83a771dac618d8dd6208923d22daf6','modifyDataType columnName=proy_fecha_crea, tableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-69','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:46',69,'EXECUTED','7:8e5148c9e10b866db3848e4242f70b5e','modifyDataType columnName=proy_fecha_est_act, tableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767'),('1535738429301-70','sofis','db.changelog_siges_v5.2.18.sql','2018-09-05 18:19:47',70,'EXECUTED','7:89240595f110fd8791e8207b39eb2498','modifyDataType columnName=proy_ult_mod, tableName=proyectos','',NULL,'3.5.3',NULL,NULL,'5738581767');
+/*!40000 ALTER TABLE `DATABASECHANGELOG` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `DATABASECHANGELOGLOCK`
+--
+
+DROP TABLE IF EXISTS `DATABASECHANGELOGLOCK`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DATABASECHANGELOGLOCK` (
+  `ID` int(11) NOT NULL,
+  `LOCKED` bit(1) NOT NULL,
+  `LOCKGRANTED` datetime DEFAULT NULL,
+  `LOCKEDBY` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `DATABASECHANGELOGLOCK`
+--
+
+LOCK TABLES `DATABASECHANGELOGLOCK` WRITE;
+/*!40000 ALTER TABLE `DATABASECHANGELOGLOCK` DISABLE KEYS */;
+INSERT INTO `DATABASECHANGELOGLOCK` VALUES (1,'\0',NULL,NULL);
+/*!40000 ALTER TABLE `DATABASECHANGELOGLOCK` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `REVINFO`
+--
+
+DROP TABLE IF EXISTS `REVINFO`;
+/*!50001 DROP VIEW IF EXISTS `REVINFO`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `REVINFO` AS SELECT 
+ 1 AS `REV`,
+ 1 AS `REVTSTMP`,
+ 1 AS `version`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `adquisicion`
@@ -24,19 +105,55 @@ CREATE TABLE `adquisicion` (
   `adq_fuente_fk` int(11) DEFAULT NULL,
   `adq_moneda_fk` int(11) DEFAULT NULL,
   `adq_proc_compra` varchar(20) DEFAULT NULL,
-  `adq_proc_compra_grp` varchar(20) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `adq_componente_producto_fk` int(11) DEFAULT NULL,
+  `adq_procedimiento_compra_fk` int(11) DEFAULT NULL,
+  `adq_compartida` bit(1) NOT NULL DEFAULT b'0',
+  `adq_compartida_usuario_fk` int(11) DEFAULT NULL,
+  `adq_tipo_registro` varchar(40) DEFAULT NULL,
+  `adq_arrastre` bit(1) DEFAULT b'0',
+  `adq_fecha_estimada_inicio_compra` date DEFAULT NULL,
+  `adq_fecha_esperada_inicio_ejecucion` date DEFAULT NULL,
+  `adq_tipo_adquisicion_fk` int(11) DEFAULT NULL,
+  `adq_id_adquisicion` varchar(255) DEFAULT NULL,
+  `adq_centro_costo_fk` int(11) DEFAULT NULL,
+  `adq_causal_compra_fk` int(11) DEFAULT NULL,
+  `adq_proc_compra_bk` varchar(100) DEFAULT NULL,
+  `adq_id_grp_erp_fk` int(11) DEFAULT NULL,
   PRIMARY KEY (`adq_pk`),
   KEY `adq_pre_fk_idx` (`adq_pre_fk`),
   KEY `adq_fuente_idx` (`adq_fuente_fk`),
   KEY `adq_moneda_idx` (`adq_moneda_fk`),
   KEY `adq_prov_orga_idx` (`adq_prov_orga_fk`),
+  KEY `adq_comp_prod_fk_idx` (`adq_componente_producto_fk`),
+  KEY `adq_proc_comp_fk_idx` (`adq_procedimiento_compra_fk`),
+  KEY `adquisicion_adq_compartida_usuario_fk_IDX` (`adq_compartida_usuario_fk`),
+  KEY `fk_adquisicion_tipo_adquisicion_idx` (`adq_tipo_adquisicion_fk`),
+  KEY `fk_adquisicion_centro_costo_idx` (`adq_centro_costo_fk`),
+  KEY `fk_adquisicion_causal_idx` (`adq_causal_compra_fk`),
+  KEY `fk_adq_id_grp_erp` (`adq_id_grp_erp_fk`),
+  CONSTRAINT `adq_comp_prod_fk` FOREIGN KEY (`adq_componente_producto_fk`) REFERENCES `componente_producto` (`com_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `adq_fuente` FOREIGN KEY (`adq_fuente_fk`) REFERENCES `fuente_financiamiento` (`fue_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `adq_moneda` FOREIGN KEY (`adq_moneda_fk`) REFERENCES `moneda` (`mon_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `adq_pre_fk` FOREIGN KEY (`adq_pre_fk`) REFERENCES `presupuesto` (`pre_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `adq_prov_orga` FOREIGN KEY (`adq_prov_orga_fk`) REFERENCES `organi_int_prove` (`orga_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1656 DEFAULT CHARSET=utf8;
+  CONSTRAINT `adq_proc_comp_fk` FOREIGN KEY (`adq_procedimiento_compra_fk`) REFERENCES `procedimiento_compra` (`proc_comp_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `adq_prov_orga` FOREIGN KEY (`adq_prov_orga_fk`) REFERENCES `organi_int_prove` (`orga_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `adquisicion_ibfk_1` FOREIGN KEY (`adq_id_grp_erp_fk`) REFERENCES `identificadores_grp_erp` (`id_grp_erp_pk`),
+  CONSTRAINT `adquisicion_ss_usuario_FK` FOREIGN KEY (`adq_compartida_usuario_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_adquisicion_causal` FOREIGN KEY (`adq_causal_compra_fk`) REFERENCES `causales_compra` (`cau_com_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_adquisicion_centro_costo` FOREIGN KEY (`adq_centro_costo_fk`) REFERENCES `centros_costo` (`cen_cos_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_adquisicion_tipo_adquisicion` FOREIGN KEY (`adq_tipo_adquisicion_fk`) REFERENCES `tipos_adquisicion` (`tip_adq_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `adquisicion`
+--
+
+LOCK TABLES `adquisicion` WRITE;
+/*!40000 ALTER TABLE `adquisicion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `adquisicion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ambito`
@@ -50,9 +167,20 @@ CREATE TABLE `ambito` (
   `amb_nombre` varchar(100) NOT NULL,
   `amb_org_fk` int(11) NOT NULL,
   `version` int(11) DEFAULT '0',
-  PRIMARY KEY (`amb_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`amb_pk`),
+  KEY `FK_n5tl58dqv18cs790jbmejxom2` (`amb_org_fk`),
+  CONSTRAINT `FK_n5tl58dqv18cs790jbmejxom2` FOREIGN KEY (`amb_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ambito`
+--
+
+LOCK TABLES `ambito` WRITE;
+/*!40000 ALTER TABLE `ambito` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ambito` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `area_conocimiento`
@@ -71,8 +199,18 @@ CREATE TABLE `area_conocimiento` (
   KEY `con_padre_fk_idx` (`con_padre_fk`),
   CONSTRAINT `con_org_fk` FOREIGN KEY (`con_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `con_padre_fk` FOREIGN KEY (`con_padre_fk`) REFERENCES `area_conocimiento` (`con_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1133 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `area_conocimiento`
+--
+
+LOCK TABLES `area_conocimiento` WRITE;
+/*!40000 ALTER TABLE `area_conocimiento` DISABLE KEYS */;
+INSERT INTO `area_conocimiento` VALUES (1,'PMI - Áreas de Conocimiento',47,NULL),(3,'Alcance',47,1),(4,'Plazos',47,1),(5,'Costos',47,1),(6,'Riesgos',47,1),(7,'Calidad',47,1),(8,'Comunicaciones',47,1),(9,'Recursos Humanos',47,1),(10,'Adquisiciones',47,1),(11,'Interesados',47,1),(12,'Integración',47,1);
+/*!40000 ALTER TABLE `area_conocimiento` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `area_organi_int_prove`
@@ -96,6 +234,15 @@ CREATE TABLE `area_organi_int_prove` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `area_organi_int_prove`
+--
+
+LOCK TABLES `area_organi_int_prove` WRITE;
+/*!40000 ALTER TABLE `area_organi_int_prove` DISABLE KEYS */;
+/*!40000 ALTER TABLE `area_organi_int_prove` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `areas`
 --
 
@@ -111,15 +258,27 @@ CREATE TABLE `areas` (
   `area_director` int(11) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
   `area_activo` tinyint(4) DEFAULT '1',
-  `area_habilitada` tinyint(4) NOT NULL DEFAULT '1',
+  `area_habilitada` tinyint(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`area_pk`),
   KEY `fk_AREAS_ORGANISMOS1_idx` (`area_org_fk`),
   KEY `fk_AREAS_AREAS1_idx` (`area_padre`),
   KEY `area_activo_idx` (`area_activo`),
+  KEY `FK_j151q3d1wiqgx10w9n92hwx5j` (`area_director`),
+  CONSTRAINT `FK_j151q3d1wiqgx10w9n92hwx5j` FOREIGN KEY (`area_director`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_AREAS_AREAS1` FOREIGN KEY (`area_padre`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_AREAS_ORGANISMOS1` FOREIGN KEY (`area_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=354 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `areas`
+--
+
+LOCK TABLES `areas` WRITE;
+/*!40000 ALTER TABLE `areas` DISABLE KEYS */;
+INSERT INTO `areas` VALUES (350,45,NULL,'Dirección General','DG',NULL,0,1,1),(352,47,NULL,'Presidencia','PR',NULL,0,1,1),(353,47,NULL,'Secretaría General','SG',NULL,0,1,1);
+/*!40000 ALTER TABLE `areas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `areas_tags`
@@ -142,8 +301,49 @@ CREATE TABLE `areas_tags` (
   KEY `fk_AREAS_TAGS_AREAS_TAGS1_idx` (`areatag_padre_fk`),
   CONSTRAINT `fk_AREAS_TAGS_AREAS_TAGS1` FOREIGN KEY (`areatag_padre_fk`) REFERENCES `areas_tags` (`arastag_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_AREAS_TAGS_ORGANISMOS1` FOREIGN KEY (`areatag_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=533 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `areas_tags`
+--
+
+LOCK TABLES `areas_tags` WRITE;
+/*!40000 ALTER TABLE `areas_tags` DISABLE KEYS */;
+INSERT INTO `areas_tags` VALUES (64,47,NULL,'Innovación',NULL,'Innovación','Innovación',0),(65,47,NULL,'Ubicación Geográfica',NULL,'Ubicación Geográfica','Ubicación Geográfica',0),(66,47,NULL,'Organismo que Participa',NULL,'Organismo que Participa','Organismo que Participa',0),(67,47,NULL,'Tecnología',NULL,'Tecnología','Tecnología',0),(68,47,NULL,'Diseño',NULL,'Diseño','Diseño',0),(69,47,NULL,'PGE',NULL,'PGE','PGE',0),(70,47,NULL,'Seguridad',NULL,'Seguridad','Seguridad',0),(71,47,64,'Razón',NULL,'Razón','Razón',0),(72,47,64,'Tipo',NULL,'Tipo','Tipo',0),(73,47,64,'Originalidad',NULL,'Originalidad','Originalidad',0),(74,47,65,'Interior',NULL,'Interior','Interior',0),(75,47,65,'Montevideo.',1,'Montevideo.','Montevideo',0),(76,47,65,'Uruguay',NULL,'Uruguay','Uruguay',0),(77,47,65,'América Latina y el Caribe',NULL,'América Latina y el Caribe','América Latina y el Caribe',0),(78,47,65,'Mundial',NULL,'Mundial','Mundial',0),(79,47,66,'Administración Central.',1,'Administración Central.','Administración Central',0),(80,47,66,'Organismo Descentralizado',NULL,'Organismo Descentralizado','Organismo Descentralizado',0),(81,47,66,'Intendencia',NULL,'Intendencia','Intendencia',0),(82,47,66,'Organismo Multilateral',NULL,'Organismo Multilateral','Organismo Multilateral',0),(83,47,66,'Organización Privada',NULL,'Organización Privada','Organización Privada',0),(84,47,66,'ONG',NULL,'ONG','ONG',0),(85,47,66,'Ente Autónomo',NULL,'Ente Autónomo','Ente Autónomo',0),(86,47,66,'Poder Judicial',NULL,'Poder Judicial','Poder Judicial',0),(87,47,66,'Poder Legislativo',NULL,'Poder Legislativo','Poder Legislativo',0),(88,47,66,'Universidad',NULL,'Universidad','Universidad',0),(89,47,66,'Múltiple organismo',NULL,'Múltiple organismo','Múltiple organismo',0),(90,47,67,'Java',NULL,'Java','Java',0),(91,47,67,'Python',NULL,'Python','Python',0),(92,47,67,'C / C++',NULL,'C / C++','C / C++',0),(93,47,67,'Portales Virtuales',NULL,'Portales Virtuales','Portales Virtuales',0),(94,47,68,'Responsiva',NULL,'Responsiva','Responsiva',0),(95,47,68,'Usabilidad',NULL,'Usabilidad','Usabilidad',0),(96,47,69,'Control de Acceso',NULL,'Control de Acceso','Control de Acceso',0),(97,47,69,'Metadatos',NULL,'Metadatos','Metadatos',0),(98,47,69,'Cloud',NULL,'Cloud','Cloud',0),(99,47,69,'Publica Servicios en PGE',NULL,'Publica Servicios en PGE','Publica Servicios en PGE',0),(100,47,69,'Consume Servicios de PGE',NULL,'Consume Servicios de PGE','Consume Servicios de PGE',0),(101,47,69,'Middleware',NULL,'Middleware','Middleware',0),(102,47,69,'Publica Datos Abiertos',NULL,'Publica Datos Abiertos','Publica Datos Abiertos',0),(103,47,70,'SSL / HTTPS',NULL,'SSL / HTTPS','SSL / HTTPS',0),(104,47,70,'Firma Electrónica Avanzada',NULL,'Firma Electrónica Avanzada','Firma Electrónica Avanzada',0),(105,47,70,'Single Sign On',NULL,'Single Sign On','Single Sign On',0),(106,47,70,'Identificación Electrónica',NULL,'Identificación Electrónica','Identificación Electrónica',0),(107,47,70,'Políticas - normas',NULL,'Políticas - normas','Políticas - normas',0),(108,47,70,'Monitoreo / Incidentes',NULL,'Monitoreo / Incidentes','Monitoreo / Incidentes',0);
+/*!40000 ALTER TABLE `areas_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aud_doc_file`
+--
+
+DROP TABLE IF EXISTS `aud_doc_file`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `aud_doc_file` (
+  `docfile_pk` int(11) NOT NULL,
+  `REV` int(11) NOT NULL,
+  `REVTYPE` tinyint(3) DEFAULT NULL,
+  `docfile_nombre` varchar(255) DEFAULT NULL,
+  `docfile_path` varchar(255) DEFAULT NULL,
+  `docfile_ult_mod` datetime(6) DEFAULT NULL,
+  `docfile_ult_origen` varchar(255) DEFAULT NULL,
+  `docfile_ult_usuario` varchar(255) DEFAULT NULL,
+  `docfile_version` int(11) DEFAULT NULL,
+  `docfile_doc_fk` int(11) DEFAULT NULL,
+  PRIMARY KEY (`docfile_pk`,`REV`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_doc_file`
+--
+
+LOCK TABLES `aud_doc_file` WRITE;
+/*!40000 ALTER TABLE `aud_doc_file` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_doc_file` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_pge_configuraciones`
@@ -165,9 +365,19 @@ CREATE TABLE `aud_pge_configuraciones` (
   `cnf_ultmod_usu` varchar(255) DEFAULT NULL,
   `cnf_valor` varchar(255) DEFAULT NULL,
   `cnf_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`cnf_id`,`REV`)
+  PRIMARY KEY (`cnf_id`,`REV`),
+  KEY `FK69423495DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_pge_configuraciones`
+--
+
+LOCK TABLES `aud_pge_configuraciones` WRITE;
+/*!40000 ALTER TABLE `aud_pge_configuraciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_pge_configuraciones` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_programas`
@@ -198,6 +408,15 @@ CREATE TABLE `aud_programas` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `aud_programas`
+--
+
+LOCK TABLES `aud_programas` WRITE;
+/*!40000 ALTER TABLE `aud_programas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_programas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `aud_programas_proyectos`
 --
 
@@ -223,9 +442,19 @@ CREATE TABLE `aud_programas_proyectos` (
   `organismo` int(11) DEFAULT NULL,
   `pmoFederada` int(11) DEFAULT NULL,
   `tipoFicha` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`,`REV`)
+  PRIMARY KEY (`id`,`REV`),
+  KEY `FK36A8E0B6DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_programas_proyectos`
+--
+
+LOCK TABLES `aud_programas_proyectos` WRITE;
+/*!40000 ALTER TABLE `aud_programas_proyectos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_programas_proyectos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_ayuda`
@@ -244,9 +473,19 @@ CREATE TABLE `aud_ss_ayuda` (
   `ayu_ult_mod_origen` varchar(45) DEFAULT NULL,
   `ayu_ult_mod_usuario` varchar(45) DEFAULT NULL,
   `ayu_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ayu_id`,`REV`)
+  PRIMARY KEY (`ayu_id`,`REV`),
+  KEY `FK7E2A928ADF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_ayuda`
+--
+
+LOCK TABLES `aud_ss_ayuda` WRITE;
+/*!40000 ALTER TABLE `aud_ss_ayuda` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_ayuda` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_categoper`
@@ -265,9 +504,19 @@ CREATE TABLE `aud_ss_categoper` (
   `cat_user_code` int(11) DEFAULT NULL,
   `cat_version` int(11) DEFAULT NULL,
   `cat_vigente` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`cat_id`,`REV`)
+  PRIMARY KEY (`cat_id`,`REV`),
+  KEY `FKA2EE3756DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_categoper`
+--
+
+LOCK TABLES `aud_ss_categoper` WRITE;
+/*!40000 ALTER TABLE `aud_ss_categoper` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_categoper` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_configuraciones`
@@ -290,9 +539,19 @@ CREATE TABLE `aud_ss_configuraciones` (
   `cnf_valor` longtext,
   `cnf_version` int(11) DEFAULT NULL,
   `cnf_org_fk` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`,`REV`)
+  PRIMARY KEY (`id`,`REV`),
+  KEY `FK1E264BA5DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_configuraciones`
+--
+
+LOCK TABLES `aud_ss_configuraciones` WRITE;
+/*!40000 ALTER TABLE `aud_ss_configuraciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_configuraciones` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_departamentos`
@@ -311,9 +570,19 @@ CREATE TABLE `aud_ss_departamentos` (
   `err_ult_origen` varchar(255) DEFAULT NULL,
   `depto_ult_usuario` varchar(255) DEFAULT NULL,
   `depto_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`depto_id`,`REV`)
+  PRIMARY KEY (`depto_id`,`REV`),
+  KEY `FKCA442AFFDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_departamentos`
+--
+
+LOCK TABLES `aud_ss_departamentos` WRITE;
+/*!40000 ALTER TABLE `aud_ss_departamentos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_departamentos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_domicilios`
@@ -349,9 +618,19 @@ CREATE TABLE `aud_ss_domicilios` (
   `dom_par_id` smallint(6) DEFAULT NULL,
   `dom_tec_id` int(11) DEFAULT NULL,
   `dom_tvi_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`dom_id`,`REV`)
+  PRIMARY KEY (`dom_id`,`REV`),
+  KEY `FKC027379EDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_domicilios`
+--
+
+LOCK TABLES `aud_ss_domicilios` WRITE;
+/*!40000 ALTER TABLE `aud_ss_domicilios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_domicilios` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_errores`
@@ -370,9 +649,19 @@ CREATE TABLE `aud_ss_errores` (
   `err_ult_origen` varchar(255) DEFAULT NULL,
   `err_ult_usuario` varchar(255) DEFAULT NULL,
   `err_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`,`REV`)
+  PRIMARY KEY (`id`,`REV`),
+  KEY `FK65521EC6DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_errores`
+--
+
+LOCK TABLES `aud_ss_errores` WRITE;
+/*!40000 ALTER TABLE `aud_ss_errores` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_errores` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_localidades`
@@ -392,9 +681,19 @@ CREATE TABLE `aud_ss_localidades` (
   `loc_ult_usuario` varchar(255) DEFAULT NULL,
   `loc_version` int(11) DEFAULT NULL,
   `loc_depto_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`loc_id`,`REV`)
+  PRIMARY KEY (`loc_id`,`REV`),
+  KEY `FKBDD320E7DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_localidades`
+--
+
+LOCK TABLES `aud_ss_localidades` WRITE;
+/*!40000 ALTER TABLE `aud_ss_localidades` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_localidades` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_noticias`
@@ -418,9 +717,19 @@ CREATE TABLE `aud_ss_noticias` (
   `not_ult_mod_origen` varchar(45) DEFAULT NULL,
   `not_ult_mod_usuario` varchar(45) DEFAULT NULL,
   `not_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`not_id`,`REV`)
+  PRIMARY KEY (`not_id`,`REV`),
+  KEY `FK5037FBFEDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_noticias`
+--
+
+LOCK TABLES `aud_ss_noticias` WRITE;
+/*!40000 ALTER TABLE `aud_ss_noticias` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_noticias` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_oficina`
@@ -439,9 +748,20 @@ CREATE TABLE `aud_ss_oficina` (
   `ofi_usuario` int(11) DEFAULT NULL,
   `ofi_version` int(11) DEFAULT NULL,
   `ofi_activo` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`ofi_id`,`REV`)
+  PRIMARY KEY (`ofi_id`,`REV`),
+  KEY `FK6151DF1BDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_oficina`
+--
+
+LOCK TABLES `aud_ss_oficina` WRITE;
+/*!40000 ALTER TABLE `aud_ss_oficina` DISABLE KEYS */;
+INSERT INTO `aud_ss_oficina` VALUES (46,2,1,'2019-11-21 14:54:30','Presidencia','',1,1,1),(47,4,1,NULL,NULL,NULL,0,NULL,NULL),(47,5,1,'2019-11-22 09:31:28','Presidencia','',1,1,0),(47,7,1,NULL,NULL,NULL,0,NULL,NULL),(47,9,1,NULL,NULL,NULL,0,NULL,NULL),(47,12,1,NULL,NULL,NULL,0,NULL,NULL),(47,14,1,NULL,NULL,NULL,0,NULL,NULL);
+/*!40000 ALTER TABLE `aud_ss_oficina` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_operacion`
@@ -463,9 +783,19 @@ CREATE TABLE `aud_ss_operacion` (
   `ope_version` int(11) DEFAULT NULL,
   `ope_vigente` tinyint(1) DEFAULT NULL,
   `ope_categoria_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ope_id`,`REV`)
+  PRIMARY KEY (`ope_id`,`REV`),
+  KEY `FKA8AC7928DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_operacion`
+--
+
+LOCK TABLES `aud_ss_operacion` WRITE;
+/*!40000 ALTER TABLE `aud_ss_operacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_operacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_paises`
@@ -487,9 +817,19 @@ CREATE TABLE `aud_ss_paises` (
   `pai_ult_origen` varchar(255) DEFAULT NULL,
   `pai_ult_usuario` varchar(255) DEFAULT NULL,
   `pai_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`pai_id`,`REV`)
+  PRIMARY KEY (`pai_id`,`REV`),
+  KEY `FK5F6900B9DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_paises`
+--
+
+LOCK TABLES `aud_ss_paises` WRITE;
+/*!40000 ALTER TABLE `aud_ss_paises` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_paises` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_paridades`
@@ -508,9 +848,19 @@ CREATE TABLE `aud_ss_paridades` (
   `par_ult_mod_origen` varchar(45) DEFAULT NULL,
   `par_ult_mod_usuario` varchar(45) DEFAULT NULL,
   `par_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`par_id`,`REV`)
+  PRIMARY KEY (`par_id`,`REV`),
+  KEY `FKC73DF59DDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_paridades`
+--
+
+LOCK TABLES `aud_ss_paridades` WRITE;
+/*!40000 ALTER TABLE `aud_ss_paridades` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_paridades` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_personas`
@@ -535,9 +885,19 @@ CREATE TABLE `aud_ss_personas` (
   `per_version` int(11) DEFAULT NULL,
   `per_pais_doc` int(11) DEFAULT NULL,
   `per_tipo_doc` int(11) DEFAULT NULL,
-  PRIMARY KEY (`per_id`,`REV`)
+  PRIMARY KEY (`per_id`,`REV`),
+  KEY `FKC24C637DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_personas`
+--
+
+LOCK TABLES `aud_ss_personas` WRITE;
+/*!40000 ALTER TABLE `aud_ss_personas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_personas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_rel_rol_operacion`
@@ -557,9 +917,19 @@ CREATE TABLE `aud_ss_rel_rol_operacion` (
   `rel_rol_operacion_operacion_id` int(11) DEFAULT NULL,
   `rel_rol_operacion_rol_id` int(11) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
-  PRIMARY KEY (`rel_rol_operacion_id`,`REV`)
+  PRIMARY KEY (`rel_rol_operacion_id`,`REV`),
+  KEY `FKCE17192DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_rel_rol_operacion`
+--
+
+LOCK TABLES `aud_ss_rel_rol_operacion` WRITE;
+/*!40000 ALTER TABLE `aud_ss_rel_rol_operacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_rel_rol_operacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_rol`
@@ -581,9 +951,20 @@ CREATE TABLE `aud_ss_rol` (
   `rol_vigente` tinyint(1) DEFAULT NULL,
   `rol_tipo_usuario` tinyint(1) DEFAULT NULL,
   `rol_label` varchar(150) DEFAULT NULL,
-  PRIMARY KEY (`rol_id`,`REV`)
+  PRIMARY KEY (`rol_id`,`REV`),
+  KEY `FK533EE3DFDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_rol`
+--
+
+LOCK TABLES `aud_ss_rol` WRITE;
+/*!40000 ALTER TABLE `aud_ss_rol` DISABLE KEYS */;
+INSERT INTO `aud_ss_rol` VALUES (93,14,1,'DIR',NULL,'Director','SIGES_WEB',0,NULL,1,1,'rol_dir'),(97,7,1,'PMOF',NULL,'PMO Federada','SIGES_WEB',0,NULL,1,1,'rol_pmof'),(97,9,1,'PMOF',NULL,'PMO Federada','SIGES_WEB',0,NULL,1,1,'rol_pmof'),(98,2,1,'PMOT',NULL,'PMO Transversal','SIGES_WEB',0,NULL,1,1,'rol_pmot'),(98,4,1,'PMOT',NULL,'PMO Transversal','SIGES_WEB',0,NULL,1,1,'rol_pmot'),(98,5,1,'PMOT',NULL,'PMO Transversal','SIGES_WEB',0,NULL,1,1,'rol_pmot'),(100,12,1,'USU',NULL,'Usuario','SIGES_WEB',0,NULL,1,1,'rol_usu');
+/*!40000 ALTER TABLE `aud_ss_rol` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_telefonos`
@@ -604,9 +985,19 @@ CREATE TABLE `aud_ss_telefonos` (
   `tel_ult_usuario` varchar(45) DEFAULT NULL,
   `tel_version` int(11) DEFAULT NULL,
   `tel_tiptel_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`tel_id`,`REV`)
+  PRIMARY KEY (`tel_id`,`REV`),
+  KEY `FK73BE520FDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_telefonos`
+--
+
+LOCK TABLES `aud_ss_telefonos` WRITE;
+/*!40000 ALTER TABLE `aud_ss_telefonos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_telefonos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_tipos_documento_persona`
@@ -626,9 +1017,19 @@ CREATE TABLE `aud_ss_tipos_documento_persona` (
   `tipdocper_ult_origen` varchar(255) DEFAULT NULL,
   `tipdocper_ult_usuario` varchar(255) DEFAULT NULL,
   `tipdocper_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`tipdocper_id`,`REV`)
+  PRIMARY KEY (`tipdocper_id`,`REV`),
+  KEY `FK82B382B1DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_tipos_documento_persona`
+--
+
+LOCK TABLES `aud_ss_tipos_documento_persona` WRITE;
+/*!40000 ALTER TABLE `aud_ss_tipos_documento_persona` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_tipos_documento_persona` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_tipos_entrada_colectiva`
@@ -647,9 +1048,19 @@ CREATE TABLE `aud_ss_tipos_entrada_colectiva` (
   `tec_ult_origen` varchar(255) DEFAULT NULL,
   `tec_ult_usuario` varchar(255) DEFAULT NULL,
   `tec_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`tec_id`,`REV`)
+  PRIMARY KEY (`tec_id`,`REV`),
+  KEY `FK2ABC90A6DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_tipos_entrada_colectiva`
+--
+
+LOCK TABLES `aud_ss_tipos_entrada_colectiva` WRITE;
+/*!40000 ALTER TABLE `aud_ss_tipos_entrada_colectiva` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_tipos_entrada_colectiva` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_tipos_telefono`
@@ -669,9 +1080,19 @@ CREATE TABLE `aud_ss_tipos_telefono` (
   `tipTel_ult_origen` varchar(255) DEFAULT NULL,
   `tipTel_ult_usuario` varchar(255) DEFAULT NULL,
   `tipTel_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`tipTel_id`,`REV`)
+  PRIMARY KEY (`tipTel_id`,`REV`),
+  KEY `FK5F493B64DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_tipos_telefono`
+--
+
+LOCK TABLES `aud_ss_tipos_telefono` WRITE;
+/*!40000 ALTER TABLE `aud_ss_tipos_telefono` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_tipos_telefono` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_tipos_vialidad`
@@ -691,9 +1112,19 @@ CREATE TABLE `aud_ss_tipos_vialidad` (
   `tvi_ult_origen` varchar(255) DEFAULT NULL,
   `tvi_ult_usuario` varchar(255) DEFAULT NULL,
   `tvi_version` int(11) DEFAULT NULL,
-  PRIMARY KEY (`tvi_id`,`REV`)
+  PRIMARY KEY (`tvi_id`,`REV`),
+  KEY `FKF0430A0CDF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_tipos_vialidad`
+--
+
+LOCK TABLES `aud_ss_tipos_vialidad` WRITE;
+/*!40000 ALTER TABLE `aud_ss_tipos_vialidad` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aud_ss_tipos_vialidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_usu_ofi_roles`
@@ -711,10 +1142,22 @@ CREATE TABLE `aud_ss_usu_ofi_roles` (
   `usu_ofi_roles_oficina` int(11) DEFAULT NULL,
   `usu_ofi_roles_rol` int(11) DEFAULT NULL,
   `usu_ofi_roles_usuario` int(11) DEFAULT NULL,
+  `version` int(11) DEFAULT '0',
   `usu_ofi_roles_activo` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`usu_ofi_roles_id`,`REV`)
+  PRIMARY KEY (`usu_ofi_roles_id`,`REV`),
+  KEY `FK317B0718DF74E053` (`REV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_usu_ofi_roles`
+--
+
+LOCK TABLES `aud_ss_usu_ofi_roles` WRITE;
+/*!40000 ALTER TABLE `aud_ss_usu_ofi_roles` DISABLE KEYS */;
+INSERT INTO `aud_ss_usu_ofi_roles` VALUES (3453,2,0,'Presidencia',0,46,98,1285,0,1),(3453,3,1,'Presidencia',0,46,98,1285,0,0),(3454,4,0,'Presidencia',0,47,98,1286,0,1),(3454,5,2,NULL,NULL,NULL,NULL,NULL,0,NULL),(3455,5,0,'Presidencia',0,47,98,1286,0,1),(3455,8,1,'Presidencia',0,47,98,1286,0,0),(3455,10,1,'Presidencia',0,47,98,1286,0,1),(3456,7,0,'Presidencia',0,47,97,1287,0,1),(3457,9,0,'Presidencia',0,47,97,1288,0,1),(3458,12,0,'Presidencia',0,47,100,1289,0,1),(3459,14,0,'Presidencia',0,47,93,1290,0,1);
+/*!40000 ALTER TABLE `aud_ss_usu_ofi_roles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `aud_ss_usuario`
@@ -760,11 +1203,23 @@ CREATE TABLE `aud_ss_usuario` (
   `usu_token` varchar(100) DEFAULT NULL,
   `usu_token_act` datetime DEFAULT NULL,
   `usu_celular` varchar(255) DEFAULT NULL,
+  `usu_ldap_user` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`usu_id`,`REV`),
+  KEY `FKB58E953EDF74E053` (`REV`),
   KEY `usu_area_org_idx` (`usu_area_org`),
   KEY `usu_token_idx` (`usu_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aud_ss_usuario`
+--
+
+LOCK TABLES `aud_ss_usuario` WRITE;
+/*!40000 ALTER TABLE `aud_ss_usuario` DISABLE KEYS */;
+INSERT INTO `aud_ss_usuario` VALUES (1285,2,0,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-21 15:25:00',NULL,NULL,NULL,NULL,46,NULL,'0d6d6f72dddb9e16b95ddfd8bb3a4d3d','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'admin','2019-11-21 15:54:30',NULL,NULL,NULL,NULL,'',NULL),(1285,3,1,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-21 15:25:00',NULL,NULL,NULL,NULL,46,NULL,'0d6d6f72dddb9e16b95ddfd8bb3a4d3d','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,1,1,0,'admin','2019-11-21 15:59:29',NULL,NULL,NULL,NULL,'',NULL),(1286,4,0,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-21 16:21:12',NULL,NULL,NULL,NULL,47,NULL,'38c940333cf41a13eaa43511951a4737','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'admin','2019-11-21 16:21:12',NULL,NULL,NULL,NULL,'',NULL),(1286,5,1,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-21 16:21:12',NULL,NULL,NULL,NULL,47,NULL,'38c940333cf41a13eaa43511951a4737','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,1,1,0,'admin','2019-11-22 10:31:28',NULL,NULL,NULL,NULL,'',NULL),(1286,6,1,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-22 11:08:14',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,3,1,0,'usuario.pmot@siges.com','2019-11-22 11:08:14',NULL,NULL,NULL,NULL,'',NULL),(1286,8,1,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-22 11:08:14',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,4,1,0,'usuario.pmot@siges.com','2019-11-22 11:12:30',NULL,NULL,NULL,NULL,'',NULL),(1286,10,1,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-22 11:08:14',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOT','Usuario',NULL,NULL,NULL,'',0,NULL,5,1,0,'admin','2019-11-22 11:34:28',NULL,NULL,NULL,NULL,'',NULL),(1287,7,0,NULL,NULL,'','usuario.pmof@siges.com',0,'',NULL,'2019-11-22 11:09:29',NULL,NULL,NULL,NULL,47,NULL,'6a5f8b1a29942bf2a0625f3f5291d128','PMOF','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'usuario.pmot@siges.com','2019-11-22 11:09:29',NULL,NULL,NULL,NULL,'',NULL),(1288,9,0,NULL,NULL,'','usuario.pmof@siges.com',0,'',NULL,'2019-11-22 11:34:06',NULL,NULL,NULL,NULL,47,NULL,'f123068cdef8e0a8bf1c2f4e9152efc9','PMOF','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'admin','2019-11-22 11:34:06',NULL,NULL,NULL,NULL,'',NULL),(1288,11,1,NULL,NULL,'','usuario.pmof@siges.com',0,'',NULL,'2019-11-22 11:41:02',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOF','Usuario',NULL,NULL,NULL,'',0,NULL,2,1,0,'usuario.pmof@siges.com','2019-11-22 11:41:02',NULL,NULL,NULL,NULL,'',NULL),(1289,12,0,NULL,NULL,'','usuario@siges.com',0,'',NULL,'2019-11-22 11:43:08',NULL,NULL,NULL,NULL,47,NULL,'305d1ceb92e1dc95233a92693ecae462','Común','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'usuario.pmot@siges.com','2019-11-22 11:43:08',NULL,NULL,NULL,NULL,'',NULL),(1289,13,1,NULL,NULL,'','usuario@siges.com',0,'',NULL,'2019-11-22 11:43:43',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','Común','Usuario',NULL,NULL,NULL,'',0,NULL,2,1,0,'usuario@siges.com','2019-11-22 11:43:43',NULL,NULL,NULL,NULL,'',NULL),(1290,14,0,NULL,NULL,'','usuario.director@siges.com',0,'',NULL,'2019-11-22 11:44:35',NULL,NULL,NULL,NULL,47,NULL,'c7b442bedd4cbb0f3f748685fe851ead','Director','Usuario',NULL,NULL,NULL,'',0,NULL,0,1,0,'usuario.pmot@siges.com','2019-11-22 11:44:35',NULL,NULL,NULL,NULL,'',NULL),(1290,15,1,NULL,NULL,'','usuario.director@siges.com',0,'',NULL,'2019-11-22 11:45:18',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','Director','Usuario',NULL,NULL,NULL,'',0,NULL,2,1,0,'usuario.director@siges.com','2019-11-22 11:45:18',NULL,NULL,NULL,NULL,'',NULL);
+/*!40000 ALTER TABLE `aud_ss_usuario` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `busq_filtro`
@@ -779,9 +1234,23 @@ CREATE TABLE `busq_filtro` (
   `busq_filtro_org_fk` int(11) NOT NULL,
   `busq_filtro_xml` mediumtext NOT NULL,
   `version` int(11) DEFAULT '0',
-  PRIMARY KEY (`busq_filtro_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`busq_filtro_pk`),
+  KEY `FK_4b0pq8qh2f6u7ei11lh0atbf8` (`busq_filtro_usu_fk`),
+  KEY `FK_a726jrgroi6p90dip38n70ftp` (`busq_filtro_org_fk`),
+  CONSTRAINT `FK_4b0pq8qh2f6u7ei11lh0atbf8` FOREIGN KEY (`busq_filtro_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_a726jrgroi6p90dip38n70ftp` FOREIGN KEY (`busq_filtro_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `busq_filtro`
+--
+
+LOCK TABLES `busq_filtro` WRITE;
+/*!40000 ALTER TABLE `busq_filtro` DISABLE KEYS */;
+INSERT INTO `busq_filtro` VALUES (1,1286,47,'<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<filtroInicioTO>\n    <nivel>1</nivel>\n    <porArea>false</porArea>\n    <nombre></nombre>\n    <interesadoNombre></interesadoNombre>\n    <estados xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">2</estados>\n    <estados xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">3</estados>\n    <estados xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">4</estados>\n    <estados xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">1</estados>\n    <anioDesde>0</anioDesde>\n    <anioHasta>0</anioHasta>\n    <gradoRiesgo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">1</gradoRiesgo>\n    <gradoRiesgo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">2</gradoRiesgo>\n    <gradoRiesgo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">3</gradoRiesgo>\n    <cantidadRiesgosAltos>0</cantidadRiesgosAltos>\n    <indicadorAvance xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">1</indicadorAvance>\n    <indicadorAvance xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xs:string\">2</indicadorAvance>\n    <activo>true</activo>\n    <codigo>0</codigo>\n    <orderBy>2</orderBy>\n    <configuracion>\n        <entry>\n            <key>CALIDAD_LIMITE_AMARILLO</key>\n            <value>\n                <cnfCodigo>CALIDAD_LIMITE_AMARILLO</cnfCodigo>\n                <cnfDescripcion>Semaforo limite amarillo calidad</cnfDescripcion>\n                <cnfOrgFk>\n                    <orgPk>47</orgPk>\n                    <orgNombre>Presidencia</orgNombre>\n                    <orgDireccion>Torre Ejecutiva</orgDireccion>\n                    <orgActivo>true</orgActivo>\n                    <orgToken>visua</orgToken>\n                </cnfOrgFk>\n                <cnfUltMod>2019-11-21T16:20:43-02:00</cnfUltMod>\n                <cnfValor>70</cnfValor>\n                <cnfVersion>1</cnfVersion>\n                <id>2790</id>\n            </value>\n        </entry>\n        <entry>\n            <key>RIESGO_INDICE_LIMITE_AMARILLO</key>\n            <value>\n                <cnfCodigo>RIESGO_INDICE_LIMITE_AMARILLO</cnfCodigo>\n                <cnfDescripcion></cnfDescripcion>\n                <cnfOrgFk>\n                    <orgPk>47</orgPk>\n                    <orgNombre>Presidencia</orgNombre>\n                    <orgDireccion>Torre Ejecutiva</orgDireccion>\n                    <orgActivo>true</orgActivo>\n                    <orgToken>visua</orgToken>\n                </cnfOrgFk>\n                <cnfUltMod>2019-11-21T16:20:43-02:00</cnfUltMod>\n                <cnfValor>1.2</cnfValor>\n                <cnfVersion>1</cnfVersion>\n                <id>2767</id>\n            </value>\n        </entry>\n        <entry>\n            <key>RIESGO_INDICE_LIMITE_ROJO</key>\n            <value>\n                <cnfCodigo>RIESGO_INDICE_LIMITE_ROJO</cnfCodigo>\n                <cnfDescripcion></cnfDescripcion>\n                <cnfOrgFk>\n                    <orgPk>47</orgPk>\n                    <orgNombre>Presidencia</orgNombre>\n                    <orgDireccion>Torre Ejecutiva</orgDireccion>\n                    <orgActivo>true</orgActivo>\n                    <orgToken>visua</orgToken>\n                </cnfOrgFk>\n                <cnfUltMod>2019-11-21T16:20:43-02:00</cnfUltMod>\n                <cnfValor>4</cnfValor>\n                <cnfVersion>1</cnfVersion>\n                <id>2768</id>\n            </value>\n        </entry>\n        <entry>\n            <key>CALIDAD_LIMITE_ROJO</key>\n            <value>\n                <cnfCodigo>CALIDAD_LIMITE_ROJO</cnfCodigo>\n                <cnfDescripcion>Semaforo limite rojo calidad</cnfDescripcion>\n                <cnfOrgFk>\n                    <orgPk>47</orgPk>\n                    <orgNombre>Presidencia</orgNombre>\n                    <orgDireccion>Torre Ejecutiva</orgDireccion>\n                    <orgActivo>true</orgActivo>\n                    <orgToken>visua</orgToken>\n                </cnfOrgFk>\n                <cnfUltMod>2019-11-21T16:20:43-02:00</cnfUltMod>\n                <cnfValor>30</cnfValor>\n                <cnfVersion>1</cnfVersion>\n                <id>2791</id>\n            </value>\n        </entry>\n    </configuracion>\n</filtroInicioTO>\n',0);
+/*!40000 ALTER TABLE `busq_filtro` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `calidad`
@@ -813,8 +1282,17 @@ CREATE TABLE `calidad` (
   CONSTRAINT `cal_proy_fk` FOREIGN KEY (`cal_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `cal_tca_fk` FOREIGN KEY (`cal_tca_fk`) REFERENCES `temas_calidad` (`tca_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `cal_vca_fk` FOREIGN KEY (`cal_vca_fk`) REFERENCES `valor_calidad_codigos` (`vca_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `calidad`
+--
+
+LOCK TABLES `calidad` WRITE;
+/*!40000 ALTER TABLE `calidad` DISABLE KEYS */;
+/*!40000 ALTER TABLE `calidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `categoria_proyectos`
@@ -825,7 +1303,7 @@ DROP TABLE IF EXISTS `categoria_proyectos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `categoria_proyectos` (
   `cat_proy_pk` int(11) NOT NULL AUTO_INCREMENT,
-  `cat_proy_codigo` varchar(45) NOT NULL,
+  `cat_proy_codigo` varchar(45) DEFAULT NULL,
   `cat_proy_nombre` varchar(145) NOT NULL,
   `cat_proy_activo` tinyint(1) NOT NULL DEFAULT '1',
   `cat_tipo` int(11) NOT NULL DEFAULT '0',
@@ -835,9 +1313,110 @@ CREATE TABLE `categoria_proyectos` (
   PRIMARY KEY (`cat_proy_pk`),
   KEY `cat_proy_activo_idx` (`cat_proy_activo`),
   KEY `cat_org_fk_idx` (`cat_org_fk`),
-  KEY `cat_tipo_idx` (`cat_tipo`)
-) ENGINE=InnoDB AUTO_INCREMENT=501 DEFAULT CHARSET=latin1 COMMENT='Categoria de los Proyectos. Principalmente para usar con el Visualizador.';
+  KEY `cat_tipo_idx` (`cat_tipo`),
+  KEY `FK_hb3weyc8xvdrbp62k3u1halnb` (`cat_icono_marker`),
+  KEY `FK_hh3lr9l8qt7isgvniyif3w6tw` (`cat_icono`),
+  CONSTRAINT `FK_4t53ltja1415bq3d23c3kdjl1` FOREIGN KEY (`cat_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_hb3weyc8xvdrbp62k3u1halnb` FOREIGN KEY (`cat_icono_marker`) REFERENCES `image` (`image_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_hh3lr9l8qt7isgvniyif3w6tw` FOREIGN KEY (`cat_icono`) REFERENCES `image` (`image_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Categoria de los Proyectos. Principalmente para usar con el Visualizador.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categoria_proyectos`
+--
+
+LOCK TABLES `categoria_proyectos` WRITE;
+/*!40000 ALTER TABLE `categoria_proyectos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `categoria_proyectos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `causales_compra`
+--
+
+DROP TABLE IF EXISTS `causales_compra`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `causales_compra` (
+  `cau_com_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `cau_com_nombre` varchar(100) NOT NULL,
+  `cau_com_descripcion` varchar(300) NOT NULL,
+  `cau_com_habilitado` tinyint(3) NOT NULL DEFAULT '1',
+  `cau_com_org_fk` int(11) NOT NULL,
+  PRIMARY KEY (`cau_com_pk`),
+  KEY `fk_cau_com_org` (`cau_com_org_fk`),
+  CONSTRAINT `causales_compra_ibfk_1` FOREIGN KEY (`cau_com_org_fk`) REFERENCES `organismos` (`org_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `causales_compra`
+--
+
+LOCK TABLES `causales_compra` WRITE;
+/*!40000 ALTER TABLE `causales_compra` DISABLE KEYS */;
+INSERT INTO `causales_compra` VALUES (1,'BID-Continuación del servicio','',1,47),(2,'BID-Estandarización de equipo','',1,47),(3,'RRGG-Equipo patentado o marca registrada','',1,47),(4,'RRGG-Organismo público','',1,47);
+/*!40000 ALTER TABLE `causales_compra` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `centros_costo`
+--
+
+DROP TABLE IF EXISTS `centros_costo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `centros_costo` (
+  `cen_cos_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `cen_cos_nombre` varchar(100) NOT NULL,
+  `cen_cos_descripcion` varchar(300) NOT NULL,
+  `cen_cos_habilitado` tinyint(3) NOT NULL DEFAULT '1',
+  `cen_cos_org_fk` int(11) NOT NULL,
+  PRIMARY KEY (`cen_cos_pk`),
+  KEY `fk_cen_cos_org` (`cen_cos_org_fk`),
+  CONSTRAINT `centros_costo_ibfk_1` FOREIGN KEY (`cen_cos_org_fk`) REFERENCES `organismos` (`org_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `centros_costo`
+--
+
+LOCK TABLES `centros_costo` WRITE;
+/*!40000 ALTER TABLE `centros_costo` DISABLE KEYS */;
+INSERT INTO `centros_costo` VALUES (1,'Comunidades Digitales','',1,47),(2,'Datacenter','',1,47),(3,'Difusión de Políticas','',1,47),(4,'Calidad de Software','',1,47),(5,'Comunicación','',1,47),(6,'Gestión de Datos','',1,47),(7,'Investigación','',1,47);
+/*!40000 ALTER TABLE `centros_costo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `componente_producto`
+--
+
+DROP TABLE IF EXISTS `componente_producto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `componente_producto` (
+  `com_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `com_nombre` varchar(300) DEFAULT NULL,
+  `com_org_fk` int(11) DEFAULT NULL,
+  `com_version` int(11) DEFAULT NULL,
+  `com_descripcion` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`com_pk`),
+  KEY `fk_componente_producto_1_idx` (`com_org_fk`),
+  CONSTRAINT `componente_producto_organismos_FK` FOREIGN KEY (`com_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `componente_producto`
+--
+
+LOCK TABLES `componente_producto` WRITE;
+/*!40000 ALTER TABLE `componente_producto` DISABLE KEYS */;
+INSERT INTO `componente_producto` VALUES (1,'BID2677 04.01',47,NULL,'Adquisición de imágenes'),(2,'BID2677 04.02',47,NULL,'Control de imágenes'),(3,'BID2677 04.03',47,NULL,'Cartografía'),(4,'BID2677 04.04',47,NULL,'Control de cartografía'),(5,'BID2677 04.05',47,NULL,'Almacenamiento'),(6,'BID2677 04.06',47,NULL,'Geoplataforma'),(7,'BID2677 04.07',47,NULL,'Gestión');
+/*!40000 ALTER TABLE `componente_producto` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `cronogramas`
@@ -855,8 +1434,18 @@ CREATE TABLE `cronogramas` (
   `cro_permiso_escritura_padre` tinyint(1) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`cro_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=2542 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cronogramas`
+--
+
+LOCK TABLES `cronogramas` WRITE;
+/*!40000 ALTER TABLE `cronogramas` DISABLE KEYS */;
+INSERT INTO `cronogramas` VALUES (1,0,NULL,NULL,1,1,0),(2,0,NULL,NULL,1,1,0),(3,6,NULL,NULL,1,0,0);
+/*!40000 ALTER TABLE `cronogramas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `departamentos`
@@ -876,6 +1465,15 @@ CREATE TABLE `departamentos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `departamentos`
+--
+
+LOCK TABLES `departamentos` WRITE;
+/*!40000 ALTER TABLE `departamentos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `departamentos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `devengado`
 --
 
@@ -891,9 +1489,20 @@ CREATE TABLE `devengado` (
   `dev_real` decimal(11,2) DEFAULT NULL,
   PRIMARY KEY (`dev_pk`),
   KEY `dev_mes_idx` (`dev_mes`),
-  KEY `dev_anio_idx` (`dev_anio`)
-) ENGINE=InnoDB AUTO_INCREMENT=496 DEFAULT CHARSET=latin1;
+  KEY `dev_anio_idx` (`dev_anio`),
+  KEY `FK_9c8og633e1waprs81i6ayorba` (`dev_adq_fk`),
+  CONSTRAINT `FK_9c8og633e1waprs81i6ayorba` FOREIGN KEY (`dev_adq_fk`) REFERENCES `adquisicion` (`adq_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `devengado`
+--
+
+LOCK TABLES `devengado` WRITE;
+/*!40000 ALTER TABLE `devengado` DISABLE KEYS */;
+/*!40000 ALTER TABLE `devengado` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `doc_file`
@@ -904,14 +1513,28 @@ DROP TABLE IF EXISTS `doc_file`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `doc_file` (
   `docfile_pk` int(11) NOT NULL AUTO_INCREMENT,
-  `docfile_file` longblob,
   `docfile_nombre` varchar(256) NOT NULL,
   `docfile_doc_fk` int(11) NOT NULL,
-  `version` int(11) DEFAULT '0',
+  `docfile_path` varchar(255) DEFAULT NULL,
+  `docfile_ult_mod` datetime(6) DEFAULT NULL,
+  `docfile_ult_origen` varchar(255) DEFAULT NULL,
+  `docfile_ult_usuario` varchar(255) DEFAULT NULL,
+  `docfile_version` int(11) DEFAULT '0',
   PRIMARY KEY (`docfile_pk`),
-  KEY `docfile_doc_fk` (`docfile_doc_fk`)
-) ENGINE=InnoDB AUTO_INCREMENT=7710 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `UK_n76rhuste8gi3p3jq7m91j7iq` (`docfile_doc_fk`),
+  KEY `docfile_doc_fk` (`docfile_doc_fk`),
+  CONSTRAINT `FK_n76rhuste8gi3p3jq7m91j7iq` FOREIGN KEY (`docfile_doc_fk`) REFERENCES `documentos` (`docs_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `doc_file`
+--
+
+LOCK TABLES `doc_file` WRITE;
+/*!40000 ALTER TABLE `doc_file` DISABLE KEYS */;
+/*!40000 ALTER TABLE `doc_file` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `documentos`
@@ -923,7 +1546,7 @@ DROP TABLE IF EXISTS `documentos`;
 CREATE TABLE `documentos` (
   `docs_pk` int(11) NOT NULL AUTO_INCREMENT,
   `docs_nombre` varchar(100) DEFAULT NULL,
-  `docs_fecha` date NOT NULL,
+  `docs_fecha` datetime(6) DEFAULT NULL,
   `docs_privado` tinyint(1) DEFAULT NULL,
   `docs_estado` double DEFAULT NULL,
   `docs_entregable_fk` int(11) DEFAULT NULL,
@@ -932,15 +1555,29 @@ CREATE TABLE `documentos` (
   `docs_aprobado` tinyint(1) DEFAULT NULL,
   `docs_pago_fk` int(11) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `docs_publicable` bit(1) NOT NULL DEFAULT b'0',
+  `docs_ult_pub` datetime(6) DEFAULT NULL,
+  `docs_pub_fecha` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`docs_pk`),
   KEY `entregable_fk_idx` (`docs_entregable_fk`),
   KEY `tipo_doc_fk_idx` (`docs_tipodoc_fk`),
   KEY `docs_pago_fk_idx` (`docs_pago_fk`),
+  KEY `docs_docfile_fk_idx` (`docs_docfile_pk`),
+  CONSTRAINT `docs_docfile_fk` FOREIGN KEY (`docs_docfile_pk`) REFERENCES `doc_file` (`docfile_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `docs_entregable_fk` FOREIGN KEY (`docs_entregable_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `docs_pago_fk` FOREIGN KEY (`docs_pago_fk`) REFERENCES `pagos` (`pag_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tipo_doc_fk` FOREIGN KEY (`docs_tipodoc_fk`) REFERENCES `tipo_documento_instancia` (`tipodoc_inst_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8170 DEFAULT CHARSET=utf8 COMMENT='	';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `documentos`
+--
+
+LOCK TABLES `documentos` WRITE;
+/*!40000 ALTER TABLE `documentos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `documentos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ent_hist_linea_base`
@@ -959,9 +1596,20 @@ CREATE TABLE `ent_hist_linea_base` (
   `enthist_replan_fk` int(11) DEFAULT NULL,
   PRIMARY KEY (`enthist_pk`),
   KEY `enthist_ent_fk_idx` (`enthist_ent_fk`),
-  CONSTRAINT `enthist_ent_fk` FOREIGN KEY (`enthist_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=33429 DEFAULT CHARSET=utf8;
+  KEY `enthist_replan_fk_idx` (`enthist_replan_fk`),
+  CONSTRAINT `enthist_ent_fk` FOREIGN KEY (`enthist_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `enthist_replan_fk` FOREIGN KEY (`enthist_replan_fk`) REFERENCES `proy_replanificacion` (`proyreplan_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ent_hist_linea_base`
+--
+
+LOCK TABLES `ent_hist_linea_base` WRITE;
+/*!40000 ALTER TABLE `ent_hist_linea_base` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ent_hist_linea_base` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `entregables`
@@ -998,6 +1646,8 @@ CREATE TABLE `entregables` (
   `ent_progreso` int(11) DEFAULT NULL,
   `ent_relevante` tinyint(1) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `ent_inicio_periodo` bit(1) NOT NULL DEFAULT b'0',
+  `ent_fin_periodo` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`ent_pk`),
   KEY `gantt_task_gantt_fk_idx` (`ent_cro_fk`),
   KEY `ent_coord_usu_fk_idx` (`ent_coord_usu_fk`),
@@ -1007,8 +1657,18 @@ CREATE TABLE `entregables` (
   KEY `ent_parent_idx` (`ent_parent`),
   CONSTRAINT `ent_coord_usu_fk` FOREIGN KEY (`ent_coord_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `ent_cro_fk` FOREIGN KEY (`ent_cro_fk`) REFERENCES `cronogramas` (`cro_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=28279 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `entregables`
+--
+
+LOCK TABLES `entregables` WRITE;
+/*!40000 ALTER TABLE `entregables` DISABLE KEYS */;
+INSERT INTO `entregables` VALUES (1,3,7,'Tarea 4',NULL,1,'STATUS_ACTIVE',0,1579186800000,16,1580482800000,'',0,0,0,NULL,1289,10,NULL,0,NULL,'6',0,'',100,0,0,'\0','\0'),(2,3,6,'Tarea 3',NULL,1,'STATUS_ACTIVE',0,1577890800000,15,1579100400000,'',0,0,0,NULL,1289,15,NULL,0,NULL,'',0,'',0,0,0,'\0','\0'),(3,3,5,'Fase 2','',1,'STATUS_ACTIVE',0,1577890800000,31,1580482800000,NULL,0,0,0,NULL,1289,1,NULL,0,NULL,'2',0,'',100,0,0,'\0','\0'),(4,3,4,'Tarea 2','',2,'STATUS_ACTIVE',0,1574434800000,40,1577804400000,NULL,0,0,0,NULL,1289,30,NULL,0,NULL,'',0,'',0,0,0,'\0','\0'),(5,3,3,'Tarea 1','',2,'STATUS_ACTIVE',0,1574434800000,13,1575471600000,NULL,0,0,0,NULL,1289,10,NULL,0,NULL,'',0,'',0,0,0,'\0','\0'),(6,3,2,'Fase 1','',1,'STATUS_ACTIVE',1,1574434800000,40,1577804400000,NULL,0,0,0,NULL,1289,0,NULL,0,NULL,'',0,'',0,0,0,'\0','\0'),(7,3,1,'Herramientas de monitoreo del Plan Nacional de Eficiencia Energética','',0,'STATUS_ACTIVE',1,1574434800000,71,1580482800000,NULL,0,0,0,NULL,1289,0,NULL,0,NULL,'',0,'',0,0,0,'\0','\0');
+/*!40000 ALTER TABLE `entregables` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `estados`
@@ -1026,8 +1686,18 @@ CREATE TABLE `estados` (
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`est_pk`),
   KEY `est_codigo` (`est_codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `estados`
+--
+
+LOCK TABLES `estados` WRITE;
+/*!40000 ALTER TABLE `estados` DISABLE KEYS */;
+INSERT INTO `estados` VALUES (0,'NO_EXIGIDO','No Exigido','',NULL,0),(1,'PENDIENTE','Pendiente','',1,0),(2,'INICIO','Inicio','',2,0),(3,'PLANIFICACION','Planificacion','',3,0),(4,'EJECUCION','Ejecucion','',4,0),(5,'FINALIZADO','Finalizado','',5,0),(11,'PENDIENTE_PMOT','Pendiente PMO T.','',-1,0),(12,'PENDIENTE_PMOF','Pendiente PMO F.','',0,0),(41,'SOLICITUD_FINALIZADO_PMOF','Solicitud Finalizado PMO F.','',NULL,0),(42,'SOLICITUD_FINALIZADO_PMOT','Solicitud Finalizado PMO T.','',NULL,0),(61,'SOLICITUD_CANCELAR_PMOT','Solicitud Cancelar PMO T.','',NULL,0);
+/*!40000 ALTER TABLE `estados` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `estados_publicacion`
@@ -1041,8 +1711,18 @@ CREATE TABLE `estados_publicacion` (
   `est_pub_codigo` varchar(45) DEFAULT NULL,
   `est_pub_nombre` varchar(145) DEFAULT NULL,
   PRIMARY KEY (`est_pub_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='Estados de la publicaci\F3n de un proyecto en el visualizador.';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='Estados de la publicaci�n de un proyecto en el visualizador.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `estados_publicacion`
+--
+
+LOCK TABLES `estados_publicacion` WRITE;
+/*!40000 ALTER TABLE `estados_publicacion` DISABLE KEYS */;
+INSERT INTO `estados_publicacion` VALUES (1,'NO_ES_PARA_PUBLICAR','No es para publicar'),(2,'PENDIENTE_CARGAR','Pendiente de cargar datos'),(3,'PENDIENTE_PUBLICAR','Pendiente de publicar'),(4,'PUBLICADO','Publicado');
+/*!40000 ALTER TABLE `estados_publicacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `etapa`
@@ -1059,9 +1739,46 @@ CREATE TABLE `etapa` (
   `eta_label` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`eta_pk`),
   KEY `eta_org_fk_idx` (`eta_org_fk`),
+  KEY `eta_org_fk_cod_idx` (`eta_org_fk`,`eta_codigo`),
   CONSTRAINT `eta_org_fk` FOREIGN KEY (`eta_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=latin1 COMMENT='Son los estados del proyecto que se van a exportar al visualizador.';
+) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=latin1 COMMENT='Son los estados del proyecto que se van a exportar al visualizador.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `etapa`
+--
+
+LOCK TABLES `etapa` WRITE;
+/*!40000 ALTER TABLE `etapa` DISABLE KEYS */;
+INSERT INTO `etapa` VALUES (177,45,'PROYECTADO','Proyectado',NULL),(178,45,'EN_ADJUDICACION','En adjudicación',NULL),(179,45,'EN_EJECUCION','En Ejecución',NULL),(180,45,'FINALIZADO','Finalizado',NULL),(185,47,'PROYECTADO','Proyectado',NULL),(186,47,'EN_ADJUDICACION','En adjudicación',NULL),(187,47,'EN_EJECUCION','En Ejecución',NULL),(188,47,'FINALIZADO','Finalizado',NULL);
+/*!40000 ALTER TABLE `etapa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fue_pro_com_cau_com`
+--
+
+DROP TABLE IF EXISTS `fue_pro_com_cau_com`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fue_pro_com_cau_com` (
+  `fue_pro_com_pk` int(11) NOT NULL,
+  `cau_com_pk` int(11) NOT NULL,
+  KEY `fuente_proc_compra_key` (`fue_pro_com_pk`),
+  KEY `causal_compra_key` (`cau_com_pk`),
+  CONSTRAINT `causal_compras_key` FOREIGN KEY (`cau_com_pk`) REFERENCES `causales_compra` (`cau_com_pk`),
+  CONSTRAINT `fuente_proc_compras_key` FOREIGN KEY (`fue_pro_com_pk`) REFERENCES `fuentes_procedimiento_compra` (`fue_pro_com_pk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fue_pro_com_cau_com`
+--
+
+LOCK TABLES `fue_pro_com_cau_com` WRITE;
+/*!40000 ALTER TABLE `fue_pro_com_cau_com` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fue_pro_com_cau_com` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `fuente_financiamiento`
@@ -1075,11 +1792,51 @@ CREATE TABLE `fuente_financiamiento` (
   `fue_nombre` varchar(300) NOT NULL,
   `fue_org_fk` int(11) NOT NULL,
   `version` int(11) DEFAULT '0',
+  `fue_habilitada` tinyint(3) NOT NULL,
   PRIMARY KEY (`fue_pk`),
   KEY `fue_org_fk_idx` (`fue_org_fk`),
   CONSTRAINT `fue_org_fk` FOREIGN KEY (`fue_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fuente_financiamiento`
+--
+
+LOCK TABLES `fuente_financiamiento` WRITE;
+/*!40000 ALTER TABLE `fuente_financiamiento` DISABLE KEYS */;
+INSERT INTO `fuente_financiamiento` VALUES (1,'BID',47,0,1),(2,'N/A - desarrollo interno',47,0,1),(3,'PNUD',47,0,1),(4,'RRGG',47,0,1);
+/*!40000 ALTER TABLE `fuente_financiamiento` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fuentes_procedimiento_compra`
+--
+
+DROP TABLE IF EXISTS `fuentes_procedimiento_compra`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fuentes_procedimiento_compra` (
+  `fue_pro_com_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `fue_pro_com_fuente` varchar(100) NOT NULL,
+  `fue_pro_com_procedimiento_compra` varchar(100) NOT NULL,
+  `fue_pro_com_habilitado` tinyint(3) NOT NULL DEFAULT '1',
+  `fue_pro_com_org_fk` int(11) NOT NULL,
+  PRIMARY KEY (`fue_pro_com_pk`),
+  KEY `fk_fue_pro_com_org` (`fue_pro_com_org_fk`),
+  CONSTRAINT `fuentes_procedimiento_compra_ibfk_1` FOREIGN KEY (`fue_pro_com_org_fk`) REFERENCES `organismos` (`org_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fuentes_procedimiento_compra`
+--
+
+LOCK TABLES `fuentes_procedimiento_compra` WRITE;
+/*!40000 ALTER TABLE `fuentes_procedimiento_compra` DISABLE KEYS */;
+INSERT INTO `fuentes_procedimiento_compra` VALUES (1,'BID','CD',1,47),(2,'BM','CD',1,47),(3,'RRGG','CDE',1,47);
+/*!40000 ALTER TABLE `fuentes_procedimiento_compra` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `gastos`
@@ -1109,8 +1866,17 @@ CREATE TABLE `gastos` (
   CONSTRAINT `gas_proy_fk` FOREIGN KEY (`gas_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `gas_tipo_fk` FOREIGN KEY (`gas_tipo_fk`) REFERENCES `tipo_gasto` (`tipogas_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `gas_usu_fk` FOREIGN KEY (`gas_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gastos`
+--
+
+LOCK TABLES `gastos` WRITE;
+/*!40000 ALTER TABLE `gastos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gastos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `hibernate_sequence`
@@ -1124,6 +1890,45 @@ CREATE TABLE `hibernate_sequence` (
   `version` int(11) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `hibernate_sequence`
+--
+
+LOCK TABLES `hibernate_sequence` WRITE;
+/*!40000 ALTER TABLE `hibernate_sequence` DISABLE KEYS */;
+INSERT INTO `hibernate_sequence` VALUES (1,0);
+/*!40000 ALTER TABLE `hibernate_sequence` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `identificadores_grp_erp`
+--
+
+DROP TABLE IF EXISTS `identificadores_grp_erp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `identificadores_grp_erp` (
+  `id_grp_erp_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `id_grp_erp_nombre` varchar(100) NOT NULL,
+  `id_grp_erp_descripcion` varchar(300) NOT NULL,
+  `id_grp_erp_habilitado` tinyint(3) NOT NULL DEFAULT '1',
+  `id_grp_erp_org_fk` int(11) NOT NULL,
+  PRIMARY KEY (`id_grp_erp_pk`),
+  KEY `fk_id_grp_erp_org` (`id_grp_erp_org_fk`),
+  CONSTRAINT `identificadores_grp_erp_ibfk_1` FOREIGN KEY (`id_grp_erp_org_fk`) REFERENCES `organismos` (`org_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `identificadores_grp_erp`
+--
+
+LOCK TABLES `identificadores_grp_erp` WRITE;
+/*!40000 ALTER TABLE `identificadores_grp_erp` DISABLE KEYS */;
+INSERT INTO `identificadores_grp_erp` VALUES (1,'Número de compra SAP','sap',1,47);
+/*!40000 ALTER TABLE `identificadores_grp_erp` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `image`
@@ -1143,6 +1948,15 @@ CREATE TABLE `image` (
   PRIMARY KEY (`image_pk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `image`
+--
+
+LOCK TABLES `image` WRITE;
+/*!40000 ALTER TABLE `image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `image` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `interesados`
@@ -1168,8 +1982,17 @@ CREATE TABLE `interesados` (
   CONSTRAINT `fk_INTERESADOS_PERSONAS1` FOREIGN KEY (`int_pers_fk`) REFERENCES `personas` (`pers_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_INTERESADOS_ROLES_INTERESADOS1` FOREIGN KEY (`int_rolint_fk`) REFERENCES `roles_interesados` (`rolint_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `int_ent_fk` FOREIGN KEY (`int_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `interesados`
+--
+
+LOCK TABLES `interesados` WRITE;
+/*!40000 ALTER TABLE `interesados` DISABLE KEYS */;
+/*!40000 ALTER TABLE `interesados` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `latlng_proyectos`
@@ -1193,8 +2016,17 @@ CREATE TABLE `latlng_proyectos` (
   KEY `latlang_dep_fk_idx` (`latlang_dep_fk`),
   CONSTRAINT `latlang_dep_fk` FOREIGN KEY (`latlang_dep_fk`) REFERENCES `departamentos` (`dep_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `latlng_proy_fk` FOREIGN KEY (`latlng_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1450 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `latlng_proyectos`
+--
+
+LOCK TABLES `latlng_proyectos` WRITE;
+/*!40000 ALTER TABLE `latlng_proyectos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `latlng_proyectos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `lecapr_areacon`
@@ -1212,6 +2044,15 @@ CREATE TABLE `lecapr_areacon` (
   CONSTRAINT `lecaprcon_lecapr_fk` FOREIGN KEY (`lecaprcon_lecapr_fk`) REFERENCES `lecc_aprendidas` (`lecapr_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lecapr_areacon`
+--
+
+LOCK TABLES `lecapr_areacon` WRITE;
+/*!40000 ALTER TABLE `lecapr_areacon` DISABLE KEYS */;
+/*!40000 ALTER TABLE `lecapr_areacon` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `lecc_aprendidas`
@@ -1240,8 +2081,17 @@ CREATE TABLE `lecc_aprendidas` (
   CONSTRAINT `lecapr_proy_fk` FOREIGN KEY (`lecapr_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `lecapr_tipo_fk` FOREIGN KEY (`lecapr_tipo_fk`) REFERENCES `tipo_leccion` (`tipolec_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `lecapr_usr_fk` FOREIGN KEY (`lecapr_usr_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=740 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lecc_aprendidas`
+--
+
+LOCK TABLES `lecc_aprendidas` WRITE;
+/*!40000 ALTER TABLE `lecc_aprendidas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `lecc_aprendidas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `lineabase_historico`
@@ -1260,8 +2110,17 @@ CREATE TABLE `lineabase_historico` (
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`lineabase_pk`),
   KEY `entre_lineabase_entFk_idx` (`lineabase_entFk`)
-) ENGINE=InnoDB AUTO_INCREMENT=445 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lineabase_historico`
+--
+
+LOCK TABLES `lineabase_historico` WRITE;
+/*!40000 ALTER TABLE `lineabase_historico` DISABLE KEYS */;
+/*!40000 ALTER TABLE `lineabase_historico` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `mails_template`
@@ -1280,8 +2139,18 @@ CREATE TABLE `mails_template` (
   PRIMARY KEY (`mail_tmp_pk`),
   KEY `mail_tmp_org_fk_idx` (`mail_tmp_org_fk`),
   CONSTRAINT `mail_tmp_org_fk` FOREIGN KEY (`mail_tmp_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=242 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mails_template`
+--
+
+LOCK TABLES `mails_template` WRITE;
+/*!40000 ALTER TABLE `mails_template` DISABLE KEYS */;
+INSERT INTO `mails_template` VALUES (227,'MAIL_SOL_APROBACION',45,'Solicitud de Aprobación','<h2>Solicitud de Aprobación</h2><p>Se generó una solicitud de cambio de estado para el #TIPO_PROG_PROY# \"#NOMBRE_PROG_PROY#\".</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(228,'MAIL_CAMBIO_CONTRASENIA',45,'Cambio de contraseña en SIGES','Estimado #NOMBRE#, se ha cambiado su contraseña en SIGES por #CONTRASENIA#',0),(229,'MAIL_CAMBIO_ESTADO',45,'Programa / Proyecto cambió de fase.','<h2>Cambio de Fase</h2><p>El #TIPO_PROG_PROY# #ID_PROG_PROY# \"#NOMBRE_PROG_PROY#\" cambió de fase a #FASE_PROG_PROY#.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(230,'MAIL_PROG_PROY_PENDIENTE',45,'Pendiente de aprobación.','<h2>Pendiente de aprobación</h2><p>El #TIPO_PROG_PROY# #ID_PROG_PROY# \"#NOMBRE_PROG_PROY#\" esta pendiente de aprobación.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(231,'MAIL_NVO_USUARIO',45,'Usuario SIGES.','<h2>Usuario creado</h2><p>Se ha creado el usuario #USU_MAIL# cuya clave es #USU_PASSWORD#, para ingresar al sistema de SIGES.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(237,'MAIL_SOL_APROBACION',47,'Solicitud de Aprobación','<h2>Solicitud de Aprobación</h2><p>Se generó una solicitud de cambio de estado para el #TIPO_PROG_PROY# \"#NOMBRE_PROG_PROY#\".</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(238,'MAIL_CAMBIO_CONTRASENIA',47,'Cambio de contraseña en SIGES','Estimado #NOMBRE#, se ha cambiado su contraseña en SIGES por #CONTRASENIA#',0),(239,'MAIL_CAMBIO_ESTADO',47,'Programa / Proyecto cambió de fase.','<h2>Cambio de Fase</h2><p>El #TIPO_PROG_PROY# #ID_PROG_PROY# \"#NOMBRE_PROG_PROY#\" cambió de fase a #FASE_PROG_PROY#.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(240,'MAIL_PROG_PROY_PENDIENTE',47,'Pendiente de aprobación.','<h2>Pendiente de aprobación</h2><p>El #TIPO_PROG_PROY# #ID_PROG_PROY# \"#NOMBRE_PROG_PROY#\" esta pendiente de aprobación.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0),(241,'MAIL_NVO_USUARIO',47,'Usuario SIGES.','<h2>Usuario creado</h2><p>Se ha creado el usuario #USU_MAIL# cuya clave es #USU_PASSWORD#, para ingresar al sistema de SIGES.</p><p>#ORGANISMO_NOMBRE#<br />#ORGANISMO_DIRECCION#</p>',0);
+/*!40000 ALTER TABLE `mails_template` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `media_proyectos`
@@ -1292,16 +2161,16 @@ DROP TABLE IF EXISTS `media_proyectos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `media_proyectos` (
   `media_pk` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Clave primaria del media',
-  `media_tipo_fk` int(11) DEFAULT NULL COMMENT 'Tipo de media, los tipos definidos son:\nImagens, link a videos youtube, links a webcam',
+  `media_tipo_fk` int(11) DEFAULT NULL,
   `media_link` varchar(545) DEFAULT NULL COMMENT 'El link al media, en caso de imagenes es el link al folder donde se encuentra, en youtube la url del video, y en camaras web la url de la camara',
   `media_estado` int(11) DEFAULT NULL COMMENT 'EL estado del media puede ser \nPENDIENTE REVISION, PUBLICADO, RECHAZADO',
   `media_proy_fk` int(11) DEFAULT NULL,
-  `media_principal` tinyint(1) DEFAULT NULL COMMENT 'en caso de ser una imagen es la que se utlizar\E1 para la vista rapida y para la seccion de destacados',
-  `media_orden` int(11) DEFAULT NULL COMMENT 'EL orde de aparici\F3n del media en la galeria que lo esta desplegando.',
-  `media_usr_pub_fk` int(11) DEFAULT NULL COMMENT 'EL c\F3digo del usuario que public\F3 el media',
-  `media_pub_fecha` datetime DEFAULT NULL COMMENT 'Fecha y hora de publicaci\F3n',
+  `media_principal` tinyint(1) DEFAULT NULL COMMENT 'en caso de ser una imagen es la que se utlizar� para la vista rapida y para la seccion de destacados',
+  `media_orden` int(11) DEFAULT NULL COMMENT 'EL orde de aparici�n del media en la galeria que lo esta desplegando.',
+  `media_usr_pub_fk` int(11) DEFAULT NULL COMMENT 'EL c�digo del usuario que public� el media',
+  `media_pub_fecha` datetime DEFAULT NULL COMMENT 'Fecha y hora de publicaci�n',
   `media_usr_mod_fk` int(11) DEFAULT NULL COMMENT 'EL usuario que creo el media',
-  `media_mod_fecha` datetime DEFAULT NULL COMMENT 'La fecha de creaci\F3n del media',
+  `media_mod_fecha` datetime DEFAULT NULL COMMENT 'La fecha de creaci�n del media',
   `media_usr_rech_fk` int(11) DEFAULT NULL COMMENT 'Usuario que rechaza el media',
   `media_rech_fecha` datetime DEFAULT NULL COMMENT 'fecha de rehazo del medio',
   `media_comentario` varchar(2000) DEFAULT NULL,
@@ -1318,8 +2187,17 @@ CREATE TABLE `media_proyectos` (
   CONSTRAINT `media_usr_mod_fk` FOREIGN KEY (`media_usr_mod_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `media_usr_pub_fk` FOREIGN KEY (`media_usr_pub_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `media_usr_rech_fk` FOREIGN KEY (`media_usr_rech_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1792 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `media_proyectos`
+--
+
+LOCK TABLES `media_proyectos` WRITE;
+/*!40000 ALTER TABLE `media_proyectos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `media_proyectos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `moneda`
@@ -1339,6 +2217,16 @@ CREATE TABLE `moneda` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `moneda`
+--
+
+LOCK TABLES `moneda` WRITE;
+/*!40000 ALTER TABLE `moneda` DISABLE KEYS */;
+INSERT INTO `moneda` VALUES (1,'Pesos','$',NULL,0),(2,'Dólares','U$S',NULL,0),(3,'Euros','€','',0),(4,'Unidad Reajustable','UR','UR',0),(5,'Unidades Indexadas','UI','UI',0);
+/*!40000 ALTER TABLE `moneda` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `notificacion`
 --
 
@@ -1356,9 +2244,22 @@ CREATE TABLE `notificacion` (
   `not_pmot` tinyint(4) DEFAULT NULL,
   `not_sponsor` tinyint(4) DEFAULT NULL,
   `not_msg` varchar(5000) NOT NULL,
-  PRIMARY KEY (`not_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=278 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`not_pk`),
+  UNIQUE KEY `not_unique_key` (`not_org_fk`,`not_cod`),
+  KEY `notificacion_not_org_fk_IDX` (`not_org_fk`),
+  CONSTRAINT `notificacion_organismos_FK` FOREIGN KEY (`not_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=660 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notificacion`
+--
+
+LOCK TABLES `notificacion` WRITE;
+/*!40000 ALTER TABLE `notificacion` DISABLE KEYS */;
+INSERT INTO `notificacion` VALUES (618,45,'Riesgos1','Se pasa a amarillo el semáforo de actualización de riesgos.',NULL,1,0,0,0,'Para el proyecto #NOMBRE_PROYECTO# existen riesgos en estado de atención.'),(619,45,'Riesgos2','Se registra un nuevo riesgo y este cae en la zona roja.',NULL,1,0,0,0,'Para el proyecto #NOMBRE_PROYECTO# existen riesgos en estado de alerta.'),(620,45,'inicio','Hace mucho tiempo que está en inicio.',NULL,1,0,0,0,'Hace varios días que el proyecto #NOMBRE_PROYECTO# se mantiene en inicio.'),(621,45,'Planificacion','Hace mucho tiempo que está en planificación.',NULL,1,0,0,0,'Hace varios días que el proyecto #NOMBRE_PROYECTO# se mantiene en planificación.'),(622,45,'Actualizacion1','Semáforo de actualización del proyecto pasa a estar en amarillo.',NULL,1,0,0,0,'Atención! El proyecto #NOMBRE_PROYECTO# está desactualizado.'),(623,45,'Actualizacion2','Semáforo de actualización del proyecto pasa a estar en rojo.',NULL,1,0,0,0,'Alerta! El proyecto #NOMBRE_PROYECTO# está desactualizado.'),(624,45,'Presupuesto1','Cuando la fecha de pago se venció y no ha sido confirmada la factura.',NULL,1,0,0,0,'Tiene pagos vencidos para el proyecto #NOMBRE_PROYECTO#.'),(625,45,'Presupuesto2','Durante los últimos 5 días hábiles del mes, solamente para los que tienen cargado devengado. Actualicen el devengado dado que cuando comience el siguiente mes no se podrá tocar el actual.',NULL,1,0,0,0,'Actualizar el devengado para el proyecto #NOMBRE_PROYECTO#. No podrá modificarlo una vez iniciado el proximo mes.'),(626,45,'Presupuesto3','Cuando un entregable está al 100% y tiene un pago asociado cuya factura no está confirmada. A los 5 días, notificación para conseguir la factura.',NULL,1,0,0,0,'Un entregable finalizado del proyecto #NOMBRE_PROYECTO# tiene asociado una factura que no ha sido confirmada.'),(627,45,'Presupuesto4','Cuando un entregable está al 100% y tiene un pago asociado cuya factura no está confirmada. A los 10 días, notificación para conseguir la factura.',NULL,1,0,0,0,'Un entregable finalizado del proyecto #NOMBRE_PROYECTO# tiene asociado una factura que no ha sido confirmada.'),(628,45,'Presupuesto5','Cuando la nueva fecha proyectada de la confirmación de una factura es durante la última quincena del año o al año siguiente.',NULL,1,0,0,0,'La fecha proyectada de la confirmacion de una factura para el proyecto #NOMBRE_PROYECTO# será durante la última quincena del año o al año siguiente.'),(629,45,'Cronograma1','Cuando un entregable no está al 100% de avance y tiene fecha de fin anterior al día de hoy. Solamente en caso que el proyecto está desactualizado.',NULL,1,0,0,0,'Un entregable del proyecto #NOMBRE_PROYECTO# está atrasado o desactualizado.'),(630,45,'CambioFase1','Existen una solicitud pendiente del proyecto #NOMBRE_PROYECTO#.',NULL,1,0,0,0,'Existen una solicitud pendiente del proyecto #NOMBRE_PROYECTO#.'),(631,45,'EliminacionProy1','Se ha eliminado el proyecto #NOMBRE_PROYECTO#.',NULL,1,0,0,0,'Se ha eliminado el proyecto #NOMBRE_PROYECTO#.'),(646,47,'Riesgos1','Se pasa a amarillo el semáforo de actualización de riesgos.',NULL,1,0,0,0,'Para el proyecto #NOMBRE_PROYECTO# existen riesgos en estado de atención.'),(647,47,'Riesgos2','Se registra un nuevo riesgo y este cae en la zona roja.',NULL,1,0,0,0,'Para el proyecto #NOMBRE_PROYECTO# existen riesgos en estado de alerta.'),(648,47,'inicio','Hace mucho tiempo que está en inicio.',NULL,1,0,0,0,'Hace varios días que el proyecto #NOMBRE_PROYECTO# se mantiene en inicio.'),(649,47,'Planificacion','Hace mucho tiempo que está en planificación.',NULL,1,0,0,0,'Hace varios días que el proyecto #NOMBRE_PROYECTO# se mantiene en planificación.'),(650,47,'Actualizacion1','Semáforo de actualización del proyecto pasa a estar en amarillo.',NULL,1,0,0,0,'Atención! El proyecto #NOMBRE_PROYECTO# está desactualizado.'),(651,47,'Actualizacion2','Semáforo de actualización del proyecto pasa a estar en rojo.',NULL,1,0,0,0,'Alerta! El proyecto #NOMBRE_PROYECTO# está desactualizado.'),(652,47,'Presupuesto1','Cuando la fecha de pago se venció y no ha sido confirmada la factura.',NULL,1,0,0,0,'Tiene pagos vencidos para el proyecto #NOMBRE_PROYECTO#.'),(653,47,'Presupuesto2','Durante los últimos 5 días hábiles del mes, solamente para los que tienen cargado devengado. Actualicen el devengado dado que cuando comience el siguiente mes no se podrá tocar el actual.',NULL,1,0,0,0,'Actualizar el devengado para el proyecto #NOMBRE_PROYECTO#. No podrá modificarlo una vez iniciado el proximo mes.'),(654,47,'Presupuesto3','Cuando un entregable está al 100% y tiene un pago asociado cuya factura no está confirmada. A los 5 días, notificación para conseguir la factura.',NULL,1,0,0,0,'Un entregable finalizado del proyecto #NOMBRE_PROYECTO# tiene asociado una factura que no ha sido confirmada.'),(655,47,'Presupuesto4','Cuando un entregable está al 100% y tiene un pago asociado cuya factura no está confirmada. A los 10 días, notificación para conseguir la factura.',NULL,1,0,0,0,'Un entregable finalizado del proyecto #NOMBRE_PROYECTO# tiene asociado una factura que no ha sido confirmada.'),(656,47,'Presupuesto5','Cuando la nueva fecha proyectada de la confirmación de una factura es durante la última quincena del año o al año siguiente.',NULL,1,0,0,0,'La fecha proyectada de la confirmacion de una factura para el proyecto #NOMBRE_PROYECTO# será durante la última quincena del año o al año siguiente.'),(657,47,'Cronograma1','Cuando un entregable no está al 100% de avance y tiene fecha de fin anterior al día de hoy. Solamente en caso que el proyecto está desactualizado.',NULL,1,0,0,0,'Un entregable del proyecto #NOMBRE_PROYECTO# está atrasado o desactualizado.'),(658,47,'CambioFase1','Existen una solicitud pendiente del proyecto #NOMBRE_PROYECTO#.',NULL,1,0,0,0,'Existen una solicitud pendiente del proyecto #NOMBRE_PROYECTO#.'),(659,47,'EliminacionProy1','Se ha eliminado el proyecto #NOMBRE_PROYECTO#.',NULL,1,0,0,0,'Se ha eliminado el proyecto #NOMBRE_PROYECTO#.');
+/*!40000 ALTER TABLE `notificacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `notificacion_envio`
@@ -1373,9 +2274,20 @@ CREATE TABLE `notificacion_envio` (
   `notenv_proy_fk` int(11) NOT NULL,
   `notenv_not_cod` varchar(45) NOT NULL,
   PRIMARY KEY (`notenv_pk`),
-  KEY `notenv_fecha_idx` (`notenv_fecha`)
-) ENGINE=InnoDB AUTO_INCREMENT=10697 DEFAULT CHARSET=latin1;
+  KEY `notenv_fecha_idx` (`notenv_fecha`),
+  KEY `notificacion_envio_proyectos_FK` (`notenv_proy_fk`),
+  CONSTRAINT `notificacion_envio_proyectos_FK` FOREIGN KEY (`notenv_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notificacion_envio`
+--
+
+LOCK TABLES `notificacion_envio` WRITE;
+/*!40000 ALTER TABLE `notificacion_envio` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notificacion_envio` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `notificacion_instancia`
@@ -1393,12 +2305,22 @@ CREATE TABLE `notificacion_instancia` (
   `notinst_pmot` tinyint(4) DEFAULT NULL,
   `notinst_sponsor` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`notinst_pk`),
+  UNIQUE KEY `notinst_unique_key` (`notinst_proy_fk`,`notinst_not_fk`),
   KEY `notinst_not_fk_idx` (`notinst_not_fk`),
   KEY `notinst_proy_fk_idx` (`notinst_proy_fk`),
   CONSTRAINT `notinst_not_fk` FOREIGN KEY (`notinst_not_fk`) REFERENCES `notificacion` (`not_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `notinst_proy_fk` FOREIGN KEY (`notinst_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8629 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notificacion_instancia`
+--
+
+LOCK TABLES `notificacion_instancia` WRITE;
+/*!40000 ALTER TABLE `notificacion_instancia` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notificacion_instancia` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `objetivos_estrategicos`
@@ -1412,12 +2334,23 @@ CREATE TABLE `objetivos_estrategicos` (
   `obj_est_nombre` varchar(100) DEFAULT NULL,
   `obj_est_descripcion` varchar(300) DEFAULT NULL,
   `obj_est_org_fk` int(11) DEFAULT NULL,
+  `obj_est_habilitado` tinyint(3) NOT NULL,
   PRIMARY KEY (`obj_est_pk`),
   UNIQUE KEY `obj_est_org_fk_nombre` (`obj_est_org_fk`,`obj_est_nombre`),
   KEY `obj_est_org_fk_idx` (`obj_est_org_fk`),
   CONSTRAINT `obj_est_org_fk` FOREIGN KEY (`obj_est_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `objetivos_estrategicos`
+--
+
+LOCK TABLES `objetivos_estrategicos` WRITE;
+/*!40000 ALTER TABLE `objetivos_estrategicos` DISABLE KEYS */;
+INSERT INTO `objetivos_estrategicos` VALUES (9,'Salud Integral','',47,1),(10,'Rectoría','',47,1),(11,'Descentralización y territorialización','',47,1),(12,'Estrategia de comunicación','',47,1),(13,'Generación de conocimiento y capacitación','',47,1),(14,'Sistemas de información nacionales e internacionales','',47,1),(15,'Seguimiento y evaluación científica','',47,1),(16,'Integración de Derechos Humanos','',47,1);
+/*!40000 ALTER TABLE `objetivos_estrategicos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `organi_int_prove`
@@ -1440,14 +2373,25 @@ CREATE TABLE `organi_int_prove` (
   `orga_org_fk` int(11) NOT NULL,
   `orga_amb_fk` int(11) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `orga_habilitado` tinyint(3) NOT NULL,
   PRIMARY KEY (`orga_pk`),
   KEY `orga_org_fk_idx` (`orga_org_fk`),
   KEY `orga_amb_fk_idx` (`orga_amb_fk`),
   KEY `orga_proveedor_idx` (`orga_proveedor`),
   CONSTRAINT `orga_amb_fk` FOREIGN KEY (`orga_amb_fk`) REFERENCES `ambito` (`amb_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `orga_org_fk` FOREIGN KEY (`orga_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1072 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `organi_int_prove`
+--
+
+LOCK TABLES `organi_int_prove` WRITE;
+/*!40000 ALTER TABLE `organi_int_prove` DISABLE KEYS */;
+INSERT INTO `organi_int_prove` VALUES (5,'Donaciones',1,'Donaciones','Donaciones','','',NULL,'',NULL,47,NULL,0,1),(6,'Proveedores Plaza M/N',1,'','','','','','',NULL,47,NULL,0,1),(7,'Proveedores Plaza M/E',1,'','','','','','',NULL,47,NULL,0,1),(8,'Proveedores Exterior',1,'','','','','','',NULL,47,NULL,0,1),(9,'MGAP',0,'Ministerio de Ganadería, Agricultura y Pesca','','','2410 4155 - 58','http://www.mgap.gub.uy',' Constituyente 1476 ',NULL,47,NULL,0,1),(10,'MSP',0,'Ministerio de Salud Pública','','','','','',NULL,47,NULL,0,1),(11,'Prestadores integrales del SNIS',0,'Prestadores integrales del SNIS','','','','','',NULL,47,NULL,0,1);
+/*!40000 ALTER TABLE `organi_int_prove` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `organismos`
@@ -1467,8 +2411,18 @@ CREATE TABLE `organismos` (
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`org_pk`),
   KEY `org_token_idx` (`org_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `organismos`
+--
+
+LOCK TABLES `organismos` WRITE;
+/*!40000 ALTER TABLE `organismos` DISABLE KEYS */;
+INSERT INTO `organismos` VALUES (45,'Administración SIGES','logo-siges.png','Torre Ejecutiva Sur, Liniers 1324 piso 4','�PNG\r\n\Z\n\0\0\0\rIHDR\0\0\0�\0\0\0I\0\0\0�-S\0\0\0	pHYs\0\0\0\0\0��\0\0\0tEXtSoftware\0Adobe ImageReadyq�e<\0\0�IDATx��]���85�&w��e�Bs�=A�Мv���B;�!�}�Jl����lI�z�ϏƲ�*�~�$T���t�\0\0�O�\0\0�\0\0d\0\0d\0�\r\0@6\0\0@6\0\0�\0\0\0�\0\0d\0�\r\0\0�\r\0@6\0\0@6\0\0�\0\0d\0\0d\0�\r\0\0�\r\0@6\0���M����\\}L�Q��TGCG�������Rg�>�,�~\Z�n�����GAm�{�U�ʧ�T��i\n�\0 9و2BCm�Ku�Tes32vM�\\M�s��ц?Ki�C�vѩ��Q���~����}�����*SU^�r]��8u����:�Ar����}��le���B�X?S�;9�Y�L��\r��A�z����t���>ت��OZ�%�-�܎��|v�l�ܧT�$~�oT,����é�|V�ȶ����h�Q���Aՙ��]��,ӄN�W�<�T��PZ�$�30Ƴ���qdN\"˲B�ԝ_ۥk!bai+w���}_�>��Hg~�q6��}z��9�8�B�����hӭp��ߜMث��e���3!r��jC�&�Zɢȋ0�3ԃ��bs����p�s�E&���2���:��E��Ig��+2J-gA��LB�<���۳��%��&��W���C]Ѽ�<Pf�>�_X^{�1�cf�����Z�iG;�ts��ٴ���<�xjW��ι-n 1d�x�kP�V �Ԏ�����0�:�;Z��9AS�/�l���lR�P�!�n(t^<D\"�w���[�����Ƹ��@R�&��6CE�9���#��ʃ�.،�x�y�)ɶ� ��b3}�U>9XY�(Ҵx�o�۬���#���\r���^#I������f�V�̫B�����JZ`i<�geH���(�	Ae��3N��Nt�,eVK��E�ƧB�L�����\nr��K���?ha�I�dk��-�yQ� ��h)�G��z��#2�=!뚯�X��Z��1A�Щԫ�D��NT7��w�����CZ�r!ɣ^K������A�<	�\"ے�*����D���}B#�7�q��S�7Yӏ��@��0=x��uc���Nm{\\\\�1�<Ed�yTӓ��kn8�K�*�3|\"C�Z�\r�$\\O$T7��z=\r��YYi)�>7�	�|�Tr�>m\\}3DtՍ/��Vv�pJ��㰭8\r��������b�>&�����^|�,e��f�)�X)�T�>�F:���[����`k�ʱ�y5�t{g}9� ��58�49\\�I݆�mA�o<�󖇸�Sgk�xme�!��\Z��!T.�u]�m�p��ǌ�`���H�6���������9����93�0�\"�ts�G���*�����+�l�Ku��o+�Htp�d�߂�k�#F7\0H��-�x�!e@������o��(�ӡ�Ͳ��zG~,qF���^7�\"�Vef1J=ǚ�*_\n��!ߨm8�Q{�͒�f&�z\\߰|\'�\r�z�h�3�Q��h��ٗ��4\'1�z�����ι��tY����¬9�_j)��1�Z>���Q7[.�+[���lkC�o�������!sֶ+k�qN��[�J�E�<��I5m�leKJ6��d3î��?��� \\��ю�cU��1�[u�a����[2K�i�\"���%�69�Qg�yd.�:��|s�lʸ�ƶu,*�=n�[�}��� $�7ת���\"�OqYcsb�&��E���y��+�;�u��/n),��>s��mD>��\r#��@!\"\\�����:\0W��+ٚ�1�c2t����������o�ba��|t�m���J��囇E+��l[{|��\0ѭ3\'�Q�&=���1$c��+$E��Yw�pt����;�nC�o�\nEW�g���	�|�I*��:\'��9�^���׺9\r8dk�~�j��K���r��c�m�$Ik��]��g��(�Pe��sq�$��|T+G�a�svӁI��z�R�\"��Wp��>yX&��i�Y�z�vG9��-��<&�z\\���r�:OI��ԫn>:��lx��.��b(9d^�9��A6�`u����!<�l�_����P[Uv���%c��~����,R�\\�a#�w\n���僒\rkG,��	�xw-�x�u�>�M\"Ԙ���G�w����A���[\"@͌�̉r�6\Z�\\lC�ݞ����Q�\"�����bq��,�����Q��e��� �?�%��{#���\0@�s6\0\0@6\0\0�\0\0\0�\0\0d\0�\r\0\0�\r\0@6\0\0@6\0\0�\0\0d\0\0d\0�\r\0\0�\r\0@6\0\0�\0\0\0�\0\0d\0\0d\0�\r\0@6\0\0z¿\0{\nH����\0\0\0\0IEND�B`�',1,'1234',0),(47,'Presidencia',NULL,'Torre Ejecutiva',NULL,1,'visua',0);
+/*!40000 ALTER TABLE `organismos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pagos`
@@ -1486,19 +2440,37 @@ CREATE TABLE `pagos` (
   `pag_importe_planificado` decimal(11,2) NOT NULL,
   `pag_fecha_real` date DEFAULT NULL,
   `pag_importe_real` decimal(11,2) DEFAULT NULL,
-  `pag_txt_referencia` varchar(20) DEFAULT NULL,
+  `pag_txt_referencia` varchar(50) DEFAULT NULL,
   `pag_confirmar` tinyint(1) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `pag_gasto` smallint(6) NOT NULL DEFAULT '0',
+  `pag_inversion` smallint(6) NOT NULL DEFAULT '0',
+  `pag_contr_organizacion_fk` int(11) DEFAULT NULL,
+  `pag_contr_porcentaje` smallint(6) DEFAULT NULL,
+  `pag_proveedor_fk` int(11) DEFAULT NULL,
   PRIMARY KEY (`pag_pk`),
   KEY `pag_ent_fk_idx` (`pag_ent_fk`),
   KEY `pag_adq_fk_idx` (`pag_adq_fk`),
   KEY `pag_fecha_planificada_idx` (`pag_fecha_planificada`),
   KEY `pag_fecha_real_idx` (`pag_fecha_real`),
   KEY `pag_confirmar_idx` (`pag_confirmar`),
+  KEY `pagos_organi_int_prove_FK` (`pag_contr_organizacion_fk`),
+  KEY `pagos_proveedor_idx` (`pag_proveedor_fk`),
   CONSTRAINT `pag_adq_fk` FOREIGN KEY (`pag_adq_fk`) REFERENCES `adquisicion` (`adq_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `pag_ent_fk` FOREIGN KEY (`pag_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4475 DEFAULT CHARSET=utf8;
+  CONSTRAINT `pag_ent_fk` FOREIGN KEY (`pag_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `pagos_organi_int_prove_FK` FOREIGN KEY (`pag_contr_organizacion_fk`) REFERENCES `organi_int_prove` (`orga_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `pagos_proveedor` FOREIGN KEY (`pag_proveedor_fk`) REFERENCES `organi_int_prove` (`orga_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pagos`
+--
+
+LOCK TABLES `pagos` WRITE;
+/*!40000 ALTER TABLE `pagos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pagos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `participantes`
@@ -1522,8 +2494,17 @@ CREATE TABLE `participantes` (
   CONSTRAINT `fk_participantes_proyectos1` FOREIGN KEY (`part_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_participantes_usuarios1` FOREIGN KEY (`part_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `part_ent_fk` FOREIGN KEY (`part_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `participantes`
+--
+
+LOCK TABLES `participantes` WRITE;
+/*!40000 ALTER TABLE `participantes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `participantes` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `personas`
@@ -1544,9 +2525,19 @@ CREATE TABLE `personas` (
   PRIMARY KEY (`pers_pk`),
   KEY `fk_PERSONAS_ROLES_USUARIOS1_idx` (`pers_rol_fk`),
   KEY `FK1A6A26477E1BCA41` (`pers_orga_fk`),
-  CONSTRAINT `FK1A6A26477E1BCA41` FOREIGN KEY (`pers_orga_fk`) REFERENCES `organi_int_prove` (`orga_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=186 DEFAULT CHARSET=utf8;
+  CONSTRAINT `FK1A6A26477E1BCA41` FOREIGN KEY (`pers_orga_fk`) REFERENCES `organi_int_prove` (`orga_pk`),
+  CONSTRAINT `personas_roles_interesados_FK` FOREIGN KEY (`pers_rol_fk`) REFERENCES `roles_interesados` (`rolint_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `personas`
+--
+
+LOCK TABLES `personas` WRITE;
+/*!40000 ALTER TABLE `personas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `personas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pge_configuraciones`
@@ -1569,6 +2560,15 @@ CREATE TABLE `pge_configuraciones` (
   PRIMARY KEY (`cnf_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pge_configuraciones`
+--
+
+LOCK TABLES `pge_configuraciones` WRITE;
+/*!40000 ALTER TABLE `pge_configuraciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pge_configuraciones` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pge_invocaciones`
@@ -1595,6 +2595,15 @@ CREATE TABLE `pge_invocaciones` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `pge_invocaciones`
+--
+
+LOCK TABLES `pge_invocaciones` WRITE;
+/*!40000 ALTER TABLE `pge_invocaciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pge_invocaciones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `plantilla_cronograma`
 --
 
@@ -1606,9 +2615,22 @@ CREATE TABLE `plantilla_cronograma` (
   `p_crono_nombre` varchar(845) DEFAULT NULL,
   `p_crono_org_fk` int(11) DEFAULT NULL,
   `activo` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`p_crono_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`p_crono_pk`),
+  KEY `plantilla_cronograma_activo_IDX` (`activo`),
+  KEY `plantilla_cronograma_organismos_FK` (`p_crono_org_fk`),
+  CONSTRAINT `plantilla_cronograma_organismos_FK` FOREIGN KEY (`p_crono_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `plantilla_cronograma`
+--
+
+LOCK TABLES `plantilla_cronograma` WRITE;
+/*!40000 ALTER TABLE `plantilla_cronograma` DISABLE KEYS */;
+INSERT INTO `plantilla_cronograma` VALUES (1,'Cronograma de Obra',47,NULL);
+/*!40000 ALTER TABLE `plantilla_cronograma` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `plantilla_entregables`
@@ -1626,13 +2648,25 @@ CREATE TABLE `plantilla_entregables` (
   `p_entregable_ant_fk` int(11) DEFAULT NULL,
   `p_entregable_p_cro_fk` int(11) DEFAULT NULL,
   `p_entregables_numero` int(11) DEFAULT NULL,
+  `p_entregables_dependencia` varchar(45) DEFAULT NULL,
+  `p_entregables_es_hito` bit(1) DEFAULT NULL,
   PRIMARY KEY (`p_entregables_id`),
   KEY `plantilla_cro_idx` (`p_entregable_p_cro_fk`),
   KEY `entre_ante_idx` (`p_entregable_ant_fk`),
   CONSTRAINT `entre_ante` FOREIGN KEY (`p_entregable_ant_fk`) REFERENCES `plantilla_entregables` (`p_entregables_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `plantilla_cro` FOREIGN KEY (`p_entregable_p_cro_fk`) REFERENCES `plantilla_cronograma` (`p_crono_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=542 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `plantilla_entregables`
+--
+
+LOCK TABLES `plantilla_entregables` WRITE;
+/*!40000 ALTER TABLE `plantilla_entregables` DISABLE KEYS */;
+INSERT INTO `plantilla_entregables` VALUES (1,'Acta de inicio',0,0,1,NULL,1,1,'','\0'),(2,'Saneamiento (metros terminados)',1,0,1,NULL,1,2,'','\0'),(3,'Vialidad (metros terminados)',1,0,1,NULL,1,3,'','\0'),(4,'Conexiones saneamiento funcionando',1,0,1,NULL,1,4,'2','\0'),(5,'Conexiones agua funcionando',1,0,1,NULL,1,5,'','\0'),(6,'Conexiones electricidad funcionando',1,0,1,NULL,1,6,'','\0'),(7,'Viviendas',1,0,1,NULL,1,7,'','\0'),(8,'Compras de vivienda usada entregadas',1,0,1,NULL,1,8,'7','\0'),(9,'Canastas de materiales con obra terminada',1,0,1,NULL,1,9,'7','\0'),(10,'Mitigación ambiental terminada',1,0,1,NULL,1,10,'','\0'),(11,'Equipamientos terminados',1,0,1,NULL,1,11,'','\0'),(12,'Espacios públicos terminados',1,0,1,NULL,1,12,'','\0'),(13,'Recepción provisoria (si es en partes, la última)',1,0,1,NULL,1,13,'',''),(14,'Realojos (vivienda nueva) entregados',1,0,1,NULL,1,14,'7','\0');
+/*!40000 ALTER TABLE `plantilla_entregables` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `presupuesto`
@@ -1652,8 +2686,48 @@ CREATE TABLE `presupuesto` (
   KEY `pre_moneda_idx` (`pre_moneda`),
   CONSTRAINT `pre_fuente_organi` FOREIGN KEY (`pre_fuente_organi_fk`) REFERENCES `fuente_financiamiento` (`fue_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `pre_moneda` FOREIGN KEY (`pre_moneda`) REFERENCES `moneda` (`mon_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2220 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `presupuesto`
+--
+
+LOCK TABLES `presupuesto` WRITE;
+/*!40000 ALTER TABLE `presupuesto` DISABLE KEYS */;
+INSERT INTO `presupuesto` VALUES (1,NULL,NULL,NULL,0),(2,134000.00,2,1,0);
+/*!40000 ALTER TABLE `presupuesto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `procedimiento_compra`
+--
+
+DROP TABLE IF EXISTS `procedimiento_compra`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `procedimiento_compra` (
+  `proc_comp_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `proc_comp_nombre` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `proc_comp_org_fk` int(11) DEFAULT NULL,
+  `proc_comp_version` int(11) DEFAULT NULL,
+  `proc_comp_descripcion` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `proc_comp_habilitado` bit(1) DEFAULT b'1',
+  PRIMARY KEY (`proc_comp_pk`),
+  KEY `fk_procedimiento_compra_1_idx` (`proc_comp_org_fk`),
+  KEY `procedimiento_compra_proc_comp_habilitado_IDX` (`proc_comp_habilitado`),
+  CONSTRAINT `procedimiento_compra_organismos_FK` FOREIGN KEY (`proc_comp_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `procedimiento_compra`
+--
+
+LOCK TABLES `procedimiento_compra` WRITE;
+/*!40000 ALTER TABLE `procedimiento_compra` DISABLE KEYS */;
+/*!40000 ALTER TABLE `procedimiento_compra` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prod_mes`
@@ -1676,8 +2750,18 @@ CREATE TABLE `prod_mes` (
   KEY `prodmes_mes_idx` (`prodmes_mes`),
   KEY `prodmes_anio_idx` (`prodmes_anio`),
   CONSTRAINT `prodmes_prod_fk` FOREIGN KEY (`prodmes_prod_fk`) REFERENCES `productos` (`prod_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9197 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prod_mes`
+--
+
+LOCK TABLES `prod_mes` WRITE;
+/*!40000 ALTER TABLE `prod_mes` DISABLE KEYS */;
+INSERT INTO `prod_mes` VALUES (1,1,1,2020,0.00,0.00,0.00,0.00),(2,2,1,2020,0.00,0.00,0.00,0.00);
+/*!40000 ALTER TABLE `prod_mes` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `productos`
@@ -1698,8 +2782,18 @@ CREATE TABLE `productos` (
   PRIMARY KEY (`prod_pk`),
   KEY `prod_ent_fk_idx` (`prod_ent_fk`),
   CONSTRAINT `prod_ent_fk` FOREIGN KEY (`prod_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1343 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `productos`
+--
+
+LOCK TABLES `productos` WRITE;
+/*!40000 ALTER TABLE `productos` DISABLE KEYS */;
+INSERT INTO `productos` VALUES (1,1,'un.',1,'2019-11-22',NULL,NULL,'Documento integrador de Herramientas'),(2,2,'un.',3,'2019-11-22',NULL,NULL,'Canales de comunicación establecidos');
+/*!40000 ALTER TABLE `productos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prog_docs`
@@ -1719,6 +2813,15 @@ CREATE TABLE `prog_docs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `prog_docs`
+--
+
+LOCK TABLES `prog_docs` WRITE;
+/*!40000 ALTER TABLE `prog_docs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_docs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `prog_docs_obl`
 --
 
@@ -1735,6 +2838,15 @@ CREATE TABLE `prog_docs_obl` (
   CONSTRAINT `fk_DOCS_OBL_PROGRAMAS1` FOREIGN KEY (`progdocsobl_prog_pk`) REFERENCES `programas` (`prog_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prog_docs_obl`
+--
+
+LOCK TABLES `prog_docs_obl` WRITE;
+/*!40000 ALTER TABLE `prog_docs_obl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_docs_obl` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prog_indices`
@@ -1763,9 +2875,19 @@ CREATE TABLE `prog_indices` (
   `progind_anvance_fin_rojo` int(11) DEFAULT NULL,
   `progind_fecha_act` datetime DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `progind_fecha_act_color` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`progind_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=274 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prog_indices`
+--
+
+LOCK TABLES `prog_indices` WRITE;
+/*!40000 ALTER TABLE `prog_indices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_indices` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prog_indices_pre`
@@ -1783,9 +2905,22 @@ CREATE TABLE `prog_indices_pre` (
   `progindpre_anio` double(11,2) DEFAULT NULL,
   `progindpre_ac` double(11,2) DEFAULT NULL,
   `progindpre_pv` double(11,2) DEFAULT NULL,
-  PRIMARY KEY (`progindpre_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`progindpre_pk`),
+  KEY `prog_indices_pre_moneda_FK` (`progindpre_mon_fk`),
+  KEY `prog_indices_pre_prog_indices_FK` (`progindpre_progind_fk`),
+  CONSTRAINT `prog_indices_pre_moneda_FK` FOREIGN KEY (`progindpre_mon_fk`) REFERENCES `moneda` (`mon_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `prog_indices_pre_prog_indices_FK` FOREIGN KEY (`progindpre_progind_fk`) REFERENCES `prog_indices` (`progind_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prog_indices_pre`
+--
+
+LOCK TABLES `prog_indices_pre` WRITE;
+/*!40000 ALTER TABLE `prog_indices_pre` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_indices_pre` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prog_int`
@@ -1806,6 +2941,15 @@ CREATE TABLE `prog_int` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `prog_int`
+--
+
+LOCK TABLES `prog_int` WRITE;
+/*!40000 ALTER TABLE `prog_int` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_int` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `prog_lectura_area`
 --
 
@@ -1822,6 +2966,15 @@ CREATE TABLE `prog_lectura_area` (
   CONSTRAINT `fk_PROG_LECTURA_AREA_PROGRAMAS1` FOREIGN KEY (`proglectarea_prog_pk`) REFERENCES `programas` (`prog_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prog_lectura_area`
+--
+
+LOCK TABLES `prog_lectura_area` WRITE;
+/*!40000 ALTER TABLE `prog_lectura_area` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_lectura_area` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `prog_pre`
@@ -1842,6 +2995,15 @@ CREATE TABLE `prog_pre` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `prog_pre`
+--
+
+LOCK TABLES `prog_pre` WRITE;
+/*!40000 ALTER TABLE `prog_pre` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_pre` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `prog_tags`
 --
 
@@ -1858,6 +3020,15 @@ CREATE TABLE `prog_tags` (
   CONSTRAINT `fk_PROG_TAGS_PROGRAMAS1` FOREIGN KEY (`progtag_prog_pk`) REFERENCES `programas` (`prog_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prog_tags`
+--
+
+LOCK TABLES `prog_tags` WRITE;
+/*!40000 ALTER TABLE `prog_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prog_tags` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `programas`
@@ -1887,7 +3058,7 @@ CREATE TABLE `programas` (
   `prog_grp` varchar(45) DEFAULT NULL,
   `prog_semaforo_amarillo` int(11) DEFAULT NULL,
   `prog_semaforo_rojo` int(11) DEFAULT NULL,
-  `prog_activo` tinyint(1) DEFAULT NULL,
+  `prog_activo` bit(1) NOT NULL DEFAULT b'1',
   `prog_fecha_crea` date DEFAULT NULL,
   `prog_fecha_act` date NOT NULL,
   `prog_version` int(11) DEFAULT NULL,
@@ -1896,6 +3067,8 @@ CREATE TABLE `programas` (
   `prog_ult_origen` date DEFAULT NULL,
   `prog_id_migrado` int(11) DEFAULT NULL,
   `prog_obj_est_fk` int(11) DEFAULT NULL,
+  `prog_factor_impacto` text,
+  `prog_habilitado` bit(1) DEFAULT b'1',
   PRIMARY KEY (`prog_pk`),
   KEY `fk_PROGRAMAS_AREAS1_idx` (`prog_area_fk`),
   KEY `fk_PROGRAMAS_ORGANISMOS1_idx` (`prog_org_fk`),
@@ -1914,7 +3087,6 @@ CREATE TABLE `programas` (
   KEY `prog_fecha_crea_idx` (`prog_fecha_crea`),
   KEY `prog_fecha_act_idx` (`prog_fecha_act`),
   KEY `prog_obj_est_fk_idx` (`prog_obj_est_fk`),
-  CONSTRAINT `prog_obj_est_fk` FOREIGN KEY (`prog_obj_est_fk`) REFERENCES `objetivos_estrategicos` (`obj_est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROGRAMAS_AREAS1` FOREIGN KEY (`prog_area_fk`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROGRAMAS_ESTADOS1` FOREIGN KEY (`prog_est_fk`) REFERENCES `estados` (`est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROGRAMAS_ORGANISMOS1` FOREIGN KEY (`prog_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -1924,10 +3096,20 @@ CREATE TABLE `programas` (
   CONSTRAINT `fk_PROGRAMAS_USUARIOS4` FOREIGN KEY (`prog_usr_pmofed_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `prog_cro_fk` FOREIGN KEY (`prog_cro_fk`) REFERENCES `cronogramas` (`cro_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `prog_est_pendiente_fk` FOREIGN KEY (`prog_est_pendiente_fk`) REFERENCES `estados` (`est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `prog_obj_est_fk` FOREIGN KEY (`prog_obj_est_fk`) REFERENCES `objetivos_estrategicos` (`obj_est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `prog_pre_fk` FOREIGN KEY (`prog_pre_fk`) REFERENCES `prog_pre` (`progpre_prog_fk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `prog_progindices_fk` FOREIGN KEY (`prog_progindices_fk`) REFERENCES `prog_indices` (`progind_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=265 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `programas`
+--
+
+LOCK TABLES `programas` WRITE;
+/*!40000 ALTER TABLE `programas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `programas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Temporary table structure for view `programas_proyectos`
@@ -1937,25 +3119,24 @@ DROP TABLE IF EXISTS `programas_proyectos`;
 /*!50001 DROP VIEW IF EXISTS `programas_proyectos`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `programas_proyectos` (
-  `id` tinyint NOT NULL,
-  `fichaFk` tinyint NOT NULL,
-  `tipoFicha` tinyint NOT NULL,
-  `fechaCrea` tinyint NOT NULL,
-  `activo` tinyint NOT NULL,
-  `organismo` tinyint NOT NULL,
-  `nombre` tinyint NOT NULL,
-  `estado` tinyint NOT NULL,
-  `estadoNombre` tinyint NOT NULL,
-  `estadoPendiente` tinyint NOT NULL,
-  `areaPk` tinyint NOT NULL,
-  `areaNombre` tinyint NOT NULL,
-  `solAceptacion` tinyint NOT NULL,
-  `gerente` tinyint NOT NULL,
-  `gerentePrimerApellido` tinyint NOT NULL,
-  `gerentePrimerNombre` tinyint NOT NULL,
-  `pmoFederada` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `programas_proyectos` AS SELECT 
+ 1 AS `id`,
+ 1 AS `fichaFk`,
+ 1 AS `tipoFicha`,
+ 1 AS `fechaCrea`,
+ 1 AS `activo`,
+ 1 AS `organismo`,
+ 1 AS `nombre`,
+ 1 AS `estado`,
+ 1 AS `estadoNombre`,
+ 1 AS `estadoPendiente`,
+ 1 AS `areaPk`,
+ 1 AS `areaNombre`,
+ 1 AS `solAceptacion`,
+ 1 AS `gerente`,
+ 1 AS `gerentePrimerApellido`,
+ 1 AS `gerentePrimerNombre`,
+ 1 AS `pmoFederada`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1974,6 +3155,15 @@ CREATE TABLE `proy_docs` (
   CONSTRAINT `fk_Proy_docs_DOCUMENTOS1` FOREIGN KEY (`proydoc_doc_pk`) REFERENCES `documentos` (`docs_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_docs`
+--
+
+LOCK TABLES `proy_docs` WRITE;
+/*!40000 ALTER TABLE `proy_docs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_docs` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_indices`
@@ -2003,11 +3193,28 @@ CREATE TABLE `proy_indices` (
   `proyind_anvance_fin_rojo` int(11) DEFAULT NULL,
   `proyind_fecha_act` datetime DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `proyind_periodo_inicio_ent_fk` int(11) DEFAULT NULL,
+  `proyind_periodo_fin_ent_fk` int(11) DEFAULT NULL,
+  `proyind_fecha_act_color` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`proyind_pk`),
   KEY `proyind_periodo_inicio_idx` (`proyind_periodo_inicio`),
-  KEY `proyind_periodo_fin_idx` (`proyind_periodo_fin`)
-) ENGINE=InnoDB AUTO_INCREMENT=3355 DEFAULT CHARSET=utf8;
+  KEY `proyind_periodo_fin_idx` (`proyind_periodo_fin`),
+  KEY `proyind_periodo_fin_ent_fk_idx` (`proyind_periodo_fin_ent_fk`),
+  KEY `proyind_periodo_inicio_ent_fk_idx` (`proyind_periodo_inicio_ent_fk`),
+  CONSTRAINT `proyind_periodo_fin_ent_fk` FOREIGN KEY (`proyind_periodo_fin_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `proyind_periodo_inicio_ent_fk` FOREIGN KEY (`proyind_periodo_inicio_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_indices`
+--
+
+LOCK TABLES `proy_indices` WRITE;
+/*!40000 ALTER TABLE `proy_indices` DISABLE KEYS */;
+INSERT INTO `proy_indices` VALUES (1,NULL,NULL,0,NULL,0,'2019-11-22','2019-11-22',0.00,NULL,NULL,0,0,0,0,0,0,0,'2019-11-22 00:00:00',0,NULL,NULL,1),(2,NULL,NULL,0,NULL,0,'2019-11-22','2020-01-31',0.00,NULL,NULL,0,17,83,0,17,83,0,'2019-11-22 00:00:00',0,NULL,NULL,1);
+/*!40000 ALTER TABLE `proy_indices` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_indices_pre`
@@ -2025,9 +3232,21 @@ CREATE TABLE `proy_indices_pre` (
   `proyindpre_ac` double(11,2) DEFAULT NULL,
   `proyindpre_pv` double(11,2) DEFAULT NULL,
   `proyindpre_anio` double(11,2) DEFAULT NULL,
-  PRIMARY KEY (`proyindpre_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=561 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`proyindpre_pk`),
+  KEY `proy_indices_pre_moneda_FK` (`proyindpre_mon_fk`),
+  KEY `proy_indices_pre_proy_indices_FK` (`proyindpre_proyind_fk`),
+  CONSTRAINT `proy_indices_pre_moneda_FK` FOREIGN KEY (`proyindpre_mon_fk`) REFERENCES `moneda` (`mon_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_indices_pre`
+--
+
+LOCK TABLES `proy_indices_pre` WRITE;
+/*!40000 ALTER TABLE `proy_indices_pre` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_indices_pre` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_int`
@@ -2046,6 +3265,15 @@ CREATE TABLE `proy_int` (
   CONSTRAINT `fk_PROY_INT_PROYECTOS1` FOREIGN KEY (`proyint_proy_pk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_int`
+--
+
+LOCK TABLES `proy_int` WRITE;
+/*!40000 ALTER TABLE `proy_int` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_int` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_lectura_area`
@@ -2067,6 +3295,15 @@ CREATE TABLE `proy_lectura_area` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `proy_lectura_area`
+--
+
+LOCK TABLES `proy_lectura_area` WRITE;
+/*!40000 ALTER TABLE `proy_lectura_area` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_lectura_area` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `proy_otros_cat_secundarias`
 --
 
@@ -2080,8 +3317,17 @@ CREATE TABLE `proy_otros_cat_secundarias` (
   KEY `proy_cat_cat_proy_fk_idx` (`proy_cat_cat_proy_fk`),
   CONSTRAINT `proy_cat_cat_proy_fk` FOREIGN KEY (`proy_cat_cat_proy_fk`) REFERENCES `categoria_proyectos` (`cat_proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_cat_proy_otros_fk` FOREIGN KEY (`proy_cat_proy_otros_fk`) REFERENCES `proy_otros_datos` (`proy_otr_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Relaci\F3n entre un proyecto y una o varias categorias secundarias.';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Relaci�n entre un proyecto y una o varias categorias secundarias.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_otros_cat_secundarias`
+--
+
+LOCK TABLES `proy_otros_cat_secundarias` WRITE;
+/*!40000 ALTER TABLE `proy_otros_cat_secundarias` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_otros_cat_secundarias` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_otros_datos`
@@ -2094,13 +3340,13 @@ CREATE TABLE `proy_otros_datos` (
   `proy_otr_pk` int(11) NOT NULL AUTO_INCREMENT,
   `proy_otr_eta_fk` int(11) DEFAULT NULL COMMENT 'Estado (etapa)',
   `proy_otr_cont_fk` int(11) DEFAULT NULL COMMENT 'Contratista Principal',
-  `proy_otr_ins_eje_fk` int(11) DEFAULT NULL COMMENT 'Instituci\F3n Ejecutora',
-  `proy_otr_ent_fk` int(11) DEFAULT NULL COMMENT 'Inicio construcci\F3n del Producto. Asociado a un Entregable.',
+  `proy_otr_ins_eje_fk` int(11) DEFAULT NULL COMMENT 'Instituci�n Ejecutora',
+  `proy_otr_ent_fk` int(11) DEFAULT NULL COMMENT 'Inicio construcci�n del Producto. Asociado a un Entregable.',
   `proy_otr_origen` varchar(1000) DEFAULT NULL COMMENT 'Origen Principal de los Recursos.',
-  `proy_otr_plazo` int(11) DEFAULT NULL COMMENT 'Plazo estimado de obra en d\EDas.',
+  `proy_otr_plazo` int(11) DEFAULT NULL COMMENT 'Plazo estimado de obra en d�as.',
   `proy_otr_observaciones` varchar(4000) DEFAULT NULL COMMENT 'Observaciones.',
-  `proy_otr_cat_fk` int(11) DEFAULT NULL COMMENT 'Categor\EDa Principal.',
-  `proy_otr_est_pub_fk` int(11) DEFAULT NULL COMMENT 'Estado de Publicaci\F3n.',
+  `proy_otr_cat_fk` int(11) DEFAULT NULL COMMENT 'Categor�a Principal.',
+  `proy_otr_est_pub_fk` int(11) DEFAULT NULL COMMENT 'Estado de Publicaci�n.',
   PRIMARY KEY (`proy_otr_pk`),
   KEY `proy_otr_cont_fk_idx` (`proy_otr_cont_fk`),
   KEY `proy_otr_ins_eje_fk_idx` (`proy_otr_ins_eje_fk`),
@@ -2114,8 +3360,18 @@ CREATE TABLE `proy_otros_datos` (
   CONSTRAINT `proy_otr_est_pub_fk` FOREIGN KEY (`proy_otr_est_pub_fk`) REFERENCES `estados_publicacion` (`est_pub_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_otr_eta_fk` FOREIGN KEY (`proy_otr_eta_fk`) REFERENCES `etapa` (`eta_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_otr_ins_eje_fk` FOREIGN KEY (`proy_otr_ins_eje_fk`) REFERENCES `organi_int_prove` (`orga_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1471 DEFAULT CHARSET=latin1 COMMENT='Datos del proyecto principalmente para usarse en el visualizador';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='Datos del proyecto principalmente para usarse en el visualizador';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_otros_datos`
+--
+
+LOCK TABLES `proy_otros_datos` WRITE;
+/*!40000 ALTER TABLE `proy_otros_datos` DISABLE KEYS */;
+INSERT INTO `proy_otros_datos` VALUES (1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1),(2,185,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1);
+/*!40000 ALTER TABLE `proy_otros_datos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_pre`
@@ -2136,6 +3392,15 @@ CREATE TABLE `proy_pre` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `proy_pre`
+--
+
+LOCK TABLES `proy_pre` WRITE;
+/*!40000 ALTER TABLE `proy_pre` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_pre` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `proy_publica_hist`
 --
 
@@ -2152,8 +3417,17 @@ CREATE TABLE `proy_publica_hist` (
   KEY `proy_publica_usu_fk_idx` (`proy_publica_usu_fk`),
   CONSTRAINT `proy_publica_proy_fk` FOREIGN KEY (`proy_publica_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_publica_usu_fk` FOREIGN KEY (`proy_publica_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1658 DEFAULT CHARSET=latin1 COMMENT='Registro de las veces que se publicó el proyecto en el Visualizador.';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Registro de las veces que se publicó el proyecto en el Visualizador.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_publica_hist`
+--
+
+LOCK TABLES `proy_publica_hist` WRITE;
+/*!40000 ALTER TABLE `proy_publica_hist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_publica_hist` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_replanificacion`
@@ -2170,14 +3444,26 @@ CREATE TABLE `proy_replanificacion` (
   `proyreplan_historial` tinyint(1) NOT NULL,
   `proyreplan_activo` tinyint(1) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
-  `proyreplan_generar_linea_base` tinyint(1) NOT NULL DEFAULT '0',
+  `proyreplan_generar_linea_base` bit(1) DEFAULT NULL,
+  `proyreplan_generar_presupuesto` tinyint(1) NOT NULL DEFAULT '0',
+  `proyreplan_generar_producto` tinyint(1) NOT NULL DEFAULT '0',
+  `proyreplan_permit_editar` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`proyreplan_pk`),
   KEY `proyreplan_proy_fk_idx` (`proyreplan_proy_fk`),
   KEY `proyreplan_fecha_idx` (`proyreplan_fecha`),
   KEY `proyreplan_activo_idx` (`proyreplan_activo`),
   CONSTRAINT `proyreplan_proy_fk` FOREIGN KEY (`proyreplan_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1242 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_replanificacion`
+--
+
+LOCK TABLES `proy_replanificacion` WRITE;
+/*!40000 ALTER TABLE `proy_replanificacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_replanificacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_sitact_historico`
@@ -2189,15 +3475,27 @@ DROP TABLE IF EXISTS `proy_sitact_historico`;
 CREATE TABLE `proy_sitact_historico` (
   `proy_sitact_hist_pk` int(11) NOT NULL AUTO_INCREMENT,
   `proy_sitact_fecha` date NOT NULL,
-  `proy_sitact_desc` varchar(4000) DEFAULT NULL,
+  `proy_sitact_desc` text,
   `proy_sitact_proy_fk` int(11) NOT NULL,
   `proy_sitact_usu_fk` int(11) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`proy_sitact_hist_pk`),
   KEY `proy_sitact_proy_fk_idx` (`proy_sitact_proy_fk`),
+  KEY `proy_sitact_historico_proy_sitact_usu_fk_IDX` (`proy_sitact_usu_fk`),
+  CONSTRAINT `proy_sitact_historico_ss_usuario_FK` FOREIGN KEY (`proy_sitact_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_sitact_proy_fk` FOREIGN KEY (`proy_sitact_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=18546 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_sitact_historico`
+--
+
+LOCK TABLES `proy_sitact_historico` WRITE;
+/*!40000 ALTER TABLE `proy_sitact_historico` DISABLE KEYS */;
+INSERT INTO `proy_sitact_historico` VALUES (1,'2019-11-22','<p> Meta 1: Se publicaron los<span>&nbsp;indicadores sobre la evolución de la eficiencia energética en diferentes sectores de actividad en formato de datos abiertos</span></p>',2,1289,0),(2,'2019-11-22','<p> - Se actualiza Drupal a nueva versión</p> \n<p> - Hoy se decide subir MRREE</p>',2,1289,0);
+/*!40000 ALTER TABLE `proy_sitact_historico` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proy_tags`
@@ -2216,6 +3514,15 @@ CREATE TABLE `proy_tags` (
   CONSTRAINT `fk_PROY_TAGS_PROYECTOS1` FOREIGN KEY (`proytag_proy_pk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proy_tags`
+--
+
+LOCK TABLES `proy_tags` WRITE;
+/*!40000 ALTER TABLE `proy_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `proy_tags` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `proyectos`
@@ -2241,28 +3548,30 @@ CREATE TABLE `proyectos` (
   `proy_pre_fk` int(11) DEFAULT NULL,
   `proy_proyindices_fk` int(11) DEFAULT NULL,
   `proy_peso` int(11) DEFAULT NULL,
-  `proy_descripcion` varchar(4000) DEFAULT NULL,
-  `proy_objetivo` varchar(4000) DEFAULT NULL,
-  `proy_obj_publico` varchar(4000) DEFAULT NULL,
-  `proy_situacion_actual` varchar(4000) DEFAULT NULL,
+  `proy_descripcion` text,
+  `proy_objetivo` text,
+  `proy_obj_publico` text,
+  `proy_situacion_actual` text,
   `proy_leccion_aprendida` varchar(256) DEFAULT NULL,
   `proy_nombre` varchar(100) DEFAULT NULL,
   `proy_grp` varchar(45) DEFAULT NULL,
   `proy_semaforo_amarillo` int(11) DEFAULT NULL,
   `proy_semaforo_rojo` int(11) DEFAULT NULL,
   `proy_activo` tinyint(1) DEFAULT NULL,
-  `proy_fecha_crea` date DEFAULT NULL,
-  `proy_fecha_act` date NOT NULL,
+  `proy_fecha_crea` datetime(6) DEFAULT NULL,
+  `proy_fecha_act` datetime(6) DEFAULT NULL,
   `proy_ult_usuario` int(11) DEFAULT NULL,
-  `proy_ult_mod` date DEFAULT NULL,
+  `proy_ult_mod` datetime(6) DEFAULT NULL,
   `proy_ult_origen` varchar(45) DEFAULT NULL,
   `proy_version` int(11) DEFAULT NULL,
-  `proy_fecha_est_act` date DEFAULT NULL,
+  `proy_fecha_est_act` datetime(6) DEFAULT NULL,
   `proy_id_migrado` int(11) DEFAULT NULL,
   `proy_publicable` tinyint(1) NOT NULL DEFAULT '1',
   `proy_otr_dat_fk` int(11) DEFAULT NULL,
   `proy_latlng_fk` int(11) DEFAULT NULL,
   `proy_obj_est_fk` int(11) DEFAULT NULL,
+  `proy_factor_impacto` text,
+  `proy_fecha_act_pub` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`proy_pk`),
   KEY `fk_PROYECTOS_CRONOGRAMAS1_idx` (`proy_cro_fk`),
   KEY `fk_PROYECTOS_RIESGOS1_idx` (`proy_risk_fk`),
@@ -2286,7 +3595,6 @@ CREATE TABLE `proyectos` (
   KEY `proy_otr_dat_fk_idx` (`proy_otr_dat_fk`),
   KEY `proy_latlng_fk_idx` (`proy_latlng_fk`),
   KEY `proy_obj_est_fk_idx` (`proy_obj_est_fk`),
-  CONSTRAINT `proy_obj_est_fk` FOREIGN KEY (`proy_obj_est_fk`) REFERENCES `objetivos_estrategicos` (`obj_est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROYECTOS_AREAS1` FOREIGN KEY (`proy_area_fk`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROYECTOS_CRONOGRAMA` FOREIGN KEY (`proy_cro_fk`) REFERENCES `cronogramas` (`cro_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROYECTOS_ESTADOS1` FOREIGN KEY (`proy_est_fk`) REFERENCES `estados` (`est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -2296,13 +3604,24 @@ CREATE TABLE `proyectos` (
   CONSTRAINT `fk_PROYECTOS_USUARIOS1` FOREIGN KEY (`proy_usr_adjunto_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROYECTOS_USUARIOS2` FOREIGN KEY (`proy_usr_sponsor_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_PROYECTOS_USUARIOS4` FOREIGN KEY (`proy_usr_pmofed_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_PROYECTOS_USUARIOS5` FOREIGN KEY (`proy_usr_gerente_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_est_pendiente_fk` FOREIGN KEY (`proy_est_pendiente_fk`) REFERENCES `estados` (`est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `proy_latlng_fk` FOREIGN KEY (`proy_latlng_fk`) REFERENCES `latlng_proyectos` (`latlng_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `proy_obj_est_fk` FOREIGN KEY (`proy_obj_est_fk`) REFERENCES `objetivos_estrategicos` (`obj_est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_otr_dat_fk` FOREIGN KEY (`proy_otr_dat_fk`) REFERENCES `proy_otros_datos` (`proy_otr_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_pre_fk` FOREIGN KEY (`proy_pre_fk`) REFERENCES `presupuesto` (`pre_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `proy_proyindices_fk` FOREIGN KEY (`proy_proyindices_fk`) REFERENCES `proy_indices` (`proyind_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2365 DEFAULT CHARSET=utf8 COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proyectos`
+--
+
+LOCK TABLES `proyectos` WRITE;
+/*!40000 ALTER TABLE `proyectos` DISABLE KEYS */;
+INSERT INTO `proyectos` VALUES (2,47,2,NULL,NULL,352,1289,1290,1289,1288,NULL,NULL,3,2,2,0,'<p> <span>Existen 63 sitios diferentes en la Administración Central, con estructura heterogénea que dificultan el acceso homogeinizado a contenidos, incrementando costos operativos y generando una experiencia de usuario confusa. Se propone disponibilizar un <em><strong>Portal del Estado Único, promoviendo la armonía en los mensajes y el vínculo cercano del Estado con las personas.</strong></em></span></p>','<p> <span>Disponer de un Portal del Estado único para comunicar, informar y acercarse a las personas; con una imagen de gobierno unificada, con una comunicación integrada, y centralizando la infraestructura tecnológica.</span></p> \n<p> <span>Que esté integrado por todas las unidades y programas de Presidencia de la República y cada uno de los Ministerios.</span></p> \n<p> <br> <span><strong><em>Contribuye a:</em></strong><br> - Potenciar la Comunicación de Gobierno<br> - Facilitar la interacción de las personas con el Gobierno<br> - Racionalizar recursos y costos</span></p>','<ul> \n <li> Publicar indicadores sobre la evolución de la eficiencia energética en diferentes sectores de actividad en formato de datos abiertos.</li> \n <li> Desarrollar y publicación de un mapa nacional donde se georeferencien los distintos proyectos de eficiencia energética, los instrumentos de promoción que utilizaron y su localización en el territorio nacional.</li> \n</ul>','<p> - Se actualiza Drupal a nueva versión</p> \n<p> - Hoy se decide subir MRREE</p>',NULL,'Portal Único del Estado',NULL,10,20,1,'2019-11-22 15:42:08.000000','2019-11-22 16:39:40.000000',NULL,NULL,NULL,NULL,NULL,NULL,0,2,NULL,12,'<p> <span><em><strong>El Estado</strong></em>: Incorporando una estrategia de comunicación y una vía tecnológica que le permita organizar y homogeinizar su comunicación con la ciudadanía.</span></p> \n<p> <span><em><strong>El ciudadano:</strong></em> Que contará con una herramienta tecnológica moderna y eficiente.</span></p>','2019-11-22 16:39:40.000000');
+/*!40000 ALTER TABLE `proyectos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `registros_horas`
@@ -2329,8 +3648,17 @@ CREATE TABLE `registros_horas` (
   CONSTRAINT `fk_registrohoras_entregables1` FOREIGN KEY (`rh_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_registrohoras_proyectos1` FOREIGN KEY (`rh_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_registrohoras_usuarios1` FOREIGN KEY (`rh_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registros_horas`
+--
+
+LOCK TABLES `registros_horas` WRITE;
+/*!40000 ALTER TABLE `registros_horas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registros_horas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `revinfo`
@@ -2344,8 +3672,18 @@ CREATE TABLE `revinfo` (
   `REVTSTMP` bigint(20) DEFAULT NULL,
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`REV`)
-) ENGINE=MyISAM AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `revinfo`
+--
+
+LOCK TABLES `revinfo` WRITE;
+/*!40000 ALTER TABLE `revinfo` DISABLE KEYS */;
+INSERT INTO `revinfo` VALUES (2,1574358870689,0),(3,1574359169247,0),(4,1574360472961,0),(5,1574425889061,0),(6,1574428094681,0),(7,1574428169794,0),(8,1574428350589,0),(9,1574429646783,0),(10,1574429668757,0),(11,1574430062757,0),(12,1574430189525,0),(13,1574430223081,0),(14,1574430276138,0),(15,1574430318352,0);
+/*!40000 ALTER TABLE `revinfo` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `riesgos`
@@ -2372,6 +3710,7 @@ CREATE TABLE `riesgos` (
   `risk_usuario_superado_fk` int(11) DEFAULT NULL,
   `risk_exposicion` double DEFAULT NULL,
   `version` int(11) DEFAULT '0',
+  `risk_observaciones` varchar(400) DEFAULT NULL,
   PRIMARY KEY (`risk_pk`),
   KEY `risk_proy_fk_idx` (`risk_proy_fk`),
   KEY `risk_usuario_superado_fk_fk_idx` (`risk_usuario_superado_fk`),
@@ -2380,10 +3719,20 @@ CREATE TABLE `riesgos` (
   KEY `risk_fecha_actu_idx` (`risk_fecha_actu`),
   KEY `risk_fecha_limite_idx` (`risk_fecha_limite`),
   KEY `risk_fecha_superado_idx` (`risk_fecha_superado`),
+  CONSTRAINT `riesgos_proyectos_FK` FOREIGN KEY (`risk_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `risk_ent_fk` FOREIGN KEY (`risk_ent_fk`) REFERENCES `entregables` (`ent_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `risk_usuario_superado_fk_fk` FOREIGN KEY (`risk_usuario_superado_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2049 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `riesgos`
+--
+
+LOCK TABLES `riesgos` WRITE;
+/*!40000 ALTER TABLE `riesgos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `riesgos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `roles_interesados`
@@ -2400,8 +3749,18 @@ CREATE TABLE `roles_interesados` (
   PRIMARY KEY (`rolint_pk`),
   KEY `fk_ROLES_INTERESADOS_ORGANISMOS1_idx` (`rolint_org_fk`),
   CONSTRAINT `fk_ROLES_INTERESADOS_ORGANISMOS1` FOREIGN KEY (`rolint_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles_interesados`
+--
+
+LOCK TABLES `roles_interesados` WRITE;
+/*!40000 ALTER TABLE `roles_interesados` DISABLE KEYS */;
+INSERT INTO `roles_interesados` VALUES (2,47,'Analista',0),(3,47,'Comercial',0),(4,47,'Consultor',0),(5,47,'Coordinador',0);
+/*!40000 ALTER TABLE `roles_interesados` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `roles_usuarios`
@@ -2417,6 +3776,15 @@ CREATE TABLE `roles_usuarios` (
   PRIMARY KEY (`rol_pk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles_usuarios`
+--
+
+LOCK TABLES `roles_usuarios` WRITE;
+/*!40000 ALTER TABLE `roles_usuarios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `roles_usuarios` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_ayuda`
@@ -2439,6 +3807,15 @@ CREATE TABLE `ss_ayuda` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_ayuda`
+--
+
+LOCK TABLES `ss_ayuda` WRITE;
+/*!40000 ALTER TABLE `ss_ayuda` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_ayuda` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_categoper`
 --
 
@@ -2456,6 +3833,15 @@ CREATE TABLE `ss_categoper` (
   PRIMARY KEY (`cat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_categoper`
+--
+
+LOCK TABLES `ss_categoper` WRITE;
+/*!40000 ALTER TABLE `ss_categoper` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_categoper` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_configuraciones`
@@ -2478,9 +3864,20 @@ CREATE TABLE `ss_configuraciones` (
   `cnf_version` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cnf_org_fk` (`cnf_org_fk`),
-  KEY `cnf_codigo` (`cnf_codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=873 DEFAULT CHARSET=utf8;
+  KEY `cnf_codigo` (`cnf_codigo`),
+  CONSTRAINT `ss_configuraciones_organismos_FK` FOREIGN KEY (`cnf_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2823 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_configuraciones`
+--
+
+LOCK TABLES `ss_configuraciones` WRITE;
+/*!40000 ALTER TABLE `ss_configuraciones` DISABLE KEYS */;
+INSERT INTO `ss_configuraciones` VALUES (2638,NULL,'AUTH_LDAP_ENABLE','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2639,NULL,'AUTH_LDAP_SEARCH_NAME','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2640,NULL,'AUTH_LDAP_SEARCH_FILTER','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2641,NULL,'AUTH_LDAP_SEARCH_INITIAL_CTX_FACTORY','Clase java que construye el initial context','com.sun.jndi.ldap.LdapCtxFactory',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2642,NULL,'AUTH_LDAP_SEARCH_URL','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2643,NULL,'AUTH_LDAP_SECURITY_PRINCIPAL','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2644,NULL,'AUTH_LDAP_SECURITY_CREDENTIAL','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2645,NULL,'AUTH_LDAP_SEARCH_USER_LOGIN_FILTER','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2646,NULL,'DOCUMENTOS_DIR','Directorio donde se almacenarán los documentos','/srv/siges/docs',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2647,NULL,'NOMBRE_ARCHIVO_MANUAL','Nombre del archivo correspondiente al manual de usuario','MANUAL',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2648,NULL,'TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO','Tamaño máximo del archivo de manual de usuario en bytes','10485760',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2649,NULL,'MEDIA_MIMETYPE_REGEX','Regex que valida el mimetype de los media que se suben','image\\/(jpeg|png)',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2650,NULL,'DEBUG','Modo depuración','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2651,NULL,'DEBUG_DESTINO','Email destino en modo depuración','prueba@prueba.com',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2652,NULL,'INCLUIR_CALCULAR_FINALIZADOS','Incluir lor pryectos finalizdos en el cáclulo de indicadores','false',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2653,NULL,'URL_SISTEMA','URL del Sistema','https://siges.agesic.gub.uy',NULL,NULL,NULL,'2019-11-20 15:56:02',NULL,1),(2654,45,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2019-11-20 16:41:04',NULL,1),(2655,45,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2019-11-20 16:41:04',NULL,1),(2656,45,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2019-11-20 16:41:04',NULL,1),(2657,45,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2658,45,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2659,45,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2660,45,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2661,45,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2662,45,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2663,45,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2664,45,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2665,45,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2019-11-20 16:41:05',NULL,1),(2666,45,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2019-11-20 16:41:06',NULL,1),(2667,45,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2668,45,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2669,45,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2670,45,'CON_CORREO','Si se envía correo o no','true',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2671,45,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2672,45,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2673,45,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2674,45,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2675,45,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2676,45,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2677,45,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2678,45,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2679,45,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2680,45,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2681,45,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2682,45,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://127.0.0.1:8080/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2683,45,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://127.0.0.1:8080/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2684,45,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2685,45,'PROYECTO_GANTT_PERIODO','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2686,45,'TOOLTIP_OBJETIVO_ESTRATEGICO','Tooltip de objetivo estratégico','Objetivo Estratégico',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2687,45,'LABEL_OBJ_ESTRE','Esta configuracion es utilizada para definir nuevas etiquetas de objetivos estrategicos','Objetivo Estratégico',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2688,45,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2689,45,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2019-11-20 16:41:08',NULL,1),(2690,45,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2019-11-20 16:41:09',NULL,1),(2691,45,'MAIL_ENCODING','Encoding de los mails a enviar','UTF-8',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2692,45,'VISUALIZADOR.PUBLICARSERVICIO_VERSION','Versión de la que se exportan los proyectos al visualizador','2',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2693,45,'APROBACION_PMOF','Esta configuración es utilizada para que el PMO Federada cambiar de fase en los proyectos sin enviar solicitudes.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2694,45,'APROBACION_REPLANIFICACION_PMOF','Esta configuración es utilizada para que el PMO Federada pueda cambiar del estado de Ejecución a Planificación sin realizar una solicitud.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2695,45,'PROVEEDOR_ES_EXIGIDO_EN_PAGO','Esta configuración es utilizada para que el PMO Federada deba elegir un proveedor en el pago.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2696,45,'PROVEEDOR_ES_EXIGIDO_EN_COMPRA','Esta configuración es utilizada para que el PMO Federada deba elegir un proveedor en la compra.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2697,45,'CLIENTE_ES_EXIGIDO_EN_PAGO','Esta configuración es utilizada para que se deba elegir un cliente en el pago al momento de aprobarlo.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2698,45,'SHOW_MODULO_RIESGOS','Mostrar el modulo de riesgos','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2699,45,'SHOW_MODULO_PRODUCTOS','Mostrar el modulo de productos','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2700,45,'SHOW_MODULO_PRESUPUESTO','Mostrar el modulo de presupuesto','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2701,45,'SHOW_MODULO_DOCUMENTOS','Mostrar el modulo de documentos','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2702,45,'SHOW_MODULO_INTERESADOS','Mostrar el modulo de interesados','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2703,45,'SHOW_MODULO_COLABORADORES','Mostrar el modulo de colaboradores','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2704,45,'SHOW_MODULO_LOCALIZACIONES','Mostrar el modulo de localizaciones','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2705,45,'SHOW_MODULO_CALIDAD','Mostrar el modulo de calidad','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2706,45,'SHOW_MODULO_MULTIMEDIA','Mostrar el modulo de multimedia','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2707,45,'CAMPOS_SON_EXIGIDOS_EN_ADQUISICION','Esta configuración es utilizada para que los campos \"ID de adquisición\", \"Tipo de adquisición\", y \"Centro de costo\" sean requeridos al crear/modificar una adquisición.','true',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2708,45,'GERENTES_ASIGNAN_AREAS_TEMATICAS','Habilita a Gerente y Adjunto a asignar áreas temáticas a los proyectos en los cuales se encuentran asignados.','false',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2709,45,'LARGO_MAXIMO_ID_ADQUISICION','Define el largo máximo del valor del campo \"Id. de Adquisición\" en Adquisición.','5',NULL,NULL,NULL,'2019-11-20 16:41:10',NULL,1),(2766,47,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2019-11-21 16:20:42',NULL,1),(2767,47,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2768,47,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2769,47,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2770,47,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2771,47,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2772,47,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2773,47,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2774,47,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2775,47,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2776,47,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2777,47,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2778,47,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2779,47,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2780,47,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2781,47,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2782,47,'CON_CORREO','Si se envía correo o no','true',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2783,47,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2784,47,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2785,47,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2786,47,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2787,47,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2788,47,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2789,47,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2790,47,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2791,47,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2792,47,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2793,47,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2794,47,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://127.0.0.1:8080/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2795,47,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://127.0.0.1:8080/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2796,47,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2797,47,'PROYECTO_GANTT_PERIODO','true/false: habilitar configuración de período de proyecto en entregables','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2798,47,'TOOLTIP_OBJETIVO_ESTRATEGICO','Tooltip de objetivo estratégico','Objetivo Estratégico',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2799,47,'LABEL_OBJ_ESTRE','Esta configuracion es utilizada para definir nuevas etiquetas de objetivos estrategicos','Objetivo Estratégico',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2800,47,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2801,47,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2802,47,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2803,47,'MAIL_ENCODING','Encoding de los mails a enviar','UTF-8',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2804,47,'VISUALIZADOR.PUBLICARSERVICIO_VERSION','Versión de la que se exportan los proyectos al visualizador','2',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2805,47,'APROBACION_PMOF','Esta configuración es utilizada para que el PMO Federada cambiar de fase en los proyectos sin enviar solicitudes.','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2806,47,'APROBACION_REPLANIFICACION_PMOF','Esta configuración es utilizada para que el PMO Federada pueda cambiar del estado de Ejecución a Planificación sin realizar una solicitud.','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2807,47,'PROVEEDOR_ES_EXIGIDO_EN_PAGO','Esta configuración es utilizada para que el PMO Federada deba elegir un proveedor en el pago.','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2808,47,'PROVEEDOR_ES_EXIGIDO_EN_COMPRA','Esta configuración es utilizada para que el PMO Federada deba elegir un proveedor en la compra.','false',NULL,NULL,NULL,'2019-11-21 16:20:43',NULL,1),(2809,47,'CLIENTE_ES_EXIGIDO_EN_PAGO','Esta configuración es utilizada para que se deba elegir un cliente en el pago al momento de aprobarlo.','false',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2810,47,'SHOW_MODULO_RIESGOS','Mostrar el modulo de riesgos','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2811,47,'SHOW_MODULO_PRODUCTOS','Mostrar el modulo de productos','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2812,47,'SHOW_MODULO_PRESUPUESTO','Mostrar el modulo de presupuesto','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2813,47,'SHOW_MODULO_DOCUMENTOS','Mostrar el modulo de documentos','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2814,47,'SHOW_MODULO_INTERESADOS','Mostrar el modulo de interesados','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2815,47,'SHOW_MODULO_COLABORADORES','Mostrar el modulo de colaboradores','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2816,47,'SHOW_MODULO_LOCALIZACIONES','Mostrar el modulo de localizaciones','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2817,47,'SHOW_MODULO_CALIDAD','Mostrar el modulo de calidad','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2818,47,'SHOW_MODULO_MULTIMEDIA','Mostrar el modulo de multimedia','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2819,47,'CAMPOS_SON_EXIGIDOS_EN_ADQUISICION','Esta configuración es utilizada para que los campos \"ID de adquisición\", \"Tipo de adquisición\", y \"Centro de costo\" sean requeridos al crear/modificar una adquisición.','true',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2820,47,'GERENTES_ASIGNAN_AREAS_TEMATICAS','Habilita a Gerente y Adjunto a asignar áreas temáticas a los proyectos en los cuales se encuentran asignados.','false',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2821,47,'LARGO_MAXIMO_ID_ADQUISICION','Define el largo máximo del valor del campo \"Id. de Adquisición\" en Adquisición.','5',NULL,NULL,NULL,'2019-11-21 16:20:44',NULL,1),(2822,NULL,'HABILITAR_MOVER_PROYECTO','Habilita la operación \"Mover proyecto\" en la ficha de los proyectos.','false',NULL,NULL,NULL,NULL,NULL,0);
+/*!40000 ALTER TABLE `ss_configuraciones` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_departamentos`
@@ -2500,6 +3897,15 @@ CREATE TABLE `ss_departamentos` (
   PRIMARY KEY (`depto_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_departamentos`
+--
+
+LOCK TABLES `ss_departamentos` WRITE;
+/*!40000 ALTER TABLE `ss_departamentos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_departamentos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_domicilios`
@@ -2550,6 +3956,15 @@ CREATE TABLE `ss_domicilios` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_domicilios`
+--
+
+LOCK TABLES `ss_domicilios` WRITE;
+/*!40000 ALTER TABLE `ss_domicilios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_domicilios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_errores`
 --
 
@@ -2567,6 +3982,15 @@ CREATE TABLE `ss_errores` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_errores`
+--
+
+LOCK TABLES `ss_errores` WRITE;
+/*!40000 ALTER TABLE `ss_errores` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_errores` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_localidades`
@@ -2589,6 +4013,15 @@ CREATE TABLE `ss_localidades` (
   CONSTRAINT `FKEF82E378E2A77891` FOREIGN KEY (`loc_depto_id`) REFERENCES `ss_departamentos` (`depto_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_localidades`
+--
+
+LOCK TABLES `ss_localidades` WRITE;
+/*!40000 ALTER TABLE `ss_localidades` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_localidades` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_noticias`
@@ -2616,6 +4049,15 @@ CREATE TABLE `ss_noticias` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_noticias`
+--
+
+LOCK TABLES `ss_noticias` WRITE;
+/*!40000 ALTER TABLE `ss_noticias` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_noticias` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Temporary table structure for view `ss_oficina`
 --
 
@@ -2623,15 +4065,14 @@ DROP TABLE IF EXISTS `ss_oficina`;
 /*!50001 DROP VIEW IF EXISTS `ss_oficina`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `ss_oficina` (
-  `ofi_id` tinyint NOT NULL,
-  `ofi_nombre` tinyint NOT NULL,
-  `ofi_activo` tinyint NOT NULL,
-  `ofi_fecha_creacion` tinyint NOT NULL,
-  `ofi_origen` tinyint NOT NULL,
-  `ofi_usuario` tinyint NOT NULL,
-  `ofi_version` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `ss_oficina` AS SELECT 
+ 1 AS `ofi_id`,
+ 1 AS `ofi_nombre`,
+ 1 AS `ofi_activo`,
+ 1 AS `ofi_fecha_creacion`,
+ 1 AS `ofi_origen`,
+ 1 AS `ofi_usuario`,
+ 1 AS `ofi_version`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2659,6 +4100,15 @@ CREATE TABLE `ss_operacion` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_operacion`
+--
+
+LOCK TABLES `ss_operacion` WRITE;
+/*!40000 ALTER TABLE `ss_operacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_operacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_paises`
 --
 
@@ -2681,6 +4131,15 @@ CREATE TABLE `ss_paises` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_paises`
+--
+
+LOCK TABLES `ss_paises` WRITE;
+/*!40000 ALTER TABLE `ss_paises` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_paises` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_paridades`
 --
 
@@ -2698,6 +4157,15 @@ CREATE TABLE `ss_paridades` (
   PRIMARY KEY (`par_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_paridades`
+--
+
+LOCK TABLES `ss_paridades` WRITE;
+/*!40000 ALTER TABLE `ss_paridades` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_paridades` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_personas`
@@ -2729,6 +4197,15 @@ CREATE TABLE `ss_personas` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_personas`
+--
+
+LOCK TABLES `ss_personas` WRITE;
+/*!40000 ALTER TABLE `ss_personas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_personas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_rel_rol_operacion`
 --
 
@@ -2753,6 +4230,15 @@ CREATE TABLE `ss_rel_rol_operacion` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_rel_rol_operacion`
+--
+
+LOCK TABLES `ss_rel_rol_operacion` WRITE;
+/*!40000 ALTER TABLE `ss_rel_rol_operacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_rel_rol_operacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_rol`
 --
 
@@ -2771,8 +4257,18 @@ CREATE TABLE `ss_rol` (
   `rol_vigente` tinyint(1) NOT NULL,
   `rol_tipo_usuario` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`rol_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_rol`
+--
+
+LOCK TABLES `ss_rol` WRITE;
+/*!40000 ALTER TABLE `ss_rol` DISABLE KEYS */;
+INSERT INTO `ss_rol` VALUES (91,'ADMINISTRADOR',NULL,'Usuario Administrador de la aplicacion','rol_administrador','SIGES_WEB',0,NULL,1,0),(92,'ADMIN_USU',NULL,'Administración de los Usuarios','rol_admin_usu','SIGES_WEB',0,NULL,1,0),(93,'DIR',NULL,'Director','rol_dir','SIGES_WEB',0,NULL,1,1),(94,'EDITOR_GRAL',NULL,'Editor General','rol_editor_gral','SIGES_WEB',0,NULL,1,0),(95,'MIGRACION',NULL,'Acceso a la migración','rol_migracion','SIGES_WEB',0,NULL,1,0),(96,'MIGRA_CALC_INDICA',NULL,'Acceso a los callculos de la migración','rol_migra_calc_indica','SIGES_WEB',0,NULL,1,0),(97,'PMOF',NULL,'PMO Federada','rol_pmof','SIGES_WEB',0,NULL,1,1),(98,'PMOT',NULL,'PMO Transversal','rol_pmot','SIGES_WEB',0,NULL,1,1),(99,'REGISTRO_HORAS',NULL,'Externo (solo carga de horas)','rol_registro_horas','SIGES_WEB',0,NULL,1,0),(100,'USU',NULL,'Usuario','rol_usu','SIGES_WEB',0,NULL,1,1);
+/*!40000 ALTER TABLE `ss_rol` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_telefonos`
@@ -2798,6 +4294,15 @@ CREATE TABLE `ss_telefonos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_telefonos`
+--
+
+LOCK TABLES `ss_telefonos` WRITE;
+/*!40000 ALTER TABLE `ss_telefonos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_telefonos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_tipos_documento_persona`
 --
 
@@ -2818,6 +4323,15 @@ CREATE TABLE `ss_tipos_documento_persona` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_tipos_documento_persona`
+--
+
+LOCK TABLES `ss_tipos_documento_persona` WRITE;
+/*!40000 ALTER TABLE `ss_tipos_documento_persona` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_tipos_documento_persona` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_tipos_entrada_colectiva`
 --
 
@@ -2835,6 +4349,15 @@ CREATE TABLE `ss_tipos_entrada_colectiva` (
   PRIMARY KEY (`tec_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_tipos_entrada_colectiva`
+--
+
+LOCK TABLES `ss_tipos_entrada_colectiva` WRITE;
+/*!40000 ALTER TABLE `ss_tipos_entrada_colectiva` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_tipos_entrada_colectiva` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_tipos_telefono`
@@ -2857,6 +4380,15 @@ CREATE TABLE `ss_tipos_telefono` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ss_tipos_telefono`
+--
+
+LOCK TABLES `ss_tipos_telefono` WRITE;
+/*!40000 ALTER TABLE `ss_tipos_telefono` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_tipos_telefono` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ss_tipos_vialidad`
 --
 
@@ -2875,6 +4407,15 @@ CREATE TABLE `ss_tipos_vialidad` (
   PRIMARY KEY (`tvi_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_tipos_vialidad`
+--
+
+LOCK TABLES `ss_tipos_vialidad` WRITE;
+/*!40000 ALTER TABLE `ss_tipos_vialidad` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_tipos_vialidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_usu_ofi_roles`
@@ -2900,8 +4441,18 @@ CREATE TABLE `ss_usu_ofi_roles` (
   CONSTRAINT `FKB64469698353C0A7` FOREIGN KEY (`usu_ofi_roles_usuario`) REFERENCES `ss_usuario` (`usu_id`),
   CONSTRAINT `FKB64469698D342B69` FOREIGN KEY (`usu_ofi_roles_rol`) REFERENCES `ss_rol` (`rol_id`),
   CONSTRAINT `usu_ofi_roles_usu_area` FOREIGN KEY (`usu_ofi_roles_usu_area`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1465 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3460 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_usu_ofi_roles`
+--
+
+LOCK TABLES `ss_usu_ofi_roles` WRITE;
+/*!40000 ALTER TABLE `ss_usu_ofi_roles` DISABLE KEYS */;
+INSERT INTO `ss_usu_ofi_roles` VALUES (3449,'MIGRACION',2,NULL,91,1281,350,1,0),(3455,'Presidencia',0,47,98,1286,352,1,0),(3457,'Presidencia',0,47,97,1288,352,1,0),(3458,'Presidencia',0,47,100,1289,352,1,0),(3459,'Presidencia',0,47,93,1290,352,1,0);
+/*!40000 ALTER TABLE `ss_usu_ofi_roles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_usuario`
@@ -2945,14 +4496,26 @@ CREATE TABLE `ss_usuario` (
   `usu_area_org` int(11) DEFAULT NULL,
   `usu_token` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   `usu_token_act` datetime DEFAULT NULL,
+  `usu_ldap_user` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`usu_id`),
+  UNIQUE KEY `usu_ldap_user_UNIQUE` (`usu_ldap_user`),
   KEY `usu_cod_index` (`usu_cod`),
   KEY `usu_area_org_idx` (`usu_area_org`),
   KEY `usu_correo_electronico_idx` (`usu_correo_electronico`),
   KEY `usu_token_idx` (`usu_token`),
   CONSTRAINT `usu_area_org` FOREIGN KEY (`usu_area_org`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=708 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1291 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_usuario`
+--
+
+LOCK TABLES `ss_usuario` WRITE;
+/*!40000 ALTER TABLE `ss_usuario` DISABLE KEYS */;
+INSERT INTO `ss_usuario` VALUES (1281,1,NULL,'admin','admin',0,NULL,NULL,'2017-07-31 09:21:32',NULL,NULL,NULL,NULL,NULL,NULL,'21232f297a57a5a743894a0e4a801fc3','Admin','Usuario',NULL,NULL,NULL,NULL,NULL,0,NULL,3,1,NULL,'admin','2017-07-31 09:21:32',NULL,350,NULL,NULL,NULL),(1286,NULL,NULL,'','usuario.pmot@siges.com',0,'',NULL,'2019-11-22 11:08:14',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOT','Usuario',NULL,NULL,NULL,'','',0,NULL,5,1,0,'admin','2019-11-22 11:34:28',NULL,NULL,NULL,NULL,NULL),(1288,NULL,NULL,'','usuario.pmof@siges.com',0,'',NULL,'2019-11-22 11:41:02',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','PMOF','Usuario',NULL,NULL,NULL,'','',0,NULL,2,1,0,'usuario.pmof@siges.com','2019-11-22 11:41:02',NULL,NULL,NULL,NULL,NULL),(1289,NULL,NULL,'','usuario@siges.com',0,'',NULL,'2019-11-22 11:43:43',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','Común','Usuario',NULL,NULL,NULL,'','',0,NULL,2,1,0,'usuario@siges.com','2019-11-22 11:43:43',NULL,NULL,NULL,NULL,NULL),(1290,NULL,NULL,'','usuario.director@siges.com',0,'',NULL,'2019-11-22 11:45:18',NULL,NULL,NULL,NULL,47,NULL,'30e22097b4e4271e06c04e56b1d0ad6f','Director','Usuario',NULL,NULL,NULL,'','',0,NULL,2,1,0,'usuario.director@siges.com','2019-11-22 11:45:18',NULL,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `ss_usuario` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ss_usuarios_datos`
@@ -2966,9 +4529,22 @@ CREATE TABLE `ss_usuarios_datos` (
   `ss_usu_dat_area_fk` int(11) NOT NULL,
   `ss_usu_dat_usu_fk` int(11) NOT NULL,
   `version` int(11) DEFAULT '0',
-  PRIMARY KEY (`ss_usu_dat_pk`)
+  PRIMARY KEY (`ss_usu_dat_pk`),
+  KEY `ss_usuarios_datos_ss_usu_dat_area_fk_IDX` (`ss_usu_dat_area_fk`),
+  KEY `ss_usuarios_datos_ss_usu_dat_usu_fk_IDX` (`ss_usu_dat_usu_fk`),
+  CONSTRAINT `ss_usuarios_datos_areas_FK` FOREIGN KEY (`ss_usu_dat_area_fk`) REFERENCES `areas` (`area_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ss_usuarios_datos_ss_usuario_FK` FOREIGN KEY (`ss_usu_dat_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ss_usuarios_datos`
+--
+
+LOCK TABLES `ss_usuarios_datos` WRITE;
+/*!40000 ALTER TABLE `ss_usuarios_datos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ss_usuarios_datos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `temas_calidad`
@@ -2984,8 +4560,18 @@ CREATE TABLE `temas_calidad` (
   PRIMARY KEY (`tca_pk`),
   KEY `tca_org_fk_idx` (`tca_org_fk`),
   CONSTRAINT `tca_org_fk` FOREIGN KEY (`tca_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `temas_calidad`
+--
+
+LOCK TABLES `temas_calidad` WRITE;
+/*!40000 ALTER TABLE `temas_calidad` DISABLE KEYS */;
+INSERT INTO `temas_calidad` VALUES (1,'Performance',47),(2,'Accesibilidad',47),(3,'Usabilidad',47),(4,'Seguridad',47),(5,'Definición de los requisitos',47),(12,'Conformidad por parte de los usuarios con el producto desarrollado',47),(13,'Cumplimiento con todos los requerimientos establecidos',47),(14,'Realización en tiempo estipulado',47),(15,'Cumple requisitos técnicos',47);
+/*!40000 ALTER TABLE `temas_calidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipo_documento`
@@ -3005,8 +4591,18 @@ CREATE TABLE `tipo_documento` (
   PRIMARY KEY (`tipdoc_pk`),
   KEY `tipodoc_org_fk_idx` (`tipodoc_org_fk`),
   CONSTRAINT `tipodoc_org_fk` FOREIGN KEY (`tipodoc_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_documento`
+--
+
+LOCK TABLES `tipo_documento` WRITE;
+/*!40000 ALTER TABLE `tipo_documento` DISABLE KEYS */;
+INSERT INTO `tipo_documento` VALUES (11,'Riesgos',0,10,47,0,0),(12,'Cambios',0,8,47,0,0),(13,'Incidentes',0,8,47,0,0),(14,'Lecciones Aprendidas',0,5,47,0,0),(15,'Gestión de Cambios',0,5,47,0,0),(16,'Informe de Avance',5,5,47,0,0),(17,'Interesados',0,5,47,0,0),(18,'Comunicaciones',0,5,47,0,0),(19,'Presupuesto',0,8,47,0,0),(20,'Resumen Ejecutivo',2,13,47,1,0);
+/*!40000 ALTER TABLE `tipo_documento` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipo_documento_instancia`
@@ -3026,9 +4622,25 @@ CREATE TABLE `tipo_documento_instancia` (
   `version` int(11) DEFAULT '0',
   PRIMARY KEY (`tipodoc_inst_pk`),
   KEY `tipodoc_inst_tipodoc_fk_idx` (`tipodoc_inst_tipodoc_fk`),
+  KEY `tipo_documento_instancia_estados_FK` (`tipodoc_inst_exigido_desde`),
+  KEY `tipo_documento_instancia_programas_FK` (`tipodoc_inst_prog_fk`),
+  KEY `tipo_documento_instancia_proyectos_FK` (`tipodoc_inst_proy_fk`),
+  CONSTRAINT `tipo_documento_instancia_estados_FK` FOREIGN KEY (`tipodoc_inst_exigido_desde`) REFERENCES `estados` (`est_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tipo_documento_instancia_programas_FK` FOREIGN KEY (`tipodoc_inst_prog_fk`) REFERENCES `programas` (`prog_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tipo_documento_instancia_proyectos_FK` FOREIGN KEY (`tipodoc_inst_proy_fk`) REFERENCES `proyectos` (`proy_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tipodoc_inst_tipodoc_fk` FOREIGN KEY (`tipodoc_inst_tipodoc_fk`) REFERENCES `tipo_documento` (`tipdoc_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=28110 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_documento_instancia`
+--
+
+LOCK TABLES `tipo_documento_instancia` WRITE;
+/*!40000 ALTER TABLE `tipo_documento_instancia` DISABLE KEYS */;
+INSERT INTO `tipo_documento_instancia` VALUES (8,11,0,10,2,NULL,NULL,0),(9,12,0,8,2,NULL,NULL,0),(10,13,0,8,2,NULL,NULL,0),(11,14,0,5,2,NULL,NULL,0),(12,15,0,5,2,NULL,NULL,0),(13,16,5,5,2,NULL,NULL,0),(14,17,0,5,2,NULL,NULL,0),(15,18,0,5,2,NULL,NULL,0),(16,19,0,8,2,NULL,NULL,0),(17,20,2,13,2,NULL,NULL,0);
+/*!40000 ALTER TABLE `tipo_documento_instancia` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipo_gasto`
@@ -3044,8 +4656,18 @@ CREATE TABLE `tipo_gasto` (
   PRIMARY KEY (`tipogas_pk`),
   KEY `tipogas_org_fk_idx` (`tipogas_org_fk`),
   CONSTRAINT `tipogas_org_fk` FOREIGN KEY (`tipogas_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_gasto`
+--
+
+LOCK TABLES `tipo_gasto` WRITE;
+/*!40000 ALTER TABLE `tipo_gasto` DISABLE KEYS */;
+INSERT INTO `tipo_gasto` VALUES (1,47,'Transporte'),(2,47,'Almuerzo'),(3,47,'Impresiones'),(5,47,'Papelería'),(6,47,'Publicidad'),(7,47,'Servicios de terceros'),(8,47,'Consumos'),(9,47,'Reparación y mantenimiento');
+/*!40000 ALTER TABLE `tipo_gasto` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipo_leccion`
@@ -3060,8 +4682,47 @@ CREATE TABLE `tipo_leccion` (
   `tipolec_nombre` varchar(150) NOT NULL,
   PRIMARY KEY (`tipolec_pk`),
   KEY `tipolec_codigo` (`tipolec_codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_leccion`
+--
+
+LOCK TABLES `tipo_leccion` WRITE;
+/*!40000 ALTER TABLE `tipo_leccion` DISABLE KEYS */;
+INSERT INTO `tipo_leccion` VALUES (13,'A_EVITAR','A evitar'),(14,'A_REPETIR','A repetir');
+/*!40000 ALTER TABLE `tipo_leccion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tipos_adquisicion`
+--
+
+DROP TABLE IF EXISTS `tipos_adquisicion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tipos_adquisicion` (
+  `tip_adq_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `tip_adq_nombre` varchar(100) NOT NULL,
+  `tip_adq_descripcion` varchar(300) NOT NULL,
+  `tip_adq_habilitado` tinyint(3) NOT NULL DEFAULT '1',
+  `tip_adq_org_fk` int(11) NOT NULL,
+  PRIMARY KEY (`tip_adq_pk`),
+  KEY `fk_tip_adq_org` (`tip_adq_org_fk`),
+  CONSTRAINT `tipos_adquisicion_ibfk_1` FOREIGN KEY (`tip_adq_org_fk`) REFERENCES `organismos` (`org_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipos_adquisicion`
+--
+
+LOCK TABLES `tipos_adquisicion` WRITE;
+/*!40000 ALTER TABLE `tipos_adquisicion` DISABLE KEYS */;
+INSERT INTO `tipos_adquisicion` VALUES (1,'Bienes','',1,47),(2,'Servicios de consultoría','',1,47),(3,'Compra Directa Descentralizada','',1,47),(4,'Licitación Pública Internacional','',1,47),(5,'Compra Directa por Excepción','',1,47);
+/*!40000 ALTER TABLE `tipos_adquisicion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipos_media`
@@ -3075,8 +4736,18 @@ CREATE TABLE `tipos_media` (
   `tip_cod` varchar(45) DEFAULT NULL,
   `tip_nombre` varchar(245) DEFAULT NULL,
   PRIMARY KEY (`tip_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipos_media`
+--
+
+LOCK TABLES `tipos_media` WRITE;
+/*!40000 ALTER TABLE `tipos_media` DISABLE KEYS */;
+INSERT INTO `tipos_media` VALUES (22,'IMG','Imagen'),(23,'VIDEO','Video'),(24,'CAM','Cámara');
+/*!40000 ALTER TABLE `tipos_media` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `valor_calidad_codigos`
@@ -3093,8 +4764,17 @@ CREATE TABLE `valor_calidad_codigos` (
   PRIMARY KEY (`vca_pk`),
   KEY `vca_codigo` (`vca_codigo`),
   KEY `vca_habilitado_idx` (`vca_habilitado`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `valor_calidad_codigos`
+--
+
+LOCK TABLES `valor_calidad_codigos` WRITE;
+/*!40000 ALTER TABLE `valor_calidad_codigos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `valor_calidad_codigos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `valor_hora`
@@ -3118,22 +4798,40 @@ CREATE TABLE `valor_hora` (
   CONSTRAINT `val_hor_mon_fk` FOREIGN KEY (`val_hor_mon_fk`) REFERENCES `moneda` (`mon_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `val_hor_org_fk` FOREIGN KEY (`val_hor_org_fk`) REFERENCES `organismos` (`org_pk`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `val_hor_usu_fk` FOREIGN KEY (`val_hor_usu_fk`) REFERENCES `ss_usuario` (`usu_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'siges_agesic'
+-- Dumping data for table `valor_hora`
 --
 
+LOCK TABLES `valor_hora` WRITE;
+/*!40000 ALTER TABLE `valor_hora` DISABLE KEYS */;
+/*!40000 ALTER TABLE `valor_hora` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
--- Dumping routines for database 'siges_agesic'
+-- Final view structure for view `REVINFO`
 --
+
+/*!50001 DROP VIEW IF EXISTS `REVINFO`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `REVINFO` AS select `revinfo`.`REV` AS `REV`,`revinfo`.`REVTSTMP` AS `REVTSTMP`,`revinfo`.`version` AS `version` from `revinfo` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `programas_proyectos`
 --
 
-/*!50001 DROP TABLE IF EXISTS `programas_proyectos`*/;
 /*!50001 DROP VIEW IF EXISTS `programas_proyectos`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -3142,7 +4840,7 @@ CREATE TABLE `valor_hora` (
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `programas_proyectos` AS select concat('1-',`programas`.`prog_pk`) AS `id`,`programas`.`prog_pk` AS `fichaFk`,1 AS `tipoFicha`,`programas`.`prog_fecha_crea` AS `fechaCrea`,`programas`.`prog_activo` AS `activo`,`programas`.`prog_org_fk` AS `organismo`,`programas`.`prog_nombre` AS `nombre`,`estados`.`est_pk` AS `estado`,`estados`.`est_nombre` AS `estadoNombre`,`programas`.`prog_est_pendiente_fk` AS `estadoPendiente`,`areas`.`area_pk` AS `areaPk`,`areas`.`area_nombre` AS `areaNombre`,`programas`.`prog_sol_aceptacion` AS `solAceptacion`,`programas`.`prog_usr_gerente_fk` AS `gerente`,`ss_usuario`.`usu_primer_apellido` AS `gerentePrimerApellido`,`ss_usuario`.`usu_primer_nombre` AS `gerentePrimerNombre`,`programas`.`prog_usr_pmofed_fk` AS `pmoFederada` from (((`programas` join `estados` on((`programas`.`prog_est_fk` = `estados`.`est_pk`))) join `areas` on((`programas`.`prog_area_fk` = `areas`.`area_pk`))) join `ss_usuario` on((`programas`.`prog_usr_gerente_fk` = `ss_usuario`.`usu_id`))) union select concat('2-',`proyectos`.`proy_pk`) AS `id`,`proyectos`.`proy_pk` AS `fichaFk`,2 AS `tipoFicha`,`proyectos`.`proy_fecha_crea` AS `fechaCrea`,`proyectos`.`proy_activo` AS `activo`,`proyectos`.`proy_org_fk` AS `organismo`,`proyectos`.`proy_nombre` AS `nombre`,`estados`.`est_pk` AS `estado`,`estados`.`est_nombre` AS `estadoNombre`,`proyectos`.`proy_est_pendiente_fk` AS `estadoPendiente`,`areas`.`area_pk` AS `areaPk`,`areas`.`area_nombre` AS `areaNombre`,`proyectos`.`proy_sol_aceptacion` AS `solAceptacion`,`proyectos`.`proy_usr_gerente_fk` AS `gerente`,`ss_usuario`.`usu_primer_apellido` AS `gerentePrimerApellido`,`ss_usuario`.`usu_primer_nombre` AS `gerentePrimerNombre`,`proyectos`.`proy_usr_pmofed_fk` AS `pmoFederada` from (((`proyectos` join `estados` on((`proyectos`.`proy_est_fk` = `estados`.`est_pk`))) join `areas` on((`proyectos`.`proy_area_fk` = `areas`.`area_pk`))) join `ss_usuario` on((`proyectos`.`proy_usr_gerente_fk` = `ss_usuario`.`usu_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3152,7 +4850,6 @@ CREATE TABLE `valor_hora` (
 -- Final view structure for view `ss_oficina`
 --
 
-/*!50001 DROP TABLE IF EXISTS `ss_oficina`*/;
 /*!50001 DROP VIEW IF EXISTS `ss_oficina`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -3161,7 +4858,7 @@ CREATE TABLE `valor_hora` (
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `ss_oficina` AS select `organismos`.`org_pk` AS `ofi_id`,`organismos`.`org_nombre` AS `ofi_nombre`,`organismos`.`org_activo` AS `ofi_activo`,now() AS `ofi_fecha_creacion`,'' AS `ofi_origen`,1 AS `ofi_usuario`,1 AS `ofi_version` from `organismos` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3176,679 +4873,4 @@ CREATE TABLE `valor_hora` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `categoria_proyectos`
---
-
-LOCK TABLES `categoria_proyectos` WRITE;
-/*!40000 ALTER TABLE `categoria_proyectos` DISABLE KEYS */;
-INSERT INTO `categoria_proyectos` VALUES (1,'TE_SALUD','Salud',1,1,NULL,NULL,NULL),(2,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,NULL),(3,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,NULL),(4,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,NULL),(7,'TE_URBANA','Urbana',1,1,NULL,NULL,NULL),(8,'TE_SOCIAL','Social',1,1,NULL,NULL,NULL),(9,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,NULL),(12,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,NULL),(13,'TE_VARIOS','Varios',1,1,NULL,NULL,NULL),(14,'CA_SALUD','Salud',1,2,NULL,NULL,NULL),(15,'CA_EDUCACION','Educativa',1,2,NULL,NULL,NULL),(16,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,NULL),(17,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,NULL),(18,'CA_URBANA','Urbana',1,2,NULL,NULL,NULL),(19,'CA_SOCIAL','Social',1,2,NULL,NULL,NULL),(20,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,NULL),(21,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,NULL),(22,'CA_VARIOS','Varios',1,2,NULL,NULL,NULL),(23,'TE_SALUD','Salud',1,1,NULL,NULL,1),(24,'TE_EDUCATIVA','Cultura y Educación',0,1,NULL,NULL,1),(25,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,1),(26,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,1),(27,'TE_URBANA','Urbana',1,1,NULL,NULL,1),(28,'TE_SOCIAL','Social',1,1,NULL,NULL,1),(29,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,1),(30,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,1),(31,'TE_VARIOS','Varios',1,1,NULL,NULL,1),(32,'CA_SALUD','Salud',0,2,NULL,NULL,1),(33,'CA_EDUCACION','Educación',0,2,NULL,NULL,1),(34,'CA_VIVIENDA','Viviendas',0,2,NULL,NULL,1),(35,'CA_TERRESTRE','Transporte Terrestre',0,2,NULL,NULL,1),(36,'CA_URBANA','Urbana',0,2,NULL,NULL,1),(37,'CA_SOCIAL','Social',0,2,NULL,NULL,1),(38,'CA_SEGURIDAD','Seguridad',0,2,NULL,NULL,1),(39,'CA_SANIDAD','Obras Sanitarias',0,2,NULL,NULL,1),(40,'CA_VARIOS','Varios',0,2,NULL,NULL,1),(41,'TE_SALUD','Salud',1,1,NULL,NULL,2),(42,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,2),(43,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,2),(44,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,2),(45,'TE_URBANA','Urbana',1,1,NULL,NULL,2),(46,'TE_SOCIAL','Social',1,1,NULL,NULL,2),(47,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,2),(48,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,2),(49,'TE_VARIOS','Varios',1,1,NULL,NULL,2),(50,'CA_SALUD','Salud',1,2,NULL,NULL,2),(51,'CA_EDUCACION','Educativa',1,2,NULL,NULL,2),(52,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,2),(53,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,2),(54,'CA_URBANA','Urbana',1,2,NULL,NULL,2),(55,'CA_SOCIAL','Social',1,2,NULL,NULL,2),(56,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,2),(57,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,2),(58,'CA_VARIOS','Varios',1,2,NULL,NULL,2),(59,'TE_SALUD','Salud',1,1,NULL,NULL,3),(60,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,3),(61,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,3),(62,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,3),(63,'TE_URBANA','Urbana',1,1,NULL,NULL,3),(64,'TE_SOCIAL','Social',1,1,NULL,NULL,3),(65,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,3),(66,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,3),(67,'TE_VARIOS','Varios',1,1,NULL,NULL,3),(68,'CA_SALUD','Salud',1,2,NULL,NULL,3),(69,'CA_EDUCACION','Educativa',1,2,NULL,NULL,3),(70,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,3),(71,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,3),(72,'CA_URBANA','Urbana',1,2,NULL,NULL,3),(73,'CA_SOCIAL','Social',1,2,NULL,NULL,3),(74,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,3),(75,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,3),(76,'CA_VARIOS','Varios',1,2,NULL,NULL,3),(77,'TE_SALUD','Salud',1,1,NULL,NULL,4),(78,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,4),(79,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,4),(80,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,4),(81,'TE_URBANA','Urbana',1,1,NULL,NULL,4),(82,'TE_SOCIAL','Social',1,1,NULL,NULL,4),(83,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,4),(84,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,4),(85,'TE_VARIOS','Varios',1,1,NULL,NULL,4),(86,'CA_SALUD','Salud',1,2,NULL,NULL,4),(87,'CA_EDUCACION','Educativa',1,2,NULL,NULL,4),(88,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,4),(89,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,4),(90,'CA_URBANA','Urbana',1,2,NULL,NULL,4),(91,'CA_SOCIAL','Social',1,2,NULL,NULL,4),(92,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,4),(93,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,4),(94,'CA_VARIOS','Varios',1,2,NULL,NULL,4),(95,'TE_SALUD','Salud',1,1,NULL,NULL,5),(96,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,5),(97,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,5),(98,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,5),(99,'TE_URBANA','Urbana',1,1,NULL,NULL,5),(100,'TE_SOCIAL','Social',1,1,NULL,NULL,5),(101,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,5),(102,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,5),(103,'TE_VARIOS','Varios',1,1,NULL,NULL,5),(104,'CA_SALUD','Salud',1,2,NULL,NULL,5),(105,'CA_EDUCACION','Educativa',1,2,NULL,NULL,5),(106,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,5),(107,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,5),(108,'CA_URBANA','Urbana',1,2,NULL,NULL,5),(109,'CA_SOCIAL','Social',1,2,NULL,NULL,5),(110,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,5),(111,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,5),(112,'CA_VARIOS','Varios',1,2,NULL,NULL,5),(113,'TE_SALUD','Salud y Cuidados',1,1,NULL,NULL,6),(114,'TE_EDUCATIVA','Cultura y Educación',1,1,NULL,NULL,6),(115,'TE_VIVIENDA','Viviendas',0,1,NULL,NULL,6),(116,'TE_TERRESTRE','Transporte Terrestre',0,1,NULL,NULL,6),(117,'TE_URBANA','Urbana',0,1,NULL,NULL,6),(118,'TE_SOCIAL','Social',0,1,NULL,NULL,6),(119,'TE_SEGURIDAD','Seguridad',0,1,NULL,NULL,6),(120,'TE_SANIDAD','Obras Sanitarias',0,1,NULL,NULL,6),(121,'TE_VARIOS','Varios',0,1,NULL,NULL,6),(122,'CA_SALUD','Salud',0,2,NULL,NULL,6),(123,'CA_EDUCACION','Educación',0,2,NULL,NULL,6),(124,'CA_VIVIENDA','Viviendas',0,2,NULL,NULL,6),(125,'CA_TERRESTRE','Transporte Terrestre',0,2,NULL,NULL,6),(126,'CA_URBANA','Urbana',0,2,NULL,NULL,6),(127,'CA_SOCIAL','Social',0,2,NULL,NULL,6),(128,'CA_SEGURIDAD','Seguridad',0,2,NULL,NULL,6),(129,'CA_SANIDAD','Obras Sanitarias',0,2,NULL,NULL,6),(130,'CA_VARIOS','Varios',0,2,NULL,NULL,6),(131,'TE_SALUD','Salud',1,1,NULL,NULL,7),(132,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,7),(133,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,7),(134,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,7),(135,'TE_URBANA','Urbana',1,1,NULL,NULL,7),(136,'TE_SOCIAL','Social',1,1,NULL,NULL,7),(137,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,7),(138,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,7),(139,'TE_VARIOS','Varios',1,1,NULL,NULL,7),(140,'CA_SALUD','Salud',1,2,NULL,NULL,7),(141,'CA_EDUCACION','Educativa',1,2,NULL,NULL,7),(142,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,7),(143,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,7),(144,'CA_URBANA','Urbana',1,2,NULL,NULL,7),(145,'CA_SOCIAL','Social',1,2,NULL,NULL,7),(146,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,7),(147,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,7),(148,'CA_VARIOS','Varios',1,2,NULL,NULL,7),(149,'TE_SALUD','Salud',1,1,NULL,NULL,8),(150,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,8),(151,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,8),(152,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,8),(153,'TE_URBANA','Urbana',1,1,NULL,NULL,8),(154,'TE_SOCIAL','Social',1,1,NULL,NULL,8),(155,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,8),(156,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,8),(157,'TE_VARIOS','Varios',1,1,NULL,NULL,8),(158,'CA_SALUD','Salud',1,2,NULL,NULL,8),(159,'CA_EDUCACION','Educativa',1,2,NULL,NULL,8),(160,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,8),(161,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,8),(162,'CA_URBANA','Urbana',1,2,NULL,NULL,8),(163,'CA_SOCIAL','Social',1,2,NULL,NULL,8),(164,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,8),(165,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,8),(166,'CA_VARIOS','Varios',1,2,NULL,NULL,8),(167,'TE_SALUD','Salud',1,1,NULL,NULL,9),(168,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,9),(169,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,9),(170,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,9),(171,'TE_URBANA','Urbana',1,1,NULL,NULL,9),(172,'TE_SOCIAL','Social',1,1,NULL,NULL,9),(173,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,9),(174,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,9),(175,'TE_VARIOS','Varios',1,1,NULL,NULL,9),(176,'CA_SALUD','Salud',1,2,NULL,NULL,9),(177,'CA_EDUCACION','Educativa',1,2,NULL,NULL,9),(178,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,9),(179,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,9),(180,'CA_URBANA','Urbana',1,2,NULL,NULL,9),(181,'CA_SOCIAL','Social',1,2,NULL,NULL,9),(182,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,9),(183,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,9),(184,'CA_VARIOS','Varios',1,2,NULL,NULL,9),(185,'TE_SALUD','Salud',1,1,NULL,NULL,10),(186,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,10),(187,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,10),(188,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,10),(189,'TE_URBANA','Urbana',1,1,NULL,NULL,10),(190,'TE_SOCIAL','Social',1,1,NULL,NULL,10),(191,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,10),(192,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,10),(193,'TE_VARIOS','Varios',1,1,NULL,NULL,10),(194,'CA_SALUD','Salud',1,2,NULL,NULL,10),(195,'CA_EDUCACION','Educativa',1,2,NULL,NULL,10),(196,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,10),(197,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,10),(198,'CA_URBANA','Urbana',1,2,NULL,NULL,10),(199,'CA_SOCIAL','Social',1,2,NULL,NULL,10),(200,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,10),(201,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,10),(202,'CA_VARIOS','Varios',1,2,NULL,NULL,10),(203,'TE_SALUD','Salud',1,1,NULL,NULL,11),(204,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,11),(205,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,11),(206,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,11),(207,'TE_URBANA','Urbana',1,1,NULL,NULL,11),(208,'TE_SOCIAL','Social',1,1,NULL,NULL,11),(209,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,11),(210,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,11),(211,'TE_VARIOS','Varios',1,1,NULL,NULL,11),(212,'CA_SALUD','Salud',1,2,NULL,NULL,11),(213,'CA_EDUCACION','Educativa',1,2,NULL,NULL,11),(214,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,11),(215,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,11),(216,'CA_URBANA','Urbana',1,2,NULL,NULL,11),(217,'CA_SOCIAL','Social',1,2,NULL,NULL,11),(218,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,11),(219,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,11),(220,'CA_VARIOS','Varios',1,2,NULL,NULL,11),(221,'TE_SALUD','Salud',1,1,NULL,NULL,12),(222,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,12),(223,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,12),(224,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,12),(225,'TE_URBANA','Urbana',1,1,NULL,NULL,12),(226,'TE_SOCIAL','Social',1,1,NULL,NULL,12),(227,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,12),(228,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,12),(229,'TE_VARIOS','Varios',1,1,NULL,NULL,12),(230,'CA_SALUD','Salud',1,2,NULL,NULL,12),(231,'CA_EDUCACION','Educativa',1,2,NULL,NULL,12),(232,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,12),(233,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,12),(234,'CA_URBANA','Urbana',1,2,NULL,NULL,12),(235,'CA_SOCIAL','Social',1,2,NULL,NULL,12),(236,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,12),(237,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,12),(238,'CA_VARIOS','Varios',1,2,NULL,NULL,12),(239,'TE_SALUD','Salud',1,1,NULL,NULL,13),(240,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,13),(241,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,13),(242,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,13),(243,'TE_URBANA','Urbana',1,1,NULL,NULL,13),(244,'TE_SOCIAL','Social',1,1,NULL,NULL,13),(245,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,13),(246,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,13),(247,'TE_VARIOS','Varios',1,1,NULL,NULL,13),(248,'CA_SALUD','Salud',1,2,NULL,NULL,13),(249,'CA_EDUCACION','Educativa',1,2,NULL,NULL,13),(250,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,13),(251,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,13),(252,'CA_URBANA','Urbana',1,2,NULL,NULL,13),(253,'CA_SOCIAL','Social',1,2,NULL,NULL,13),(254,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,13),(255,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,13),(256,'CA_VARIOS','Varios',1,2,NULL,NULL,13),(257,'TE_SALUD','Salud',1,1,NULL,NULL,14),(258,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,14),(259,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,14),(260,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,14),(261,'TE_URBANA','Urbana',1,1,NULL,NULL,14),(262,'TE_SOCIAL','Social',1,1,NULL,NULL,14),(263,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,14),(264,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,14),(265,'TE_VARIOS','Varios',1,1,NULL,NULL,14),(266,'CA_SALUD','Salud',1,2,NULL,NULL,14),(267,'CA_EDUCACION','Educativa',1,2,NULL,NULL,14),(268,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,14),(269,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,14),(270,'CA_URBANA','Urbana',1,2,NULL,NULL,14),(271,'CA_SOCIAL','Social',1,2,NULL,NULL,14),(272,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,14),(273,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,14),(274,'CA_VARIOS','Varios',1,2,NULL,NULL,14),(275,'TE_SALUD','Salud',1,1,NULL,NULL,15),(276,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,15),(277,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,15),(278,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,15),(279,'TE_URBANA','Urbana',1,1,NULL,NULL,15),(280,'TE_SOCIAL','Social',1,1,NULL,NULL,15),(281,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,15),(282,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,15),(283,'TE_VARIOS','Varios',1,1,NULL,NULL,15),(284,'CA_SALUD','Salud',1,2,NULL,NULL,15),(285,'CA_EDUCACION','Educativa',1,2,NULL,NULL,15),(286,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,15),(287,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,15),(288,'CA_URBANA','Urbana',1,2,NULL,NULL,15),(289,'CA_SOCIAL','Social',1,2,NULL,NULL,15),(290,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,15),(291,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,15),(292,'CA_VARIOS','Varios',1,2,NULL,NULL,15),(293,'TE_SALUD','Salud y Cuidados',1,1,NULL,NULL,16),(294,'TE_EDUCATIVA','Cultura y Educación',1,1,NULL,NULL,16),(295,'TE_VIVIENDA','Viviendas',0,1,NULL,NULL,16),(296,'TE_TERRESTRE','Transporte Terrestre',0,1,NULL,NULL,16),(297,'TE_URBANA','Urbana',0,1,NULL,NULL,16),(298,'TE_SOCIAL','Social',0,1,NULL,NULL,16),(299,'TE_SEGURIDAD','Seguridad',0,1,NULL,NULL,16),(300,'TE_SANIDAD','Obras Sanitarias',0,1,NULL,NULL,16),(301,'TE_VARIOS','Varios',0,1,NULL,NULL,16),(302,'CA_SALUD','Salud',0,2,NULL,NULL,16),(303,'CA_EDUCACION','Educación',0,2,NULL,NULL,16),(304,'CA_VIVIENDA','Viviendas',0,2,NULL,NULL,16),(305,'CA_TERRESTRE','Transporte Terrestre',0,2,NULL,NULL,16),(306,'CA_URBANA','Urbana',0,2,NULL,NULL,16),(307,'CA_SOCIAL','Social',0,2,NULL,NULL,16),(308,'CA_SEGURIDAD','Seguridad',0,2,NULL,NULL,16),(309,'CA_SANIDAD','Obras Sanitarias',0,2,NULL,NULL,16),(310,'CA_VARIOS','Varios',0,2,NULL,NULL,16),(311,'APPS','Aplicaciones Móviles',0,1,NULL,NULL,1),(312,'CA_COLAB_CIUDADANA','Colaboración Ciudadana',0,2,NULL,NULL,1),(313,'COMPRAS_PUB','Compras Públicas',0,1,NULL,NULL,1),(314,'ECONOMIA','Economía',0,1,NULL,NULL,1),(315,'EMPRESAS','Empresas',0,1,NULL,NULL,1),(316,'CA_ENERGIA','Energética',0,2,NULL,NULL,1),(317,'TE_GOB_LOCALES','Estadísticas',0,1,NULL,NULL,1),(318,'CIUDADANIA','Fortalecimiento de la Ciudadanía',0,1,NULL,NULL,1),(319,'GEST_INST','Gestión Institucional',0,1,NULL,NULL,1),(320,'POL_SOC','Inclusión',0,1,NULL,NULL,1),(321,'INMUEBLES','Inmuebles',0,1,NULL,NULL,1),(322,'PAR_ABIERTO','Parlamento abierto',0,1,NULL,NULL,1),(323,'CA_PARTICIPACION','Participación ciudadana',0,2,NULL,NULL,1),(324,'CA_RENDICION','Rendición de Cuentas',0,2,NULL,NULL,1),(325,'SOFT_PUB','Software Público',0,1,NULL,NULL,1),(326,'CA_TECNO','Tecnológica',0,2,NULL,NULL,1),(327,'TRAMITES','Trámites',0,1,NULL,NULL,1),(328,'CA_TRANSPARENCIA','Transparencia',0,2,NULL,NULL,1),(329,'CA_AEREO','Transporte Áereo',0,2,NULL,NULL,1),(330,'CA_MARITIMO','Transporte Marítimo',0,2,NULL,NULL,1),(331,'TE_SALUD','Salud',1,1,NULL,NULL,17),(332,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,17),(333,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,17),(334,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,17),(335,'TE_URBANA','Urbana',1,1,NULL,NULL,17),(336,'TE_SOCIAL','Social',1,1,NULL,NULL,17),(337,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,17),(338,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,17),(339,'TE_VARIOS','Varios',1,1,NULL,NULL,17),(340,'CA_SALUD','Salud',1,2,NULL,NULL,17),(341,'CA_EDUCACION','Educativa',1,2,NULL,NULL,17),(342,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,17),(343,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,17),(344,'CA_URBANA','Urbana',1,2,NULL,NULL,17),(345,'CA_SOCIAL','Social',1,2,NULL,NULL,17),(346,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,17),(347,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,17),(348,'CA_VARIOS','Varios',1,2,NULL,NULL,17),(349,'TE_SALUD','Salud',1,1,NULL,NULL,19),(350,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,19),(351,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,19),(352,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,19),(353,'TE_URBANA','Urbana',1,1,NULL,NULL,19),(354,'TE_SOCIAL','Social',1,1,NULL,NULL,19),(355,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,19),(356,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,19),(357,'TE_VARIOS','Varios',1,1,NULL,NULL,19),(358,'CA_SALUD','Salud',1,2,NULL,NULL,19),(359,'CA_EDUCACION','Educativa',1,2,NULL,NULL,19),(360,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,19),(361,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,19),(362,'CA_URBANA','Urbana',1,2,NULL,NULL,19),(363,'CA_SOCIAL','Social',1,2,NULL,NULL,19),(364,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,19),(365,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,19),(366,'CA_VARIOS','Varios',1,2,NULL,NULL,19),(367,'TE_SALUD','Salud',1,1,NULL,NULL,18),(368,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,18),(369,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,18),(370,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,18),(371,'TE_URBANA','Urbana',1,1,NULL,NULL,18),(372,'TE_SOCIAL','Social',1,1,NULL,NULL,18),(373,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,18),(374,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,18),(375,'TE_VARIOS','Varios',1,1,NULL,NULL,18),(376,'CA_SALUD','Salud',1,2,NULL,NULL,18),(377,'CA_EDUCACION','Educativa',1,2,NULL,NULL,18),(378,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,18),(379,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,18),(380,'CA_URBANA','Urbana',1,2,NULL,NULL,18),(381,'CA_SOCIAL','Social',1,2,NULL,NULL,18),(382,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,18),(383,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,18),(384,'CA_VARIOS','Varios',1,2,NULL,NULL,18),(385,'TE_EDUCACION','Educativa',0,1,NULL,NULL,6),(386,'TE_ENERGIA','Energética',0,1,NULL,NULL,6),(387,'TE_TECNO','Tecnológica',0,1,NULL,NULL,6),(388,'TE_AEREO','Transporte Áereo',0,1,NULL,NULL,6),(389,'TE_MARITIMO','Transporte Marítimo',0,1,NULL,NULL,6),(390,'TE_SALUD','Salud',1,1,NULL,NULL,20),(391,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,20),(392,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,20),(393,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,20),(394,'TE_URBANA','Urbana',1,1,NULL,NULL,20),(395,'TE_SOCIAL','Social',1,1,NULL,NULL,20),(396,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,20),(397,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,20),(398,'TE_VARIOS','Varios',1,1,NULL,NULL,20),(399,'CA_SALUD','Salud',1,2,NULL,NULL,20),(400,'CA_EDUCACION','Educativa',1,2,NULL,NULL,20),(401,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,20),(402,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,20),(403,'CA_URBANA','Urbana',1,2,NULL,NULL,20),(404,'CA_SOCIAL','Social',1,2,NULL,NULL,20),(405,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,20),(406,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,20),(407,'CA_VARIOS','Varios',1,2,NULL,NULL,20),(408,'TE_SALUD','Salud',1,1,NULL,NULL,21),(409,'TE_EDUCATIVA','Educativa',1,1,NULL,NULL,21),(410,'TE_VIVIENDA','Viviendas',1,1,NULL,NULL,21),(411,'TE_TERRESTRE','Transporte Terrestre',1,1,NULL,NULL,21),(412,'TE_URBANA','Urbana',1,1,NULL,NULL,21),(413,'TE_SOCIAL','Social',1,1,NULL,NULL,21),(414,'TE_SEGURIDAD','Seguridad',1,1,NULL,NULL,21),(415,'TE_SANIDAD','Obras Sanitarias',1,1,NULL,NULL,21),(416,'TE_VARIOS','Varios',1,1,NULL,NULL,21),(417,'CA_SALUD','Salud',1,2,NULL,NULL,21),(418,'CA_EDUCACION','Educativa',1,2,NULL,NULL,21),(419,'CA_VIVIENDA','Viviendas',1,2,NULL,NULL,21),(420,'CA_TERRESTRE','Transporte Terrestre',1,2,NULL,NULL,21),(421,'CA_URBANA','Urbana',1,2,NULL,NULL,21),(422,'CA_SOCIAL','Social',1,2,NULL,NULL,21),(423,'CA_SEGURIDAD','Seguridad',1,2,NULL,NULL,21),(424,'CA_SANIDAD','Obras Sanitarias',1,2,NULL,NULL,21),(425,'CA_VARIOS','Varios',1,2,NULL,NULL,21),(426,'Cecilia','Cecilia',0,2,NULL,NULL,6),(427,'Cecilia','Cecilia',1,2,NULL,NULL,1),(428,'TE_EDUCACION','Educativa',1,1,NULL,NULL,1),(429,'TE_ENERGIA','Energética',1,1,NULL,NULL,1),(430,'TE_TECNO','Tecnológica',1,1,NULL,NULL,1),(431,'TE_AEREO','Transporte Áereo',1,1,NULL,NULL,1),(432,'TE_MARITIMO','Transporte Marítimo',1,1,NULL,NULL,1),(433,'aaaa','aaaa',1,1,NULL,NULL,1),(434,'dsa12312','dsasd',1,2,NULL,NULL,1),(435,'aaaa','aaaa',0,1,NULL,NULL,6),(436,'dsa12312','dsasd',0,2,NULL,NULL,6),(437,'ACERCA_CIUDA','Acercamiento a la Ciudadanía',1,1,NULL,NULL,6),(438,'APPS','Aplicaciones Móviles',1,1,NULL,NULL,6),(439,'CA_COLAB_CIUDADANA','Colaboración Ciudadana',1,2,NULL,NULL,6),(440,'COMPRAS_PUB','Compras Públicas',1,1,NULL,NULL,6),(441,'DESA_SOCIAL','Desarrollo Social',1,1,NULL,NULL,6),(442,'ECONOMIA','Economía',1,1,NULL,NULL,6),(443,'EMPRESAS','Empresas, Industria y Energía',1,1,NULL,NULL,6),(444,'CA_ENERGIA','Energética',0,2,NULL,NULL,6),(445,'TE_GOB_LOCALES','Estadísticas',1,1,NULL,NULL,6),(446,'FIN_PUB','Finanzas Públicas',1,1,NULL,NULL,6),(447,'CIUDADANIA','Fortalecimiento de la Ciudadanía',1,1,NULL,NULL,6),(448,'GEST_INST','Gestión Institucional',1,1,NULL,NULL,6),(449,'GOB_DEP','Gobiernos Departamentales',1,1,NULL,NULL,6),(450,'POL_SOC','Inclusión',1,1,NULL,NULL,6),(451,'INMUEBLES','Inmuebles',1,1,NULL,NULL,6),(452,'INN_TEC','Innovación Tecnológica',1,2,NULL,NULL,6),(453,'JUS_ANTICO','Justicia, Anti-Corrupución',1,1,NULL,NULL,6),(454,'MEDIO_AMBIENTE','Medio Ambiente',1,1,NULL,NULL,6),(455,'MON_DDHH','Monitoreo de Derechos Humanos',1,1,NULL,NULL,6),(456,'PAR_ABIERTO','Parlamento abierto',1,1,NULL,NULL,6),(457,'CA_PARTICIPACION','Participación ciudadana',1,2,NULL,NULL,6),(458,'PART_CIU','Participación Ciudadana',1,1,NULL,NULL,6),(459,'CA_RENDICION','Rendición de Cuentas',1,2,NULL,NULL,6),(460,'SOFT_PUB','Software Público',1,1,NULL,NULL,6),(461,'CA_TECNO','Tecnológica',0,2,NULL,NULL,6),(462,'TRAMITES','Trámites',1,1,NULL,NULL,6),(463,'CA_TRANSPARENCIA','Transparencia',1,2,NULL,NULL,6),(464,'TRANSP_AIP_RENDCTAS','Transparencia, Acceso a la Información Pública y Rendición de Cuentas',1,1,NULL,NULL,6),(465,'CA_AEREO','Transporte Aereo',0,2,NULL,NULL,6),(466,'CA_MARITIMO','Transporte Marítimo',0,2,NULL,NULL,6),(467,'CATEGORIA NUEVA','CATEGORIA NUEVA',1,2,NULL,NULL,6),(468,'TEMA NUEVO','TEMA NUEVO',1,1,NULL,NULL,6),(469,'ACERCA_CIUDA','Acercamiento a la Ciudadanía',1,1,NULL,NULL,16),(470,'APPS','Aplicaciones Móviles',1,1,NULL,NULL,16),(471,'CATEGORIA NUEVA','CATEGORIA NUEVA',1,2,NULL,NULL,16),(472,'CA_COLAB_CIUDADANA','Colaboración Ciudadana',1,2,NULL,NULL,16),(473,'COMPRAS_PUB','Compras Públicas',1,1,NULL,NULL,16),(474,'DESA_SOCIAL','Desarrollo Social',1,1,NULL,NULL,16),(475,'ECONOMIA','Economía',1,1,NULL,NULL,16),(476,'EMPRESAS','Empresas, Industria y Energía',1,1,NULL,NULL,16),(477,'CA_ENERGIA','Energética',0,2,NULL,NULL,16),(478,'TE_GOB_LOCALES','Estadísticas',1,1,NULL,NULL,16),(479,'FIN_PUB','Finanzas Públicas',1,1,NULL,NULL,16),(480,'CIUDADANIA','Fortalecimiento de la Ciudadanía',1,1,NULL,NULL,16),(481,'GEST_INST','Gestión Institucional',1,1,NULL,NULL,16),(482,'GOB_DEP','Gobiernos Departamentales',1,1,NULL,NULL,16),(483,'POL_SOC','Inclusión',1,1,NULL,NULL,16),(484,'INMUEBLES','Inmuebles',1,1,NULL,NULL,16),(485,'INN_TEC','Innovación Tecnológica',1,2,NULL,NULL,16),(486,'JUS_ANTICO','Justicia, Anti-Corrupución',1,1,NULL,NULL,16),(487,'MEDIO_AMBIENTE','Medio Ambiente',1,1,NULL,NULL,16),(488,'MON_DDHH','Monitoreo de Derechos Humanos',1,1,NULL,NULL,16),(489,'PAR_ABIERTO','Parlamento abierto',1,1,NULL,NULL,16),(490,'CA_PARTICIPACION','Participación ciudadana',1,2,NULL,NULL,16),(491,'PART_CIU','Participación Ciudadana',1,1,NULL,NULL,16),(492,'CA_RENDICION','Rendición de Cuentas',1,2,NULL,NULL,16),(493,'SOFT_PUB','Software Público',1,1,NULL,NULL,16),(494,'CA_TECNO','Tecnológica',0,2,NULL,NULL,16),(495,'TEMA NUEVO','TEMA NUEVO',1,1,NULL,NULL,16),(496,'TRAMITES','Trámites',1,1,NULL,NULL,16),(497,'CA_TRANSPARENCIA','Transparencia',1,2,NULL,NULL,16),(498,'TRANSP_AIP_RENDCTAS','Transparencia, Acceso a la Información Pública y Rendición de Cuentas',1,1,NULL,NULL,16),(499,'CA_AEREO','Transporte Aereo',0,2,NULL,NULL,16),(500,'CA_MARITIMO','Transporte Marítimo',0,2,NULL,NULL,16);
-/*!40000 ALTER TABLE `categoria_proyectos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `plantilla_cronograma`
---
-
-LOCK TABLES `plantilla_cronograma` WRITE;
-/*!40000 ALTER TABLE `plantilla_cronograma` DISABLE KEYS */;
-INSERT INTO `plantilla_cronograma` VALUES (2,'Desarrollo en base a Procedimiento de Compra Solicitud de Propuestas',1,NULL),(3,'Electrificación rural',6,NULL),(4,'Arquitectura',6,NULL),(5,'Infraestructura',6,NULL),(6,'Procedimiento de Compra Solicitud de Propuestas',1,NULL),(7,'Procedimiento de Compra Compra Directa Por Excepción (entre mínimo para contadora y LPN)',1,NULL),(8,'Procedimiento de Compra Compra Directa (sin publicación)',1,NULL),(9,'Procedimiento de Compra Compra Directa (con publicación)',1,NULL),(10,'Procedimiento de Compra Licitación Pública',1,NULL),(11,'Procedimiento de Compra Licitación Abreviada',1,NULL),(12,'Procedimiento de Compra Solicitud de Propuestas',15,NULL),(13,'Procedimiento de Compra Compra Directa Por Excepción (entre mínimo para contadora y LPN)	',15,NULL),(14,'Procedimiento de Compra Compra Directa (sin publicación)',15,NULL),(15,'Procedimiento de Compra Compra Directa (con publicación)',15,NULL),(16,'Procedimiento de Compra Licitación Pública',15,NULL),(17,'Procedimiento de Compra Licitación Abreviada',15,NULL),(18,'Procedimiento de Compra Licitación Pública Internacional (monto menor a LP RRGG)',15,NULL),(19,'Procedimiento de Compra Licitación Pública Internacional (monto mayor a LP RRGG)',15,NULL),(20,'Procedimiento de Compra Licitación Pública Nacional',15,NULL),(21,'Procedimiento de Compra Compra Directa BID (sin revisión Contadora Delegada)',15,NULL),(22,'Procedimiento de Compra Comparación de Precios (con revisión Contadora Delegada)',15,NULL),(23,'Procedimiento de Compra Compra Directa BID (con revisión Contadora Delegada)',15,NULL),(24,'Procedimiento de Compra Comparación de Precios (sin revisión Contadora Delegada)',15,NULL),(25,'Procedimiento de Compra Licitación Pública Internacional (monto menor a LP RRGG)',1,NULL),(26,'Procedimiento de Compra Licitación Pública Internacional (monto mayor a LP RRGG)',1,NULL),(27,'Procedimiento de Compra Licitación Pública Nacional',1,NULL),(28,'Procedimiento de Compra Compra Directa BID (con revisión Contadora Delegada)',1,NULL),(29,'Procedimiento de Compra Comparación de Precios (con revisión Contadora Delegada)',1,NULL),(30,'Procedimiento de Compra Comparación de Precios (sin revisión Contadora Delegada)',1,NULL),(31,'Procedimiento de Compra Compra Directa BID (sin revisión Contadora Delegada)',1,NULL),(32,'Horacio',1,NULL);
-/*!40000 ALTER TABLE `plantilla_cronograma` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `plantilla_entregables`
---
-
-LOCK TABLES `plantilla_entregables` WRITE;
-/*!40000 ALTER TABLE `plantilla_entregables` DISABLE KEYS */;
-INSERT INTO `plantilla_entregables` VALUES (4,'Proyecto',1,0,0,NULL,2,1),(5,'Proceso Licitatorio',2,0,0,NULL,2,2),(6,'Relevamiento',3,30,60,NULL,2,3),(7,'Elaboración de TDR y Pliego ',3,30,120,6,2,4),(8,'Publicación del Pliego ',3,5,20,7,2,5),(9,'Evaluación Técnica de la Oferta ',3,30,35,8,2,6),(10,'Adjudicación de la Oferta',3,5,25,9,2,7),(11,'Ejecución del Proyecto',2,0,0,NULL,2,8),(12,'Plan de Trabajo',3,10,10,10,2,9),(13,'Análisis de Requerimientos ',3,20,35,12,2,10),(14,'Desarrollo de los Aplicativos e Implantación del sistema ',3,40,120,13,2,11),(15,'Transferencia de conocimientos ',3,20,30,14,2,12),(16,'Mantenimiento ',2,10,90,15,2,13),(17,'Proyecto de electrificación rural',0,0,0,NULL,3,1),(18,'Ingreso de documentación',1,0,1,NULL,3,2),(19,'Aprobación CIER',1,0,1,18,3,3),(20,'Firma de conformes',1,0,1,19,3,4),(21,'Depósito de garantía',1,10,1,20,3,5),(22,'Postación',1,20,1,21,3,6),(23,'Tendido',1,30,1,22,3,7),(24,'Corte',1,40,1,23,3,8),(25,'Inauguración',1,0,1,24,3,9),(26,'Proyecto',0,0,1,NULL,4,1),(27,'Implantación de obra',1,0,1,NULL,4,2),(28,'Replanteos',2,0,1,NULL,4,3),(29,'Implantaciones varias',2,0,1,NULL,4,4),(30,'Movimiento de tierra',1,0,1,NULL,4,5),(31,'Excavaciones manuales',2,0,1,NULL,4,6),(32,'Pozo en arcilla compacta 1 a 2 metros',3,0,1,NULL,4,7),(33,'Pozo en tosca semidura 2 a 4 metros',3,0,1,NULL,4,8),(34,'Carga en camión',3,0,1,NULL,4,9),(35,'Demoliciones manuales',2,0,1,NULL,4,10),(36,'Demolición manual de muros',3,0,1,NULL,4,11),(37,'Demolición manual de muros de H.A.',3,0,1,NULL,4,12),(38,'Demolición manual cimientos de H.A.',3,0,1,NULL,4,13),(39,'Demolición de contrapiso de cascote',3,0,1,NULL,4,14),(40,'Picado manual revoque mortero de cal',3,0,1,NULL,4,15),(41,'Picado de paredes de mampostería',3,0,1,NULL,4,16),(42,'Picado de revestimientos',3,0,1,NULL,4,17),(43,'Retiro de aberturas',3,0,1,NULL,4,18),(44,'Retiro de artefactos sanitarios',3,0,1,NULL,4,19),(45,'Retiro de cubierta de chapas',3,0,1,NULL,4,20),(46,'Cimentaciones',1,0,1,NULL,4,21),(47,'Muros de contención',2,0,1,NULL,4,22),(48,'Hormigón armado',3,0,1,NULL,4,23),(49,'Pantallas',2,0,1,NULL,4,24),(50,'Pantalla de hormigón armado',3,0,1,NULL,4,25),(51,'Cimientos',2,0,1,NULL,4,26),(52,'Dados de hormigón ciclópeo',3,0,1,NULL,4,27),(53,'Zapata corrida de hormigón armado',3,0,1,NULL,4,28),(54,'Patin de hormigón armado',3,0,1,NULL,4,29),(55,'Vigas de cimentación hormigón armado',3,0,1,NULL,4,30),(56,'Platea de hormigón armado',3,0,1,NULL,4,31),(57,'Pilotaje',2,0,1,NULL,4,32),(58,'Estructuras de hormigón armado',1,0,1,NULL,4,33),(59,'Pilares y vigas',2,0,1,NULL,4,34),(60,'Pilares y pantallas',3,0,1,NULL,4,35),(61,'Vigas y dinteles',3,0,1,NULL,4,36),(62,'Losas',2,0,1,NULL,4,37),(63,'Losas de escalera',3,0,1,NULL,4,38),(64,'Tanques de agua',2,0,1,NULL,4,39),(65,'Pavimentos de hormigón',2,0,1,NULL,4,40),(66,'Estructuras de acero',1,0,1,NULL,4,41),(67,'Cerchas de perfil de hierro',2,0,1,NULL,4,42),(68,'Estructuras de madera',1,0,1,NULL,4,43),(69,'Cerchas de madera',2,0,1,NULL,4,44),(70,'Mampostería',1,0,1,NULL,4,45),(71,'Mampostería de ladrillo',2,0,1,NULL,4,46),(72,'Muro de 15 cm sin revocar',3,0,1,NULL,4,47),(73,'Muro de 20 cm',3,0,1,NULL,4,48),(74,'Muro de 30 cm',3,0,1,NULL,4,49),(75,'Tabique de espejo de 8 cm',3,0,1,NULL,4,50),(76,'Mampostería de ticholos',2,0,1,NULL,4,51),(77,'Muro de 15 cm (ticholo 12x25x25)',3,0,1,NULL,4,52),(78,'Muro de 20 cm (ticholo 12x17x25)',3,0,1,NULL,4,53),(79,'Muro de 30 cm (ticholo 25x25x25)',3,0,1,NULL,4,54),(80,'Mampostería de bloques de hormigón vibrado',2,0,1,NULL,4,55),(81,'Muro de 12 cm (Block 12x19x39)',3,0,1,NULL,4,56),(82,'Muro de 19 cm (Block 19x19x39)',3,0,1,NULL,4,57),(83,'Varios',2,0,1,NULL,4,58),(84,'Colocación de aberturas',3,0,1,NULL,4,59),(85,'Terminación de mochetas',3,0,1,NULL,4,60),(86,'Mampostería de placas de yeso',2,0,1,NULL,4,61),(87,'Aislaciones humídicas y térmicas',2,0,1,NULL,4,62),(88,'Aislación humídica con emulsión asfáltica',3,0,1,NULL,4,63),(89,'Aislación humídica de arena y port. con hidrófugo',3,0,1,NULL,4,64),(90,'Aislación térmica con poliuretano proyectado',3,0,1,NULL,4,65),(91,'Revoques',1,0,1,NULL,4,66),(92,'Revoque de cielorraso',2,0,1,NULL,4,67),(93,'Revoque interior',2,0,1,NULL,4,68),(94,'Revoque exterior con hidrófugo',2,0,1,NULL,4,69),(95,'Revoque de portland lustrado',2,0,1,NULL,4,70),(96,'Contrapisos',1,0,1,NULL,4,71),(97,'Contrapiso común',2,0,1,NULL,4,72),(98,'Contrapiso sobre losa',2,0,1,NULL,4,73),(99,'Alisado de arena y portland',2,0,1,NULL,4,74),(100,'Acabados',1,0,1,NULL,4,75),(101,'Aplicación de mortero monocapa incoloro interior',2,0,1,NULL,4,76),(102,'Azulejos lisos de color',2,0,1,NULL,4,77),(103,'Paquetas de cerámica',2,0,1,NULL,4,78),(104,'Aplicación de mortero monocapa incoloro exterior',2,0,1,NULL,4,79),(105,'Balai',2,0,1,NULL,4,80),(106,'Acabados sin muros exteriores',2,0,1,NULL,4,81),(107,'Cielo raso machiembrado',2,0,1,NULL,4,82),(108,'Cielo raso acústico 60x60',2,0,1,NULL,4,83),(109,'Pisos y zocalos',1,0,1,NULL,4,84),(110,'Pavimentos',2,0,1,NULL,4,85),(111,'Baldosas vereda 20x20',3,0,1,NULL,4,86),(112,'Baldosas monolíticas 30x30',3,0,1,NULL,4,87),(113,'Monolítico hecho en sitio',3,0,1,NULL,4,88),(114,'Alisado de arena y portland rodillado',3,0,1,NULL,4,89),(115,'Parque de eucaliptus engrampado',3,0,1,NULL,4,90),(116,'Alfombra moquette valor promedio',3,0,1,NULL,4,91),(117,'Baldosa cerámica',3,0,1,NULL,4,92),(118,'Baldosa de porcelanato pulido',3,0,1,NULL,4,93),(119,'Piso flotante de madera',3,0,1,NULL,4,94),(120,'Pavimentos especiales',2,0,1,NULL,4,95),(121,'Piso de micro cemento',3,0,1,NULL,4,96),(122,'Piso de hormigón con endurecedor',3,0,1,NULL,4,97),(123,'Proyecto',0,0,0,NULL,5,1),(124,'Movimiento de tierra y bases',1,0,1,NULL,5,2),(125,'Mantenimiento ordinario básico (60 m3/km)',2,0,1,NULL,5,3),(126,'Mantenimiento extraordinario 5m de ancho de calzada (10cm de espesor)',2,0,1,NULL,5,4),(127,'Mantenimiento extraordinario 5m de ancho de calzada (15cm de espesor)',2,0,1,NULL,5,5),(128,'Excavación no clasificada a depósito',2,0,1,NULL,5,6),(129,'Perfilado (ancho 5m)',2,0,1,NULL,5,7),(130,'Sustitución de terreno de fundación',2,0,1,NULL,5,8),(131,'Terraplén con material no clasificado',2,0,1,NULL,5,9),(132,'Base granular CBR mayor 60',2,0,1,NULL,5,10),(133,'Base granular CBR mayor 40',2,0,1,NULL,5,11),(134,'Base granular CBR mayor 80',2,0,1,NULL,5,12),(135,'Escarficado, conformación y compactación de base',2,0,1,NULL,5,13),(136,'Limpieza de cunetas',2,0,1,NULL,5,14),(137,'Mantenimiento de faja',2,0,1,NULL,5,15),(138,'Pavimentación',1,0,1,NULL,5,16),(139,'Ejecución de pavimentación con mezcla en frío',2,0,1,NULL,5,17),(140,'Ejecución de tratamiento bituminoso de sellado',2,0,1,NULL,5,18),(141,'Ejecución riego imprimación',2,0,1,NULL,5,19),(142,'Ejecución tratamiento bituminoso simple o tipo \"A\"',2,0,1,NULL,5,20),(143,'Ejecución tratamiento bituminoso tipo \"B\"',2,0,1,NULL,5,21),(144,'Ejecución tratamiento bituminoso de sellado',2,0,1,NULL,5,22),(145,'Hormigón para pavimento',2,0,1,NULL,5,23),(146,'Mezcla asfáltica para carpeta de rodadura',2,0,1,NULL,5,24),(147,'Suministro cemento pórtland',2,0,1,NULL,5,25),(148,'Suministro cemento aditivos estabilizadores',2,0,1,NULL,5,26),(149,'Suministro, transporte y elaboración de cemento asfáltico',2,0,1,NULL,5,27),(150,'Suministro, transporte y elaboración de diluidos asfálticos',2,0,1,NULL,5,28),(151,'Suministro, transporte y elaboración de emulsiones asfálticas',2,0,1,NULL,5,29),(152,'Suministro, transporte y elaboración de agregados pétreos gruesos y medianos',2,0,1,NULL,5,30),(153,'Suministro y transporte de agregados pétreos finos',2,0,1,NULL,5,31),(154,'Obras de arte',1,0,1,NULL,5,32),(155,'Entradas particulares de 50 cm de diámetro',2,0,1,NULL,5,33),(156,'Entradas particulares de 60 cm de diámetro',2,0,1,NULL,5,34),(157,'Alcantarilla de 1 boca Tipo Z de 120 cm',2,0,1,NULL,5,35),(158,'Alcantarilla de 1 boca Tipo Z de 50 cm',2,0,1,NULL,5,36),(159,'Alcantarilla de 1 boca Tipo Z de 60 cm',2,0,1,NULL,5,37),(160,'Alcantarilla de 1 boca Tipo Z de 80 cm',2,0,1,NULL,5,38),(161,'Alcantarilla de 2 bocas Tipo Z de 100 cm',2,0,1,NULL,5,39),(162,'Alcantarilla de 2 bocas Tipo Z de 120 cm',2,0,1,NULL,5,40),(163,'Alcantarilla de 2 bocas Tipo Z de 50 cm',2,0,1,NULL,5,41),(164,'Alcantarilla de 2 bocas Tipo Z de 60 cm',2,0,1,NULL,5,42),(165,'Alcantarilla de 2 bocas Tipo Z de 80 cm',2,0,1,NULL,5,43),(166,'Alcantarilla de 3 bocas Tipo Z de 100 cm',2,0,1,NULL,5,44),(167,'Alcantarilla de 3 bocas Tipo Z de 120 cm',2,0,1,NULL,5,45),(168,'Alcantarilla de 3 bocas Tipo Z de 50 cm',2,0,1,NULL,5,46),(169,'Alcantarilla de 3 bocas Tipo Z de 60 cm',2,0,1,NULL,5,47),(170,'Alcantarilla de 3 bocas Tipo Z de 80 cm',2,0,1,NULL,5,48),(171,'Caños colocados diámetro 50 cm',2,0,1,NULL,5,49),(172,'Caños colocados diámetro 60 cm',2,0,1,NULL,5,50),(173,'Caños colocados diámetro 80 cm',2,0,1,NULL,5,51),(174,'Caños colocados diámetro 100 cm',2,0,1,NULL,5,52),(175,'Caños de plástico',2,0,1,NULL,5,53),(176,'Hormigón armado clase VII para alcantarillas',2,0,1,NULL,5,54),(177,'Hormigón armado para losas de badén',2,0,1,NULL,5,55),(178,'Hormigón sin armar',2,0,1,NULL,5,56),(179,'Hormigón armado para revestimiento de talud',2,0,1,NULL,5,57),(180,'Hormigón armado para cabezales y alas',2,0,1,NULL,5,58),(181,'Hormigón ciclópeo',2,0,1,NULL,5,59),(182,'Piezas prefabricadas de hormigón',2,0,1,NULL,5,60),(183,'Tosca cementada (100 kg/m3 compactado)',2,0,1,NULL,5,61),(184,'Tosca compactada',2,0,1,NULL,5,62),(185,'Seguridad vial',1,0,1,NULL,5,63),(186,'Demarcación horizontal',2,0,1,NULL,5,64),(187,'Señales reflectorizantes',2,0,1,NULL,5,65),(188,'Suministro y colocación de tachas reflectivas',2,0,1,NULL,5,66),(189,'Suministro y colocación de barandas metálicas',2,0,1,NULL,5,67),(190,'Suministro y colocación de flex beam',2,0,1,NULL,5,68),(191,'Varios',1,0,1,NULL,5,69),(192,'Desvío provisorio sumergible',2,0,1,NULL,5,70),(193,'Proyecto ejecutivo',2,0,1,NULL,5,71),(194,'Movilización',2,0,1,NULL,5,72),(195,'Transporte de material a granel',2,0,1,NULL,5,73),(196,'Controles de calidad externos',2,0,1,NULL,5,74),(197,'Zócalos',2,0,1,NULL,4,98),(198,'Zócalos de monolítico',3,0,1,NULL,4,99),(199,'Zócalos de madera',3,0,1,NULL,4,100),(200,'Zócalos sanitarios de monolítico',3,0,1,NULL,4,101),(201,'Varios',2,0,1,NULL,4,102),(202,'Colocación de escalones o umbrales',3,0,1,NULL,4,103),(203,'Azoteas y sobretechos',1,0,1,NULL,4,104),(204,'Contrapiso y alisado de arena y portland',2,0,1,NULL,4,105),(205,'Capa impermeabilizante',2,0,1,NULL,4,106),(206,'Membrana asfáltica 4 mm de aluminio',3,0,1,NULL,4,107),(207,'Aislante poliuretano proyectado',3,0,1,NULL,4,108),(208,'Colocación de film polietileno',3,0,1,NULL,4,109),(209,'Superficies de protección',2,0,1,NULL,4,110),(210,'Tejuelas de cerámica',3,0,1,NULL,4,111),(211,'Teja plana',3,0,1,NULL,4,112),(212,'Sobretecho de chapa sobre correas 2x2',2,0,1,NULL,4,113),(213,'Acondicionamiento exterior',1,0,1,NULL,4,114),(214,'Pavimentos exteriores',2,0,1,NULL,4,115),(215,'Césped en tepes',3,0,1,NULL,4,116),(216,'Balasto compactado',3,0,1,NULL,4,117),(217,'Piso en green block',3,0,1,NULL,4,118),(218,'Baldosa atérmica para vereda perimetral piscina',3,0,1,NULL,4,119),(219,'Piso tipo rectangular adoquin espesor 8cm',3,0,1,NULL,4,120),(220,'Piso hormigón estampado',3,0,1,NULL,4,121),(221,'Elementos de acondicionamiento exterior',2,0,1,NULL,4,122),(222,'Cordones de hormigón',3,0,1,NULL,4,123),(223,'Bancos de hormigón',3,0,1,NULL,4,124),(224,'Cerco con postes con tejido galvanizado',3,0,1,NULL,4,125),(225,'Suministro de especies vegetales',3,0,1,NULL,4,126),(226,'Cubiertas inclinadas',1,0,1,NULL,4,127),(227,'Cubiertas con estructura',2,0,1,NULL,4,128),(228,'Techo de chapa estructura hierro redondo',3,0,1,NULL,4,129),(229,'Cubiertas sin estructura',2,0,1,NULL,4,130),(230,'Cubierta teja colonial',3,0,1,NULL,4,131),(231,'Cubierta de chapa galvanizada',3,0,1,NULL,4,132),(232,'Acondicionamiento eléctrico',1,0,1,NULL,4,133),(233,'Instalación eléctrica',2,0,1,NULL,4,134),(234,'Canalización',3,0,1,NULL,4,135),(235,'Enhebrado',3,0,1,NULL,4,136),(236,'Puestas (luces y tomas)',3,0,1,NULL,4,137),(237,'Tableros',3,0,1,NULL,4,138),(238,'Datos, telefonía, CCTV, alarma',3,0,1,NULL,4,139),(239,'Artefactos de iluminación',3,0,1,NULL,4,140),(240,'Cámaras',3,0,1,NULL,4,141),(241,'Luminarias exteriores',3,0,1,NULL,4,142),(242,'Acondicionamiento sanitario',1,0,1,NULL,4,143),(243,'Instalación sanitaria',2,0,1,NULL,4,144),(244,'Sanitaria: abastecimiento',3,0,1,NULL,4,145),(245,'Sanitaria: desagues primaria',3,0,1,NULL,4,146),(246,'Sanitaria: desagues secundaria',3,0,1,NULL,4,147),(247,'Ensayos y pruebas hidráulicas',3,0,1,NULL,4,148),(248,'Cámaras de inspección',3,0,1,NULL,4,149),(249,'Depósito impermeable',3,0,1,NULL,4,150),(250,'Artefactos y grifería',3,0,1,NULL,4,151),(251,'Aparatos y accesorios de baños',2,0,1,NULL,4,152),(252,'Aparatos de loza c/IP con mochila',3,0,1,NULL,4,153),(253,'Juego de grifería estándar: lavatorio, bidé y ducha',3,0,1,NULL,4,154),(254,'Accesorios para baño con metal cromado',3,0,1,NULL,4,155),(255,'Mampara de baño: vidrio templado con colocación',3,0,1,NULL,4,156),(256,'Barras fijas y móviles baño discapacitados en acero inoxidable',3,0,1,NULL,4,157),(257,'Bacha en acero inoxidable con válvula',3,0,1,NULL,4,158),(258,'Pileta y grifería de cocina',2,0,1,NULL,4,159),(259,'Pileta doble de acero prof. 15cm',3,0,1,NULL,4,160),(260,'Mezcladora estandar para cocina (de pared)',3,0,1,NULL,4,161),(261,'Aberturas y equipamiento',1,0,1,NULL,4,162),(262,'Aberturas en perfil de hierro (simple contacto)',2,0,1,NULL,4,163),(263,'Aberturas en madera',2,0,1,NULL,4,164),(264,'Ventana batiente',3,0,1,NULL,4,165),(265,'Puerta ventana',3,0,1,NULL,4,166),(266,'Puerta interior',3,0,1,NULL,4,167),(267,'Puerta exterior',3,0,1,NULL,4,168),(268,'Aberturas en aluminio con accesorios y cristales comunes',2,0,1,NULL,4,169),(269,'Ventana corrediza',3,0,1,NULL,4,170),(270,'Puerta ventana corrediza',3,0,1,NULL,4,171),(271,'Serie 30',2,0,1,NULL,4,172),(272,'Ventana batiente',3,0,1,NULL,4,173),(273,'Puerta batiente',3,0,1,NULL,4,174),(274,'Ventana proyectante',3,0,1,NULL,4,175),(275,'Serie 50',2,0,1,NULL,4,176),(276,'Puerta batiente',3,0,1,NULL,4,177),(277,'Claraboyas de aluminio',2,0,1,NULL,4,178),(278,'Sistema de claraboyas con policarbonato',3,0,1,NULL,4,179),(279,'Sistemas curtain wall (aluminio y D.V.H.)',2,0,1,NULL,4,180),(280,'Sistema vidriado estructural con D.V.H. (6+12+6)',3,0,1,NULL,4,181),(281,'Cortina de enrollar',2,0,1,NULL,4,182),(282,'Cortina de enrollar completa PVC c/colocación',3,0,1,NULL,4,183),(283,'Equipamiento cocinas y baños',2,0,1,NULL,4,184),(284,'Mueble bajo',3,0,1,NULL,4,185),(285,'Cajoneras',3,0,1,NULL,4,186),(286,'Mueble alto',3,0,1,NULL,4,187),(287,'Pinturas',1,0,1,NULL,4,188),(288,'Aplicación de pinturas en mampostería fondo',2,0,1,NULL,4,189),(289,'Aplicación de fijador',3,0,1,NULL,4,190),(290,'Aplicación de imprimación',3,0,1,NULL,4,191),(291,'Aplicación de sellador pigmentado (semi-cubriente)',3,0,1,NULL,4,192),(292,'Enduído sobre revoque fino',3,0,1,NULL,4,193),(293,'Aplicación de pintura al agua',3,0,1,NULL,4,194),(294,'Cielo rasos antihongo',3,0,1,NULL,4,195),(295,'Aplicación de pintura impermeabilizante',3,0,1,NULL,4,196),(296,'Aplicación de pintura para exteriores',3,0,1,NULL,4,197),(297,'Aplicación de fondos y acabados sobre metales fondo',2,0,1,NULL,4,198),(298,'Aplicación de fondo antióxido sintetico',3,0,1,NULL,4,199),(299,'Terminación',2,0,1,NULL,4,200),(300,'Aplicación de esmalte sintético',3,0,1,NULL,4,201),(301,'Aplicación de fondos y acabados para madera',2,0,1,NULL,4,202),(302,'Aplicación de fondo blanco',3,0,1,NULL,4,203),(303,'Aplicación de esmalte sintetico',3,0,1,NULL,4,204),(304,'Aplicación de tinta de lustre',3,0,1,NULL,4,205),(305,'Aplicación de barniz',3,0,1,NULL,4,206),(306,'Impermeabilizantes',2,0,1,NULL,4,207),(307,'Membrana liq. impermeabilizante',3,0,1,NULL,4,208),(308,'Aplicación de impermeabilizante para piedras y ladrillos',3,0,1,NULL,4,209),(309,'Aplicación de pintura para piscinas',3,0,1,NULL,4,210),(310,'Vidrios',2,0,1,NULL,4,211),(311,'Espejos',2,0,1,NULL,4,212),(312,'Ascensores',1,0,1,NULL,4,213),(313,'Ascensor de 11 paradas',2,0,1,NULL,4,214),(314,'Proyecto',1,0,0,NULL,6,1),(315,'Proceso Licitatorio',2,0,0,NULL,6,2),(316,'Relevamiento',3,30,60,NULL,6,3),(317,'Elaboración de TDR y Pliego ',3,30,30,316,6,4),(318,'Publicación del Pliego ',3,5,20,317,6,5),(319,'Evaluación Técnica de la Oferta ',3,30,35,318,6,6),(320,'Adjudicación de la Oferta',3,5,25,319,6,7),(321,'Ejecución del Proyecto',2,100,285,320,6,8),(322,'Proyecto',1,0,0,NULL,7,1),(323,'Proceso Compra Directa',2,0,0,NULL,7,2),(324,'Elaboración TDR',3,30,15,NULL,7,3),(325,'Justificación Técnica',3,20,3,324,7,4),(326,'Solicitud de cotización',3,5,5,325,7,5),(327,'Adjudicación de la Oferta',3,5,25,326,7,6),(328,'Ejecución del Proyecto',2,100,285,327,7,7),(329,'Proyecto',1,0,0,NULL,8,1),(330,'Proceso Compra Directa',2,0,0,NULL,8,2),(331,'Relevamiento',3,30,60,NULL,8,3),(332,'Elaboración de TDR',3,30,4,331,8,4),(333,'Publicación de la Compra ',3,5,4,332,8,5),(334,'Evaluación Técnica de la Oferta ',3,15,2,333,8,6),(335,'Adjudicación de la Oferta',3,5,3,334,8,7),(336,'Ejecución del Proyecto',2,100,285,335,8,8),(337,'Proyecto',1,0,0,NULL,9,1),(338,'Proceso Compra Directa',2,0,0,NULL,9,2),(339,'Relevamiento',3,30,60,NULL,9,3),(340,'Elaboración de TDR',3,30,7,339,9,4),(341,'Publicación de la Compra ',3,5,7,340,9,5),(342,'Evaluación Técnica de la Oferta ',3,15,3,341,9,6),(343,'Adjudicación de la Oferta',3,5,4,342,9,7),(344,'Ejecución del Proyecto',2,100,285,343,9,8),(345,'Proyecto',1,0,0,NULL,10,1),(346,'Proceso Licitatorio',2,0,0,NULL,10,2),(347,'Relevamiento',3,30,60,NULL,10,3),(348,'Elaboración de TDR y Pliego ',3,30,30,347,10,4),(349,'Publicación del Pliego ',3,15,19,348,10,5),(350,'Evaluación Jurídica de la Oferta ',3,15,14,349,10,6),(351,'Evaluación Técnica de la Oferta ',3,15,20,349,10,7),(352,'Evaluación Económica de la Oferta ',3,15,9,349,10,8),(353,'Informe comisión asesora de adjudicaciones',3,15,12,352,10,9),(354,'Adjudicación de la Oferta',3,30,72,353,10,10),(355,'Ejecución del Proyecto',2,100,285,354,10,11),(356,'Proyecto',1,0,0,NULL,11,1),(357,'Proceso Licitatorio',2,0,0,NULL,11,2),(358,'Relevamiento',3,30,60,NULL,11,3),(359,'Elaboración de TDR y Pliego ',3,30,27,358,11,4),(360,'Publicación del Pliego ',3,15,19,359,11,5),(361,'Evaluación Jurídica de la Oferta ',3,15,4,360,11,6),(362,'Evaluación Técnica de la Oferta ',3,15,20,360,11,7),(363,'Evaluación Económica de la Oferta ',3,15,9,360,11,8),(364,'Informe comisión asesora de adjudicaciones',3,15,12,363,11,9),(365,'Adjudicación de la Oferta',3,30,49,364,11,10),(366,'Ejecución del Proyecto',2,100,285,365,11,11),(367,'Proyecto',1,0,0,NULL,12,1),(368,'Proceso Licitatorio',2,0,0,NULL,12,2),(369,'Relevamiento',3,30,60,NULL,12,3),(370,'Elaboración de TDR y Pliego ',3,30,30,369,12,4),(371,'Publicación del Pliego ',3,5,20,370,12,5),(372,'Evaluación Técnica de la Oferta ',3,30,35,371,12,6),(373,'Adjudicación de la Oferta',3,5,25,372,12,7),(374,'Ejecución del Proyecto',2,100,285,373,12,8),(375,'Proyecto',1,0,0,NULL,13,1),(376,'Proceso Compra Directa',2,0,0,NULL,13,2),(377,'Elaboración TDR',3,30,15,NULL,13,3),(378,'Justificación Técnica',3,20,3,377,13,4),(379,'Solicitud de cotización',3,5,5,378,13,5),(380,'Adjudicación de la Oferta',3,5,25,379,13,6),(381,'Ejecución del Proyecto',2,100,285,380,13,7),(382,'Proyecto',1,0,0,NULL,14,1),(383,'Proceso Compra Directa',2,0,0,NULL,14,2),(384,'Relevamiento',3,30,60,NULL,14,3),(385,'Elaboración de TDR',3,30,4,384,14,4),(386,'Publicación de la Compra ',3,5,4,385,14,5),(387,'Evaluación Técnica de la Oferta',3,15,2,386,14,6),(388,'Adjudicación de la Oferta',3,5,3,387,14,7),(389,'Ejecución del Proyecto',2,100,285,388,14,8),(390,'Proyecto',1,0,0,NULL,15,1),(391,'Proceso Compra Directa',2,0,0,NULL,15,2),(392,'Relevamiento',3,30,60,NULL,15,3),(393,'Elaboración de TDR',3,30,7,392,15,4),(394,'Publicación de la Compra ',3,5,7,393,15,5),(395,'Evaluación Técnica de la Oferta ',3,15,3,394,15,6),(396,'Adjudicación de la Oferta',3,5,4,395,15,7),(397,'Ejecución del Proyecto',2,100,285,396,15,8),(398,'Proyecto',1,0,0,NULL,16,1),(399,'Proceso Licitatorio',2,0,0,NULL,16,2),(400,'Relevamiento',3,30,60,NULL,16,3),(401,'Elaboración de TDR y Pliego ',3,30,30,400,16,4),(402,'Publicación del Pliego ',3,15,19,401,16,5),(403,'Evaluación Jurídica de la Oferta ',3,15,4,402,16,6),(404,'Evaluación Técnica de la Oferta ',3,15,20,402,16,7),(405,'Evaluación Económica de la Oferta ',3,15,9,402,16,8),(406,'Informe comisión asesora de adjudicaciones',3,15,12,405,16,9),(407,'Adjudicación de la Oferta',3,30,72,406,16,10),(408,'Ejecución del Proyecto',2,100,285,407,16,11),(409,'Proyecto',1,0,0,NULL,17,1),(410,'Proceso Licitatorio',2,0,0,NULL,17,2),(411,'Relevamiento',3,30,60,NULL,17,3),(412,'Elaboración de TDR y Pliego ',3,30,27,411,17,4),(413,'Publicación del Pliego ',3,15,19,412,17,5),(414,'Evaluación Jurídica de la Oferta ',3,15,4,413,17,6),(415,'Evaluación Técnica de la Oferta ',3,15,20,413,17,7),(416,'Evaluación Económica de la Oferta ',3,15,9,413,17,8),(417,'Informe comisión asesora de adjudicaciones',3,15,12,416,17,9),(418,'Adjudicación de la Oferta',3,30,49,417,17,10),(419,'Ejecución del Proyecto',2,100,285,418,17,11),(420,'Proyecto',1,0,0,NULL,18,1),(421,'Proceso Licitatorio',2,0,0,NULL,18,2),(422,'Relevamiento',3,30,60,NULL,18,3),(423,'Elaboración de TDR y Pliego ',3,30,25,422,18,4),(424,'Publicación del Pliego ',3,15,42,423,18,5),(425,'Evaluación Jurídica de la Oferta ',3,15,4,424,18,6),(426,'Evaluación Técnica de la Oferta ',3,15,20,424,18,7),(427,'Evaluación Económica de la Oferta ',3,15,9,424,18,8),(428,'Adjudicación de la Oferta',3,30,51,427,18,9),(429,'Ejecución del Proyecto',2,100,285,428,18,10),(430,'Proyecto',1,0,0,NULL,19,1),(431,'Proceso Licitatorio',2,0,0,NULL,19,2),(432,'Relevamiento',3,30,60,NULL,19,3),(433,'Elaboración de TDR y Pliego ',3,30,25,432,19,4),(434,'Publicación del Pliego ',3,15,42,433,19,5),(435,'Evaluación Jurídica de la Oferta ',3,15,4,434,19,6),(436,'Evaluación Técnica de la Oferta ',3,15,20,434,19,7),(437,'Evaluación Económica de la Oferta ',3,15,9,434,19,8),(438,'Adjudicación de la Oferta',3,30,85,437,19,9),(439,'Ejecución del Proyecto',2,100,285,438,19,10),(440,'Proyecto',1,0,0,NULL,20,1),(441,'Proceso Licitatorio',2,0,0,NULL,20,2),(442,'Relevamiento',3,30,60,NULL,20,3),(443,'Elaboración de TDR y Pliego ',3,30,25,442,20,4),(444,'Publicación del Pliego ',3,15,10,443,20,5),(445,'Evaluación Jurídica de la Oferta ',3,15,4,444,20,6),(446,'Evaluación Técnica de la Oferta ',3,15,20,444,20,7),(447,'Evaluación Económica de la Oferta ',3,15,9,444,20,8),(448,'Adjudicación de la Oferta',3,30,41,447,20,9),(449,'Ejecución del Proyecto',2,100,285,448,20,10),(450,'Proyecto',1,0,0,NULL,21,1),(451,'Proceso Compra Directa',2,0,0,NULL,21,2),(452,'Elaboración TDR',3,30,15,NULL,21,3),(453,'Justificación Técnica',3,20,3,452,21,4),(454,'Solicitud de No Objeción',3,5,5,453,21,5),(455,'Adjudicación de la Oferta',3,5,5,454,21,6),(456,'Ejecución del Proyecto',2,100,285,455,21,7),(457,'Proyecto',1,0,0,NULL,22,1),(458,'Proceso Comparación de Precios',2,0,0,NULL,22,2),(459,'Relevamiento',3,30,60,NULL,22,3),(460,'Elaboración de TDR',3,30,7,459,22,4),(461,'Publicación de la Compra ',3,5,7,460,22,5),(462,'Evaluación Técnica de la Oferta ',3,15,3,461,22,6),(463,'Adjudicación de la Oferta',3,5,30,462,22,7),(464,'Ejecución del Proyecto',2,100,285,463,22,8),(465,'Proyecto',1,0,0,NULL,23,1),(466,'Proceso Compra Directa',2,0,0,NULL,23,2),(467,'Elaboración TDR',3,30,15,NULL,23,3),(468,'Justificación Técnica',3,20,3,467,23,4),(469,'Solicitud de No Objeción',3,5,5,468,23,5),(470,'Adjudicación de la Oferta',3,5,25,469,23,6),(471,'Ejecución del Proyecto',2,100,285,470,23,7),(472,'Proyecto',1,0,0,NULL,24,1),(473,'Proceso Comparación de Precios',2,0,0,NULL,24,2),(474,'Relevamiento',3,30,60,NULL,24,3),(475,'Elaboración de TDR',3,30,7,474,24,4),(476,'Publicación de la Compra ',3,5,7,475,24,5),(477,'Evaluación Técnica de la Oferta ',3,15,3,476,24,6),(478,'Adjudicación de la Oferta',3,5,5,477,24,7),(479,'Ejecución del Proyecto',2,100,285,478,24,8),(480,'Proyecto',1,0,0,NULL,25,1),(481,'Proceso Licitatorio',2,0,0,NULL,25,2),(482,'Relevamiento',3,30,60,NULL,25,3),(483,'Elaboración de TDR y Pliego ',3,30,25,482,25,4),(484,'Publicación del Pliego ',3,15,42,483,25,5),(485,'Evaluación Jurídica de la Oferta ',3,15,4,484,25,6),(486,'Evaluación Técnica de la Oferta ',3,15,20,484,25,7),(487,'Evaluación Económica de la Oferta ',3,15,9,484,25,8),(488,'Adjudicación de la Oferta',3,30,51,487,25,9),(489,'Ejecución del Proyecto',2,100,285,488,25,10),(490,'Proyecto',1,0,0,NULL,26,1),(491,'Proceso Licitatorio',2,0,0,NULL,26,2),(492,'Relevamiento',3,30,60,NULL,26,3),(493,'Elaboración de TDR y Pliego ',3,30,25,492,26,4),(494,'Publicación del Pliego ',3,15,42,493,26,5),(495,'Evaluación Jurídica de la Oferta ',3,15,4,494,26,6),(496,'Evaluación Técnica de la Oferta ',3,15,20,494,26,7),(497,'Evaluación Económica de la Oferta ',3,15,9,494,26,8),(498,'Adjudicación de la Oferta',3,30,85,497,26,9),(499,'Ejecución del Proyecto',2,100,285,498,26,10),(500,'Proyecto',1,0,0,NULL,27,1),(501,'Proceso Licitatorio',2,0,0,NULL,27,2),(502,'Relevamiento',3,30,60,NULL,27,3),(503,'Elaboración de TDR y Pliego ',3,30,25,502,27,4),(504,'Publicación del Pliego ',3,15,10,503,27,5),(505,'Evaluación Jurídica de la Oferta ',3,15,4,504,27,6),(506,'Evaluación Técnica de la Oferta',3,15,20,504,27,7),(507,'Evaluación Económica de la Oferta ',3,15,9,504,27,8),(508,'Adjudicación de la Oferta',3,30,41,507,27,9),(509,'Ejecución del Proyecto',2,100,285,508,27,10),(510,'Proyecto',1,0,0,NULL,28,1),(511,'Proceso Compra Directa',2,0,0,NULL,28,2),(512,'Elaboración TDR',3,30,15,NULL,28,3),(513,'Justificación Técnica',3,20,3,512,28,4),(514,'Solicitud de No Objeción',3,5,5,513,28,5),(515,'Adjudicación de la Oferta',3,5,25,514,28,6),(516,'Ejecución del Proyecto',2,100,285,515,28,7),(517,'Proyecto',1,0,0,NULL,29,1),(518,'Proceso Comparación de Precios',2,0,0,NULL,29,2),(519,'Relevamiento',3,30,60,NULL,29,3),(520,'Elaboración de TDR',3,30,7,519,29,4),(521,'Publicación de la Compra ',3,5,7,520,29,5),(522,'Evaluación Técnica de la Oferta ',3,15,3,521,29,6),(523,'Adjudicación de la Oferta',3,5,30,522,29,7),(524,'Ejecución del Proyecto',2,100,285,523,29,8),(525,'Proyecto',1,0,0,NULL,30,1),(526,'Proceso Comparación de Precios',2,0,0,NULL,30,2),(527,'Relevamiento',3,30,60,NULL,30,3),(528,'Elaboración de TDR',3,30,7,527,30,4),(529,'Publicación de la Compra ',3,5,7,528,30,5),(530,'Evaluación Técnica de la Oferta ',3,15,3,529,30,6),(531,'Adjudicación de la Oferta',3,5,5,530,30,7),(532,'Ejecución del Proyecto',2,100,285,531,30,8),(533,'Proyecto',1,0,0,NULL,31,1),(534,'Proceso Compra Directa',2,0,0,NULL,31,2),(535,'Elaboración TDR',3,30,15,NULL,31,3),(536,'Justificación Técnica',3,20,3,535,31,4),(537,'Solicitud de No Objeción',3,5,5,536,31,5),(538,'Adjudicación de la Oferta',3,5,5,537,31,6),(539,'Ejecución del Proyecto',2,100,285,538,31,7),(540,'Relacionamiento con Organismos',0,0,0,NULL,32,1),(541,'1ero',1,0,0,NULL,32,2);
-/*!40000 ALTER TABLE `plantilla_entregables` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `departamentos`
---
-
-LOCK TABLES `departamentos` WRITE;
-/*!40000 ALTER TABLE `departamentos` DISABLE KEYS */;
-INSERT INTO `departamentos` VALUES (1,'MONTEVIDEO',NULL,NULL,NULL),(2,'ARTIGAS',NULL,NULL,NULL),(3,'CANELONES',NULL,NULL,NULL),(4,'CERRO LARGO',NULL,NULL,NULL),(5,'COLONIA',NULL,NULL,NULL),(6,'DURAZNO',NULL,NULL,NULL),(7,'FLORES',NULL,NULL,NULL),(8,'FLORIDA',NULL,NULL,NULL),(9,'LAVALLEJA',NULL,NULL,NULL),(10,'MALDONADO',NULL,NULL,NULL),(11,'PAYSANDU',NULL,NULL,NULL),(12,'RIO NEGRO',NULL,NULL,NULL),(13,'RIVERA',NULL,NULL,NULL),(14,'ROCHA',NULL,NULL,NULL),(15,'SALTO',NULL,NULL,NULL),(16,'SAN JOSE',NULL,NULL,NULL),(17,'SORIANO',NULL,NULL,NULL),(18,'TACUAREMBO',NULL,NULL,NULL),(19,'TREINTA Y TRES',NULL,NULL,NULL);
-/*!40000 ALTER TABLE `departamentos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `estados`
---
-
-LOCK TABLES `estados` WRITE;
-/*!40000 ALTER TABLE `estados` DISABLE KEYS */;
-INSERT INTO `estados` VALUES (0,'NO_EXIGIDO','No Exigido','',NULL,0),(1,'PENDIENTE','Pendiente','',1,0),(2,'INICIO','Inicio','',2,0),(3,'PLANIFICACION','Planificación','',3,0),(4,'EJECUCION','Ejecución','',4,0),(5,'FINALIZADO','Finalizado','',5,0),(11,'PENDIENTE_PMOT','Pendiente PMO T.','',NULL,0),(12,'PENDIENTE_PMOF','Pendiente PMO F.','',NULL,0),(41,'SOLICITUD_FINALIZADO_PMOF','Solicitud Finalizado PMO F.','',NULL,0),(42,'SOLICITUD_FINALIZADO_PMOT','Solicitud Finalizado PMO T.','',NULL,0),(61,'SOLICITUD_CANCELAR_PMOT','Solicitud Cancelar PMO T.','',NULL,0);
-/*!40000 ALTER TABLE `estados` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `estados_publicacion`
---
-
-LOCK TABLES `estados_publicacion` WRITE;
-/*!40000 ALTER TABLE `estados_publicacion` DISABLE KEYS */;
-INSERT INTO `estados_publicacion` VALUES (1,'NO_ES_PARA_PUBLICAR','No es para publicar'),(2,'PENDIENTE_CARGAR','Pendiente de cargar datos'),(3,'PENDIENTE_PUBLICAR','Pendiente de publicar'),(4,'PUBLICADO','Publicado');
-/*!40000 ALTER TABLE `estados_publicacion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `image`
---
-
-LOCK TABLES `image` WRITE;
-/*!40000 ALTER TABLE `image` DISABLE KEYS */;
-/*!40000 ALTER TABLE `image` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `moneda`
---
-
-LOCK TABLES `moneda` WRITE;
-/*!40000 ALTER TABLE `moneda` DISABLE KEYS */;
-INSERT INTO `moneda` VALUES (1,'Pesos','$',NULL,0),(2,'Dólares','U$S',NULL,0),(3,'Euros','€','',0),(4,'Unidad Reajustable','UR','',0),(5,'Unidades Indexadas','UI','UI',0);
-/*!40000 ALTER TABLE `moneda` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `pge_configuraciones`
---
-
-LOCK TABLES `pge_configuraciones` WRITE;
-/*!40000 ALTER TABLE `pge_configuraciones` DISABLE KEYS */;
-/*!40000 ALTER TABLE `pge_configuraciones` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `ss_configuraciones`
---
-
-LOCK TABLES `ss_configuraciones` WRITE;
-/*!40000 ALTER TABLE `ss_configuraciones` DISABLE KEYS */;
-INSERT INTO `ss_configuraciones` VALUES (4,1,'RIESGO_INDICE_LIMITE_AMARILLO',NULL,'0.8',NULL,NULL,NULL,'2014-03-12 15:59:03',NULL,9),(5,1,'RIESGO_INDICE_LIMITE_ROJO',NULL,'4.8',NULL,NULL,NULL,'2016-05-27 11:22:30.634',NULL,11),(6,1,'RIESGO_TIEMPO_LIMITE_AMARILLO',NULL,'10',NULL,NULL,NULL,'2014-05-12 18:05:27',NULL,1),(7,1,'RIESGO_TIEMPO_LIMITE_ROJO',NULL,'20',NULL,NULL,NULL,'2014-05-12 18:05:27',NULL,3),(8,1,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO',NULL,'30',NULL,NULL,NULL,'2014-03-11 16:28:06',NULL,0),(9,1,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO',NULL,'70',NULL,NULL,NULL,'2014-03-11 16:28:07',NULL,0),(10,1,'TAMANIO_MAX_ARCHIVO_DOCUMENTO',NULL,'10485760',NULL,NULL,NULL,'2014-03-20 14:14:11',NULL,0),(11,1,'COSTO_ACTUAL_LIMITE_AMARILLO',NULL,'15',NULL,NULL,NULL,'2014-03-20 14:14:11',NULL,0),(12,1,'COSTO_ACTUAL_LIMITE_ROJO',NULL,'30',NULL,NULL,NULL,'2014-03-20 14:14:11',NULL,0),(13,1,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño maximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2014-06-11',NULL,0),(14,1,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2014-10-01 16:35:26',NULL,1),(15,1,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2014-06-25',NULL,0),(17,1,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2014-09-24 16:24:07',NULL,2),(20,1,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2014-07-10 15:17:14',NULL,NULL),(21,1,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2014-08-14',NULL,0),(22,1,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2014-08-14',NULL,0),(23,2,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(24,2,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(25,2,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(26,2,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(27,2,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(28,2,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(29,2,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(30,2,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(31,2,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,0,NULL,'2015-08-28 18:19:59.57',NULL,1),(32,2,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(33,2,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2014-10-01 16:37:59',NULL,2),(34,2,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(35,2,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(36,2,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(37,2,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(38,2,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(39,3,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(40,3,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(41,3,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(42,3,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(43,3,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(44,3,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(45,3,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(46,3,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(47,3,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,0,NULL,'2015-08-28 18:20:13.99',NULL,1),(48,3,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(49,3,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2014-10-01 16:38:12',NULL,1),(50,3,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(51,3,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(52,3,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(53,3,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(54,3,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(55,4,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(56,4,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(57,4,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(58,4,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(59,4,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(60,4,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(61,4,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(62,4,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(63,4,'COSTO_ACTUAL_LIMITE_ROJO','','25',NULL,0,NULL,'2015-08-31 15:55:58.863',NULL,2),(64,4,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(65,4,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2014-10-01 16:38:24',NULL,1),(66,4,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(67,4,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2016-07-12 15:04:07.75',NULL,1),(68,4,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(69,4,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(70,4,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2014-09-25 15:47:11',NULL,0),(71,1,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','true',NULL,NULL,NULL,'2014-10-10 16:19:33',NULL,0),(72,2,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','true',NULL,NULL,NULL,'2014-10-10 16:19:33',NULL,0),(73,3,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','true',NULL,NULL,NULL,'2014-10-10 16:19:33',NULL,0),(74,4,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,0,NULL,'2014-10-20 12:48:31',NULL,1),(75,1,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(76,1,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(77,1,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(78,1,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(79,2,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(80,2,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(81,2,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(82,2,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(83,3,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(84,3,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(85,3,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(86,3,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(87,4,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(88,4,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(89,4,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(90,4,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-02-04 16:46:59',NULL,0),(91,5,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(92,5,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(93,5,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(94,5,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(95,5,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(96,5,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(97,5,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(98,5,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(99,5,'COSTO_ACTUAL_LIMITE_ROJO','','10',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(100,5,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(101,5,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(102,5,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(103,5,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(104,5,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(105,5,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2016-06-08 14:22:01.615',NULL,1),(106,5,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(107,5,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-03-11 15:40:14',NULL,1),(108,5,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(109,5,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(110,5,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(111,5,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-03-04 12:06:15',NULL,0),(112,6,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(113,6,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(114,6,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(115,6,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(116,6,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(117,6,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(118,6,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(119,6,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(120,6,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,0,NULL,'2015-08-28 18:20:41.805',NULL,1),(121,6,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(122,6,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(123,6,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(124,6,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(125,6,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(126,6,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-07-14 17:28:14.208',NULL,1),(127,6,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(128,6,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-03-16 09:18:25',NULL,1),(129,6,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(130,6,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(131,6,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(132,6,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-03-16 09:12:12',NULL,0),(133,1,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(134,1,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','true',NULL,0,NULL,'2015-06-18 11:07:28',NULL,2),(135,1,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(136,1,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(137,1,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(138,2,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(139,2,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(140,2,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(141,2,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(142,2,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(143,4,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(144,4,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','true',NULL,0,NULL,'2015-09-22 12:57:15.135',NULL,2),(145,4,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(146,4,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(147,4,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(148,3,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(149,3,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(150,3,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(151,3,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(152,3,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(153,6,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(154,6,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','true',NULL,0,NULL,'2016-04-28 11:53:20.206',NULL,2),(155,6,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(156,6,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(157,6,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(158,5,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(159,5,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(160,5,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(161,5,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(162,5,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-05-29 16:28:30',NULL,1),(163,7,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(164,7,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(165,7,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(166,7,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(167,7,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(168,7,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(169,7,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(170,7,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(171,7,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(172,7,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,0,NULL,'2015-08-28 18:20:57.653',NULL,2),(173,7,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(174,7,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(175,7,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(176,7,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(177,7,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(178,7,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-06-02 18:40:59',NULL,2),(179,7,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(180,7,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-06-02 18:40:50',NULL,2),(181,7,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(182,7,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(183,7,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(184,7,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(185,7,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(186,7,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(187,7,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(188,7,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-06-02 18:34:58',NULL,1),(189,8,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-06-12 12:04:35',NULL,1),(190,8,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-06-12 12:04:35',NULL,1),(191,8,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(192,8,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(193,8,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(194,8,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(195,8,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(196,8,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(197,8,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(198,8,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,0,NULL,'2015-08-28 18:21:20.764',NULL,2),(199,8,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(200,8,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(201,8,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(202,8,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(203,8,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(204,8,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-07-14 17:26:33.82',NULL,2),(205,8,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(206,8,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-07-14 17:26:10.319',NULL,2),(207,8,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(208,8,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(209,8,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(210,8,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-06-12 12:04:36',NULL,1),(211,8,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-06-12 12:04:37',NULL,1),(212,8,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-06-12 12:04:37',NULL,1),(213,8,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-06-12 12:04:37',NULL,1),(214,8,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-06-12 12:04:37',NULL,1),(215,1,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:32:47.823',NULL,2),(216,1,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(217,1,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/jboss-as-7.1.1.Final/media_files/',NULL,0,NULL,'2015-06-26 15:10:55',NULL,2),(218,8,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:34:03.861',NULL,2),(219,8,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(220,8,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/jboss-as-7.1.1.Final/media_files/',NULL,0,NULL,'2015-07-14 17:26:21.651',NULL,2),(221,6,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:31:30.391',NULL,2),(222,6,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(223,6,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/jboss-as-7.1.1.Final/media_files/',NULL,0,NULL,'2015-07-06 16:36:38.162',NULL,2),(224,2,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:33:00.837',NULL,2),(225,2,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(226,2,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(227,4,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:33:34.654',NULL,2),(228,4,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(229,4,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/jboss-as-7.1.1.Final/media_files/',NULL,0,NULL,'2015-07-14 17:27:43.147',NULL,2),(230,3,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:33:14.182',NULL,2),(231,3,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(232,3,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(233,7,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','1048576',NULL,0,NULL,'2015-07-07 15:33:50.164',NULL,2),(234,7,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(235,7,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/jboss-as-7.1.1.Final/media_files/',NULL,0,NULL,'2015-07-14 17:28:42.1',NULL,2),(236,5,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(237,5,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(238,5,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-06-26 14:50:04',NULL,1),(239,1,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.754',NULL,1),(240,1,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.769',NULL,1),(241,8,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.783',NULL,1),(242,8,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.794',NULL,1),(243,6,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.812',NULL,1),(244,6,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.827',NULL,1),(245,2,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.855',NULL,1),(246,2,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.868',NULL,1),(247,4,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.884',NULL,1),(248,4,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.896',NULL,1),(249,3,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.912',NULL,1),(250,3,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.924',NULL,1),(251,7,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.942',NULL,1),(252,7,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.954',NULL,1),(253,5,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-08 11:20:58.969',NULL,1),(254,5,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-08 11:20:58.986',NULL,1),(255,9,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-09 11:46:37.875',NULL,1),(256,9,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-09 11:46:37.892',NULL,1),(257,9,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-09 11:46:37.902',NULL,1),(258,9,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-09 11:46:37.911',NULL,1),(259,9,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-09 11:46:37.922',NULL,1),(260,9,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-09 11:46:37.933',NULL,1),(261,9,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-09 11:46:37.944',NULL,1),(262,9,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-09 11:46:37.953',NULL,1),(263,9,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-09 11:46:37.964',NULL,1),(264,9,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-09 11:46:37.976',NULL,1),(265,9,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-09 11:46:37.991',NULL,1),(266,9,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-09 11:46:38.002',NULL,1),(267,9,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-09 11:46:38.015',NULL,1),(268,9,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-09 11:46:38.028',NULL,1),(269,9,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-09 11:46:38.039',NULL,1),(270,9,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-09 11:46:38.05',NULL,1),(271,9,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-12-04 12:55:11.895',NULL,2),(272,9,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-09 11:46:38.072',NULL,1),(273,9,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-09 11:46:38.083',NULL,1),(274,9,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-12-04 12:55:03.73',NULL,2),(275,9,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-09 11:46:38.103',NULL,1),(276,9,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-09 11:46:38.113',NULL,1),(277,9,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-09 11:46:38.124',NULL,1),(278,9,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-09 11:46:38.137',NULL,1),(279,9,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-09 11:46:38.148',NULL,1),(280,9,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-09-09 11:46:38.159',NULL,1),(281,9,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-09 11:46:38.175',NULL,1),(282,9,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-09 11:46:38.185',NULL,1),(283,9,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-09 11:46:38.195',NULL,1),(284,9,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-09 11:46:38.206',NULL,1),(285,9,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-09 11:46:38.217',NULL,1),(286,1,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.612',NULL,1),(287,8,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.675',NULL,1),(288,6,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.709',NULL,1),(289,2,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.753',NULL,1),(290,9,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.783',NULL,1),(291,4,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.823',NULL,1),(292,3,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.851',NULL,1),(293,7,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.88',NULL,1),(294,5,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 16:24:30.907',NULL,1),(295,10,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-21 18:17:33.644',NULL,1),(296,10,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-21 18:17:33.661',NULL,1),(297,10,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-21 18:17:33.675',NULL,1),(298,10,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:17:33.693',NULL,1),(299,10,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:17:33.709',NULL,1),(300,10,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-21 18:17:33.735',NULL,1),(301,10,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-21 18:17:33.757',NULL,1),(302,10,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-21 18:17:33.78',NULL,1),(303,10,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-21 18:17:33.803',NULL,1),(304,10,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:17:33.853',NULL,1),(305,10,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:17:33.873',NULL,1),(306,10,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-21 18:17:33.888',NULL,1),(307,10,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-21 18:17:33.901',NULL,1),(308,10,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-21 18:17:33.926',NULL,1),(309,10,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-21 18:17:33.951',NULL,1),(310,10,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-21 18:17:33.976',NULL,1),(311,10,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-12-04 12:55:41.327',NULL,2),(312,10,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:17:34.035',NULL,1),(313,10,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:17:34.053',NULL,1),(314,10,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-21 18:17:34.069',NULL,1),(315,10,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-12-04 12:55:34.617',NULL,2),(316,10,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-21 18:17:34.139',NULL,1),(317,10,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-21 18:17:34.162',NULL,1),(318,10,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-21 18:17:34.229',NULL,1),(319,10,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-21 18:17:34.261',NULL,1),(320,10,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-21 18:17:34.281',NULL,1),(321,10,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-09-21 18:17:34.307',NULL,1),(322,10,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-21 18:17:34.325',NULL,1),(323,10,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-21 18:17:34.347',NULL,1),(324,10,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-21 18:17:34.365',NULL,1),(325,10,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-21 18:17:34.385',NULL,1),(326,10,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-21 18:17:34.395',NULL,1),(327,11,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-21 18:19:22.335',NULL,1),(328,11,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-21 18:19:22.349',NULL,1),(329,11,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-21 18:19:22.362',NULL,1),(330,11,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:19:22.373',NULL,1),(331,11,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:19:22.384',NULL,1),(332,11,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-21 18:19:22.395',NULL,1),(333,11,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-21 18:19:22.405',NULL,1),(334,11,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-21 18:19:22.414',NULL,1),(335,11,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-21 18:19:22.424',NULL,1),(336,11,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:19:22.434',NULL,1),(337,11,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:19:22.444',NULL,1),(338,11,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-21 18:19:22.454',NULL,1),(339,11,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-21 18:19:22.465',NULL,1),(340,11,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-21 18:19:22.476',NULL,1),(341,11,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-21 18:19:22.489',NULL,1),(342,11,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-21 18:19:22.498',NULL,1),(343,11,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-12-04 12:56:00.379',NULL,2),(344,11,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:19:22.52',NULL,1),(345,11,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:19:22.534',NULL,1),(346,11,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-21 18:19:22.543',NULL,1),(347,11,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-12-04 12:55:54.42',NULL,2),(348,11,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-21 18:19:22.566',NULL,1),(349,11,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-21 18:19:22.576',NULL,1),(350,11,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-21 18:19:22.588',NULL,1),(351,11,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-21 18:19:22.601',NULL,1),(352,11,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-21 18:19:22.613',NULL,1),(353,11,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-09-21 18:19:22.624',NULL,1),(354,11,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-21 18:19:22.642',NULL,1),(355,11,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-21 18:19:22.653',NULL,1),(356,11,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-21 18:19:22.666',NULL,1),(357,11,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-21 18:19:22.676',NULL,1),(358,11,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-21 18:19:22.689',NULL,1),(359,12,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-21 18:19:53.17',NULL,1),(360,12,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-21 18:19:53.225',NULL,1),(361,12,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-21 18:19:53.242',NULL,1),(362,12,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:19:53.268',NULL,1),(363,12,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:19:53.355',NULL,1),(364,12,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-21 18:19:53.374',NULL,1),(365,12,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-21 18:19:53.44',NULL,1),(366,12,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-21 18:19:53.457',NULL,1),(367,12,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-21 18:19:53.469',NULL,1),(368,12,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-21 18:19:53.483',NULL,1),(369,12,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-21 18:19:53.501',NULL,1),(370,12,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-21 18:19:53.519',NULL,1),(371,12,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-21 18:19:53.536',NULL,1),(372,12,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-21 18:19:53.578',NULL,1),(373,12,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-21 18:19:53.604',NULL,1),(374,12,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-21 18:19:53.626',NULL,1),(375,12,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-12-04 12:56:16.725',NULL,2),(376,12,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:19:53.66',NULL,1),(377,12,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-21 18:19:53.674',NULL,1),(378,12,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-21 18:19:53.689',NULL,1),(379,12,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-12-04 12:51:32.382',NULL,2),(380,12,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-21 18:19:53.718',NULL,1),(381,12,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-21 18:19:53.732',NULL,1),(382,12,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-21 18:19:53.747',NULL,1),(383,12,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-21 18:19:53.761',NULL,1),(384,12,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-21 18:19:53.774',NULL,1),(385,12,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-09-21 18:19:53.785',NULL,1),(386,12,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-21 18:19:53.8',NULL,1),(387,12,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-21 18:19:53.815',NULL,1),(388,12,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-21 18:19:53.833',NULL,1),(389,12,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-21 18:19:53.852',NULL,1),(390,12,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-21 18:19:53.869',NULL,1),(391,14,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-23 10:27:58.596',NULL,1),(392,14,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-23 10:27:58.611',NULL,1),(393,14,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-23 10:27:58.627',NULL,1),(394,14,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-23 10:27:58.65',NULL,1),(395,14,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-23 10:27:58.664',NULL,1),(396,14,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-23 10:27:58.676',NULL,1),(397,14,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-23 10:27:58.688',NULL,1),(398,14,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-23 10:27:58.702',NULL,1),(399,14,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-23 10:27:58.714',NULL,1),(400,14,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-23 10:27:58.727',NULL,1),(401,14,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-23 10:27:58.738',NULL,1),(402,14,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-23 10:27:58.75',NULL,1),(403,14,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-23 10:27:58.76',NULL,1),(404,14,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-23 10:27:58.773',NULL,1),(405,14,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-23 10:27:58.784',NULL,1),(406,14,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-23 10:27:58.809',NULL,1),(407,14,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2015-09-23 10:27:58.822',NULL,1),(408,14,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-23 10:27:58.84',NULL,1),(409,14,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-23 10:27:58.858',NULL,1),(410,14,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-23 10:27:58.87',NULL,1),(411,14,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2015-09-23 10:27:58.887',NULL,1),(412,14,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-23 10:27:58.899',NULL,1),(413,14,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-23 10:27:58.912',NULL,1),(414,14,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-23 10:27:58.925',NULL,1),(415,14,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-23 10:27:58.939',NULL,1),(416,14,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-23 10:27:58.956',NULL,1),(417,14,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2015-09-23 10:27:58.973',NULL,1),(418,14,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-23 10:27:59.004',NULL,1),(419,14,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-23 10:27:59.026',NULL,1),(420,14,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-23 10:27:59.046',NULL,1),(421,14,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-23 10:27:59.062',NULL,1),(422,14,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-23 10:27:59.082',NULL,1),(423,13,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-09-23 10:27:59.097',NULL,1),(424,13,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-09-23 10:27:59.119',NULL,1),(425,13,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-09-23 10:27:59.138',NULL,1),(426,13,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-23 10:27:59.152',NULL,1),(427,13,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-23 10:27:59.168',NULL,1),(428,13,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-09-23 10:27:59.187',NULL,1),(429,13,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-09-23 10:27:59.201',NULL,1),(430,13,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-09-23 10:27:59.213',NULL,1),(431,13,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','10485760',NULL,NULL,NULL,'2015-09-23 10:27:59.229',NULL,1),(432,13,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-09-23 10:27:59.242',NULL,1),(433,13,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-09-23 10:27:59.254',NULL,1),(434,13,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-09-23 10:27:59.267',NULL,1),(435,13,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-09-23 10:27:59.279',NULL,1),(436,13,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-09-23 10:27:59.32',NULL,1),(437,13,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-09-23 10:27:59.339',NULL,1),(438,13,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-09-23 10:27:59.351',NULL,1),(439,13,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-09-23 12:21:02.055',NULL,2),(440,13,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-09-23 10:27:59.389',NULL,1),(441,13,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-09-23 10:27:59.4',NULL,1),(442,13,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-09-23 10:27:59.412',NULL,1),(443,13,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-09-23 12:20:54.137',NULL,2),(444,13,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-09-23 10:27:59.44',NULL,1),(445,13,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-09-23 10:27:59.453',NULL,1),(446,13,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-09-23 10:27:59.648',NULL,1),(447,13,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-09-23 10:27:59.854',NULL,1),(448,13,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-09-23 10:27:59.91',NULL,1),(449,13,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','true',NULL,0,NULL,'2016-03-04 19:40:55.257',NULL,2),(450,13,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2015-09-23 10:27:59.938',NULL,1),(451,13,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-09-23 10:27:59.955',NULL,1),(452,13,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-09-23 10:27:59.967',NULL,1),(453,13,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-09-23 10:27:59.977',NULL,1),(454,13,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-09-23 10:27:59.988',NULL,1),(455,15,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2015-10-30 14:13:42.184',NULL,1),(456,15,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2015-10-30 14:13:42.209',NULL,1),(457,15,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2015-10-30 14:13:42.23',NULL,1),(458,15,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-10-30 14:13:42.252',NULL,1),(459,15,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-10-30 14:13:42.271',NULL,1),(460,15,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2015-10-30 14:13:42.285',NULL,1),(461,15,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2015-10-30 14:13:42.303',NULL,1),(462,15,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2015-10-30 14:13:42.319',NULL,1),(463,15,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','2 MB como tope','2097152',NULL,0,NULL,'2016-05-25 11:58:26.867',NULL,2),(464,15,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2015-10-30 14:13:42.348',NULL,1),(465,15,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2015-10-30 14:13:42.381',NULL,1),(466,15,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2015-10-30 14:13:42.397',NULL,1),(467,15,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2015-10-30 14:13:42.415',NULL,1),(468,15,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2015-10-30 14:13:42.428',NULL,1),(469,15,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2015-10-30 14:13:42.441',NULL,1),(470,15,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2015-10-30 14:13:42.464',NULL,1),(471,15,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2015-12-04 12:57:01.45',NULL,2),(472,15,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2015-10-30 14:13:42.508',NULL,1),(473,15,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2015-10-30 14:13:42.536',NULL,1),(474,15,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2015-10-30 14:13:42.556',NULL,1),(475,15,'CON_CORREO','Si se envía correo o no','false',NULL,0,NULL,'2015-12-04 12:56:56.669',NULL,2),(476,15,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2015-10-30 14:13:42.588',NULL,1),(477,15,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2015-10-30 14:13:42.616',NULL,1),(478,15,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2015-10-30 14:13:42.641',NULL,1),(479,15,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2015-10-30 14:13:42.657',NULL,1),(480,15,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2015-10-30 14:13:42.68',NULL,1),(481,15,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','true',NULL,0,NULL,'2015-12-08 10:01:32.702',NULL,2),(482,15,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','true',NULL,0,NULL,'2016-02-01 11:42:52.978',NULL,2),(483,15,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2015-10-30 14:13:42.728',NULL,1),(484,15,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2015-10-30 14:13:42.743',NULL,1),(485,15,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2015-10-30 14:13:42.757',NULL,1),(486,15,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/siges/media_files/',NULL,NULL,NULL,'2015-10-30 14:13:42.778',NULL,1),(517,6,'VISUALIZADOR.PUBLICARSERVICIO_URLLOGICA','PGE','http://servicios.pge.red.uy/agesic/PublicarProyecto',NULL,0,NULL,'2016-02-04 14:31:01.681',NULL,1),(518,6,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,0,NULL,'2016-06-20 11:10:41.802',NULL,2),(519,6,'VISUALIZADOR.PUBLICARSERVICIO_NAMESPACE','PGE','http://ws.web.visualizador.siges.agesic.org/',NULL,0,NULL,'2016-02-04 14:30:44.657',NULL,1),(520,4,'VISUALIZADOR.PUBLICARSERVICIO_SERVICENAME','','PublicarProyecto',NULL,0,NULL,'2016-02-04 14:26:03.618',NULL,0),(521,6,'VISUALIZADOR.PUBLICARSERVICIO_SERVICENAME','PGE','PublicarProyecto',NULL,0,NULL,'2016-02-04 14:30:53.454',NULL,1),(522,6,'VISUALIZADOR.PUBLICARSERVICIO_ROL','PGE','ou=siges,o=agesic',NULL,0,NULL,'2016-02-04 14:30:48.904',NULL,1),(523,6,'STS_URL','PGE','https://servicios.pge.red.uy:10001/TrustServer/SecurityTokenServiceProtected',NULL,0,NULL,'2016-02-04 14:30:30.175',NULL,1),(524,6,'STS_POLITICA','PGE','urn:std15',NULL,0,NULL,'2016-02-04 14:30:26.197',NULL,1),(525,6,'STS_EMISOR','PGE','Agesic',NULL,0,NULL,'2016-02-04 14:30:21.781',NULL,1),(526,6,'KEYSTORE_ORG_PASS','PGE','Clave_4ges!c-PD1',NULL,0,NULL,'2016-02-04 14:30:05.971',NULL,1),(527,6,'KEYSTORE_ORG_ALIAS','PGE','agesic-pdi (correo uruguayo - ca)',NULL,0,NULL,'2016-02-04 14:30:01.611',NULL,1),(528,6,'KEYSTORE_SSL_PASS','PGE','agesic',NULL,0,NULL,'2016-02-04 14:30:10.583',NULL,1),(529,6,'TRUSTSTORE_SSL_PASS','PGE','Clave_4ges!c-PD1',NULL,0,NULL,'2016-02-04 14:30:33.925',NULL,1),(530,6,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,0,NULL,'2016-02-04 16:45:41.836',NULL,1),(531,6,'KEYSTORE_ORG_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/organismo.keystore',NULL,0,NULL,'2016-02-04 14:37:26.6',NULL,0),(532,6,'KEYSTORE_SSL_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/vsiges_ssl.keystore',NULL,0,NULL,'2016-02-04 14:38:47.176',NULL,0),(533,6,'TRUSTSTORE_SSL_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/agesic.truststore',NULL,0,NULL,'2016-02-04 14:39:20.162',NULL,0),(534,16,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-03-16 09:43:25.002',NULL,1),(535,16,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-03-16 09:43:25.019',NULL,1),(536,16,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-03-16 09:43:25.036',NULL,1),(537,16,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-03-16 09:43:25.051',NULL,1),(538,16,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-03-16 09:43:25.065',NULL,1),(539,16,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-03-16 09:43:25.081',NULL,1),(540,16,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-03-16 09:43:25.095',NULL,1),(541,16,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-03-16 09:43:25.114',NULL,1),(542,16,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-03-16 09:43:25.128',NULL,1),(543,16,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-03-16 09:43:25.14',NULL,1),(544,16,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-03-16 09:43:25.153',NULL,1),(545,16,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-03-16 09:43:25.166',NULL,1),(546,16,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-03-16 09:43:25.179',NULL,1),(547,16,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-03-16 09:43:25.192',NULL,1),(548,16,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-03-16 09:43:25.204',NULL,1),(549,16,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-03-16 09:43:25.217',NULL,1),(550,16,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2016-03-16 09:43:25.229',NULL,1),(551,16,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-03-16 09:43:25.242',NULL,1),(552,16,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-03-16 09:43:25.256',NULL,1),(553,16,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-03-16 09:43:25.278',NULL,1),(554,16,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-03-16 09:43:25.291',NULL,1),(555,16,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-03-16 09:43:25.308',NULL,1),(556,16,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-03-16 09:43:25.324',NULL,1),(557,16,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-03-16 09:43:25.343',NULL,1),(558,16,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-03-16 09:43:25.37',NULL,1),(559,16,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-03-16 09:43:25.382',NULL,1),(560,16,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-03-16 09:43:25.395',NULL,1),(561,16,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-03-16 09:43:25.409',NULL,1),(562,16,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-03-16 09:43:25.423',NULL,1),(563,16,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-03-16 09:43:25.436',NULL,1),(564,16,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-03-16 09:43:25.453',NULL,1),(565,16,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-03-16 09:43:25.466',NULL,1),(566,NULL,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-05-19 18:40:46.915',NULL,1),(567,1,'VISUALIZADOR.PUBLICARSERVICIO_NAMESPACE','PGE','http://ws.web.visualizador.siges.agesic.org/',NULL,0,NULL,'2016-05-23 16:34:55.729',NULL,0),(568,1,'VISUALIZADOR.PUBLICARSERVICIO_ROL','PGE','ou=siges,o=agesic',NULL,0,NULL,'2016-05-23 16:35:37.41',NULL,0),(569,1,'VISUALIZADOR.PUBLICARSERVICIO_SERVICENAME','PGE','PublicarProyecto',NULL,0,NULL,'2016-05-23 16:35:52.607',NULL,0),(570,1,'VISUALIZADOR.PUBLICARSERVICIO_URLLOGICA','PGE','http://servicios.pge.red.uy/agesic/PublicarProyecto/MiradorGobierno',NULL,0,NULL,'2016-05-23 16:38:21.203',NULL,1),(571,1,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,0,NULL,'2016-05-25 17:35:30.068',NULL,4),(572,1,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,0,NULL,'2016-05-23 16:50:30.664',NULL,1),(573,1,'STS_POLITICA','PGE','urn:std15',NULL,0,NULL,'2016-05-23 16:40:22.295',NULL,0),(574,1,'STS_EMISOR','PGE','Agesic',NULL,0,NULL,'2016-05-23 16:40:42.048',NULL,0),(575,1,'KEYSTORE_SSL_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/vsiges_ssl.keystore',NULL,0,NULL,'2016-05-23 16:41:20.123',NULL,0),(576,1,'KEYSTORE_SSL_PASS','PGE','agesic',NULL,0,NULL,'2016-05-23 16:41:32.79',NULL,0),(577,1,'KEYSTORE_ORG_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/organismo.keystore',NULL,0,NULL,'2016-05-23 16:41:45.4',NULL,0),(578,1,'KEYSTORE_ORG_PASS','PGE','Clave_4ges!c-PD1',NULL,0,NULL,'2016-05-23 16:42:02.011',NULL,0),(579,1,'KEYSTORE_ORG_ALIAS','PGE','agesic-pdi (correo uruguayo - ca)',NULL,0,NULL,'2016-05-23 16:42:21.004',NULL,0),(580,1,'STS_URL','PGE','https://servicios.pge.red.uy:10001/TrustServer/SecurityTokenServiceProtected',NULL,0,NULL,'2016-05-23 16:43:04.344',NULL,0),(581,1,'TRUSTSTORE_SSL_PASS','PGE','Clave_4ges!c-PD1',NULL,0,NULL,'2016-05-23 16:43:33.658',NULL,0),(582,1,'TRUSTSTORE_SSL_PATH','PGE','/srv/siges/jboss-as-7.1.1.Final/PGE/agesic.truststore',NULL,0,NULL,'2016-05-23 16:43:57.985',NULL,0),(583,1,'VISUALIZADOR_EXPORTACION_POR_PGE','PGE Usar PGE','false',NULL,0,NULL,'2016-05-25 17:35:57.836',NULL,1),(584,1,'VISUALIZADOR.PUBLICARSERVICIO_MTOM','Habilitar envío WS MTOM','true',NULL,0,NULL,'2016-05-25 12:22:39.978',NULL,1),(585,6,'VISUALIZADOR_EXPORTACION_POR_PGE','Si publica o no por PGE','false',NULL,0,NULL,'2016-06-20 11:05:17.508',NULL,0),(586,17,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-07-20 14:49:06.76',NULL,1),(587,17,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-07-20 14:49:06.768',NULL,1),(588,17,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-07-20 14:49:06.775',NULL,1),(589,17,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-20 14:49:06.783',NULL,1),(590,17,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-20 14:49:06.791',NULL,1),(591,17,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-07-20 14:49:06.798',NULL,1),(592,17,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-07-20 14:49:06.806',NULL,1),(593,17,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-07-20 14:49:06.816',NULL,1),(594,17,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-07-20 14:49:06.823',NULL,1),(595,17,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-20 14:49:06.831',NULL,1),(596,17,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-20 14:49:06.839',NULL,1),(597,17,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-07-20 14:49:06.846',NULL,1),(598,17,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-07-20 14:49:06.854',NULL,1),(599,17,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-07-20 14:49:06.862',NULL,1),(600,17,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-07-20 14:49:06.87',NULL,1),(601,17,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-07-20 14:49:06.878',NULL,1),(602,17,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2016-07-20 14:49:06.885',NULL,1),(603,17,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-07-20 14:49:06.893',NULL,1),(604,17,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-07-20 14:49:06.9',NULL,1),(605,17,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-07-20 14:49:06.908',NULL,1),(606,17,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-07-20 14:49:06.916',NULL,1),(607,17,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-07-20 14:49:06.923',NULL,1),(608,17,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-07-20 14:49:06.931',NULL,1),(609,17,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-07-20 14:49:06.938',NULL,1),(610,17,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-07-20 14:49:06.946',NULL,1),(611,17,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-07-20 14:49:06.954',NULL,1),(612,17,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-07-20 14:49:06.961',NULL,1),(613,17,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-07-20 14:49:06.969',NULL,1),(614,17,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-07-20 14:49:06.977',NULL,1),(615,17,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-07-20 14:49:06.984',NULL,1),(616,17,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-07-20 14:49:06.992',NULL,1),(617,17,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-07-20 14:49:07',NULL,1),(618,18,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-07-29 18:03:18.377',NULL,1),(619,18,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-07-29 18:03:18.384',NULL,1),(620,18,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-07-29 18:03:18.391',NULL,1),(621,18,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-29 18:03:18.397',NULL,1),(622,18,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-29 18:03:18.404',NULL,1),(623,18,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-07-29 18:03:18.411',NULL,1),(624,18,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-07-29 18:03:18.417',NULL,1),(625,18,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-07-29 18:03:18.424',NULL,1),(626,18,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-07-29 18:03:18.43',NULL,1),(627,18,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-29 18:03:18.437',NULL,1),(628,18,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-29 18:03:18.444',NULL,1),(629,18,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-07-29 18:03:18.452',NULL,1),(630,18,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-07-29 18:03:18.458',NULL,1),(631,18,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-07-29 18:03:18.465',NULL,1),(632,18,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-07-29 18:03:18.471',NULL,1),(633,18,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-07-29 18:03:18.478',NULL,1),(634,18,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2016-07-29 18:03:18.486',NULL,1),(635,18,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-07-29 18:03:18.492',NULL,1),(636,18,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-07-29 18:03:18.498',NULL,1),(637,18,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-07-29 18:03:18.505',NULL,1),(638,18,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-07-29 18:03:18.512',NULL,1),(639,18,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-07-29 18:03:18.518',NULL,1),(640,18,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-07-29 18:03:18.525',NULL,1),(641,18,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-07-29 18:03:18.533',NULL,1),(642,18,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-07-29 18:03:18.54',NULL,1),(643,18,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-07-29 18:03:18.548',NULL,1),(644,18,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-07-29 18:03:18.555',NULL,1),(645,18,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-07-29 18:03:18.562',NULL,1),(646,18,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-07-29 18:03:18.569',NULL,1),(647,18,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-07-29 18:03:18.576',NULL,1),(648,18,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-07-29 18:03:18.583',NULL,1),(649,18,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-07-29 18:03:18.59',NULL,1),(650,19,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-07-29 18:18:13.492',NULL,1),(651,19,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-07-29 18:18:13.499',NULL,1),(652,19,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-07-29 18:18:13.506',NULL,1),(653,19,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-29 18:18:13.512',NULL,1),(654,19,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-29 18:18:13.519',NULL,1),(655,19,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-07-29 18:18:13.526',NULL,1),(656,19,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-07-29 18:18:13.532',NULL,1),(657,19,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-07-29 18:18:13.539',NULL,1),(658,19,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-07-29 18:18:13.545',NULL,1),(659,19,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-07-29 18:18:13.552',NULL,1),(660,19,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-07-29 18:18:13.559',NULL,1),(661,19,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-07-29 18:18:13.565',NULL,1),(662,19,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-07-29 18:18:13.572',NULL,1),(663,19,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-07-29 18:18:13.579',NULL,1),(664,19,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-07-29 18:18:13.585',NULL,1),(665,19,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-07-29 18:18:13.592',NULL,1),(666,19,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2016-07-29 18:18:13.598',NULL,1),(667,19,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-07-29 18:18:13.605',NULL,1),(668,19,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-07-29 18:18:13.612',NULL,1),(669,19,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-07-29 18:18:13.618',NULL,1),(670,19,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-07-29 18:18:13.625',NULL,1),(671,19,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-07-29 18:18:13.632',NULL,1),(672,19,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-07-29 18:18:13.638',NULL,1),(673,19,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-07-29 18:18:13.645',NULL,1),(674,19,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-07-29 18:18:13.651',NULL,1),(675,19,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-07-29 18:18:13.662',NULL,1),(676,19,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-07-29 18:18:13.669',NULL,1),(677,19,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-07-29 18:18:13.675',NULL,1),(678,19,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-07-29 18:18:13.682',NULL,1),(679,19,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-07-29 18:18:13.688',NULL,1),(680,19,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-07-29 18:18:13.697',NULL,1),(681,19,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-07-29 18:18:13.704',NULL,1),(682,20,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-09-07 14:52:35.638',NULL,1),(683,20,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-09-07 14:52:35.647',NULL,1),(684,20,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-09-07 14:52:35.655',NULL,1),(685,20,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-09-07 14:52:35.664',NULL,1),(686,20,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-09-07 14:52:35.672',NULL,1),(687,20,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-09-07 14:52:35.681',NULL,1),(688,20,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-09-07 14:52:35.691',NULL,1),(689,20,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-09-07 14:52:35.701',NULL,1),(690,20,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-09-07 14:52:35.71',NULL,1),(691,20,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-09-07 14:52:35.719',NULL,1),(692,20,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-09-07 14:52:35.728',NULL,1),(693,20,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-09-07 14:52:35.736',NULL,1),(694,20,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-09-07 14:52:35.746',NULL,1),(695,20,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-09-07 14:52:35.755',NULL,1),(696,20,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-09-07 14:52:35.763',NULL,1),(697,20,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-09-07 14:52:35.772',NULL,1),(698,20,'MAIL_FROM','Dirección desde donde se envían los mails','siges@agesic.gub.uy',NULL,0,NULL,'2016-09-07 15:01:29.538',NULL,2),(699,20,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-09-07 14:52:35.79',NULL,1),(700,20,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-09-07 14:52:35.8',NULL,1),(701,20,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-09-07 14:52:35.809',NULL,1),(702,20,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-09-07 14:52:35.82',NULL,1),(703,20,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-09-07 14:52:35.829',NULL,1),(704,20,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-09-07 14:52:35.838',NULL,1),(705,20,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-09-07 14:52:35.847',NULL,1),(706,20,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-09-07 14:52:35.858',NULL,1),(707,20,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-09-07 14:52:35.868',NULL,1),(708,20,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-09-07 14:52:35.877',NULL,1),(709,20,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-09-07 14:52:35.886',NULL,1),(710,20,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-09-07 14:52:35.896',NULL,1),(711,20,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-09-07 14:52:35.906',NULL,1),(712,20,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-09-07 14:52:35.917',NULL,1),(713,20,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-09-07 14:52:35.926',NULL,1),(714,21,'FILTRO_INICIO_POR_AREAS','Agrupar resultado incio por areas','false',NULL,NULL,NULL,'2016-09-07 16:13:24.374',NULL,1),(715,21,'RIESGO_INDICE_LIMITE_AMARILLO','','1.2',NULL,NULL,NULL,'2016-09-07 16:13:24.381',NULL,1),(716,21,'RIESGO_INDICE_LIMITE_ROJO','','4',NULL,NULL,NULL,'2016-09-07 16:13:24.389',NULL,1),(717,21,'RIESGO_TIEMPO_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-09-07 16:13:24.397',NULL,1),(718,21,'RIESGO_TIEMPO_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-09-07 16:13:24.405',NULL,1),(719,21,'DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO','','30',NULL,NULL,NULL,'2016-09-07 16:13:24.412',NULL,1),(720,21,'DOCUMENTO_PORCENTAJE_LIMITE_ROJO','','70',NULL,NULL,NULL,'2016-09-07 16:13:24.42',NULL,1),(721,21,'TAMANIO_MAX_ARCHIVO_DOCUMENTO','','10485760',NULL,NULL,NULL,'2016-09-07 16:13:24.428',NULL,1),(722,21,'TAMANIO_MAX_ARCHIVO_MULTIMEDIA','','512000',NULL,NULL,NULL,'2016-09-07 16:13:24.435',NULL,1),(723,21,'COSTO_ACTUAL_LIMITE_AMARILLO','','10',NULL,NULL,NULL,'2016-09-07 16:13:24.443',NULL,1),(724,21,'COSTO_ACTUAL_LIMITE_ROJO','','20',NULL,NULL,NULL,'2016-09-07 16:13:24.452',NULL,1),(725,21,'ESTADO_INICIO_LIMITE_AMARILLO','Semaforo estado Inicio amarillo','10',NULL,NULL,NULL,'2016-09-07 16:13:24.46',NULL,1),(726,21,'ESTADO_INICIO_LIMITE_ROJO','Semaforo estado Inicio rojo','15',NULL,NULL,NULL,'2016-09-07 16:13:24.468',NULL,1),(727,21,'ESTADO_PLANIFICACION_LIMITE_AMARILLO','Semaforo estado Planificacion amarillo','15',NULL,NULL,NULL,'2016-09-07 16:13:24.476',NULL,1),(728,21,'ESTADO_PLANIFICACION_LIMITE_ROJO','Semaforo estado Planificacion rojo','20',NULL,NULL,NULL,'2016-09-07 16:13:24.483',NULL,1),(729,21,'TAMANIO_MAX_LOGO_ORGANISMO','Tamaño máximo en bytes del logo del Organismo','262144',NULL,NULL,NULL,'2016-09-07 16:13:24.491',NULL,1),(730,21,'MAIL_FROM','Dirección desde donde se envían los mails','mail@agesic.gub.uy',NULL,NULL,NULL,'2016-09-07 16:13:24.502',NULL,1),(731,21,'MAIL_TLS','Configuración TLS en envío de mail','false',NULL,NULL,NULL,'2016-09-07 16:13:24.509',NULL,1),(732,21,'MAIL_DEBUG','Debug del envío de mail','false',NULL,NULL,NULL,'2016-09-07 16:13:24.517',NULL,1),(733,21,'MAIL_ENCODING','Encoding de los mails a enviar','utf8',NULL,NULL,NULL,'2016-09-07 16:13:24.525',NULL,1),(734,21,'CON_CORREO','Si se envía correo o no','false',NULL,NULL,NULL,'2016-09-07 16:13:24.534',NULL,1),(735,21,'CON_CONTROL_ACCESO','Si se usa el control de acceso de Agesic o no','false',NULL,NULL,NULL,'2016-09-07 16:13:24.543',NULL,1),(736,21,'PRODUCTO_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Productos','10',NULL,NULL,NULL,'2016-09-07 16:13:24.551',NULL,1),(737,21,'PRODUCTO_INDICE_LIMITE_ROJO','Limite semaforo rojo para Productos','20',NULL,NULL,NULL,'2016-09-07 16:13:24.56',NULL,1),(738,21,'ALCANCE_INDICE_LIMITE_AMARILLO','Limite semaforo amarillo para Alcance','90',NULL,NULL,NULL,'2016-09-07 16:13:24.569',NULL,1),(739,21,'ALCANCE_INDICE_LIMITE_ROJO','Limite semaforo rojo para Alcance','70',NULL,NULL,NULL,'2016-09-07 16:13:24.577',NULL,1),(740,21,'ADJUNTO_MODIFICA_PRESUPUESTO','Adjunto puede modificar presupuesto','false',NULL,NULL,NULL,'2016-09-07 16:13:24.585',NULL,1),(741,21,'ENVIO_NOTIFICACIONES','Determina si se envían notificaciones','false',NULL,NULL,NULL,'2016-09-07 16:13:24.594',NULL,1),(742,21,'CALIDAD_LIMITE_AMARILLO','Semaforo limite amarillo calidad','70',NULL,NULL,NULL,'2016-09-07 16:13:24.602',NULL,1),(743,21,'CALIDAD_LIMITE_ROJO','Semaforo limite rojo calidad','30',NULL,NULL,NULL,'2016-09-07 16:13:24.61',NULL,1),(744,21,'CALIDAD_GERENTE_MODIFICA','Permitir al Gerente modificar items calidad','false',NULL,NULL,NULL,'2016-09-07 16:13:24.619',NULL,1),(745,21,'FOLDER_MEDIA','Carpeta donde se almacenan los archivos Multimedia','/srv/siges/media_files/',NULL,NULL,NULL,'2016-09-07 16:13:24.627',NULL,1),(746,3,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(747,3,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(748,3,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(749,19,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(750,19,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(751,19,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(752,18,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(753,18,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(754,18,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(755,7,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(756,7,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(757,7,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(758,16,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(759,16,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(760,16,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(761,2,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(762,2,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(763,2,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(764,9,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(765,9,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(766,9,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(767,4,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(768,4,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(769,4,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(770,11,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:39',NULL,1),(771,11,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(772,11,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(773,12,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(774,12,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(775,12,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(776,14,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(777,14,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(778,14,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(779,13,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(780,13,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(781,13,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(782,17,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(783,17,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(784,17,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(785,20,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(786,20,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(787,20,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(788,8,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(789,8,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(790,8,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(791,21,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(792,21,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(793,21,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(794,10,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(795,10,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(796,10,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(797,15,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(798,15,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(799,15,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(800,5,'VISUALIZADOR.PUBLICARSERVICIO_SOAPACTION','PGE SOAP Action','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(801,5,'VISUALIZADOR.PUBLICARSERVICIO_WSDL','PGE WSDL','http://localhost:8380/SigesVisualizadorPrivado/PublicarProyecto?WSDL',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1),(802,5,'VISUALIZADOR_EXPORTACION_POR_PGE','Realizar la exportación al Visualizador por la PGE','false',NULL,NULL,NULL,'2016-09-16 15:34:40',NULL,1);
-/*!40000 ALTER TABLE `ss_configuraciones` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `ss_rol`
---
-
-LOCK TABLES `ss_rol` WRITE;
-/*!40000 ALTER TABLE `ss_rol` DISABLE KEYS */;
-INSERT INTO `ss_rol` VALUES (0,'ADMINISTRADOR','Usuario Administrador de la aplicacion','Usuario Administrador','','SIGES_WEB',0,NULL,1,0),(1,'PMOT','PMO Transversal','PMO Transversal','','SIGES_WEB',0,NULL,1,1),(2,'PMOF','PMO Federada','PMO Federada','','SIGES_WEB',0,NULL,1,1),(3,'DIR','Director','Director','','SIGES_WEB',0,NULL,1,1),(4,'USU','Usuario','Usuario','','SIGES_WEB',0,NULL,1,1),(5,'ADMINIS',NULL,'ADMINIS','','SIGES_WEB',0,NULL,1,NULL),(6,'ADMIN_TDO',NULL,'ADMIN_TDO','','SIGES_WEB',0,NULL,1,NULL),(7,'ADMIN_ERR',NULL,'ADMIN_ERR','','SIGES_WEB',0,NULL,1,NULL),(8,'ADM_CONF',NULL,'ADM_CONF','','SIGES_WEB',0,NULL,1,NULL),(9,'ADMIN_NUEVOFICHA',NULL,'ADMIN_NUEVOFICHA','','SIGES_WEB',0,NULL,1,NULL),(10,'CONF_ADD',NULL,'CONF_ADD','','SIGES_WEB',0,NULL,1,NULL),(11,'CONF_EDIT',NULL,'CONF_EDIT','','SIGES_WEB',0,NULL,1,NULL),(12,'CONF_HIST',NULL,'CONF_HIST','','SIGES_WEB',0,NULL,1,NULL),(13,'MIGRACION','Acceso a la migración','MIGRACION','','SIGES_WEB',0,NULL,1,NULL),(14,'MIGRA_CALC_INDICA','Acceso a los callculos de la migración','MIGRA_CALC_INDICA','','SIGES_WEB',0,NULL,1,NULL),(15,'ADMINIS',NULL,'ADMINIS','','SIGES_WEB',0,NULL,1,NULL),(16,'ADMIN_TDO',NULL,'ADMIN_TDO','','SIGES_WEB',0,NULL,1,NULL),(17,'ADMIN_ERR',NULL,'ADMIN_ERR','','SIGES_WEB',0,NULL,1,NULL),(18,'ADM_CONF',NULL,'ADM_CONF','','SIGES_WEB',0,NULL,1,NULL),(19,'CONF_ADD',NULL,'CONF_ADD','','SIGES_WEB',0,NULL,1,NULL),(20,'CONF_EDIT',NULL,'CONF_EDIT','','SIGES_WEB',0,NULL,1,NULL),(21,'CONF_HIST',NULL,'CONF_HIST','','SIGES_WEB',0,NULL,1,NULL),(22,'MIGRACION','Acceso a la migración','MIGRACION','','SIGES_WEB',0,NULL,1,NULL),(23,'MIGRA_CALC_INDICA','Acceso a los callculos de la migración','MIGRA_CALC_INDICA','','SIGES_WEB',0,NULL,1,NULL),(24,'ADMIN_USU','Administración de los Usuarios','ADMIN_USU','','SIGES_WEB',0,NULL,1,NULL),(25,'ADMIN_USU','Administración de los Usuarios','ADMIN_USU','','SIGES_WEB',0,NULL,1,NULL),(26,'USU_HORAS','Externo (solo carga de horas)','Externo (solo carga de horas)','','SIGES_WEB',0,NULL,1,0),(27,'ADMIN_USU','Administración de los Usuarios','ADMIN_USU','','SIGES_WEB',0,NULL,1,NULL),(28,'USU_HORAS','Externo (solo carga de horas)','Externo (solo carga de horas)','','SIGES_WEB',0,NULL,1,0),(29,'REGISTRO_HORAS','Externo (solo carga de horas)','Externo (solo carga de horas)','rol_registro_horas','SIGES_WEB',0,NULL,1,1),(30,'EDITOR_GRAL',NULL,'Editor General','rol_editor_gral','SIGES_WEB',0,NULL,1,1);
-/*!40000 ALTER TABLE `ss_rol` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `tipo_leccion`
---
-
-LOCK TABLES `tipo_leccion` WRITE;
-/*!40000 ALTER TABLE `tipo_leccion` DISABLE KEYS */;
-INSERT INTO `tipo_leccion` VALUES (1,'A_EVITAR','Evitar'),(2,'A_REPETIR','Repetir');
-/*!40000 ALTER TABLE `tipo_leccion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `tipos_media`
---
-
-LOCK TABLES `tipos_media` WRITE;
-/*!40000 ALTER TABLE `tipos_media` DISABLE KEYS */;
-INSERT INTO `tipos_media` VALUES (1,'IMG','Imagen'),(2,'VIDEO','Video'),(3,'CAM','Cámara');
-/*!40000 ALTER TABLE `tipos_media` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping data for table `valor_calidad_codigos`
---
-
-LOCK TABLES `valor_calidad_codigos` WRITE;
-/*!40000 ALTER TABLE `valor_calidad_codigos` DISABLE KEYS */;
-INSERT INTO `valor_calidad_codigos` VALUES (1,'baja','0',1),(2,'media','0.5',1),(3,'alta','1',1),(4,'no_corresponde','No Corresponde',1),(5,'pendiente','Pendiente de Cargar',1);
-/*!40000 ALTER TABLE `valor_calidad_codigos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping events for database 'siges_agesic'
---
-
---
--- Dumping routines for database 'siges_agesic'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-
-
--- BRUNO: ver si la tabla revinfo está en mayúscula o minúscula.
---  Changeset db.changelog_siges_4410.xml::1494002716492-37::bruno (generated)
--- RENAME revinfo to REVINFO;
---  Changeset db.changelog_siges_4410.xml::1494002716492-1::bruno (generated)
--- CREATE TABLE REVINFO (REV INT AUTO_INCREMENT NOT NULL, REVTSTMP BIGINT NULL, version INT DEFAULT 0 NULL, CONSTRAINT PK_REVINFO PRIMARY KEY (REV));
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-2::bruno (generated)
-CREATE TABLE aud_doc_file (docfile_pk INT NOT NULL, REV INT NOT NULL, REVTYPE TINYINT(3) NULL, docfile_nombre VARCHAR(255) NULL, docfile_path VARCHAR(255) NULL, docfile_ult_mod datetime(6) NULL, docfile_ult_origen VARCHAR(255) NULL, docfile_ult_usuario VARCHAR(255) NULL, docfile_version INT NULL, docfile_doc_fk INT NULL);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-4::bruno (generated)
-ALTER TABLE doc_file ADD docfile_path VARCHAR(255) NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-5::bruno (generated)
-ALTER TABLE doc_file ADD docfile_ult_mod datetime(6) NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-6::bruno (generated)
-ALTER TABLE doc_file ADD docfile_ult_origen VARCHAR(255) NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-7::bruno (generated)
-ALTER TABLE doc_file ADD docfile_ult_usuario VARCHAR(255) NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-8::bruno (generated)
-ALTER TABLE doc_file ADD docfile_version INT DEFAULT 0 NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-9::bruno (generated)
-ALTER TABLE programas ADD prog_factor_impacto TEXT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-10::bruno (generated)
-ALTER TABLE proyectos ADD proy_factor_impacto TEXT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-11::bruno (generated)
-ALTER TABLE proy_indices ADD proyind_periodo_inicio_ent_fk INT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-12::bruno (generated)
-ALTER TABLE proy_indices ADD proyind_periodo_fin_ent_fk INT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-13::bruno (generated)
-ALTER TABLE entregables ADD ent_inicio_periodo BIT DEFAULT 0 NOT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-14::bruno (generated)
-ALTER TABLE entregables ADD ent_fin_periodo BIT DEFAULT 0 NOT NULL;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-15::bruno (generated)
-ALTER TABLE aud_doc_file ADD PRIMARY KEY (docfile_pk, REV);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-16::bruno (generated)
-ALTER TABLE doc_file ADD CONSTRAINT UK_n76rhuste8gi3p3jq7m91j7iq UNIQUE (docfile_doc_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-17::bruno (generated)
-CREATE INDEX FK_4b0pq8qh2f6u7ei11lh0atbf8 ON busq_filtro(busq_filtro_usu_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-18::bruno (generated)
-CREATE INDEX FK_9c8og633e1waprs81i6ayorba ON devengado(dev_adq_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-19::bruno (generated)
-CREATE INDEX FK_a726jrgroi6p90dip38n70ftp ON busq_filtro(busq_filtro_org_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-20::bruno (generated)
-CREATE INDEX FK_hb3weyc8xvdrbp62k3u1halnb ON categoria_proyectos(cat_icono_marker);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-21::bruno (generated)
-CREATE INDEX FK_hh3lr9l8qt7isgvniyif3w6tw ON categoria_proyectos(cat_icono);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-22::bruno (generated)
-CREATE INDEX FK_j151q3d1wiqgx10w9n92hwx5j ON areas(area_director);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-23::bruno (generated)
-CREATE INDEX FK_n5tl58dqv18cs790jbmejxom2 ON ambito(amb_org_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-24::bruno (generated)
-CREATE INDEX proyind_periodo_fin_ent_fk_idx ON proy_indices(proyind_periodo_fin_ent_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-25::bruno (generated)
-CREATE INDEX proyind_periodo_inicio_ent_fk_idx ON proy_indices(proyind_periodo_inicio_ent_fk);
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-26::bruno (generated)
-ALTER TABLE busq_filtro ADD CONSTRAINT FK_4b0pq8qh2f6u7ei11lh0atbf8 FOREIGN KEY (busq_filtro_usu_fk) REFERENCES ss_usuario (usu_id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-27::bruno (generated)
-ALTER TABLE categoria_proyectos ADD CONSTRAINT FK_4t53ltja1415bq3d23c3kdjl1 FOREIGN KEY (cat_org_fk) REFERENCES organismos (org_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-28::bruno (generated)
-ALTER TABLE devengado ADD CONSTRAINT FK_9c8og633e1waprs81i6ayorba FOREIGN KEY (dev_adq_fk) REFERENCES adquisicion (adq_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-29::bruno (generated)
-ALTER TABLE busq_filtro ADD CONSTRAINT FK_a726jrgroi6p90dip38n70ftp FOREIGN KEY (busq_filtro_org_fk) REFERENCES organismos (org_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-30::bruno (generated)
-ALTER TABLE categoria_proyectos ADD CONSTRAINT FK_hb3weyc8xvdrbp62k3u1halnb FOREIGN KEY (cat_icono_marker) REFERENCES image (image_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-31::bruno (generated)
-ALTER TABLE categoria_proyectos ADD CONSTRAINT FK_hh3lr9l8qt7isgvniyif3w6tw FOREIGN KEY (cat_icono) REFERENCES image (image_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-32::bruno (generated)
-ALTER TABLE areas ADD CONSTRAINT FK_j151q3d1wiqgx10w9n92hwx5j FOREIGN KEY (area_director) REFERENCES ss_usuario (usu_id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-33::bruno (generated)
-ALTER TABLE ambito ADD CONSTRAINT FK_n5tl58dqv18cs790jbmejxom2 FOREIGN KEY (amb_org_fk) REFERENCES organismos (org_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-34::bruno (generated)
-ALTER TABLE doc_file ADD CONSTRAINT FK_n76rhuste8gi3p3jq7m91j7iq FOREIGN KEY (docfile_doc_fk) REFERENCES documentos (docs_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-35::bruno (generated)
-ALTER TABLE proy_indices ADD CONSTRAINT proyind_periodo_fin_ent_fk FOREIGN KEY (proyind_periodo_fin_ent_fk) REFERENCES entregables (ent_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-36::bruno (generated)
-ALTER TABLE proy_indices ADD CONSTRAINT proyind_periodo_inicio_ent_fk FOREIGN KEY (proyind_periodo_inicio_ent_fk) REFERENCES entregables (ent_pk) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
---  Changeset db.changelog_siges_4410.xml::1494002716492-38::bruno (generated)
--- ALTER TABLE doc_file DROP COLUMN version;
-
--- Especificar directorio donde se desean almacenar los documentos
-INSERT INTO ss_configuraciones (cnf_org_fk, cnf_codigo, cnf_descripcion, cnf_valor, cnf_protegido, cnf_html, cnf_ult_usuario, cnf_ult_mod, cnf_ult_origen, cnf_version) VALUES
-(NULL, 'DOCUMENTOS_DIR', 'Directorio donde se almacenarán los documentos', '/srv/siges/docs', NULL, '0', NULL, now(), NULL, '0');
-
-
--- Luego de ejecutar la migración de documentos
-
--- Se recomienda hacer un respaldo de esta tabla antes de aplicar está acción.
-ALTER TABLE doc_file DROP COLUMN docfile_file;
-DELETE FROM aud_doc_file; -- limpia la auditoría de la migración
-
-
-
+-- Dump completed on 2019-11-22 18:56:59

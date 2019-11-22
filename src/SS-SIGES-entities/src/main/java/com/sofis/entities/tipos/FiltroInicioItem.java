@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author sofis
  */
-public class FiltroInicioItem implements Serializable{
+public class FiltroInicioItem implements Serializable {
 
     private String progProyId;
     private Integer fichaFk;
@@ -75,6 +75,12 @@ public class FiltroInicioItem implements Serializable{
     private HashMap<Integer, String> indiceMonedaColor;
     private Presupuesto presupuesto;
     private FiltroInicioResultadoTO inicioResultado;
+
+    /*
+    *  11-06-2018 Nico: agrego un atributo para que apunta al Programa padre, y así poder
+    *           actualizar los valores del padre cuando se modifique el proyecto.
+     */
+    private FiltroInicioItem progPadre;
 
     public FiltroInicioResultadoTO getInicioResultado() {
         return inicioResultado;
@@ -181,6 +187,9 @@ public class FiltroInicioItem implements Serializable{
     }
 
     public String getFase() {
+        if (this.isPrograma() && this.estado.isPendientes()) {
+            return "Pendiente";
+        }
         return estado != null ? estado.getEstNombre() : "";
     }
 
@@ -335,7 +344,7 @@ public class FiltroInicioItem implements Serializable{
     public void setIndiceAvanceParcial(int[] indiceAvanceParcial) {
         this.indiceAvanceParcial = indiceAvanceParcial;
     }
-    
+
     public boolean getHasIndiceAvanceParcial() {
         return indiceAvanceParcial != null && !(indiceAvanceParcial[0] == 0 && indiceAvanceParcial[1] == 0 && indiceAvanceParcial[2] == 0);
     }
@@ -501,4 +510,16 @@ public class FiltroInicioItem implements Serializable{
         }
         return true;
     }
+
+    /*
+    *   11-06-2018 Nico: Getters y Setters para el nuevo atributo
+     */
+    public FiltroInicioItem getProgPadre() {
+        return progPadre;
+    }
+
+    public void setProgPadre(FiltroInicioItem progPadre) {
+        this.progPadre = progPadre;
+    }
+
 }

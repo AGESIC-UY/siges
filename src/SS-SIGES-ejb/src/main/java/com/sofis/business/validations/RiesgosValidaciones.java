@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class RiesgosValidaciones {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RiesgosValidaciones.class.getName());
 
     public static boolean validar(List<Riesgos> riesgos) throws BusinessException {
         boolean result = true;

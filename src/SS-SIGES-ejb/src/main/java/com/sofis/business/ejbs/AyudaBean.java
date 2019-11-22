@@ -43,8 +43,7 @@ public class AyudaBean {
     private DatosUsuario du;
     @Inject
     private ConsultaHistorico<Ayuda> ch;
-    private static final Logger logger = Logger.getLogger(ConstantesEstandares.LOGGER);
-    
+    private static final Logger logger = Logger.getLogger(AyudaBean.class.getName());
     
     //private String usuario;
     //private String origen;

@@ -8,6 +8,7 @@
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
+  width: 100% !important;
 }
 
 .gdfTable td, .gdfTable th {
@@ -15,7 +16,7 @@
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
-  font-size: 13px
+  font-size: 11px
 }
 
 .gdfCell, .gdfColHeader {
@@ -32,10 +33,13 @@
   min-width: 5px;
   height: 30px;
   border-color: #024777;
+  text-align: center;
 }
+
 th.gdfCell {
   border-color: #024777;
 }
+
 th.gdfCell .teamworkIcon{
   color: #ffffff;
 }
@@ -83,7 +87,7 @@ th.gdfCell .teamworkIcon{
   cursor: w-resize;
 }
 
-.splitterContainer {
+/*.splitterContainer {
   width: 100%;
   height: 100%;
 }
@@ -92,11 +96,26 @@ th.gdfCell .teamworkIcon{
   overflow-x: scroll;
   overflow-y: hidden;
 
-  /*background-color: yellow;*/
+  background-color: yellow;
 }
 
 .splitBox2 {
-  /*background-color: orange;*/
+  background-color: orange;
+}*/
+
+.splitterContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.splitBox1{
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.splitBox2 {
+  overflow-x: scroll;
+  overflow-y: auto;
 }
 
 .unselectable {
@@ -112,6 +131,17 @@ th.gdfCell .teamworkIcon{
   position: absolute;
   height: 100%;
 }
+
+/**
+* Agregado Bruno 02-04-2018
+*/
+.ganttFixHead{
+  position: absolute;
+  z-index: 2;
+  top:0;
+  height: 42px;
+}
+
 
 .vSplitBar {
   width: 5px;
@@ -163,7 +193,8 @@ th.gdfCell .teamworkIcon{
 
 .ganttHead1 th{
   border-left:1px solid #024777;
-  font-size: 13px;
+  font-size: 11px;
+  text-align: center;
 }
 .ganttHead2 th{
 	border: 1px solid #024777;
@@ -171,6 +202,7 @@ th.gdfCell .teamworkIcon{
 	text-align: center;
 	font-size: 11px;
 }
+
 
 .ganttToday{
   position:absolute;
@@ -260,6 +292,7 @@ th.gdfCell .teamworkIcon{
 .taskBox .taskProgress{
   height:5px;
   position:absolute;
+  font-size: 11px;
 }
 
 .taskBox .layout.extDep{
@@ -293,7 +326,7 @@ th.gdfCell .teamworkIcon{
 
 .taskEditRow input{
   border: 0 none;
-  font-size: 13px;
+  font-size: 11px;
   height: 20px;
   margin: 0;
   padding: 0;
@@ -375,4 +408,21 @@ cursor: pointer;
 
 .taskProgressGreen{
     background-color: #80c41c;
+}
+.exp-controller{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  position: relative;
+  top: 2px;
+  margin-left: -18px;
+}
+
+.isParent .exp-controller{
+  background-image: url(toggle_collapse.png);
+}
+
+.isParent.collapsed .exp-controller{
+  cursor: pointer;
+  background-image: url(toggle-expand.png);
 }

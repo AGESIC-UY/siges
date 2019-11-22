@@ -47,7 +47,7 @@ public class MailsTemplateBean {
     public static String MAIL_NVO_USUARIO = "MAIL_NVO_USUARIO";
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MailsTemplateBean.class.getName());
     @Inject
     private DatosUsuario du;
     @Inject

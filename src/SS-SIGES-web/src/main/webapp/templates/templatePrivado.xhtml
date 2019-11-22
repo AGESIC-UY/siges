@@ -21,19 +21,21 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" href="../robicch-jQueryGantt/platform.css" type="text/css"/>
-        <link rel="stylesheet" href="../robicch-jQueryGantt/libs/dateField/jquery.dateField.css" type="text/css"/>
-        <link rel="stylesheet" href="../robicch-jQueryGantt/gantt.css" type="text/css"/>
-        <link rel="stylesheet" href="../robicch-jQueryGantt/print.css" type="text/css" media="print"/>
-        <link rel="stylesheet" href="./../bootstrap-3.2.0-dist/css/bootstrap.min.css"/>
-        <link rel="stylesheet" href="./../css/SIGES.css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/platform.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/libs/dateField/jquery.dateField.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/gantt.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" type="text/css"/>
+        <link rel="stylesheet" href="../robicch-jQueryGantt/print.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" type="text/css" media="print"/>
+        <link rel="stylesheet" href="./../bootstrap-3.2.0-dist/css/bootstrap.min.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"/>
+        <link rel="stylesheet" href="./../css/SIGES.css?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"/>
 
         <!-- Librería jQuery requerida por los plugins de JavaScript -->
-        <script src="../js/jquery-1.11.3.min.js"></script>
-        <script src="./../bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+        <script src="../js/jquery-1.11.3.min.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script src="./../bootstrap-3.2.0-dist/js/bootstrap.min.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
 
         <!-- Mapa de google -->
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp" type="text/javascript"></script>
+	<script src="#{('https://maps.google.com/maps/api/js').concat(aplicacionMB.googleAPIKey == null ? '' : ('?key=').concat(aplicacionMB.googleAPIKey))}" type="text/javascript" />
+
+
         <script src="../js/mapas.js?v=1_0"  type="text/javascript"></script>
 
         <!-- librerías opcionales que activan el soporte de HTML5 para IE8 -->
@@ -41,9 +43,10 @@
         <h:outputText value="&lt;!--[if lt IE 9]&gt;&lt;SCRIPT src=&quot;https://oss.maxcdn.com/respond/1.4.2/respond.min.js&quot;&gt;&lt;/SCRIPT&gt;&lt;![endif]--&gt;" escape="false" />
 
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="./../js/ie10-viewport-bug-workaround.js"></script>
-        <script src="./../js/ie-emulation-modes-warning.js"></script>
-        <script src="./../js/bootstrap-session-timeout.js"></script>
+        <script src="./../js/ie10-viewport-bug-workaround.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script src="./../js/ie-emulation-modes-warning.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+        <script src="./../js/bootstrap-session-timeout.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
+
 
 
     </h:head>
@@ -51,6 +54,7 @@
 
     <h:body styleClass="#{inicioMB.containerMax ? 'bodyMax' : ''}">
 
+        <icecore:config render="true"/>
 
         <!--        <script type="text/javascript" >
         
@@ -64,7 +68,7 @@
         
                 </script>-->
 
-        <!--        <h:outputScript library="omnifaces" name="fixviewstate.js" target="head" />
+<!--        <h:outputScript library="omnifaces" name="fixviewstate.js" target="head" />
                 
         -->        
         <f:metadata>
@@ -81,7 +85,14 @@
             <ice:outputConnectionStatus id="status" 
                                         activeLabel="#{labels.conn_status_active}" 
                                         disconnectedLabel="#{labels.conn_status_disconnected}"
-                                        displayHourglassWhenActive="false"/>
+                                        displayHourglassWhenActive="false"
+                                        showPopupOnDisconnect="true"/>
+            <!--            <ace:submitMonitor
+                            id="status"
+                            activeLabel="#{labels.conn_status_active}"
+                            networkErrorLabel="#{labels.conn_status_disconnected}"
+                            sessionExpiredLabel="#{labels.conn_status_session_expired}"
+                            blockUI="@all" />-->
         </o:form>
 
 
@@ -131,7 +142,9 @@
 
                         <ice:panelGroup styleClass="sesion">
                             <ice:outputText value="#{labels.bienvenido} #{inicioMB.nombreUsuario}"/>
-                            <ace:linkButton value="#{labels.cambioContrasenia}" action="#{menuMB.fireAction('CAMBIAR_CONTRASENIA')}" rendered="#{not seguridadMB.conControlDeAcceso}" styleClass="pass"/>
+                            <ace:linkButton value="#{labels.cambioContrasenia}" action="#{menuMB.fireAction('CAMBIAR_CONTRASENIA')}" 
+                                            rendered="#{not seguridadMB.conControlDeAcceso and not LoginMB.authLdapEnable}"
+                                            styleClass="pass"/>
                             <ace:pushButton value="#{labels.salir}" id="btnSalir" action="#{inicioMB.logout()}" styleClass="salir"/>
                         </ice:panelGroup>
                     </o:form>
@@ -155,14 +168,27 @@
         <div id="bottom">
             <ui:insert name="bottom">
                 <div class="container">
-                    <div class="texto-foot izq">
-                        <span id="footer_dir_name">#{labels.app_name}</span>
-                        <span>#{labels.version}:#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}</span>
-                        <span>#{labels.pie_direccion}</span>
-                        <span>#{labels.pie_correo}</span>
-                        <span>#{labels.pie_telefono}</span>
-                        <span>#{labels.pie_pais_ciudad}</span>
-                        <span>#{labels.pie_horario}</span>
+                    <div class="row texto-foot">
+                        <div class="col-sm-6 izq">
+                            <span id="footer_dir_name">#{labels.app_name}</span>
+                            <span>#{labels.version}:#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild} - #{aplicacionMB.releaseDate}</span>
+                            <span>#{labels.pie_direccion}</span>
+                            <span>#{labels.pie_correo}</span>
+                            <span>#{labels.pie_telefono}</span>
+                            <span>#{labels.pie_pais_ciudad}</span>
+                            <span>#{labels.pie_horario}</span>
+                        </div>
+                        <div class="col-sm-6 der">
+                            <o:form>
+                                <ice:outputResource id="downLink" 
+                                                    rendered="#{inicioMB.existeManualUsuario}"
+                                                    resource="#{outputResourceMB.pdfResource}"
+                                                    attachment="true"
+                                                    label="#{labels.descargarManualUsuario}"
+                                                    type="text"
+                                                    fileName="manual.pdf"/>
+                            </o:form>
+                        </div>
                     </div>
                 </div>
             </ui:insert>

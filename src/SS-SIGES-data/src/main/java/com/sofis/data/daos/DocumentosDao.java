@@ -9,6 +9,7 @@ import com.sofis.exceptions.TechnicalException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -20,9 +21,9 @@ import javax.persistence.Query;
  */
 public class DocumentosDao extends HibernateJpaDAOImp<Documentos, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(DocumentosDao.class.getName());
+    
     public DocumentosDao(EntityManager em) {
 	super(em);
     }
@@ -179,4 +180,40 @@ public class DocumentosDao extends HibernateJpaDAOImp<Documentos, Integer> imple
 	    throw te;
 	}
     }
+    
+    
+    public void actualizarNombrePath(Integer docPk, Integer docFilePk, String nuevoPath, boolean inHistorico, Integer rev){
+        try {
+            if(inHistorico){
+                String queryStr = "UPDATE aud_doc_file"
+                + " SET docfile_path = '" + nuevoPath + "'"
+                + " WHERE docfile_doc_fk = " + docPk
+                + " AND docfile_pk = " + docFilePk
+                + " AND REV = " + rev;            
+                
+                Query query = super.getEm().createNativeQuery(queryStr);
+                int result = query.executeUpdate();
+            }else{
+                String queryStr = "UPDATE FROM DocFile df"
+                + " SET docfilePath = :nuevoPath"
+                + " WHERE df.docfileDocFk.docsPk = :docPk "
+                + " AND df.docfilePk = :docFilePk";
+                
+                Query query = super.getEm().createQuery(queryStr);
+
+                query.setParameter("nuevoPath", nuevoPath);
+                query.setParameter("docPk", docPk);
+                query.setParameter("docFilePk", docFilePk);
+                
+                query.executeUpdate();
+            }
+
+
+	} catch (Exception ex) {
+	    TechnicalException te = new TechnicalException(ex);
+	    te.addError(MensajesNegocio.ERROR_MOVER_PROY_CAMBIAR_PATH);
+	    throw te;
+	}        
+    }
+    
 }

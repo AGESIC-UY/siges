@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class ProdMesValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProdMesValidacion.class.getName());
 
     public static boolean validar(Collection<ProdMes> colProdMes) throws BusinessException {
         if (CollectionsUtils.isNotEmpty(colProdMes)) {

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class MonedaValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MonedaValidacion.class.getName());   
 
     public static boolean validar(Moneda moneda) throws BusinessException {
         BusinessException be = new BusinessException();

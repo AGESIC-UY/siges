@@ -4,13 +4,7 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ace="http://www.icefaces.org/icefaces/components"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:icecore="http://www.icefaces.org/icefaces/core"
-                xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:o="http://omnifaces.org/ui">
 
     <o:form id="formularioMenu">
         <ace:menuBar id="mnPrincipal" 
@@ -20,12 +14,12 @@
 
             <ace:menuItem id="menuInicio"
                           value="#{labels.menu_inicio}"
-                          action="#{menuMB.fireAction('IR_A_INICIO')}"
-                          rendered="#{menuMB.permisos['INICIO']}">
+                          rendered="#{menuMB.permisos['INICIO']}"
+                          action="#{menuMB.fireAction('IR_A_INICIO')}">
                 <ace:ajax event="activate" execute="@this" />
             </ace:menuItem>
 
-            <ace:menuItem id="nuevoProyecto"  
+            <ace:menuItem id="nuevoProyecto"
                           value="#{labels.menu_nuevoProyectoPrograma}"
                           action="#{menuMB.fireAction('IR_A_NUEVA_FICHA')}"
                           rendered="#{menuMB.permisos['ADMIN_NUEVOFICHA']}">
@@ -40,10 +34,6 @@
             <ace:submenu id="Reportes"
                          label="#{labels.menu_reportes}"
                          rendered="#{menuMB.permisos['REPORTE_MENU']}" >
-                <!--
-                rendered="false"
-                -->
-
                 <ace:menuItem id="Reportes_Presupuesto"  
                               value="#{labels.menu_reportes_presupuesto}"
                               action="#{menuMB.fireAction('IR_A_REPORTE_PRESUPUESTO')}"
@@ -76,6 +66,30 @@
                           action="#{menuMB.fireAction('IR_A_REGISTRO_HORAS')}"
                           rendered="#{menuMB.permisos['REGISTRO_HORAS']}">
             </ace:menuItem>
+
+
+            <!-- Administracion super adm -->
+            <ace:submenu id="admSuper"
+                         label="#{labels.menu_administracion}"
+                         rendered="#{menuMB.permisos['ADMINISTRADOR']}" >
+
+                <ace:menuItem id="configuracionGeneral"  
+                              value="#{labels.configuracionGeneral}"
+                              action="#{menuMB.fireAction('configuracionGeneral')}"
+                              rendered="#{menuMB.permisos['ADM_CONF_GRAL']}" 
+                              style="width: 150px">
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+                <ace:menuItem id="cargaManual"  
+                              value="#{labels.cargaManual}"
+                              action="#{menuMB.fireAction('cargaManual')}"
+                              rendered="#{menuMB.permisos['ADM_CONF_GRAL']}" 
+                              style="width: 150px">
+                    <ace:ajax event="activate" execute="@this"/>
+                </ace:menuItem>
+
+            </ace:submenu>
+
 
             <!-- Administracion -->
             <ace:submenu id="file"
@@ -111,10 +125,10 @@
                 <!-- Configuracion -->
                 <ace:submenu id="configuracion" 
                              label="#{labels.configuracion}"
-                             rendered="#{menuMB.permisos['ADM_CONF']}">
+                             rendered="#{menuMB.permisos['ADM_CONF'] or menuMB.permisos['ADM_CONF_GRAL']}">
 
-                    <ace:menuItem id="configuracionGeneral"  
-                                  value="#{labels.configuracionGeneral}"
+                    <ace:menuItem id="configuracionGeneralOrganismo"  
+                                  value="#{labels.configuracionGeneralOrganismo}"
                                   action="#{menuMB.fireAction('configuracion')}"
                                   rendered="#{menuMB.permisos['ADM_CONF']}" 
                                   style="width: 150px">
@@ -159,6 +173,20 @@
                     <ace:menuItem id="configuracionFuenteFinanc"
                                   value="#{labels.configuracionFuenteFinanc}"
                                   action="#{menuMB.fireAction('IR_ABM_FUENTE_FINANCIAMIENTO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_FUENTE_FINANC']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="componenteProducto"
+                                  value="#{labels.componenteProducto}"
+                                  action="#{menuMB.fireAction('componenteProducto')}"
+                                  rendered="#{menuMB.permisos['ADMIN_FUENTE_FINANC']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="procedimientoCompra"
+                                  value="#{labels.procedimientoCompra}"
+                                  action="#{menuMB.fireAction('IR_A_PROCEDIMIENTO_COMPRA')}"
                                   rendered="#{menuMB.permisos['ADMIN_FUENTE_FINANC']}" >
                         <ace:ajax event="activate" execute="@this" />
                     </ace:menuItem>
@@ -226,12 +254,47 @@
                         <ace:ajax event="activate" execute="@this" />
                     </ace:menuItem>
 
-		    <ace:menuItem id="objetivos_estrategicos"  
-				  value="#{labels.objetivosEstrategicos}"
-				  action="#{menuMB.fireAction('IR_A_OBJETIVOS_ESTRATEGICOS')}"
-				  rendered="#{menuMB.permisos['ADMIN_OBJ_EST']}">
-			<ace:ajax event="activate" execute="@this"   />
-		    </ace:menuItem>
+                    <ace:menuItem id="objetivos_estrategicos"  
+                                  value="#{labels.objetivosEstrategicos}"
+                                  action="#{menuMB.fireAction('IR_A_OBJETIVOS_ESTRATEGICOS')}"
+                                  rendered="#{menuMB.permisos['ADMIN_OBJ_EST']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracion_tipo_adquisicion"  
+                                  value="#{labels.tiposAdquisicion}"
+                                  action="#{menuMB.fireAction('IR_A_TIPO_ADQUISICION')}"
+                                  rendered="#{menuMB.permisos['ADMIN_TIPO_ADQ']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracion_centro_costo"  
+                                  value="#{labels.centroCosto}"
+                                  action="#{menuMB.fireAction('IR_A_CENTRO_COSTO')}"
+                                  rendered="#{menuMB.permisos['ADMIN_CENTRO_COSTO']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+                    
+                    <ace:menuItem id="configuracion_causal_compra"  
+                                  value="#{labels.causalCompra}"
+                                  action="#{menuMB.fireAction('IR_A_CAUSAL_COMPRA')}"
+                                  rendered="#{menuMB.permisos['ADMIN_CAU_COM']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+                    
+                    <ace:menuItem id="configuracion_fuente_x_procedimiento"  
+                                  value="#{labels.fuenteProcedimientoCompra}"
+                                  action="#{menuMB.fireAction('IR_A_FUENTE_PROCEDIMIENTO_COMPRA')}"
+                                  rendered="#{menuMB.permisos['ADMIN_FUENTE_X_PRC_CMPR']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
+
+                    <ace:menuItem id="configuracion_identificador_grp_erp"  
+                                  value="#{labels.identificador_grp_erp}"
+                                  action="#{menuMB.fireAction('IR_A_IDENTIFICADOR_GRP_ERP')}"
+                                  rendered="#{menuMB.permisos['ADMIN_IDENTIFICADOR_GRP_ERP']}">
+                        <ace:ajax event="activate" execute="@this"   />
+                    </ace:menuItem>
 
                 </ace:submenu>
 
@@ -263,8 +326,8 @@
                               rendered="#{menuMB.permisos['MIGRA_CALC_INDICA']}" >
                     <ace:ajax event="activate" execute="@this"   />
                 </ace:menuItem>
-		
-		<!-- Mover Archivos Doc to FS -->
+
+                <!-- Mover Archivos Doc to FS -->
                 <ace:menuItem id="moverArchivosDoc"  
                               value="#{labels.mover_archivos_doc}"
                               action="#{menuMB.fireAction('mover_archivos_doc')}"
@@ -277,6 +340,12 @@
                               action="#{menuMB.fireAction('actualizar_categorias')}"
                               rendered="#{menuMB.permisos['ACTUALIZAR_CATEGORIAS']}" >
                     <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="gestion_proyectos"  
+                              value="#{labels.menu_gestion_programas}"
+                              action="#{menuMB.fireAction('IR_GESTION_PROGRAMAS')}"
+                              rendered="#{menuMB.permisos['IR_GESTION_PROGRAMAS']}">
                 </ace:menuItem>
 
                 <ace:menuItem id="configuracionPGE"  
@@ -307,6 +376,11 @@
                           action="#{menuMB.fireAction('IR_ABM_ORGANISMO')}"
                           rendered="#{menuMB.permisos['ADMINISTRADOR']}">
             </ace:menuItem>
+
+
+
+
+
         </ace:menuBar>
     </o:form>
 </ui:composition>

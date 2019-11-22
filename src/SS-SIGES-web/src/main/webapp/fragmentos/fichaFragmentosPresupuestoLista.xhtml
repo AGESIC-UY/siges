@@ -12,7 +12,38 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ace:panel id="presupuestoList" styleClass="tablaPresupuesto" >
+    <ace:panel id="pnlCargarPresupuestoDesdeArchivo" rendered="#{fichaMB.cargaPresupuestoDesdeArchivo}" >
+
+        <ice:panelGroup>
+            <ace:fileEntry id="fileEntryCargaPresupuestoDesdeArchivo"
+                           label="#{labels.planilla}"
+                           callback=""
+                           relativePath="/files/"
+                           maxFileCount="1" 
+                           maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                           fileEntryListener="#{fichaMB.subirPlanillaCargaPresupuestoDesdeArchivoAction}" 
+                           maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
+                           maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
+                           useOriginalFilename="true" 
+                           useSessionSubdir="true"
+                           immediate="true"
+                           style="width: 280px;"/>
+            <ace:messages for="fileEntryCargaPresupuestoDesdeArchivo" />
+            <ice:panelGroup styleClass="panelBotones margen-sup">
+                <h:commandButton value="#{labels.guardar}" 
+                                 styleClass="boton principal guardar" 
+                                 id="btnImportarPresupuestoDesdeArchivo" action="#{fichaMB.cargarPresupuestoDesdeArchivo()}" />
+                <ace:linkButton value="#{labels.cancelar}" action="#{fichaMB.cancelarCargaPresupuestoDesdeArchivo()}" styleClass="boton secundario"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+    </ace:panel>
+
+
+    <ace:panel id="presupuestoList" styleClass="tablaPresupuesto" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}" >
+
+        <ace:messages for="presupuestoListMsg" />
+
         <ice:panelGroup  styleClass="funcionalidadesResultado"  >
             <ace:dataExporter target="preTable" label="#{labels.exportarPlanilla}" 
                               type="xls" fileName="#{labels.exportarPlanillaPresupuesto}"
@@ -39,8 +70,7 @@
 
             <ace:column id="pagoAdqProvNombre" headerText="#{labels.head_pre_proveedor}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
-                <h:outputText value="#{adq.orgaNombre != null ? adq.orgaNombre : ''}"
-                              rendered="#{adq.tipo eq 1}"/>
+                <h:outputText value="#{adq.orgaNombre != null ? adq.orgaNombre : ''}" />
 
                 <ice:panelGroup rendered="#{adq.tipo eq 2}"
                                 styleClass="linkFichaRight">
@@ -104,30 +134,11 @@
                         </h:panelGrid>
                     </ace:tooltip>
 
-                    <ice:commandButton styleClass="iconoTabla #{adq.confirmado ? 'botonRestablecer':'botonSuperar'}" 
-                                       title="#{adq.confirmado != null and adq.confirmado ? labels.noAprobarPagoTooltip : labels.aprobarPagoTooltip}"
-                                       rendered="#{fichaMB.fieldRendered('confirmarPagoBtn', adq.confirmado)}"
-                                       onclick="confirmationPago#{adq.pagPk}.show();" />
-                    <ace:confirmationDialog widgetVar="confirmationPago#{adq.pagPk}" 
-                                            message="#{adq.confirmado ? labels.desconfirmarPago : labels.confirmarPago}"
-                                            header="#{labels.hConfirmacion}"
-                                            closable="true"
-                                            closeOnEscape="true"
-                                            severity="info"
-                                            modal="true"
-                                            position="center">
-                        <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                            <h:commandButton id="yesConfPag"
-                                             value="#{labels.si}"
-                                             styleClass="boton principal botonContinuar"
-                                             onclick="confirmationPago#{adq.pagPk}.hide();" 
-                                             actionListener="#{fichaMB.confirmarPago(adq.pagPk)}"/>
-                            <h:commandButton id="noConfPag"
-                                             value="#{labels.no}"
-                                             styleClass="boton principal botonEliminar"
-                                             onclick="confirmationPago#{adq.pagPk}.hide();"  />
-                        </h:panelGrid>
-                    </ace:confirmationDialog>
+                    <h:commandButton styleClass="iconoTabla #{adq.confirmado ? 'botonRestablecer':'botonSuperar'}" 
+                                     title="#{adq.confirmado != null and adq.confirmado ? labels.noAprobarPagoTooltip : labels.aprobarPagoTooltip}"
+                                     rendered="#{fichaMB.fieldRendered('confirmarPagoBtn', adq.confirmado)}"
+                                     action="#{fichaMB.confirmarPago(adq.pagPk)}"
+                                     onclick="confirmationPago.show();" />
                 </ice:panelGroup>
             </ace:column>
 
@@ -154,32 +165,13 @@
                 <h:commandButton id="btnEliminarAdq"
                                  styleClass="botonEliminar iconoTabla" 
                                  title="#{labels.eliminarAdqTooltip}"
-                                 onclick="confirmationEliminarAdq#{adq.adqPk}.show();" />
-                <ace:confirmationDialog widgetVar="confirmationEliminarAdq#{adq.adqPk}" 
-                                        message="#{labels.confirmacionEliminacion}"
-                                        header="#{labels.hConfirmacion}"
-                                        closable="true"
-                                        closeOnEscape="true"
-                                        severity="info"
-                                        modal="true"
-                                        position="center">
-                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                        <h:commandButton id="yesDelAdq"
-                                         value="#{labels.si}"
-                                         styleClass="boton principal botonContinuar"
-                                         onclick="confirmationEliminarAdq#{adq.adqPk}.hide();" 
-                                         actionListener="#{fichaMB.eliminarAdquisicionAction(adq.adqPk)}"/>
-                        <h:commandButton id="noDelAdq"
-                                         value="#{labels.no}"
-                                         styleClass="boton principal botonEliminar"
-                                         onclick="confirmationEliminarAdq#{adq.adqPk}.hide();"  />
-                    </h:panelGrid>
-                </ace:confirmationDialog>
+                                 action="#{fichaMB.eliminarAdquisicionAction(adq.adqPk)}"
+                                 onclick="confirmationEliminarAdq.show();" />
             </ace:column>
 
             <ace:column headerText=""
                         rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
-                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+                        styleClass="rowAdquisicion columnaBoton colAdquisicion">
                 <ace:tooltip id="tooltipPagoAgregar" for="btnAgregarPag">
                     <ice:outputText value="#{labels.agregarPagoTooltip}" />
                 </ace:tooltip>
@@ -188,9 +180,19 @@
                                 action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
             </ace:column>
 
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+            </ace:column>
+
             <!-- Botones Pagos -->
             <ace:column headerText=""
-                        rendered="#{fichaMB.fieldRendered('editarPago') and adq.tipo eq 2}"
+                        rendered="#{fichaMB.fieldRendered('duplicarPago') and adq.tipo eq 2}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
                 <ace:tooltip id="tooltipPagoEditar" for="btnEditarPag">
                     <ice:outputText value="#{labels.editarPagoTooltip}" />
@@ -202,30 +204,24 @@
             </ace:column>
 
             <ace:column headerText=""
-                        rendered="#{fichaMB.fieldRendered('eliminarPago') and adq.tipo eq 2}"
+                        rendered="#{fichaMB.fieldRendered('duplicarPago') and adq.tipo eq 2}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
-                <ice:commandButton styleClass="iconoTabla botonEliminar" 
-                                   title="#{labels.eliminarPagoTooltip}"
-                                   rendered="#{!adq.confirmado}"
-                                   onclick="eliminarPago#{adq.pagPk}.show();" />
-                <ace:confirmationDialog widgetVar="eliminarPago#{adq.pagPk}" 
-                                        message="#{labels.eliminarPago}"
-                                        header="#{labels.hConfirmacion}"
-                                        closable="true"
-                                        closeOnEscape="true"
-                                        severity="info"
-                                        modal="true"
-                                        position="center">
-                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                        <h:commandButton value="#{labels.si}"
-                                         styleClass="boton principal botonContinuar"
-                                         onclick="eliminarPago#{adq.pagPk}.hide();" 
-                                         actionListener="#{fichaMB.eliminarPagoAction(adq.pagPk)}"/>
-                        <h:commandButton value="#{labels.no}"
-                                         styleClass="boton principal botonEliminar"
-                                         onclick="eliminarPago#{adq.pagPk}.hide();"  />
-                    </h:panelGrid>
-                </ace:confirmationDialog>
+                <ace:tooltip id="tooltipPagoClone" for="btnClonePag">
+                    <ice:outputText value="#{labels.duplicarPagoTooltip}" />
+                </ace:tooltip>
+                <ace:pushButton id="btnClonePag"
+                                styleClass="botonDuplicar iconoTabla" 
+                                action="#{fichaMB.copiarPagoAction(adq.pagPk)}"/>
+            </ace:column>
+
+            <ace:column headerText=""
+                        rendered="#{fichaMB.fieldRendered('eliminarPago', adq.pagPk) and adq.tipo eq 2}"
+                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
+                <h:commandButton styleClass="iconoTabla botonEliminar" 
+                                 title="#{labels.eliminarPagoTooltip}"
+                                 rendered="#{!adq.confirmado}"
+                                 action="#{fichaMB.eliminarPagoAction(adq.pagPk)}"
+                                 onclick="confirmationEliminarPago.show();" />
             </ace:column>
             <ace:column headerText=""
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton"
@@ -233,5 +229,69 @@
                 <ice:outputText value="" />
             </ace:column>
         </ace:dataTable>
+
+        <!-- Confirmacion de pago -->
+        <ace:confirmationDialog widgetVar="confirmationPago"
+                                message="#{adq.confirmado ? labels.desconfirmarPago : labels.confirmarPago}"
+                                header="#{labels.hConfirmacion}"
+                                closable="true"
+                                closeOnEscape="true"
+                                severity="info"
+                                modal="true"
+                                position="center">
+            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                <h:commandButton id="yesConfPag"
+                                 value="#{labels.si}"
+                                 styleClass="boton principal botonContinuar"
+                                 onclick="confirmationPago.hide();" 
+                                 actionListener="#{fichaMB.confirmarPago()}"/>
+                <h:commandButton id="noConfPag"
+                                 value="#{labels.no}"
+                                 styleClass="boton principal botonEliminar"
+                                 onclick="confirmationPago.hide();"  />
+            </h:panelGrid>
+        </ace:confirmationDialog>
+
+        <!-- Eliminar adquisicion -->
+        <ace:confirmationDialog widgetVar="confirmationEliminarAdq"
+                                message="#{labels.confirmacionEliminacion}"
+                                header="#{labels.hConfirmacion}"
+                                closable="true"
+                                closeOnEscape="true"
+                                severity="info"
+                                modal="true"
+                                position="center">
+            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                <h:commandButton id="yesDelAdq"
+                                 value="#{labels.si}"
+                                 styleClass="boton principal botonContinuar"
+                                 onclick="confirmationEliminarAdq.hide();" 
+                                 actionListener="#{fichaMB.eliminarAdquisicionAction()}"/>
+                <h:commandButton id="noDelAdq"
+                                 value="#{labels.no}"
+                                 styleClass="boton principal botonEliminar"
+                                 onclick="confirmationEliminarAdq.hide();"/>
+            </h:panelGrid>
+        </ace:confirmationDialog>
+
+        <!-- Confirmacion de eliminacion --> 
+        <ace:confirmationDialog widgetVar="confirmationEliminarPago"
+                                message="#{labels.eliminarPago}"
+                                header="#{labels.hConfirmacion}"
+                                closable="true"
+                                closeOnEscape="true"
+                                severity="info"
+                                modal="true"
+                                position="center">
+            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                <h:commandButton value="#{labels.si}"
+                                 styleClass="boton principal botonContinuar"
+                                 onclick="confirmationEliminarPago.hide();" 
+                                 actionListener="#{fichaMB.eliminarPagoAction()}"/>
+                <h:commandButton value="#{labels.no}"
+                                 styleClass="boton principal botonEliminar"
+                                 onclick="confirmationEliminarPago.hide();"  />
+            </h:panelGrid>
+        </ace:confirmationDialog>
     </ace:panel>
 </ui:composition>

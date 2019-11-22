@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package uy.gub.agesic.pge.core.xml.util;
 
@@ -40,9 +40,10 @@ import org.xml.sax.SAXException;
 
 /**
  * @author fsierra
- * 
+ *
  */
 public final class DOMUtils {
+
 	private static Logger log = Logger.getLogger(DOMUtils.class);
 
 	// Hide the constructor
@@ -81,7 +82,7 @@ public final class DOMUtils {
 			Document doc;
 			DocumentBuilder builder = getDocumentBuilder();
 			synchronized (builder) // synchronize to prevent concurrent parsing
-									// on the same DocumentBuilder
+			// on the same DocumentBuilder
 			{
 				doc = builder.parse(xmlStream);
 			}
@@ -101,7 +102,7 @@ public final class DOMUtils {
 			Document doc;
 			DocumentBuilder builder = getDocumentBuilder();
 			synchronized (builder) // synchronize to prevent concurrent parsing
-									// on the same DocumentBuilder
+			// on the same DocumentBuilder
 			{
 				doc = builder.parse(source);
 			}
@@ -148,8 +149,9 @@ public final class DOMUtils {
 				Element nsElement = el;
 				while (namespaceURI.equals("") && nsElement != null) {
 					namespaceURI = nsElement.getAttribute("xmlns:" + prefix);
-					if (namespaceURI.equals(""))
+					if (namespaceURI.equals("")) {
 						nsElement = getParentElement(nsElement);
+					}
 				}
 			}
 
@@ -157,15 +159,17 @@ public final class DOMUtils {
 				namespaceURI = el.getNamespaceURI();
 			}
 
-			if (namespaceURI.equals(""))
+			if (namespaceURI.equals("")) {
 				throw new IllegalArgumentException(
 						"Cannot find namespace uri for: " + qualifiedName);
+			}
 		} else {
 			Element nsElement = el;
 			while (namespaceURI.equals("") && nsElement != null) {
 				namespaceURI = nsElement.getAttribute("xmlns");
-				if (namespaceURI.equals(""))
+				if (namespaceURI.equals("")) {
 					nsElement = getParentElement(nsElement);
+				}
 			}
 		}
 
@@ -175,9 +179,9 @@ public final class DOMUtils {
 
 	/**
 	 * Get the value from the given attribute
-	 * 
+	 *
 	 * @return null if the attribute value is empty or the attribute is not
-	 *         present
+	 * present
 	 */
 	public static String getAttributeValue(Element el, String attrName) {
 		return getAttributeValue(el, new QName(attrName));
@@ -185,20 +189,22 @@ public final class DOMUtils {
 
 	/**
 	 * Get the value from the given attribute
-	 * 
+	 *
 	 * @return null if the attribute value is empty or the attribute is not
-	 *         present
+	 * present
 	 */
 	public static String getAttributeValue(Element el, QName attrName) {
 		String attr = null;
-		if ("".equals(attrName.getNamespaceURI()))
+		if ("".equals(attrName.getNamespaceURI())) {
 			attr = el.getAttribute(attrName.getLocalPart());
-		else
+		} else {
 			attr = el.getAttributeNS(attrName.getNamespaceURI(),
 					attrName.getLocalPart());
+		}
 
-		if ("".equals(attr))
+		if ("".equals(attr)) {
 			attr = null;
+		}
 
 		return attr;
 	}
@@ -291,9 +297,10 @@ public final class DOMUtils {
 			// change an object in a way which is incorrect with regard to
 			// namespaces.
 			if (uri == null && qname.startsWith("xmlns")) {
-				if (log.isTraceEnabled())
+				if (log.isTraceEnabled()) {
 					log.trace("Ignore attribute: [uri=" + uri + ",qname="
 							+ qname + ",value=" + value + "]");
+				}
 			} else {
 				destElement.setAttributeNS(uri, qname, value);
 			}
@@ -306,13 +313,15 @@ public final class DOMUtils {
 	public static boolean hasTextChildNodesOnly(Node node) {
 		NodeList nodeList = node.getChildNodes();
 		int len = nodeList.getLength();
-		if (len == 0)
+		if (len == 0) {
 			return false;
+		}
 
 		for (int i = 0; i < len; i++) {
 			Node acksToChildNode = nodeList.item(i);
-			if (acksToChildNode.getNodeType() != Node.TEXT_NODE)
+			if (acksToChildNode.getNodeType() != Node.TEXT_NODE) {
 				return false;
+			}
 		}
 
 		return true;
@@ -326,8 +335,9 @@ public final class DOMUtils {
 		int len = nlist.getLength();
 		for (int i = 0; i < len; i++) {
 			Node child = nlist.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE)
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -341,8 +351,9 @@ public final class DOMUtils {
 		int len = nlist.getLength();
 		for (int i = 0; i < len; i++) {
 			Node child = nlist.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE)
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				list.add((Element) child);
+			}
 		}
 		return list.iterator();
 	}
@@ -562,18 +573,27 @@ public final class DOMUtils {
 			final boolean hasXMLReader = ((SAXSource) source).getXMLReader() != null;
 
 			if (hasInputSource || hasXMLReader) {
+				ByteArrayOutputStream baos = null;
+				ByteArrayInputStream bain = null;
 				try {
 					TransformerFactory tf = TransformerFactory.newInstance();
-					ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+					baos = new ByteArrayOutputStream(1024);
+					bain = new ByteArrayInputStream(baos.toByteArray());
 					Transformer transformer = tf.newTransformer();
 					transformer.setOutputProperty(
 							OutputKeys.OMIT_XML_DECLARATION, "yes");
 					transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 					transformer.transform(source, new StreamResult(baos));
-					retElement = DOMUtils.parse(new ByteArrayInputStream(baos
-							.toByteArray()));
+					retElement = DOMUtils.parse(bain);
 				} catch (TransformerException ex) {
 					throw new IOException(ex);
+				} finally {
+					if (baos != null) {
+						baos.close();
+					}
+					if (bain != null) {
+						bain.close();
+					}
 				}
 			}
 		} else {

@@ -81,7 +81,7 @@
                         <ice:outputText value="#{err.propertyMap['errDescripcion']}"/>
                     </ace:column>
 
-                    <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                    <ace:column headerText="" styleClass="columnaBoton">
                         <ice:panelGrid title="#{labels.editar}">
                             <ace:pushButton styleClass="botonEditar iconoTabla"   action="#{gestionErroresMB.editar(err.propertyMap['id'])}" 
                                             rendered="#{menuMB.permisos['ERR_EDIT']}"/>

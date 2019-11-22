@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmFueProComPopup">
+
+        <ice:panelPopup rendered="#{fuenteProcedimientoCompraMB.renderABMPopup}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hFuenteProcedimientoCompra}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{fuenteProcedimientoCompraMB.cerrarPopup()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formFueProCom">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.fue_proc_comp_form_fuente}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{fuenteProcedimientoCompraMB.fuenteProcedimientoCompra.fueProComFuente}" maxlength="100" style="width: 820px"/>
+
+                        <ice:outputLabel value="#{labels.fue_proc_comp_form_proc_comp}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{fuenteProcedimientoCompraMB.fuenteProcedimientoCompra.fueProComProcedimientoCompra}" maxlength="100" style="width: 820px"/>
+
+                        <!-- lista causales  -->
+                        <ice:panelGroup>                           
+                            <ice:outputLabel value="#{labels.causalCompra}" styleClass="obligatorio"/>
+                        </ice:panelGroup>                                
+                        <ice:panelGroup>
+                            <ace:pushButton value="#{labels.agregarCauCom}" action="#{fuenteProcedimientoCompraMB.addRowCausalesCompra}" styleClass="boton principal agregar agregar-fuente-proc-cau"/>
+                            <ace:dataTable id="tablaProp" value="#{fuenteProcedimientoCompraMB.listaCausalesCompraSelected}" var="tblRow" styleClass="tabla-agregar-fuente-proc-cau">
+
+                                <ace:column headerText="">
+                                    <ice:selectOneMenu value="#{tblRow.selected}"  styleClass="textoMedio">
+                                        <f:selectItems value="#{tblRow.items}"/>
+                                    </ice:selectOneMenu>              
+                                </ace:column>
+
+                                <ace:column headerText="" styleClass="columnaBoton">
+                                    <ice:panelGroup title="#{labels.eliminar}">
+                                        <h:commandButton onclick="confirmationEliminar#{fuenteProcedimientoCompraMB.listaCausalesCompraSelected.indexOf(tblRow)}.show()"
+                                                         styleClass="botonEliminar iconoTabla" 
+                                                         type="button"/>
+
+                                        <ace:confirmationDialog id="confirmDialogEliminar"
+                                                                widgetVar="confirmationEliminar#{fuenteProcedimientoCompraMB.listaCausalesCompraSelected.indexOf(tblRow)}"
+                                                                message="#{labels.confirmacionEliminacion}"
+                                                                header="#{labels.hConfirmacion}"
+                                                                closable="true"
+                                                                closeOnEscape="true"
+                                                                severity="info"
+                                                                modal="true"
+                                                                position="center">
+                                            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                                <h:commandButton id="yesEliminar"
+                                                                 value="#{labels.si}"
+                                                                 styleClass="boton principal botonContinuar"
+                                                                 onclick="confirmationEliminar#{fuenteProcedimientoCompraMB.listaCausalesCompraSelected.indexOf(tblRow)}.hide()" 
+                                                                 actionListener="#{fuenteProcedimientoCompraMB.eliminarPropAction(fuenteProcedimientoCompraMB.listaCausalesCompraSelected.indexOf(tblRow))}"/>
+                                                <h:commandButton id="noEliminar"
+                                                                 value="#{labels.no}"
+                                                                 styleClass="boton principal botonEliminar"
+                                                                 onclick="confirmationEliminar#{fuenteProcedimientoCompraMB.listaCausalesCompraSelected.indexOf(tblRow)}.hide()"  />
+                                            </h:panelGrid>
+                                        </ace:confirmationDialog> 
+                                    </ice:panelGroup>
+                                </ace:column>                                        
+                            </ace:dataTable>
+                        </ice:panelGroup>
+
+                        <ice:outputLabel value="#{labels.habilitado}"/>
+                        <ace:checkboxButton value="#{fuenteProcedimientoCompraMB.fuenteProcedimientoCompra.fueProComHabilitado}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages for="formFueProCom"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{fuenteProcedimientoCompraMB.guardar()}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{fuenteProcedimientoCompraMB.cerrarPopup()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

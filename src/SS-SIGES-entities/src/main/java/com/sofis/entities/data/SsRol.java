@@ -18,8 +18,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
 /**
@@ -40,6 +41,9 @@ import org.hibernate.envers.Audited;
     @NamedQuery(name = "SsRol.findByRolVersion", query = "SELECT s FROM SsRol s WHERE s.rolVersion = :rolVersion"),
     @NamedQuery(name = "SsRol.findByRolVigente", query = "SELECT s FROM SsRol s WHERE s.rolVigente = :rolVigente")})
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SsRol implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -84,10 +88,7 @@ public class SsRol implements Serializable {
     private Boolean rolTipoUsuario;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuOfiRolesRol")
     private Collection<SsUsuOfiRoles> ssUsuOfiRolesCollection;
-
-    public SsRol() {
-    }
-
+    
     public SsRol(Integer rolId) {
         this.rolId = rolId;
     }

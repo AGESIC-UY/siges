@@ -19,6 +19,7 @@ public class FiltroObjectivoEstategicoTO implements Serializable{
     private Organismos organismo;
     private Integer orgPk;
     private String nombre;
+    private Boolean habilitado;
 
     /**
      * @return the organismo
@@ -60,6 +61,14 @@ public class FiltroObjectivoEstategicoTO implements Serializable{
      */
     public void setOrgPk(Integer orgPk) {
         this.orgPk = orgPk;
+    }
+
+    public Boolean getHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(Boolean habilitado) {
+        this.habilitado = habilitado;
     }
 
 }

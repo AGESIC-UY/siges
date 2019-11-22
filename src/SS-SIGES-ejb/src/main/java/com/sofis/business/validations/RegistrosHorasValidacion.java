@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class RegistrosHorasValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RegistrosHorasValidacion.class.getName());
 
     public static boolean validar(RegistrosHoras registrosHoras) throws BusinessException {
 

@@ -16,7 +16,9 @@ import java.util.logging.Logger;
  */
 public class FichaValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaValidacion.class.getName());
+    
+    private static String div = "<div id=\"sconnect-is-installed\" style=\"display: none;\">([0-9. \\t]{1,10})</div>";
 
     public static boolean validar(FichaTO fichaTO, SsUsuario usuario, Integer orgPk) throws BusinessException {
         logger.fine("Validar datos de Ficha.");
@@ -65,6 +67,7 @@ public class FichaValidacion {
                     be.addError(MensajesNegocio.ERROR_FICHA_PMOF);
                 }
             }
+                       
         }
 
         if (be.getErrores().size() > 0) {
@@ -125,4 +128,26 @@ public class FichaValidacion {
     }
     
     
+    public static void validarTexto(FichaTO fichaTO){
+                
+            /*
+            [DANIEL] 01-04-2019: Validación para quitar la versión de sconnect
+            */
+            if(fichaTO.getDescripcion() != null){
+                fichaTO.setDescripcion(fichaTO.getDescripcion().replaceAll(div, ""));
+            }
+            if(fichaTO.getObjetivo()!= null){
+                fichaTO.setObjetivo(fichaTO.getObjetivo().replaceAll(div, ""));
+            }
+            if(fichaTO.getObjPublico()!= null){
+                fichaTO.setObjPublico(fichaTO.getObjPublico().replaceAll(div, ""));
+            }
+            if(fichaTO.getFactorImpacto()!= null){
+                fichaTO.setFactorImpacto(fichaTO.getFactorImpacto().replaceAll(div, ""));
+            }      
+            if(fichaTO.getSituacionActual()!= null){
+                fichaTO.setSituacionActual(fichaTO.getSituacionActual().replaceAll(div, ""));
+            }
+            
+    }
 }

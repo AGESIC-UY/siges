@@ -33,8 +33,8 @@ import javax.inject.Inject;
 public class AreaConocimientoMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(AreaConocimientoMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String AREAS_NOMBRE = "conNombre";
 
@@ -57,12 +57,6 @@ public class AreaConocimientoMB implements Serializable {
     private SofisCombo listaAreasPopupCombo;
 
     public AreaConocimientoMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        listAreas = new ArrayList<>();
-        renderPopupEdicion = new SofisPopupUI();
-        listaAreasCombo = new SofisCombo();
-        listaAreasPopupCombo = new SofisCombo();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -71,6 +65,18 @@ public class AreaConocimientoMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */        
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<AreaConocimiento>();
+        listAreas = new ArrayList<AreaConocimiento>();
+        renderPopupEdicion = new SofisPopupUI();
+        listaAreasCombo = new SofisCombo();
+        listaAreasPopupCombo = new SofisCombo();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         Organismos org = inicioMB.getOrganismo();
@@ -200,7 +206,17 @@ public class AreaConocimientoMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+                
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }
+                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -231,7 +247,20 @@ public class AreaConocimientoMB implements Serializable {
             areaEnEdicion = areasConocimientoDelegate.obtenerAreaPorPk(aPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }
+
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+            
+            
         }
 
         listAreas = areasConocimientoDelegate.busquedaAreaFiltro(inicioMB.getOrganismo().getOrgPk(), null, elementoOrdenacion, ascendente);
@@ -261,7 +290,16 @@ public class AreaConocimientoMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }
         }
         return null;
     }

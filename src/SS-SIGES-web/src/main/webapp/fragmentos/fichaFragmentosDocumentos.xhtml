@@ -10,9 +10,138 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <ice:panelGroup id="panelDocumentos" 
-                    styleClass="col-sm-6 cuadro" 
-                    style="#{fichaMB.selectedMostrar == 0 ? 'width: 100%; padding-right:25px' : ''}" 
+    <!--    <o:form id="frmDocumentos">-->
+
+    <ice:panelPopup draggable="true"
+                    positionOnLoadOnly="true"
+                    modal="true" rendered="#{fichaMB.renderPopupDocumentoHistorico}">
+
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{labels.docHistoricoPopup}"/>
+                <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
+                                   action="#{fichaMB.cerrarPopupDocumentoHistorico()}"/>
+            </ice:panelGroup>
+        </f:facet>
+
+        <f:facet name="body">
+            <ice:panelGroup>
+
+                <ice:panelGroup id="historicoFormData">
+                    <ace:dataTable id="tblHistoricoResultados" 
+                                   value="#{fichaMB.documento.docFileHistorico}" 
+                                   var="df" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true" pageCount="5" 
+                                   rows="5">
+
+                        <ace:column headerText="#{labels.docHistoriocNombre}" >
+                            <h:outputText value="#{df.docfileNombre}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.docHistoricoVersion}" >
+                            <h:outputText value="#{df.docfileVersion}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.docHistoricoModificado}">
+                            <h:outputText value="#{df.docfileUltMod}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" type="both"/>
+                            </h:outputText>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.docHistoricoUsuario}">
+                            <h:outputText value="#{df.docfileUltUsuario}"/>
+                        </ace:column>
+
+                        <ace:column>
+                            <ice:outputResource 
+                                resource="#{fichaMB.docHistDownloadFile[df.docfileVersion]}"
+                                label="#{labels.descargar_archivo}"
+                                fileName="#{fichaMB.docHistDownloadFile[df.docfileVersion].docFile.docfileNombreHist}"/>
+                        </ace:column>
+
+                    </ace:dataTable>
+
+                </ice:panelGroup> 
+            </ice:panelGroup>
+
+        </f:facet>
+
+    </ice:panelPopup>
+
+    <ice:panelPopup draggable="true"
+                    positionOnLoadOnly="true"
+                    modal="true" rendered="#{fichaMB.renderPopupDocumentos}">
+
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{labels.hDocumentosPopup}"/>
+                <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
+                                   action="#{fichaMB.cerrarPopupDocumentos()}"/>
+            </ice:panelGroup>
+        </f:facet>
+
+        <f:facet name="body">
+            <ice:panelGroup>
+
+                <ice:panelGroup id="documentosVerFormData">
+                    <ice:panelGrid  styleClass="formulario " columns="2">
+                        <ice:outputLabel value="#{labels.tipoDocumento}:"/>
+                        <ice:outputText value="#{fichaMB.documentoPopup.docsTipo.tipodocInstTipoDocFk.tipodocNombre}"/>
+
+                        <ice:outputLabel value="#{labels.nombreDocumento}:"/>
+                        <ice:outputText value="#{fichaMB.documentoPopup.docsNombre}" />
+
+                        <ice:outputLabel value="#{labels.privadoDocumento}:"/>
+                        <ace:checkboxButton value="#{fichaMB.documentoPopup.docsPrivado}" disabled="true"/>
+
+                        <ice:outputLabel value="#{labels.publicableDocumento}:"/>
+                        <ace:checkboxButton value="#{fichaMB.documentoPopup.docsPublicable}" disabled="true"/>
+
+                        <ice:outputLabel value="#{labels.entregableAsociadoDocumento}:"
+                                         rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+                        <ice:outputText value="#{fichaMB.documentoPopup.docsEntregable.entNombre}"
+                                        rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+
+                        <ice:outputLabel value="#{labels.doc_pagos}"
+                                         rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+                        <ice:outputText value="#{fichaMB.documentoPopup.docsPagoFk.textoCombo}"
+                                        rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+
+                        <ice:outputLabel value="#{labels.estadoDocumento}:"/>
+                        <ice:outputText value="#{fichaMB.documentoPopup.docsEstado}" 
+                                        rendered="#{!(fichaMB.fieldRendered('estadoDocumento') or fichaMB.isCoordinadordeEntregable(fichaMB.documentoPopup))}"/>
+                        <ace:simpleSelectOneMenu id="comboEstadoDocumento"
+                                                 value="#{fichaMB.documentoPopup.docsEstado}"
+                                                 rendered="#{fichaMB.fieldRendered('estadoDocumento') or fichaMB.isCoordinadordeEntregable(fichaMB.documentoPopup)}">
+                            <f:selectItems value="#{fichaMB.listaEstDocCombo}"/>
+                        </ace:simpleSelectOneMenu>
+
+                        <ice:outputLabel value="#{labels.fileDocumento}:"/>
+                        <h:outputText rendered="#{!fichaMB.documentoPopup.tieneArchivo}" 
+                                      value="#{fichaMB.documentoPopup.docsNombre != null ? fichaMB.documentoPopup.docsNombre : ''}"/>
+                        <ice:outputResource 
+                            rendered="#{fichaMB.documentoPopup.tieneArchivo}"
+                            resource="#{fichaMB.downloadFile[fichaMB.documentoPopup.docsPk]}"
+                            label="#{fichaMB.documentoPopup.docsNombre != null ? fichaMB.documentoPopup.docsNombre : labels.descargar_archivo}"
+                            fileName="#{fichaMB.downloadFile[fichaMB.documentoPopup.docsPk] != null ? fichaMB.downloadFile[fichaMB.documentoPopup.docsPk].docFile.docfileNombre : 'file'}"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup>
+<!--                        <ace:messages id="messages"/>-->
+                        <ace:pushButton value="#{labels.guardar}"
+                                        action="#{fichaMB.guardarDocumentoPopupAction()}"
+                                        rendered="#{fichaMB.fieldRendered('guardarDocPopup') or fichaMB.isCoordinadordeEntregable(fichaMB.documentoPopup)}"
+                                        styleClass="boton principal guardar margen-sup"/>
+                    </ice:panelGroup>
+                </ice:panelGroup> 
+            </ice:panelGroup>
+
+        </f:facet>
+    </ice:panelPopup>
+
+    <ice:panelGroup id="panelDocumentos"
+                    styleClass="cuadro"
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 0) and fichaMB.fieldRendered('panelDocumentos')}">
 
         <ice:panelGroup id="cabezalDocumentos" styleClass="cabezal" >
@@ -22,7 +151,7 @@
                             styleClass="#{fichaMB.selectedMostrar == 0 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
         </ice:panelGroup>
 
-        <ice:panelGroup rendered="#{not fichaMB.mostrar[0]}" styleClass="cuerpo">
+        <ice:panelGroup id="docVentanaEnFicha" rendered="#{not fichaMB.mostrar[0]}" styleClass="cuerpo">
             <ice:panelGroup rendered="#{fichaMB.indiceEstado != null}" styleClass="porcentajeDoc">
 
                 <ice:outputText value="#{labels.resumenMetodologia}: " />
@@ -56,79 +185,102 @@
             </ice:panelGroup>
         </ice:panelGroup>
 
-        <ice:panelGroup rendered="#{fichaMB.mostrar[0]}" styleClass="cuerpo">
-            <ice:panelGroup id="documentosFormData">
+        <ice:panelGroup id="docVentanaListadoYAgergar" rendered="#{fichaMB.mostrar[0]}" styleClass="cuerpo">
+            <!-- Formulario de alta -->
+            <ice:panelGroup id="documentosForm" styleClass="formulario">
 
-                <!-- Formulario de alta -->
-                <ice:panelGroup id="documentosForm">
-                    <ice:panelCollapsible id="collapsibleDoc" expanded="#{fichaMB.docsFormDataExpanded}">
-                        <f:facet name="header">
-                            <h:panelGrid columns="1">
-                                <h:commandButton value="#{fichaMB.documento.docsPk ne null ? (labels.editarDocumento) : labels.agregarDocumento}" 
-                                                 rendered="#{!fichaMB.docsFormDataExpanded and fichaMB.fieldRendered('agregarDocumento')}"
-                                                 styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'botonEditar' : 'botonAgregar'}" />
-                            </h:panelGrid>
-                        </f:facet>
+                <h:panelGrid columns="1">
+                    <h:commandButton value="#{labels.agregarDocumento}" 
+                                     action="#{fichaMB.abrirDocumentoAction()}"
+                                     styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'botonEditar' : 'botonAgregar'}"
+                                     rendered="#{fichaMB.fieldRendered('btnAgregarDocumento') or fichaMB.isCoordAlgunEntregable()}" />
+                </h:panelGrid>
 
-                        <ice:panelGrid  styleClass="formulario " columns="4">
-                            <ice:outputLabel value="#{labels.tipoDocumento}"/>
-                            <ace:simpleSelectOneMenu id="comboTipoDocumento"
-                                                     value="#{fichaMB.listaTipoDocCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaTipoDocCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
+                <ice:panelPopup id="popupDocumentosForm"
+                                visible="#{fichaMB.docsFormDataExpanded}"
+                                rendered="#{fichaMB.docsFormDataExpanded}"
+                                draggable="true"
+                                positionOnLoadOnly="true"
+                                modal="true">
+                    <f:facet name="header">
+                        <ice:panelGroup styleClass="cabezalPopup">
+                            <ice:outputText value="#{fichaMB.documento.docsPk ne null ? labels.editarDocumento : labels.agregarDocumento}"/>
+                            <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                               action="#{fichaMB.cerrarFormCollapsable()}"/>
+                        </ice:panelGroup>
+                    </f:facet>
+                    <f:facet name="body">
 
-                            <ice:outputLabel value="#{labels.nombreDocumento}"/>
-                            <ace:textEntry value="#{fichaMB.documento.docsNombre}" />
+                        <ice:panelGroup id="documentosFormData">
 
-                            <ice:outputLabel value="#{labels.privadoDocumento}"/>
-                            <ace:checkboxButton value="#{fichaMB.documento.docsPrivado}" />
+                            <ice:panelGrid  styleClass="formulario " columns="4">
+                                <ice:outputLabel value="#{labels.tipoDocumento}"/>
+                                <ace:simpleSelectOneMenu id="comboTipoDocumento"
+                                                         value="#{fichaMB.listaTipoDocCombo.selected}">
+                                    <f:selectItems value="#{fichaMB.listaTipoDocCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
 
-                            <ice:outputLabel value="#{labels.entregableAsociadoDocumento}"/>
-                            <ace:simpleSelectOneMenu id="comboentregableDocumento"
-                                                     value="#{fichaMB.listaEntregablesCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaEntregablesCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
+                                <ice:outputLabel value="#{labels.nombreDocumento}"/>
+                                <ace:textEntry value="#{fichaMB.documento.docsNombre}" />
 
-                            <ice:outputLabel value="#{labels.fileDocumento}"/>
-                            <ice:panelGroup>
-                                <ace:fileEntry id="fileEntryDoc"
-                                               label="#{labels.fileDocumento}"
-                                               callback=""
-                                               relativePath="/files/"
-                                               maxFileCount="1" 
-                                               maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
-                                               fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
-                                               maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
-                                               maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
-                                               useOriginalFilename="true" 
-                                               useSessionSubdir="true"
-                                               style="width: 280px;"/>
-                                <h:commandButton id="btnSubmitDoc" type="submit"
-                                                 styleClass="iconoTabla subir" />
-                                <ace:messages for="fileEntryDoc" />
+                                <ice:outputLabel value="#{labels.privadoDocumento}"/>
+                                <ace:checkboxButton value="#{fichaMB.documento.docsPrivado}" />
+
+                                <ice:outputLabel value="#{labels.publicableDocumento}"/>
+                                <ace:checkboxButton value="#{fichaMB.documento.docsPublicable}" />
+
+                                <ice:outputLabel value="#{labels.entregableAsociadoDocumento}"
+                                                 rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+                                <ace:simpleSelectOneMenu id="comboentregableDocumento"
+                                                         value="#{fichaMB.listaEntregablesCombo.selected}"
+                                                         rendered = "#{!fichaMB.fichaTO.isPrograma()}">
+                                    <f:selectItems value="#{fichaMB.listaEntregablesCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
+
+                                <ice:outputLabel value="#{labels.doc_pagos}"
+                                                 rendered = "#{!fichaMB.fichaTO.isPrograma()}"/>
+                                <ace:simpleSelectOneMenu value="#{fichaMB.listaDocPagoCombo.selected}"
+                                                         rendered = "#{!fichaMB.fichaTO.isPrograma()}">
+                                    <f:selectItems value="#{fichaMB.listaDocPagoCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
+
+                                <ice:outputLabel value="#{labels.fileDocumento}"/>
+                                <ice:panelGroup>
+                                    <ace:fileEntry id="fileEntryDoc"
+                                                   label="#{labels.fileDocumento}"
+                                                   callback=""
+                                                   relativePath="/files/"
+                                                   maxFileCount="1" 
+                                                   maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                                                   fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
+                                                   maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
+                                                   maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
+                                                   useOriginalFilename="true" 
+                                                   useSessionSubdir="true"
+                                                   immediate="true"
+                                                   style="width: 280px;"/>
+                                    <ace:messages for="fileEntryDoc" />
+                                </ice:panelGroup>
+
+                            </ice:panelGrid>
+
+                            <ice:panelGroup styleClass="panelBotones">
+<!--                                <ace:messages for="ficha:btnAgregar"/>
+                                <ace:messages globalOnly="true"/>-->
+                                <ace:messages for="ficha:btnAgregar"/>
+                                <h:commandButton id="btnAgregar" action="#{fichaMB.agregarDocumentoAction()}"
+                                                 value="#{labels.guardar}" 
+                                                 styleClass="boton principal botonGuardar" 
+                                                 type="submit"
+                                                 rendered = "#{fichaMB.fieldRendered('agregarDocumento')}" />
+                                <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                                 action="#{fichaMB.cerrarFormCollapsable()}"/>
                             </ice:panelGroup>
 
-                            <ice:outputLabel value="#{labels.doc_pagos}"/>
-                            <ace:simpleSelectOneMenu value="#{fichaMB.listaDocPagoCombo.selected}">
-                                <f:selectItems value="#{fichaMB.listaDocPagoCombo.items}"/>
-                            </ace:simpleSelectOneMenu>
-                        </ice:panelGrid>
+                        </ice:panelGroup> 
 
-                        <ice:panelGroup styleClass="panelBotones">
-                            <ace:messages for="ficha:btnAgregar"/>
-                            <ace:messages globalOnly="true" />
-                            <ace:pushButton value="#{fichaMB.documento.docsPk ne null ? labels.editarDocumento : labels.agregarDocumento}" 
-                                            styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'editar' : 'agregar'}" 
-                                            id="btnAgregar"
-                                            action="#{fichaMB.agregarDocumentoAction()}" />
-                            <ace:linkButton   value="#{labels.limpiar}" styleClass="boton secundario" 
-                                              action="#{fichaMB.limpiarDocumento()}"/>
-                            <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                             action="#{fichaMB.cerrarFormCollapsable()}"/>
-                        </ice:panelGroup>
-
-                    </ice:panelCollapsible>
-                </ice:panelGroup>
+                    </f:facet>
+                </ice:panelPopup>
             </ice:panelGroup>
 
             <ace:panel id="documentosList" styleClass="resultado recuadro" >
@@ -155,7 +307,7 @@
                         <ace:column id="docTableColTipodocNombre" colspan="4" style="background-color: gainsboro">
                             <ice:outputText value="#{doc.docsTipo.tipodocInstTipoDocFk.tipodocNombre} (#{labels.pesoFicha}#{doc.docsTipo.tipodocInstTipoDocFk.tipodocPeso})" />
                         </ace:column>
-                        <ace:column id="docTableColTipodocExigidoDesde" colspan="7" style="background-color: gainsboro">
+                        <ace:column id="docTableColTipodocExigidoDesde" colspan="9" style="background-color: gainsboro">
                             <ice:outputText value="#{doc.docsTipo.tipodocExigidoDesde}" converter="estadoConverter"/>
                         </ace:column>
                     </ace:row>
@@ -175,7 +327,7 @@
                     </ace:column>
 
                     <ace:column id="docTableColFech"  headerText="#{labels.fechaDocumento}" sortAscending="false">
-                        <h:outputText value="#{doc.docsFecha != null ? doc.docsFecha : ''}">
+                        <h:outputText value="#{doc.docFile != null and doc.docFile.docfileUltMod != null ? doc.docFile.docfileUltMod : ''}">
                             <f:convertDateTime pattern="dd/MM/yyyy" type="date" />
                         </h:outputText>
                     </ace:column>
@@ -184,10 +336,15 @@
                         <ace:checkboxButton value="#{doc.docsPrivado}" disabled="true" />
                     </ace:column>
 
+                    <ace:column id="docTableColPub" headerText="#{labels.publicableDocumento}"  >
+                        <ace:checkboxButton value="#{doc.docsPublicable}" disabled="true" />
+                    </ace:column>
+
                     <ace:column id="docTableColRequ"  headerText="#{labels.requeridoDocumento}">
                     </ace:column>
 
-                    <ace:column headerText="#{labels.entregableAsociadoDocumento}"  >
+                    <ace:column id="docTableEntAsoc" headerText="#{labels.entregableAsociadoDocumento}" 
+                                rendered = "#{!fichaMB.fichaTO.isPrograma()}" >
                         <ice:outputText value="#{doc.docsEntregable != null ? doc.docsEntregable.entNombre : ''}"/>
                     </ace:column>
 
@@ -198,50 +355,54 @@
                                            rendered="#{doc.docsTipo.tipodocExigidoDesde.intValue() ne 0}" 
                                            disabled="true"/>
                     </ace:column>
-
-                    <ace:column styleClass="columnaBoton"
+                    <!-- Visualizar documento -->
+                    <ace:column id="docTableColVerDoc"
+                                styleClass="columnaBoton"
                                 rendered="#{doc.docsPk != null and doc.docsPk gt 0}">
                         <ace:tooltip id="tooltipVer" for="btnVerDocumentos">
                             <ice:outputText value="#{labels.documentoVer}" />
                         </ace:tooltip>
-                        <ace:pushButton id="btnVerDocumentos"
-                                        action="#{fichaMB.documentosPopup(doc.docsPk)}" 
-                                        styleClass="iconoTabla botonVer"/>
+                        <h:commandButton id="btnVerDocumentos"
+                                         action="#{fichaMB.documentosPopup(doc.docsPk)}" 
+                                         styleClass="iconoTabla botonVer"/>
                     </ace:column>
-
-                    <ace:column styleClass="columnaBoton"
-                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and fichaMB.fieldRendered('editarDocumento')}">
+                    <!-- Editar documento -->
+                    <ace:column id="docTableColEditDoc"
+                                styleClass="columnaBoton"
+                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and (fichaMB.fieldRendered('editarDocumento') or fichaMB.isCoordinadordeEntregable(doc))}">
                         <ace:tooltip id="tooltipEditar" for="btnEditar">
                             <ice:outputText value="#{labels.editarTooltip}" />
                         </ace:tooltip>
                         <ace:pushButton id="btnEditar" styleClass="botonEditar iconoTabla" 
                                         action="#{fichaMB.editarDocumentoAction(doc.docsPk)}"/>
                     </ace:column>
-		    
-		    
-		    <ace:column styleClass="columnaBoton"
-                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and fichaMB.fieldRendered('editarDocumento')}">
+                    <!-- Visualizar histórico del documento -->
+                    <ace:column id="docTableColVerHistDoc"
+                                styleClass="columnaBoton"
+                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and (fichaMB.fieldRendered('editarDocumento') or fichaMB.isCoordinadordeEntregable(doc))}">
                         <ace:tooltip id="tooltipVerHist" for="btnVerHist">
                             <ice:outputText value="#{labels.docHistoricoTooltip}" />
                         </ace:tooltip>
                         <ace:pushButton id="btnVerHist" styleClass="botonHistorico iconoTabla" 
                                         action="#{fichaMB.verHistoricoDocumentoAction(doc.docsPk)}"/>
                     </ace:column>
-
-                    <ace:column styleClass="columnaBoton"
-                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and fichaMB.fieldRendered('eliminarDocumento')}">
+                    <!-- Eliminar documento -->
+                    <ace:column id="docTableElimDoc"
+                                styleClass="columnaBoton"
+                                rendered="#{doc.docsPk != null and doc.docsPk gt 0 and (fichaMB.fieldRendered('eliminarDocumento') or fichaMB.isCoordinadordeEntregable(doc))}">
                         <h:commandButton id="btnEliminarDoc"
-                                        styleClass="botonEliminar iconoTabla"
-                                        title="#{labels.eliminarTooltip}:&#13;#{doc.docsNombre}"
-                                        onclick="confirmationEliminarDoc#{doc.docsPk}.show();" 
-                                        type="button"/>
-                        <ace:confirmationDialog widgetVar="confirmationEliminarDoc#{doc.docsPk}" 
+                                         styleClass="botonEliminar iconoTabla"
+                                         title="#{labels.eliminarTooltip}:&#13;#{doc.docsNombre}"
+                                         onclick="confirmationEliminarDoc#{doc.docsPk}.show();" 
+                                         type="button"/>
+                        <ace:confirmationDialog id="elimDocDialog"
+                                                widgetVar="confirmationEliminarDoc#{doc.docsPk}" 
                                                 message="#{labels.eliminar}: &#13;#{doc.docsNombre}"
                                                 header="#{labels.hConfirmacion}"
                                                 closable="true"
                                                 closeOnEscape="true"
                                                 severity="info"
-                                                modal="false"
+                                                modal="true"
                                                 position="center">
                             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                                 <h:commandButton value="#{labels.si}"
@@ -259,4 +420,6 @@
             </ace:panel>
         </ice:panelGroup>
     </ice:panelGroup>
+
+    <!--    </o:form>-->
 </ui:composition>

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class DocumentosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(DocumentosValidacion.class.getName());
 
     public static boolean validar(Set<Documentos> docs) throws BusinessException {
         if (docs != null) {

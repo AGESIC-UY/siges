@@ -22,7 +22,7 @@ import javax.persistence.Query;
 public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(RegistrosHorasDao.class.getName());
 
     public RegistrosHorasDao(EntityManager em) {
         super(em);

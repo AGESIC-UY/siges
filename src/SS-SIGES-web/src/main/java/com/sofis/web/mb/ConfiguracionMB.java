@@ -15,6 +15,7 @@ import com.sofis.utils.CriteriaTOUtils;
 import com.sofis.web.delegates.ConfiguracionDelegate;
 import com.sofis.web.delegates.ConsultaHistoricoDelegate;
 import com.sofis.web.genericos.constantes.ConstantesPresentacion;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.EntityReferenceDataProvider;
 import com.sofis.web.utils.FilaRiesgosLimite;
 import com.sofis.web.utils.JSFUtils;
@@ -44,7 +45,7 @@ import javax.inject.Inject;
 public class ConfiguracionMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ConfiguracionMB.class.getName());
 
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
@@ -72,8 +73,10 @@ public class ConfiguracionMB implements Serializable {
     //Configuracion de Documentos
     private Configuracion confDocLimiteAmarillo = new Configuracion(ConfiguracionCodigos.DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO);
     private Configuracion confDocLimiteRojo = new Configuracion(ConfiguracionCodigos.DOCUMENTO_PORCENTAJE_LIMITE_ROJO);
-    private Configuracion tamanioMaxArchivoDocumento = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_DOCUMENTO);
+		private Configuracion tamanioMaxArchivoDocumento = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_DOCUMENTO);
+    private Configuracion tamanioMaxArchivoManualUsuario = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO);
     private Configuracion tamanioMaxArchivoMultimedia = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA);
+    private Configuracion tooltipObjetivoEstrategico = new Configuracion(ConfiguracionCodigos.TOOLTIP_OBJETIVO_ESTRATEGICO);
 
     /**
      * Creates a new instance of ConfiguracionMB
@@ -88,7 +91,9 @@ public class ConfiguracionMB implements Serializable {
     @PostConstruct
     public void init() {
 	inicioMB.cargarOrganismoSeleccionado();
-
+        if(confEnEdicion.getCnfValor() == null || confEnEdicion.getCnfValor().equals("")){
+            confEnEdicion.setCnfValor("<p></p>");
+        }
 	comboCategoria = new SofisCombo();
 	comboCategoria.addEmptyItem(ConstantesPresentacion.DEFECTO_COMBO);
 	comboCategoria.setSelected(0);
@@ -141,11 +146,28 @@ public class ConfiguracionMB implements Serializable {
 	if (tamanioMaxArchivoDocumento == null) {
 	    tamanioMaxArchivoDocumento = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_DOCUMENTO);
 	}
+        
+        tamanioMaxArchivoManualUsuario = confDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO, null);
+	if (tamanioMaxArchivoManualUsuario == null) {
+	    tamanioMaxArchivoManualUsuario = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO);
+	}
+        
 
 	tamanioMaxArchivoMultimedia = confDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA, orgPk);
 	if (tamanioMaxArchivoMultimedia == null) {
 	    tamanioMaxArchivoMultimedia = new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA);
 	}
+        
+        tooltipObjetivoEstrategico = confDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.TOOLTIP_OBJETIVO_ESTRATEGICO, orgPk);
+	if (tooltipObjetivoEstrategico == null) {
+	    tooltipObjetivoEstrategico = new Configuracion(ConfiguracionCodigos.TOOLTIP_OBJETIVO_ESTRATEGICO);
+	}
+        
+        /*
+        *   14-06-2018 Nico: Se agrega esta operación para que se listen las configuraciones cuando se carga la pantalla.
+        */
+        
+        buscar();
     }
 
     private void reset() {
@@ -290,6 +312,16 @@ public class ConfiguracionMB implements Serializable {
 	this.tamanioMaxArchivoDocumento = tamanioMaxArchivoDocumento;
     }
 
+    public Configuracion getTamanioMaxArchivoManualUsuario() {
+        return tamanioMaxArchivoManualUsuario;
+    }
+
+    public void setTamanioMaxArchivoManualUsuario(Configuracion tamanioMaxArchivoManualUsuario) {
+        this.tamanioMaxArchivoManualUsuario = tamanioMaxArchivoManualUsuario;
+    }
+    
+    
+
     public Configuracion getTamanioMaxArchivoMultimedia() {
 	return tamanioMaxArchivoMultimedia;
     }
@@ -298,6 +330,14 @@ public class ConfiguracionMB implements Serializable {
 	this.tamanioMaxArchivoMultimedia = tamanioMaxArchivoMultimedia;
     }
 
+    public Configuracion getTooltipObjetivoEstrategico() {
+        return tooltipObjetivoEstrategico;
+    }
+
+    public void setTooltipObjetivoEstrategico(Configuracion tooltipObjetivoEstrategico) {
+        this.tooltipObjetivoEstrategico = tooltipObjetivoEstrategico;
+    }
+    
     public String cerrarPopupHistorial() {
 	renderPopupHistorial = false;
 	return null;
@@ -361,7 +401,15 @@ public class ConfiguracionMB implements Serializable {
 	    buscar();
 	} catch (GeneralException ex) {
 	    logger.log(Level.SEVERE, null, ex);
-	    JSFUtils.agregarMsgs("", ex.getErrores());
+	    //JSFUtils.agregarMsgs("", ex.getErrores());
+            /*
+            *   14-06-2018 Nico: Se agrega este for para poder mostrar en el front todos los mensajes
+            *           enviados desde la lógica.
+            */
+            
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError("confMsgs", Labels.getValue(iterStr), null);                
+            }
 	} catch (Exception ex) {
 	    logger.log(Level.SEVERE, null, ex);
 //            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), ex.getMessage()));
@@ -495,5 +543,9 @@ public class ConfiguracionMB implements Serializable {
 
     public String obtenerCnfValorPorCodigo(String codigo, Integer orgPk) {
 	return confDelegate.obtenerCnfValorPorCodigo(codigo, orgPk);
+    }
+    
+    public void cnfHtmlChange(ValueChangeEvent ev) {
+            confEnEdicion.setCnfHtml((Boolean) ev.getNewValue());
     }
 }

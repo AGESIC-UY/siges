@@ -70,6 +70,9 @@ public class ObjetivoEstrategico implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Organismos objEstOrgFk;
     
+    @Column(name = "obj_est_habilitado")
+    private Boolean objEstHabilitado;
+
     @XmlTransient
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "objetivoEstrategico")
     @Fetch(FetchMode.SELECT)
@@ -79,7 +82,6 @@ public class ObjetivoEstrategico implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "objetivoEstrategico")
     @Fetch(FetchMode.SELECT)
     private Set<Programas> programas;
-    
     
     @PreUpdate
     public void preUpdate(){
@@ -124,31 +126,6 @@ public class ObjetivoEstrategico implements Serializable {
         this.objEstDescripcion = objEstDescripcion;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (objEstPk != null ? objEstPk.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ObjetivoEstrategico)) {
-            return false;
-        }
-        ObjetivoEstrategico other = (ObjetivoEstrategico) object;
-        if ((this.objEstPk == null && other.objEstPk != null) || (this.objEstPk != null && !this.objEstPk.equals(other.objEstPk))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.sofis.entities.data.ObjectivoEstrategico[ objEstPk=" + objEstPk + " ]";
-    }
-
     /**
      * @return the objEstOrgFk
      */
@@ -190,5 +167,38 @@ public class ObjetivoEstrategico implements Serializable {
     public void setProgramas(Set<Programas> programas) {
         this.programas = programas;
     }
+
+    public Boolean getObjEstHabilitado() {
+        return objEstHabilitado;
+    }
+
+    public void setObjEstHabilitado(Boolean objEstHabilitado) {
+        this.objEstHabilitado = objEstHabilitado;
+    }
     
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (objEstPk != null ? objEstPk.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof ObjetivoEstrategico)) {
+            return false;
+        }
+        ObjetivoEstrategico other = (ObjetivoEstrategico) object;
+        if ((this.objEstPk == null && other.objEstPk != null) || (this.objEstPk != null && !this.objEstPk.equals(other.objEstPk))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.sofis.entities.data.ObjectivoEstrategico[ objEstPk=" + objEstPk + " ]";
+    }
+
 }

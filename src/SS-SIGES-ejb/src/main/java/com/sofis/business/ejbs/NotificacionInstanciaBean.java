@@ -34,11 +34,11 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class NotificacionInstanciaBean {
 
-    @Inject
-    private DatosUsuario du;
+//    @Inject
+//    private DatosUsuario du;
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(NotificacionInstanciaBean.class.getName());
 
     public List<NotificacionInstancia> obtenerNotificacionInstPorProyId(Integer proyPk, Integer orgPk) {
         NotificacionInstanciaDAO notificacionInstanciaDao = new NotificacionInstanciaDAO(em);
@@ -60,7 +60,6 @@ public class NotificacionInstanciaBean {
             NotificacionInstanciaDAO dao = new NotificacionInstanciaDAO(em);
             try {
                 copiarNotInstFaltantes(proyPk, orgPk);
-
                 NotificacionInstancia notificacionInst = dao.obtenerNotificacionInstPorCod(cod, proyPk);
                 return notificacionInst;
             } catch (TechnicalException te) {

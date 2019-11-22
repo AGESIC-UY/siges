@@ -27,27 +27,20 @@
             <div class="reporteFicha">
                 <div class="cabezalMeses prodItem">
                     <span class="prodItemTitle primerEspacio"></span>
-                    <c:forEach begin="1" step="1" end="12" var="mes">
+                    <ui:repeat var="mes" value="#{misTareasMB.listMesesInt}">
                         <span class="prodItemTitle"><ice:outputText value="#{misTareasMB.mesAbreviadoStr(mes)}"/></span>
-                    </c:forEach>
+                    </ui:repeat>
 
                     <span class="prodItemTitle avance">Avance</span>
                     <span class="prodItemTitle nuevoFin">Nuevo Fin</span>
                 </div>
 
-                <c:set var="progNomb" value=" " />
-                <c:set var="proyNomb" value=" " />
-                <c:set var="dia" value="#{misTareasMB.calcularLeftDia()}px" />
-                <c:forEach var="proy" items="#{misTareasMB.misTareasGroupProgProy}">
+<!--                <c:set var="dia" value="#{misTareasMB.calcularLeftDia()}px" />-->
+                <ui:repeat var="proy" value="#{misTareasMB.misTareasGroupProgProy}">
 
-                    <ice:panelGroup styleClass="tituloReporte" style="background: #B6B6B6;"
-                                    rendered="#{progNomb != proy.progNombre}">
-                        <c:if test="#{proy.progPk != null}">
-                            <span><h:outputText value="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}" /></span>
-                        </c:if>
-                        <c:if test="#{proy.progPk == null}">
-                            <span><h:outputText value="#{labels.proyectos_sin_prog}" /></span>
-                        </c:if>
+                    <ice:panelGroup styleClass="tituloReporte" style="background: #B6B6B6;">
+                        <ice:outputText value="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}" rendered="#{proy.progPk != null}" title="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}"/>
+                        <ice:outputText value="#{labels.proyectos_sin_prog}" rendered="#{proy.progPk == null}" title="#{labels.proyectos_sin_prog}"/>                      
                     </ice:panelGroup>
 
                     <ice:panelGroup styleClass="tituloReporte"
@@ -55,15 +48,11 @@
                         <span><h:outputText value="#{labels.proyecto}: (#{proy.proyPk}) #{proy.proyNombre}" /></span>
                     </ice:panelGroup>
 
-                    <c:set var="progNomb" value="#{proy.progNombre}" />
-                    <c:set var="proyNomb" value="#{proy.proyNombre}" />
-
-
-                    <c:forEach var="ent" items="#{proy.tareas}">
+                    <ui:repeat var="ent" value="#{proy.tareas}" >
 
                         <!-- Entregable -->
                         <div class="cadaEntregable #{misTareasMB.displayDayRef() ? 'marcaFecha' : ''}"
-                             style="background-position: #{dia};">
+                             style="background-position: #{misTareasMB.calcularLeftDia()}px;">
                             <span class="prodItemTitle primerEspacio">
                                 (<ice:outputText value="#{ent.entEsfuerzoPorcentaje}" converter="ImporteDecimalFormatConverter"/>%)
                                 <ice:outputText value="#{ent.entNombre}"
@@ -79,55 +68,44 @@
                                                 rendered="#{ent.tieneProd == true}"/>
                             </span>
                             <div class="tablaMeses">
-                                <c:set var="left" value="#{misTareasMB.calcularLeftEntByDate(ent.entInicio)}px" />
-                                <c:set var="width" value="#{misTareasMB.calcularWitdhEntByDate(ent.entInicio, ent.entFin, ent.entDuracion)}px" />
-                                <div class="indice3color" style="left:#{left}; width:#{width};" >
+                                <div class="indice3color" style="left:#{misTareasMB.calcularLeftEntByDate(ent.entInicio)}px; width:#{misTareasMB.calcularWitdhEntByDate(ent.entInicio, ent.entFin, ent.entDuracion)}px;" >
                                     <!-- barras de colores -->
-                                    <c:set var="progresoPorc" value="#{ent.entProgreso}%" />
-                                    <c:set var="faltante" value="#{100 - ent.entProgreso}" />
-                                    <c:set var="faltantePorc" value="#{faltante}%" />
-                                    <div class="indice3colorBlue" style="width:#{progresoPorc}">#{ent.entProgreso}%</div>
+                                    <div class="indice3colorBlue" style="width:#{ent.entProgreso}%">#{ent.entProgreso}%</div>
                                     <div class="#{misTareasMB.entAtrasado(ent.entFin, ent.entFinLineaBaseDate) ? 'indice3colorRed':'indice3colorGreen'}" 
-                                         style="width:#{faltantePorc}">#{faltante}%</div>
+                                         style="width:#{100 - ent.entProgreso}%">#{100 - ent.entProgreso}%</div>
                                 </div>
                             </div>
                             <div class="misTareasUltimasColumnas">
                                 <div class="avance">
 
-                                    <ice:selectOneMenu  value="#{ent.entProgreso}" rendered="#{misTareasMB.usuarioCombo.selected == inicioMB.usuario.usuId}">
-                                        <f:selectItem itemLabel="0" itemValue="0" />
-                                        <f:selectItem itemLabel="10" itemValue="10" />
-                                        <f:selectItem itemLabel="20" itemValue="20" />
-                                        <f:selectItem itemLabel="30" itemValue="30" />
-                                        <f:selectItem itemLabel="40" itemValue="40" />
-                                        <f:selectItem itemLabel="50" itemValue="50" />
-                                        <f:selectItem itemLabel="60" itemValue="60" />
-                                        <f:selectItem itemLabel="70" itemValue="70" />
-                                        <f:selectItem itemLabel="80" itemValue="80" />
-                                        <f:selectItem itemLabel="90" itemValue="90" />
-                                        <f:selectItem itemLabel="100" itemValue="100" />
-                                    </ice:selectOneMenu>
-                                    <ace:pushButton  value="" rendered="#{misTareasMB.usuarioCombo.selected == inicioMB.usuario.usuId}"
+                                    <ace:textEntry style="width: 45px; margin-right:0px;"
+                                                   value="#{ent.entProgreso}" 
+                                                   rendered="#{misTareasMB.renderField(proy.proyPk, '')}"
+                                                   disabled="#{ent.tieneProd == true}"/>
+
+                                    <ace:pushButton  value="" 
+                                                     rendered="#{misTareasMB.renderField(proy.proyPk, '')}"
                                                      action="#{misTareasMB.guardar(ent)}"  
-                                                     styleClass="botonGuardar iconoTabla">
+                                                     styleClass="botonGuardar iconoTabla"
+                                                     disabled="#{ent.tieneProd == true}">
                                     </ace:pushButton>
                                 </div>
                                 <div class="nuevoFin">
-				    <c:if test="#{!misTareasMB.esUsuarioExterno()}">
-					<ice:commandLink rendered="#{misTareasMB.usuarioCombo.selected == inicioMB.usuario.usuId}"
-							 action="#{misTareasMB.irGannt(ent)}" 
-							 title="#{labels.inicio_link_nombre}">
-					    <ice:graphicImage value="../img/nueva_ventana.png" />
-					</ice:commandLink>
-				    </c:if>
+                                    <c:if test="#{!misTareasMB.esUsuarioExterno()}">
+                                        <ice:commandLink rendered="#{misTareasMB.renderField(proy.proyPk, '')}"
+                                                         action="#{misTareasMB.irGannt(ent)}" 
+                                                         title="#{labels.inicio_link_nombre}">
+                                            <ice:graphicImage value="../img/nueva_ventana.png" />
+                                        </ice:commandLink>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Linea Base -->
-                        <c:if test="#{ent.entInicioLineaBaseDate != null and ent.entFinLineaBaseDate != null}" >
+                        <ice:panelGroup id="lineaBaseGroup" rendered="#{ent.entInicioLineaBaseDate != null and ent.entFinLineaBaseDate != null}">
                             <div class="cadaEntHistLineaBase #{misTareasMB.displayDayRef() ? 'marcaFecha' : ''}"
-                                 style="background-position: #{dia};">
+                                 style="background-position: #{misTareasMB.calcularLeftDia()}px;">
                                 <span class="prodItemTitle primerEspacio">
                                     <ice:outputText value="#{labels.reporte_crono_linea_base}"/>
                                     (<ice:outputText value="#{ent.entInicioLineaBaseDate}" 
@@ -136,16 +114,12 @@
                                                     converter="fechaConverter" />)
                                 </span>
                                 <div class="tablaMeses">
-<!--                                    <c:set var="left" value="#{misTareasMB.calcularLeftEntByDate(ent.entInicioLineaBaseDate)}px" />
-                                    <c:set var="width" value="#{misTareasMB.calcularWitdhEntByDate(ent.entInicioLineaBaseDate, ent.entFinLineaBaseDate, ent.entDuracionLineaBase)}px" />
-                                    <c:set var="display" value="#{misTareasMB.displayEntLineaBase(ent,ent.getEntId()) ? '' : 'none'}" />-->
                                     <div class="lineaBase" style="left:#{misTareasMB.calcularLeftEntByDate(ent.entInicioLineaBaseDate)}px; width:#{misTareasMB.calcularWitdhEntByDate(ent.entInicioLineaBaseDate, ent.entFinLineaBaseDate, ent.entDuracionLineaBase)}px; display:#{misTareasMB.displayEntLineaBase(ent,ent.getEntId()) ? '' : 'none'};" />
                                 </div>
                             </div>
-                        </c:if>
-                    </c:forEach>
-
-                </c:forEach>
+                        </ice:panelGroup>
+                    </ui:repeat>
+                </ui:repeat>
 
                 <ice:panelGroup id="infoReferenciaColoresGantt" styleClass="margen-sup">
                     <ice:outputText value="#{reportesMB.coloresGantt()}" escape="false" />
@@ -162,40 +136,26 @@
         <ice:panelGroup styleClass="contenidoReporteApaisado misTareas"
                         rendered="#{misTareasMB.producto and misTareasMB.hayProductos}">
 
-            <c:forEach var="proy" items="#{misTareasMB.misTareasGroupProgProy}">
+            <ui:repeat var="proy" value="#{misTareasMB.misTareasGroupProgProy}">
 
                 <ice:panelGroup styleClass="tituloReporte" style="background: #B6B6B6;" rendered="#{proy.tieneProductos}">
-                                <!--rendered="#{progNomb != proy.progNombre}"-->
-                    <c:if test="#{proy.progPk != null}">
-                        <span><h:outputText value="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}" /></span>
-                    </c:if>
-                    <c:if test="#{proy.progPk == null}">
-                        <span><h:outputText value="#{labels.proyectos_sin_prog}" /></span>
-                    </c:if>
+                    <ice:outputText value="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}" rendered="#{proy.progPk != null}" title="#{labels.programa}: (#{proy.progPk}) #{proy.progNombre}"/>
+                    <ice:outputText value="#{labels.proyectos_sin_prog}" rendered="#{proy.progPk == null}" title="#{labels.proyectos_sin_prog}"/>
                 </ice:panelGroup>
 
                 <ice:panelGroup styleClass="tituloReporte" rendered="#{proy.tieneProductos}">
-                                <!--rendered="#{proyNomb != proy.proyNombre}">-->
                     <span><h:outputText value="#{labels.proyecto}: (#{proy.proyPk}) #{proy.proyNombre}" /></span>
                 </ice:panelGroup>
 
-                <c:set var="progNomb" value="#{proy.progNombre}" />
-                <c:set var="proyNomb" value="#{proy.proyNombre}" />
-
-                <c:forEach var="ent" items="#{proy.tareas}" >
-
-                    <ice:panelSeries var="prod" value="#{ent.productos}" rendered="#{proy.tieneProductos}">
-
-                        <!--<c:set var="editar" value="#{false}" />-->
-                        <c:set var="editar" value="#{misTareasMB.editarProdMap[prod.prodPk]}" />
-
+                <ui:repeat var="ent" value="#{proy.tareas}" rendered="#{proy.tieneProductos}">
+                    <ui:repeat var="prod" value="#{ent.productos}" rendered="#{proy.tieneProductos}">
                         <ice:panelGroup styleClass="datosProducto">
 
                             <ice:panelGroup styleClass="col-sm-3">
+
                                 <ice:panelGrid  styleClass="formulario" style="font-size: 10px;" columns="1">
                                     <ice:outputText value="#{prod.prodEntregableFk.entNombre}"
                                                     style="font-weight: bold"/>
-
                                     <ice:panelGroup>
                                         <ice:outputText value="#{prod.prodEntregableFk.entInicioDate}"
                                                         converter="fechaConverter"/> - 
@@ -203,20 +163,20 @@
                                                         converter="fechaConverter"/>
                                     </ice:panelGroup>
 
-                                    <ice:outputLabel value="#{labels.prod_tabla_nombre}:" rendered="#{editar}"/>
-                                    <ice:outputText value="#{prod.prodDesc} (#{prod.prodPeso})" rendered="#{!editar}"
+                                    <ice:outputLabel value="#{labels.prod_tabla_nombre}:" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}"/>
+                                    <ice:outputText value="#{prod.prodDesc} (#{prod.prodPeso})" rendered="#{!misTareasMB.editarProdMap[prod.prodPk]}"
                                                     title="#{prod.prodDesc} (Peso:#{prod.prodPeso})"/>
-                                    <ace:textEntry value="#{prod.prodDesc}" rendered="#{editar}" />
-                                    <ice:outputText value="#{prod.prodUndMedida}" rendered="#{!editar}"/>
+                                    <ace:textEntry value="#{prod.prodDesc}" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}" />
+                                    <ice:outputText value="#{prod.prodUndMedida}" rendered="#{!misTareasMB.editarProdMap[prod.prodPk]}"/>
 
                                     <ice:panelGroup styleClass="pesoMedida">
                                         <ice:panelGroup styleClass="col-sm-6">
-                                            <ice:outputLabel value="#{labels.prod_tabla_peso}:" rendered="#{editar}"/>
-                                            <ace:textEntry value="#{prod.prodPeso}" rendered="#{editar}" styleClass="textoCorto"/>
+                                            <ice:outputLabel value="#{labels.prod_tabla_peso}:" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}"/>
+                                            <ace:textEntry value="#{prod.prodPeso}" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}" styleClass="textoCorto"/>
                                         </ice:panelGroup>
                                         <ice:panelGroup styleClass="col-sm-6">
-                                            <ice:outputLabel value="#{labels.prod_tabla_unidad_medida}:" rendered="#{editar}"/>
-                                            <ace:textEntry value="#{prod.prodUndMedida}" rendered="#{editar}" styleClass="textoCorto"/>
+                                            <ice:outputLabel value="#{labels.prod_tabla_unidad_medida}:" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}"/>
+                                            <ace:textEntry value="#{prod.prodUndMedida}" rendered="#{misTareasMB.editarProdMap[prod.prodPk]}" styleClass="textoCorto"/>
                                         </ice:panelGroup>
                                     </ice:panelGroup>
 
@@ -241,17 +201,17 @@
                                     <h:commandButton id="btnEditarProd"
                                                      styleClass="botonEditar iconoTabla" 
                                                      title="#{labels.prod_tabla_btn_editar}"
-                                                     rendered="#{!editar}"
+                                                     rendered="#{misTareasMB.renderField(proy.proyPk, 'Editar') and !misTareasMB.editarProdMap[prod.prodPk]}"
                                                      action="#{misTareasMB.editarProducto(prod)}" />
                                     <h:commandButton id="btnGuardarProd"
                                                      styleClass="botonGuardar iconoTabla" 
                                                      title="#{labels.prod_tabla_btn_guardar}"
-                                                     rendered="#{editar}"
+                                                     rendered="#{misTareasMB.editarProdMap[prod.prodPk]}"
                                                      action="#{misTareasMB.guardarProducto(prod)}" />
                                     <h:commandButton id="btnEliminarProd"
                                                      styleClass="botonEliminar iconoTabla"
                                                      title="#{labels.prod_tabla_btn_eliminar}"
-                                                     rendered="#{!editar}"
+                                                     rendered="#{misTareasMB.renderField(proy.proyPk, 'Eliminar') and !misTareasMB.editarProdMap[prod.prodPk]}"
                                                      onclick="confirmationEliminarProd#{prod.prodPk}.show();" />
                                     <ace:confirmationDialog widgetVar="confirmationEliminarProd#{prod.prodPk}" 
                                                             message="#{labels.eliminar}: #{prod.prodDesc}"
@@ -296,24 +256,24 @@
 
                                         <ice:outputText value="#{prodMes.prodmesPlan}"
                                                         styleClass="alinearDerecha"
-                                                        rendered="#{!(editar and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3))) and prodMes.prodmesPk > 0}"
+                                                        rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3))) and prodMes.prodmesPk > 0}"
                                                         converter="ImporteFormatConverter">
                                         </ice:outputText>
                                         <ace:textEntry value="#{prodMes.prodmesPlan}"
                                                        converter="ImporteFormatConverter"
-                                                       rendered="#{editar and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3)) and prodMes.prodmesPk > 0}"
+                                                       rendered="#{misTareasMB.editarProdMap[prod.prodPk] and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3)) and prodMes.prodmesPk > 0}"
                                                        styleClass="textoCorto alinearDerecha"
-						       style="width: 60px !important;"/>
+                                                       style="width: 60px !important;"/>
 
                                         <ice:outputText value="#{prodMes.prodmesReal}"
                                                         styleClass="alinearDerecha"
-                                                        rendered="#{!(editar and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk)) and prodMes.prodmesPk > 0}"
+                                                        rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk)) and prodMes.prodmesPk > 0}"
                                                         converter="ImporteFormatConverter"/>
                                         <ace:textEntry value="#{prodMes.prodmesReal}" 
                                                        converter="ImporteFormatConverter"
-                                                       rendered="#{(editar and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk) and prodMes.prodmesPk > 0)}"
+                                                       rendered="#{(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk) and prodMes.prodmesPk > 0)}"
                                                        styleClass="textoCorto alinearDerecha"
-						       style="width: 60px !important;"/>
+                                                       style="width: 60px !important;"/>
 
                                         <ice:outputText value="#{prodMes.prodmesAcuPlan}"
                                                         styleClass="alinearDerecha"
@@ -335,17 +295,17 @@
                             </ice:panelGroup>
 
                         </ice:panelGroup>
-                    </ice:panelSeries>
+                    </ui:repeat>
 
-                </c:forEach>
+                </ui:repeat>
 
-            </c:forEach>
+            </ui:repeat>
 
         </ice:panelGroup>
 
-        <ice:panelGroup styleClass="panelBotones">
-            <ace:messages />
-        </ice:panelGroup>
+        <!--        <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages />
+                </ice:panelGroup>-->
     </ice:panelGroup>
 
 </ui:composition>

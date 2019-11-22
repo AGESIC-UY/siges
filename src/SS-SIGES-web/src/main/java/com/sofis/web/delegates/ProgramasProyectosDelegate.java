@@ -4,6 +4,7 @@ import com.sofis.business.ejbs.DataTestingBean;
 import com.sofis.business.ejbs.ProgramasProyectosBean;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.Configuracion;
+import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.entities.tipos.FiltroInicioItem;
@@ -33,8 +34,8 @@ public class ProgramasProyectosDelegate {
         return programasProyectosBean.obtenerPrimerNivel(organismoId, area, usuario, filtro, confAmarillo, confRojo);
     }
 
-    public FiltroInicioItem obtenerIndicadoresMaterializados(FiltroInicioItem item, Integer orgPk, Map<String, String> config) {
-        return programasProyectosBean.cargarIndicadoresMaterializados(item, orgPk, null, config);
+    public FiltroInicioItem obtenerIndicadoresMaterializados(FiltroInicioItem item, Integer orgPk, Map<String, String> config, List<Moneda> monedas) {
+        return programasProyectosBean.cargarIndicadoresMaterializados(item, orgPk, null, config, monedas);
     }
 
     public FiltroInicioResultadoTO obtenerSegundoNivel(Integer organismoId, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro) throws GeneralException {

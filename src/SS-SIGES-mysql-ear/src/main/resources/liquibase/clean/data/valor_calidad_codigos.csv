@@ -1,0 +1,6 @@
+vca_pk|vca_codigo|vca_nombre|vca_habilitado
+1|baja|0|t
+2|media|0.5|t
+3|alta|1|t
+4|no_corresponde|No Corresponde|t
+5|pendiente|Pendiente de Cargar|t

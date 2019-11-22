@@ -8,6 +8,7 @@ import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.EstadosDelegate;
 import com.sofis.web.delegates.TipoDocumentoDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ import javax.inject.Inject;
 public class TipoDocumentoMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
-    private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final Logger logger = Logger.getLogger(TipoDocumentoMB.class.getName());
+    //private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String TIPO_DOC_NOMBRE = "tipodocNombre";
     private static final String TIPO_DOC_EXIGIDO_DESDE = "tipodocExigidoDesde";
@@ -58,10 +59,6 @@ public class TipoDocumentoMB implements Serializable {
     private List<Estados> listEstados;
 
     public TipoDocumentoMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        tipoDocEnEdicion = new TipoDocumento();
-        listEstados = new ArrayList<>();
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -142,6 +139,16 @@ public class TipoDocumentoMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   31-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */         
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<TipoDocumento>();
+        tipoDocEnEdicion = new TipoDocumento();
+        listEstados = new ArrayList<Estados>();        
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         listEstados = estadosDelegate.obtenerEstadosCombo();
@@ -163,7 +170,7 @@ public class TipoDocumentoMB implements Serializable {
             renderPopupEdicion.abrir();
         } catch (BusinessException e) {
             logger.log(Level.SEVERE, null, e);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+            JSFUtils.agregarMsgs(POPUP_MSG, e.getErrores());
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
             JSFUtils.agregarMsg("ERROR GENERAL");
@@ -183,7 +190,16 @@ public class TipoDocumentoMB implements Serializable {
                 buscar();
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+           
+                /*
+                *  19-06-2018 Inspección de código.
+                */
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }                  
+
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -196,7 +212,7 @@ public class TipoDocumentoMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put(TIPO_DOC_NOMBRE, filtroNombre);
         if (filtroEstados != null) {
             mapFiltro.put(TIPO_DOC_EXIGIDO_DESDE, filtroEstados);
@@ -213,8 +229,16 @@ public class TipoDocumentoMB implements Serializable {
         try {
             tipoDocEnEdicion = tipoDocumentoDelegate.obtenerTipoDocPorId(tipoDocPk);
         } catch (BusinessException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            logger.log(Level.SEVERE, null, ex);        
+
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+
+            for(String iterStr : ex.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }            
         }
 
         listEstados = estadosDelegate.obtenerEstadosCombo();
@@ -237,7 +261,15 @@ public class TipoDocumentoMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            /*
+            *  19-06-2018 Inspección de código.
+            */
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+
+            for(String iterStr : be.getErrores()){
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            }             
+
         }
         return null;
     }

@@ -193,11 +193,11 @@
                                 </ice:selectOneMenu>
                             </ice:panelGroup>
                         </ice:panelGroup>
-
+<!--Título de presupuesto -->
                         <ice:panelGroup styleClass="subtituloSeccion">
                             <ice:outputText value="#{labels.presupuesto_titulo}" styleClass="subtitulo"/>
                         </ice:panelGroup>
-
+<!--Acá empiezan las adquisiciones -->
                         <c:forEach items="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet}" var="adq">
 
                             <ice:panelGroup styleClass="row">
@@ -266,9 +266,92 @@
                                 </ice:panelGroup>
                             </ice:panelGroup>
 
-                            <ice:panelGroup styleClass="separador" rendered="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet.size() > 1}"/>
-                        </c:forEach>
+<!--Agrego procedimiento de compras                            -->
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_proc_compra}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqProcedimientoCompra.procCompNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_proc_compra}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu value="#{adq.adqProcedimientoCompra.procCompPk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaProcedimientoCompraCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>     
 
+<!--Agrego componente/producto -->
+
+                            <ice:panelGroup styleClass="row">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_comp_prod}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{adq.adqComponenteProducto.comNombre}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_comp_prod}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu value="#{adq.adqComponenteProducto.comPk}">
+                                        <f:selectItems value="#{moverProyectoMB.listaComponenteProductoCombo.items}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup> 
+
+<!--Agrego usuarios compartida-->
+                            <ice:panelGroup styleClass="row" rendered="#{adq.adqCompartida}">
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_usu_compartida}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ice:outputText value="#{moverProyectoMB.obtenerUsuCompartidaAdqNom(adq)}" />
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-2">
+                                    <ice:outputLabel value="#{labels.mov_proy_usu_compartida}"/>
+                                </ice:panelGroup>
+                                <ice:panelGroup styleClass="col-sm-4">
+                                    <ace:simpleSelectOneMenu value="#{moverProyectoMB.auxUsuCompartida}">
+                                        <f:selectItems value="#{moverProyectoMB.listaUsuariosAdqCompartidaCombo}"/>
+                                    </ace:simpleSelectOneMenu>
+                                </ice:panelGroup>
+                            </ice:panelGroup>
+
+<!--Agrego los pagos--> <ice:panelGroup rendered="#{adq.pagosSet != null and adq.pagosSet.size() != 0}">
+                            <ice:panelGroup styleClass="subtituloSeccion">
+                                <ice:outputText value="#{labels.mov_proy_pagos_tit}" styleClass="subtitulo"/>
+                            </ice:panelGroup>
+
+                            <c:forEach items="#{adq.pagosSet}" var="pago">
+<!--Agrego cliente/organización de los pagos-->
+                                    <ice:panelGroup styleClass="separador" rendered="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet.size() > 1}"/>
+
+                                    <ice:panelGroup styleClass="row">
+                                        <ice:panelGroup styleClass="col-sm-2">
+                                            <ice:outputLabel value="#{labels.mov_proy_cliente_organizacion}"/>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup styleClass="col-sm-4">
+                                            <ice:outputText value="#{pago.pagContrOrganizacionFk.orgaNombre}" />
+                                        </ice:panelGroup>
+                                        <ice:panelGroup styleClass="col-sm-2">
+                                            <ice:outputLabel value="#{labels.mov_proy_cliente_organizacion}"/>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup styleClass="col-sm-4">
+                                            <ace:simpleSelectOneMenu value="#{pago.pagContrOrganizacionFk.orgaPk}">
+                                                <f:selectItems value="#{moverProyectoMB.listapagContrOrganizacionCombo.items}"/>
+                                            </ace:simpleSelectOneMenu>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+                            </c:forEach>
+                        </ice:panelGroup>
+
+                        <ice:panelGroup styleClass="separador" rendered="#{moverProyectoMB.fichaDestinoTO.proyPreFk.adquisicionSet.size() > 1}"/>
+                        </c:forEach>
+<!--Acá terminan las adquisiciones -->
                         <ice:panelGroup styleClass="subtituloSeccion">
                             <ice:outputText value="#{labels.documentos}" styleClass="subtitulo"/>
                         </ice:panelGroup>

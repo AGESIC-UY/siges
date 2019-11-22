@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="formIdGrpErp">
+        <ice:panelGroup id="tituloPaginaIdentificadorGrpErp" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloIdentificadorGrpErp}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="btnAgregarABM">
+            <ace:pushButton value="#{labels.agregarIdentificadorGrpErp}" 
+                            styleClass="boton principal agregar"
+                            action="#{identificadorGrpErpMB.agregar()}" />
+        </ice:panelGroup>
+
+        <ice:panelGroup id="espacioTrabajo" styleClass="buscador recuadro margen-inf">
+            <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
+            <ice:panelGroup styleClass="panelAcciones" style="margin-top: 40px">
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.identificadorGrpErpFormNombre}" />
+                    <ace:textEntry value="#{identificadorGrpErpMB.filtro.nombre}" />
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.identificadorGrpErpFormDescripcion}" />
+                    <ace:textEntry value="#{identificadorGrpErpMB.filtro.descripcion}" />
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none;">
+                    <ice:outputLabel value="#{labels.habilitado}"/>
+                    <ace:checkboxButton value="#{identificadorGrpErpMB.filtro.habilitado}"
+                                        valueChangeListener="#{identificadorGrpErpMB.identificadorGrpErpFiltroValueChange}">
+                        <ace:ajax execute="@this" render="@form"/>
+                    </ace:checkboxButton>
+                </ice:panelGroup>
+                <ice:panelGroup styleClass="panelBotones" style="float:left; clear: none; margin-top: -4px;">
+
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{identificadorGrpErpMB.buscar()}"/>
+
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{identificadorGrpErpMB.limpiar()}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <!--        <ace:messages for="resultado" />-->
+
+        <ice:panelGroup id="resultado" styleClass="resultado recuadro margen-sup" 
+                        rendered="#{identificadorGrpErpMB.renderResultado}">
+            <ice:outputText value="#{labels.resultadoBusqueda}: #{identificadorGrpErpMB.identificadores.size()} elemento(s)" 
+                            styleClass="resultadoBusqueda"/>
+            <ice:panelGroup rendered="#{not empty identificadorGrpErpMB.identificadores}" styleClass="resultadoCompleto">
+
+                <ice:panelGroup rendered="#{identificadorGrpErpMB.identificadores != null and not empty identificadorGrpErpMB.identificadores}" 
+                                styleClass="cuerpo">
+                    <ace:dataTable id="tblResultados" 
+                                   value="#{identificadorGrpErpMB.identificadores}" 
+                                   var="obj" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true">
+                        <ace:column headerText="#{labels.hId}" >
+                            <h:outputText value="#{obj.idGrpErpPk}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.identificadorGrpErpFormNombre}">
+                            <h:outputText value="#{obj.idGrpErpNombre}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.identificadorGrpErpFormDescripcion}"  >
+                            <ice:outputText value="#{obj.idGrpErpDescripcion}" escape="false"/>
+                        </ace:column>
+
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.editar}">
+                                <ace:pushButton styleClass="botonEditar iconoTabla"
+                                                action="#{identificadorGrpErpMB.editar(obj.idGrpErpPk)}"/>
+                            </ice:panelGroup>
+                        </ace:column>
+
+                        <ace:column styleClass="columnaBoton">
+                            <h:commandButton onclick="confirmationEliminar#{obj.idGrpErpPk}.show()" 
+                                             styleClass="botonEliminar iconoTabla" 
+                                             type="button"/>
+                            <ace:confirmationDialog id="confirmDialogAprobar"
+                                                    widgetVar="confirmationEliminar#{obj.idGrpErpPk}"
+                                                    message="#{labels.confirmacionEliminacion}"
+                                                    header="#{labels.hConfirmacion}"
+                                                    closable="true"
+                                                    closeOnEscape="true"
+                                                    severity="info"
+                                                    modal="true"
+                                                    position="center">
+                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                    <h:commandButton id="yesAprobar"
+                                                     value="#{labels.si}"
+                                                     styleClass="boton principal botonContinuar"
+                                                     onclick="confirmationEliminar#{obj.idGrpErpPk}.hide()" 
+                                                     actionListener="#{identificadorGrpErpMB.eliminar(obj.idGrpErpPk)}"/>
+                                    <h:commandButton id="noAprobar"
+                                                     value="#{labels.no}"
+                                                     styleClass="boton principal botonEliminar"
+                                                     onclick="confirmationEliminar#{obj.idGrpErpPk}.hide()"  />
+                                </h:panelGrid>
+                            </ace:confirmationDialog> 
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </ice:panelGroup>
+            <ice:panelGroup styleClass="noResultados" rendered="#{empty identificadorGrpErpMB.identificadores}">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

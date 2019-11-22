@@ -21,6 +21,7 @@ import javax.persistence.Query;
 public class CalidadDAO extends HibernateJpaDAOImp<Calidad, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(CalidadDAO.class.getName());                
 
     public CalidadDAO(EntityManager em) {
         super(em);

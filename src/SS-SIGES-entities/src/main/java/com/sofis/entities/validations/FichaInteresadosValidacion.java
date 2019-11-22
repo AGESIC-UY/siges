@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class FichaInteresadosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(FichaInteresadosValidacion.class.getName());
 
     public static boolean validar(Interesados interesado) throws BusinessException {
         logger.finest("Validar Ficha Interesados.");

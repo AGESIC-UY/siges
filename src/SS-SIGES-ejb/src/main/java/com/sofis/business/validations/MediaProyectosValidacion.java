@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class MediaProyectosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MediaProyectosValidacion.class.getName());   
 
     public static boolean validar(MediaProyectos mp) throws BusinessException {
         logger.finest("Validar Media Proyectos.");

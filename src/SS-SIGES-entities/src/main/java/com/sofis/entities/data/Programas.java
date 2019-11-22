@@ -20,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -30,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
  *
@@ -47,18 +51,23 @@ import org.hibernate.annotations.FetchMode;
     @NamedQuery(name = "Programas.findByProgObjPublico", query = "SELECT p FROM Programas p WHERE p.progObjPublico = :progObjPublico"),
     @NamedQuery(name = "Programas.findByProgGrp", query = "SELECT p FROM Programas p WHERE p.progGrp = :progGrp"),
     @NamedQuery(name = "Programas.progSemaforoRojo", query = "SELECT p FROM Programas p WHERE p.progSemaforoRojo = :progSemaforoRojo"),
-    @NamedQuery(name = "Programas.findByProgSemaforoAmarillo", query = "SELECT p FROM Programas p WHERE p.progSemaforoAmarillo = :progSemaforoAmarillo")})
+    @NamedQuery(name = "Programas.findByProgSemaforoAmarillo", query = "SELECT p FROM Programas p WHERE p.progSemaforoAmarillo = :progSemaforoAmarillo"),
+    @NamedQuery(name = "Programas.findByIds", query = "SELECT p FROM Programas p WHERE p.progPk IN (:ids)")
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "Programas.findByProgPkAndProgNombre", query = "SELECT p.prog_pk FROM programas AS p WHERE p.prog_pk LIKE :codigo AND p.prog_nombre LIKE :nombre AND p.prog_org_fk = :org AND p.prog_activo = true")
+})
 public class Programas implements Serializable {
-    
+
     public static final int NOMBRE_LENGHT = 100;
     public static final int DESCRIPCION_LENGHT = 4000;
     public static final int OBJETIVO_LENGHT = 4000;
     public static final int OBJ_PUBLICO_LENGHT = 4000;
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger logger = Logger.getLogger(Programas.class.getName());
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -104,11 +113,11 @@ public class Programas implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Fetch(FetchMode.SELECT)
     private List<Interesados> interesadosList;
-        
+
     @JoinColumn(name = "prog_pre_fk", referencedColumnName = "pre_pk")
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Presupuesto progPreFk;
-    
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "proyProgFk")
     @Fetch(FetchMode.SELECT)
     private Set<Proyectos> proyectosSet;
@@ -141,11 +150,13 @@ public class Programas implements Serializable {
      */
     @Column(name = "prog_activo")
     private Boolean activo;
-    
+    @Column(name = "prog_habilitado")
+    private Boolean progHabilitado = true;
+
     @JoinColumn(name = "prog_cro_fk", referencedColumnName = "cro_pk")
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Cronogramas progCroFk;
-    
+
     @JoinColumn(name = "prog_progindices_fk", referencedColumnName = "progind_pk")
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private ProgIndices progIndices;
@@ -168,12 +179,10 @@ public class Programas implements Serializable {
     @Column(name = "prog_version")
     // @Version
     private Integer progVersion;
-    
+
     @JoinColumn(name = "prog_obj_est_fk", referencedColumnName = "obj_est_pk")
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private ObjetivoEstrategico objetivoEstrategico;
-    
-    
 
     public Programas() {
     }
@@ -211,6 +220,10 @@ public class Programas implements Serializable {
         this.progAreaFk = progAreaFk;
     }
 
+    public String getNombreComboFicha() {
+        return this.progNombre + " (" + this.progPk + ")";
+    }
+
     public Integer getProgPk() {
         return progPk;
     }
@@ -232,7 +245,9 @@ public class Programas implements Serializable {
     }
 
     public void setProgDescripcion(String progDescripcion) {
-        this.progDescripcion = progDescripcion;
+        if (progDescripcion != null) {
+            this.progDescripcion = Jsoup.clean(progDescripcion, Whitelist.basic());
+        }
     }
 
     public String getProgObjetivo() {
@@ -240,7 +255,9 @@ public class Programas implements Serializable {
     }
 
     public void setProgObjetivo(String progObjetivo) {
-        this.progObjetivo = progObjetivo;
+        if (progObjetivo != null) {
+            this.progObjetivo = Jsoup.clean(progObjetivo, Whitelist.basic());
+        }
     }
 
     public String getProgObjPublico() {
@@ -248,15 +265,19 @@ public class Programas implements Serializable {
     }
 
     public void setProgObjPublico(String progObjPublico) {
-        this.progObjPublico = progObjPublico;
+        if (progObjPublico != null) {
+            this.progObjPublico = Jsoup.clean(progObjPublico, Whitelist.basic());
+        }
     }
 
     public String getProgFactorImpacto() {
-	return progFactorImpacto;
+        return progFactorImpacto;
     }
 
     public void setProgFactorImpacto(String progFactorImpacto) {
-	this.progFactorImpacto = progFactorImpacto;
+        if (progFactorImpacto != null) {
+            this.progFactorImpacto = Jsoup.clean(progFactorImpacto, Whitelist.basic());
+        }
     }
 
     public String getProgGrp() {
@@ -541,5 +562,13 @@ public class Programas implements Serializable {
      */
     public void setObjetivoEstrategico(ObjetivoEstrategico objetivoEstrategico) {
         this.objetivoEstrategico = objetivoEstrategico;
+    }
+
+    public Boolean getProgHabilitado() {
+        return progHabilitado;
+    }
+
+    public void setProgHabilitado(Boolean progHabilitado) {
+        this.progHabilitado = progHabilitado;
     }
 }

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class MailsTemplateValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(MailsTemplateValidacion.class.getName());   
 
     public static boolean validar(MailsTemplate mail) throws BusinessException {
         BusinessException be = new BusinessException();

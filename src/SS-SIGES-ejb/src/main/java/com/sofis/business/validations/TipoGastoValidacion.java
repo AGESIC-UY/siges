@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class TipoGastoValidacion {
     
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(TipoGastoValidacion.class.getName());
 
     public static boolean validar(TipoGasto tipoGasto) throws BusinessException {
         BusinessException be = new BusinessException();
@@ -24,7 +24,7 @@ public class TipoGastoValidacion {
             be.addError(MensajesNegocio.ERROR_TIPO_GASTO_NULL);
         } else {
             if (StringsUtils.isEmpty(tipoGasto.getTipogasNombre())) {
-                be.addError(MensajesNegocio.ERROR_TIPO_GASTO_DESC);
+                be.addError(MensajesNegocio.ERROR_TIPO_GASTO_NOM);
             }
 
             if (tipoGasto.getTipogasOrgFk() == null) {

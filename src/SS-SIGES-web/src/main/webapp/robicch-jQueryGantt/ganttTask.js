@@ -79,7 +79,7 @@ function Task(id, name, code, level, start, end, duration, taskPk, coordId) {
 
     /*INICIO ampliacion SOFIS - SIGES 1.0*/
     this.coordinador = (coordId != null && coordId != undefined ? coordId : 0);
-    this.esfuerzo = 0;
+    this.esfuerzo = 1;
     this.horasEstimadas;
     this.startLineaBase = 0;
     this.durationLineaBase = 0;
@@ -204,28 +204,32 @@ Task.prototype.setPeriod = function (start, end) {
     end = computeEnd(end);
     //SERGIO: 04/11/2015: si tiene hijos el end no puede ser mayor al maximo end de los hijos
     //BRUNO : 30/03/2017: si tiene hijos el start no puede ser menor al minimo start de los hijos
+    console.log("ajustar fechas de los entregables");
     var children = this.getChildren();
     var maxEnd = 0;
     var minStart = 0;
     for (var i = 0; i < children.length; i++) {
         //BRUNO : 27/04/2017: los hitos no aplican a temas de dependencias
 //        if (!children[i].endIsMilestone) {
-            maxEnd = Math.max(maxEnd, children[i].end);
-            minStart = Math.min(minStart, children[i].start);
-//        }
+        if (maxEnd === 0 || maxEnd < children[i].end) {
+            maxEnd = children[i].end;
+        }
+        if (minStart === 0 || minStart > children[i].start) {
+            minStart = children[i].start;
+        }
     }
-    if (maxEnd > 0) {
+    if (maxEnd !== 0) {
         end = maxEnd;
     }
-    if (minStart > 0) {
+    if (minStart !== 0) {
         start = minStart;
     }
 
-    if (this.end != end || this.end != wantedEndMillis) {
+    if (this.end !== end || this.end !== wantedEndMillis) {
         this.end = end;
         somethingChanged = true;
     }
-    if (this.start != start || this.start != wantedStartMillis) {
+    if (this.start !== start || this.start !== wantedStartMillis) {
         this.start = start;
         somethingChanged = true;
     }
@@ -463,33 +467,27 @@ function updateTree(task) {
         task.master.setErrorOnTransaction(GanttMaster.messages["TASK_HAS_CONSTRAINTS"] + " " + p.name, task);
         return false;
     }
-    var brothers = p.getChildren();
-    var maxStart = task.start;
-    var maxEnd = 0;
-    for (var i = 0; i < brothers.length; i++) {
-        if (brothers[i].start < maxStart) {
-            maxStart = brothers[i].start;
+    var childrens = p.getChildren();
+    var minStart = -1;
+    var maxEnd = -1;
+    for (var i = 0; i < childrens.length; i++) {
+        if (minStart < 0 || childrens[i].start < minStart) {
+            minStart = childrens[i].start;
         }
-        if (brothers[i].end > maxEnd) {
-            maxEnd = brothers[i].end;
+        if (maxEnd < 0 || childrens[i].end > maxEnd) {
+            maxEnd = childrens[i].end;
         }
     }
-    newStart = maxStart;
+    newStart = minStart;
     newEnd = maxEnd;
 
-    //propagate updates if needed
-    if (newStart != p.start || newEnd != p.end) {
-        //has external deps ?
-        if (p.hasExternalDep) {
-            task.master.setErrorOnTransaction(GanttMaster.messages["TASK_HAS_EXTERNAL_DEPS"] + "\n" + p.name, task);
-            return false;
-        }
-
-        var res = p.setPeriod(newStart, newEnd);
-        return res;
+    if (p.hasExternalDep) {
+        task.master.setErrorOnTransaction(GanttMaster.messages["TASK_HAS_EXTERNAL_DEPS"] + "\n" + p.name, task);
+        return false;
     }
+    var res = p.setPeriod(newStart, newEnd);
+    return res;
 
-    return true;
 }
 
 //<%---------- CHANGE STATUS ---------------------- --%>

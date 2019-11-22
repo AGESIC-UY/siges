@@ -25,7 +25,7 @@ import org.agesic.siges.visualizador.web.ws.Organizaciones;
  */
 public class VisualizadorWSUtils {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(VisualizadorWSUtils.class.getName());
 
     public static XMLGregorianCalendar dateToXMLGregorianCalendar(Long l) {
         if (l != null) {

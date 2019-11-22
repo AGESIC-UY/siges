@@ -18,9 +18,9 @@ import javax.persistence.Query;
  */
 public class EntHistLineaBaseDAO extends HibernateJpaDAOImp<EntHistLineaBase, Integer> implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = Logger.getLogger(EntHistLineaBaseDAO.class.getName());
+    
     public EntHistLineaBaseDAO(EntityManager em) {
         super(em);
     }

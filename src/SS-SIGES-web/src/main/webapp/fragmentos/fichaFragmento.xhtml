@@ -13,31 +13,49 @@
                 xmlns:of="http://omnifaces.org/functions">
 
     <script type="text/javascript">
-	// slight update to account for browsers not supporting e.which
-	function disableF5(e) {
-	    if ((e.which || e.keyCode) == 116)
-		e.preventDefault();
-	}
-	;
-	// To disable f5
-	// jQuery menor a 1.7
-	$(document).bind("keydown", disableF5);
-	/* OR jQuery >= 1.7 */
-	$(document).on("keydown", disableF5);
+        // slight update to account for browsers not supporting e.which
+        function disableF5(e) {
+            if ((e.which || e.keyCode) == 116)
+                e.preventDefault();
+        }
+        ;
+        // To disable f5
+        // jQuery menor a 1.7
+        $(document).bind("keydown", disableF5);
+        /* OR jQuery >= 1.7 */
+        $(document).on("keydown", disableF5);
     </script>
 
 
     <o:form id="ficha" 
-              rendered="#{!inicioMB.usuarioAdmin}">
+            useRequestURI="true"
+            includeRequestParams="true"
+            includeViewParams="true"
+            rendered="#{!inicioMB.usuarioAdmin}">
+
+        <f:metadata>
+            <o:viewParam name="programaProyectoId" value="#{fichaMB.fichaTO.proyProgId}"
+                         rendered="#{fichaMB.fichaTO != null and fichaMB.fichaTO.fichaFk != null}" />
+        </f:metadata>
+
         <ace:textEntry style="display: none" id="diaHoraServer" value="#{fichaMB.diaHoraServer}"/>
         <!-- Titulo -->
         <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
             <ice:outputLabel value="#{labels.tituloFicha}"/>
-            <ice:commandLink id="linkEditarFichaActual"
-                             action="#{fichaMB.recargarFicha()}" 
-                             value="(#{fichaMB.fichaTO.fichaFk})"
-                             rendered="#{fichaMB.fichaTO.fichaFk != null}"
-                             title="#{labels.actualizar}"/>
+            <!--            <ice:commandLink id="linkEditarFichaActual"
+                                         action="#{fichaMB.recargarFicha()}" 
+                                         value="(#{fichaMB.fichaTO.fichaFk})"
+                                         rendered="#{fichaMB.fichaTO.fichaFk != null}"
+                                         title="#{labels.actualizar}"/>-->
+
+            <h:link id="linkEditarFichaActual"
+                    outcome="IR_A_EDITAR_FICHA" 
+                    rendered="#{fichaMB.fichaTO.fichaFk != null}"
+                    value="(#{fichaMB.fichaTO.fichaFk})"
+                    title="#{labels.actualizar}">
+                <o:param name="programaProyectoId" value="#{fichaMB.fichaTO.proyProgId}" />
+            </h:link>
+
         </ice:panelGroup>
 
         <!-- Datos generales de la ficha -->
@@ -96,7 +114,8 @@
                                        rendered="#{fichaMB.fieldRendered('Descripcion')}"
                                        toolbar="Basic" immediate="true" language="es"
                                        skin="kama" saveOnSubmit="true"
-                                       styleClass="ancho100" height="80px" />
+                                       styleClass="ancho100" height="80px" 
+                                       converter="SanitizerAceRichTextConverter"/>
 
                     <ice:panelGroup styleClass="recuadro"
                                     rendered="#{!fichaMB.fieldRendered('Descripcion')}">
@@ -114,7 +133,8 @@
                                        rendered="#{fichaMB.fieldRendered('Objetivo')}"
                                        toolbar="Basic" immediate="true" language="es"
                                        skin="kama" saveOnSubmit="true"
-                                       styleClass="ancho100" height="80px" />
+                                       styleClass="ancho100" height="80px" 
+                                       converter="SanitizerAceRichTextConverter"/>
 
                     <ice:panelGroup styleClass="recuadro"
                                     rendered="#{!fichaMB.fieldRendered('Objetivo')}">
@@ -132,7 +152,8 @@
                                        rendered="#{fichaMB.fieldRendered('PubObjetivo')}"
                                        toolbar="Basic" immediate="true" language="es"
                                        skin="kama" saveOnSubmit="true" 
-                                       styleClass="ancho100" height="80px"/>
+                                       styleClass="ancho100" height="80px"
+                                       converter="SanitizerAceRichTextConverter"/>
                     <ice:panelGroup styleClass="recuadro"
                                     rendered="#{!fichaMB.fieldRendered('PubObjetivo')}">
                         <ice:outputText rendered="#{!fichaMB.fieldRendered('PubObjetivo')}"
@@ -140,8 +161,8 @@
                                         escape="false"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
-		
-		<ice:panelGroup styleClass="col-sm-12">
+
+                <ice:panelGroup styleClass="col-sm-12">
                     <ice:outputLabel value="#{labels.factorImpacto}:"/>
                     <ace:richTextEntry id="factorImpacto"
                                        value="#{fichaMB.fichaTO.factorImpacto}" 
@@ -149,7 +170,8 @@
                                        rendered="#{fichaMB.fieldRendered('FactorImpacto')}"
                                        toolbar="Basic" immediate="true" language="es"
                                        skin="kama" saveOnSubmit="true" 
-                                       styleClass="ancho100" height="80px"/>
+                                       styleClass="ancho100" height="80px"
+                                       converter="SanitizerAceRichTextConverter"/>
                     <ice:panelGroup styleClass="recuadro"
                                     rendered="#{!fichaMB.fieldRendered('FactorImpacto')}">
                         <ice:outputText rendered="#{!fichaMB.fieldRendered('FactorImpacto')}"
@@ -173,7 +195,8 @@
                                        rendered="#{fichaMB.fieldRendered('SitActual')}"
                                        toolbar="Basic" immediate="true" language="es" 
                                        skin="kama" saveOnSubmit="true" 
-                                       styleClass="ancho100" height="100px" />
+                                       styleClass="ancho100" height="100px" 
+                                       converter="SanitizerAceRichTextConverter"/>
                     <ice:panelGroup styleClass="recuadro"
                                     rendered="#{!fichaMB.fieldRendered('SitActual')}">
                         <ice:outputText rendered="#{!fichaMB.fieldRendered('SitActual')}"
@@ -181,7 +204,7 @@
                                         escape="false"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
-		
+
                 <ice:commandLink action="#{fichaMB.linkToGRP()}" 
                                  value="#{labels.ficha_grp_link}"
                                  title="#{labels.ficha_grp_link}"
@@ -213,7 +236,7 @@
                             <ice:outputLabel value="#{labels.ficha_estado_publicacion}:"
                                              styleClass="col-sm-3"/>
                             <ice:outputText value="#{fichaMB.estadoPublicacionStr()}"
-                                            styleClass="col-sm-3"/>
+                                            styleClass="col-sm-4" />
                         </ice:panelGroup>
 
                     </ice:panelGroup>
@@ -225,13 +248,15 @@
 
                     <ice:panelGroup styleClass="panelAcciones">
                         <ice:panelGroup styleClass="centrado panelBotones margen-sup">
-                            <ace:pushButton rendered="#{fichaMB.fieldRendered('retrocederEstadoFicha') and fichaMB.labelBtnEstAnterior != ''}" 
+                            <ace:pushButton rendered="#{fichaMB.fieldRendered('retrocederEstadoFicha') and fichaMB.labelBtnEstAnterior != ''}"
+                                            disabled="#{fichaMB.fieldDisabled('retrocederEstadoFicha') and fichaMB.labelBtnEstAnterior != ''}"
                                             style="margin-left: 10px;"
                                             value="#{fichaMB.labelBtnEstAnterior}" 
                                             action="#{fichaMB.retrocederEstadoFichaAction()}" 
                                             styleClass="boton principal atras"/>
 
                             <ace:pushButton rendered="#{fichaMB.fieldRendered('AprobarFicha') and fichaMB.labelBtnAprobar != ''}" 
+                                            disabled="#{fichaMB.fieldDisabled('AprobarFicha') and fichaMB.labelBtnAprobar != ''}" 
                                             style="margin-left: 10px;"
                                             value="#{fichaMB.labelBtnAprobar}" 
                                             action="#{fichaMB.guardarAprobarFichaAction()}" 
@@ -255,9 +280,9 @@
                             <f:selectItems value="#{fichaMB.listaAreasOrganismoCombo.items}"/>
                         </ice:selectOneMenu>
                     </ice:panelGroup>
-
+                    <!-- Acá va lo del label de Objetivos Estratégicos -->
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('ObjetivoEstrategico')}">
-                        <ice:outputLabel value="#{labels.objetivoEstrategicoFicha}:"
+                        <ice:outputLabel value="#{fichaMB.labelObjEstValue}:"  title="#{configuracionMB.tooltipObjetivoEstrategico.cnfValor}" 
                                          styleClass="col-sm-3"/>
                         <ice:selectOneMenu id="comboObjetivosEstrategicos" value="#{fichaMB.listaObjetivosEstrategicosCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('ObjetivoEstrategico')}"
@@ -265,7 +290,7 @@
                             <f:selectItems value="#{fichaMB.listaObjetivosEstrategicosCombo.items}"/>
                         </ice:selectOneMenu>
                     </ice:panelGroup>
-
+                    <!-- Acá termina lo del label de Objetivos Estratégicos -->
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Programas')}">
                         <ice:panelGroup styleClass="col-sm-9">
                             <ice:outputLabel value="#{labels.programaFicha}:"
@@ -410,7 +435,7 @@
 
                         <ace:textEntry value="#{fichaMB.preFicha.preBase}"
                                        styleClass="col-sm-4 textoCorto alinearDerecha"
-                                       style="margin-right:10px"
+                                       style="margin-right:10px; padding-right:10px;"
                                        disabled="#{fichaMB.fieldDisabled('FichaPresupuesto')}"
                                        converter="ImporteFormatConverter" />
 
@@ -421,16 +446,25 @@
                         </ice:selectOneMenu>
                     </ice:panelGroup>
                 </ice:panelGroup>
-
-                <ice:panelGroup id="fichaDerMapa" 
+                <!-- desde -->
+                <ice:panelGroup id="fichaDerAreasInfo" 
                                 rendered="#{fichaMB.fichaTO.proyecto}"
-                                styleClass="formulario margen-sup fondo-gris">
-                    <ice:outputLabel value="#{labels.ficha_ubicacion}:&nbsp;" />
-                    <ice:outputLabel style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 250px; display: inline-block; vertical-align: middle;" value="#{fichaMB.fichaTO.latlngProy.latlangDepFk != null? ''.concat(fichaMB.fichaTO.latlngProy.latlangDepFk.depNombre).concat(',').concat(fichaMB.fichaTO.latlngProy.latlangLoc).concat(',').concat(fichaMB.fichaTO.latlngProy.latlangBarrio)  : fichaMB.fichaTO.latlngProy.latlngLat != null and fichaMB.fichaTO.latlngProy.latlngLat > 0 ? 'Exterior'.concat(',').concat(fichaMB.fichaTO.latlngProy.latlangLoc).concat(',').concat(fichaMB.fichaTO.latlngProy.latlangBarrio) : ficha_ubicacion_sin_sel}"/>
-                    <ice:commandButton action="#{fichaMB.mapaUbicacionPopupAction()}"
-                                       styleClass="boton botonEditar iconoTabla"
-                                       rendered="true" partialSubmit="true" />
+                                styleClass="formulario margen-sup fondo-gris panelOtrosDatos">
+                    <ice:outputLabel value="#{labels.ficha_areas_titulo}"
+                                     styleClass="centrarDato subtitulo"/>
+
+                    <ul style="">
+                        <ui:repeat var="selection" value="#{fichaMB.areasTematicasSelected}">
+                            <li>
+                                <h:outputText value="#{selection.userObject.areatagNombre}" />
+                                <h:outputText value="(#{selection.userObject.areatagPadresStr})"
+                                              rendered="#{selection.userObject.areatagPadresStr != null}"/>
+                            </li>
+                        </ui:repeat>
+                    </ul>
                 </ice:panelGroup>
+                <!-- hasta -->
+
 
                 <ice:panelGroup id="fichaDerOtros" 
                                 rendered="#{fichaMB.fichaTO.proyecto}"
@@ -577,27 +611,27 @@
             </ice:panelGroup>
         </ice:panelGroup>
 
-	<ace:confirmationDialog id="confirmDialogAprobar"
-				widgetVar="confirmationEliminar"
-				message="#{labels.confirmacionEliminacion}"
-				header="#{labels.hConfirmacion}"
-				closable="true"
-				closeOnEscape="true"
-				severity="info"
-				modal="true"
-				position="center">
-	    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-		<h:commandButton id="yesAprobar"
-				 value="#{labels.si}"
-				 styleClass="boton principal botonContinuar"
-				 onclick="confirmationEliminar.hide()" 
-				 actionListener="#{fichaMB.eliminarFichaAction()}"/>
-		<h:commandButton id="noAprobar"
-				 value="#{labels.no}"
-				 styleClass="boton principal botonEliminar"
-				 onclick="confirmationEliminar.hide()"  />
-	    </h:panelGrid>
-	</ace:confirmationDialog>
+        <ace:confirmationDialog id="confirmDialogAprobar"
+                                widgetVar="confirmationEliminar"
+                                message="#{labels.confirmacionEliminacion}"
+                                header="#{labels.hConfirmacion}"
+                                closable="true"
+                                closeOnEscape="true"
+                                severity="info"
+                                modal="true"
+                                position="center">
+            <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                <h:commandButton id="yesAprobar"
+                                 value="#{labels.si}"
+                                 styleClass="boton principal botonContinuar"
+                                 onclick="confirmationEliminar.hide()" 
+                                 actionListener="#{fichaMB.eliminarFichaAction()}"/>
+                <h:commandButton id="noAprobar"
+                                 value="#{labels.no}"
+                                 styleClass="boton principal botonEliminar"
+                                 onclick="confirmationEliminar.hide()"  />
+            </h:panelGrid>
+        </ace:confirmationDialog>
 
         <ice:panelGroup styleClass="panelAcciones">
 
@@ -640,48 +674,71 @@
         </ice:panelGroup>
 
         <!-- Otros elementos de la ficha -->
-        <ice:panelGroup id="panelOtrosDatos" styleClass="otrosDatos row margen-sup">
+        <ice:panelGroup id="panelOtrosDatos" styleClass="otrosDatos margen-sup">
             <div id="fichas">
-                <ice:panelGroup id="fichaFragGrupo1" 
-                                styleClass="fichaFragGrupo1 col-sm-6 no-padding #{fichaMB.frameMax ? 'fichaFrameMax' : ''}"
-                                style="#{fichaMB.selectedMostrar == 3 or fichaMB.selectedMostrar == 4 or fichaMB.selectedMostrar == 1 or fichaMB.selectedMostrar == 5 ? 'width: 100%;' : ''}">
+                <ice:panelGroup id="fichaFragGrupo" 
+                                styleClass="fichaFragGrupo no-padding row #{fichaMB.frameMax ? 'fichaFrameMax' : ''}">
                     <!-- El panel del Gannt ID = 3 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosGantt.xhtml" />
+                    <ice:panelGroup styleClass="col-sm-3" 
+                                    style="#{fichaMB.selectedMostrar == 3 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosGantt.xhtml"  />
+                    </ice:panelGroup>
 
                     <!-- El panel del Presupuesto ID = 4 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosPresupuesto.xhtml" />
-
-                    <div class="clear"></div>
-
-                    <ice:panelGroup id="fichaFragGrupo3" styleClass="fichaFragGrupo3">
-                        <!-- El panel de Productos ID  = 5 -->
-                        <ui:include src="./../fragmentos/fichaFragmentosProductos.xhtml" />
-
-                        <!-- EL PANEL DE INTERESADOS ID = 1 -->
-                        <ui:include src="./../fragmentos/fichaFragmentosInteresados.xhtml" />
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Presupuesto')}" styleClass="col-sm-3" 
+                                    style="#{fichaMB.selectedMostrar == 4 ? 'width: 100%; padding-right:25px' : ''}">
+                        <ui:include src="./../fragmentos/fichaFragmentosPresupuesto.xhtml"/>
                     </ice:panelGroup>
-                </ice:panelGroup>
 
-                <ice:panelGroup id="fichaFragGrupo2" 
-                                styleClass="fichaFragGrupo2 col-sm-6"
-                                style="#{fichaMB.selectedMostrar == 0 or fichaMB.selectedMostrar == 2 or fichaMB.selectedMostrar == 6 or fichaMB.selectedMostrar == 7 ? 'width: 100%; padding:0;' : ''}">
+                    <!-- El panel de Productos ID  = 5 -->
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Productos')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 5 ? 'width: 100%; padding-right:25px' : ''}">
+                        <ui:include src="./../fragmentos/fichaFragmentosProductos.xhtml"/>
+                    </ice:panelGroup>
+
+                    <!-- EL PANEL DE INTERESADOS ID = 1 -->
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Interesados')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 1 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosInteresados.xhtml"/>
+                    </ice:panelGroup>
+
                     <!-- El panel de Riesgos ID = 2 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosRiesgos.xhtml" />
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Riesgos')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 2 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosRiesgos.xhtml"/>
+                    </ice:panelGroup>
 
                     <!-- El panel de Documentos ID  = 0 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosDocumentos.xhtml" />
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Documentos')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 0 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosDocumentos.xhtml"/>
+                    </ice:panelGroup>
 
                     <!-- EL PANEL DE INTERESADOS ID = 6 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosParticipantes.xhtml" />
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Colaboradores')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 6 ? 'width: 100%; padding-right:25px;' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosParticipantes.xhtml"/>
+                    </ice:panelGroup>
 
                     <!-- EL PANEL DE CALIDAD ID = 7 -->
-                    <ui:include src="./../fragmentos/fichaFragmentosCalidad.xhtml" />
-                </ice:panelGroup>
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Calidad')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 7 ? 'width: 100%; padding-right:25px' : ''}">
+                        <ui:include src="./../fragmentos/fichaFragmentosCalidad.xhtml"/>
+                    </ice:panelGroup>
 
-                <ice:panelGroup id="fichaFragGrupo4" 
-                                styleClass="fichaFragGrupo4 col-sm-6 no-padding"
-                                style="#{fichaMB.selectedMostrar == 8 ? 'width: 100%; padding:0;' : ''}">
-                    <ui:include src="./../fragmentos/fichaFragmentosMultimedia.xhtml" />
+
+                    <!-- PANEL MULTIMEDIA ID = 8 -->
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Multimedia')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 8 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosMultimedia.xhtml"/>
+                    </ice:panelGroup>
+
+                    <!-- PANEL LOCALIZACIONES ID = 9 -->
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Localizaciones')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 9 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosLocalizacion.xhtml"/>
+                    </ice:panelGroup>
+
                 </ice:panelGroup>
 
             </div>

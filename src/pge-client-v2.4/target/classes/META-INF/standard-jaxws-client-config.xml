@@ -1,9 +1,0 @@
-<jaxws-config xmlns="urn:jboss:jaxws-config:2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-				xmlns:javaee="http://java.sun.com/xml/ns/javaee"
-              xsi:schemaLocation="urn:jboss:jaxws-config:2.0 jaxws-config_2_0.xsd">
-
-   <client-config>
-      <config-name>Standard Client</config-name>
-   </client-config>
-
-</jaxws-config>

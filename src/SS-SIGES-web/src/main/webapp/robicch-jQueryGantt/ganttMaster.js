@@ -113,6 +113,13 @@ GanttMaster.prototype.init = function (place) {
                 && self.estado != 4
                 && !(self.currentTask.parent || self.currentTask.getChildren() > 0)
                 && self.currentTask.canDelete) {
+
+            if (self.currentTask.progress > 0) {
+                $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_DELETE_PROGRESS"]);
+                ganttDialogUtils.show();
+                return;
+            }
+
             self.beginTransaction();
 
             self.currentTask.deleteTask();
@@ -137,7 +144,6 @@ GanttMaster.prototype.init = function (place) {
             $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_DELETE"]);
             ganttDialogUtils.show();
         }
-
 
     }).bind("addAboveCurrentTask.gantt", function () {
         var factory = new TaskFactory();
@@ -174,6 +180,9 @@ GanttMaster.prototype.init = function (place) {
             if (self.currentTask.endIsMilestone) {
                 self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_HITOS_CHILDS"], self.currentTask);
                 doAdd = false;
+            } else if (self.currentTask.tieneProd) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+                doAdd = false;
             } else {
                 ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1, null, this.usuarioId);
                 row = self.currentTask.getRow() + 1;
@@ -181,7 +190,7 @@ GanttMaster.prototype.init = function (place) {
         } else {
             ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
         }
-        
+
         if (doAdd) {
             var task = self.addTask(ch, row);
             if (task) {
@@ -195,14 +204,32 @@ GanttMaster.prototype.init = function (place) {
     }).bind("indentCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
-            self.currentTask.indent();
+            
+            var taskAbove = self.tasks[self.currentTask.getRow() - 1];
+            
+            // Check if task above has a product when current task will be the child
+            if (taskAbove !== null && taskAbove.tieneProd && taskAbove.level === self.currentTask.level) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+            } else {
+                self.currentTask.indent();
+            }
+            
             self.endTransaction();
         }
 
     }).bind("outdentCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
-            self.currentTask.outdent();
+            
+            var taskBelow = self.tasks[self.currentTask.getRow() + 1];
+            
+            // Check if outdent generate children when current task has a product
+            if (taskBelow !== undefined && taskBelow !== null && taskBelow.level === self.currentTask.level && self.currentTask.tieneProd) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+            } else {
+                self.currentTask.outdent();
+            }
+            
             self.endTransaction();
         }
 
@@ -228,6 +255,81 @@ GanttMaster.prototype.init = function (place) {
         self.undo();
     }).bind("redo.gantt", function () {
         self.redo();
+    }).bind("copyCurrentTask.gantt", function () {
+
+        if (!self.currentTask) {
+            $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_CLONE_EMPTY"]);
+            ganttDialogUtils.show();
+            return;
+        }
+
+        if (self.currentTask.level === 0) {
+            $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_CLONE_LEVEL_0"]);
+            ganttDialogUtils.show();
+            return;
+        }
+
+        var factory = new TaskFactory();
+        self.beginTransaction();
+        var ch;
+        var row = 0;
+        var doAdd = true;
+        if (self.currentTask) {
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1, null, this.usuarioId);
+            row = self.currentTask.getRow() + 1;
+        } else {
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
+        }
+        if (doAdd) {
+            var task = self.addTask(ch, row);
+
+            task.name = self.currentTask.name;
+            //task.code = self.currentTask.code;
+            task.level = self.currentTask.level;
+            task.status = self.currentTask.status;
+            task.start = self.currentTask.start;
+            task.duration = self.currentTask.duration;
+            task.end = self.currentTask.end;
+            task.startIsMilestone = self.currentTask.startIsMilestone;
+            task.endIsMilestone = self.currentTask.endIsMilestone;
+            task.collapsed = self.currentTask.collapsed;
+            task.assigs = self.currentTask.assigs;
+            task.depends = self.currentTask.depends;
+            task.description = self.currentTask.description;
+            task.coordinador = self.currentTask.coordinador;
+            task.esfuerzo = self.currentTask.esfuerzo;
+            task.horasEstimadas = self.currentTask.horasEstimadas;
+            //No se copia la línea base
+            //task.startLineaBase = self.currentTask.startLineaBase;
+            //task.durationLineaBase = self.currentTask.durationLineaBase;
+            //task.endLineaBase = self.currentTask.endLineaBase;
+            task.parent = self.currentTask.parent;
+
+            task.canDelete = true;
+            task.tieneProd = false;
+            task.relevantePMO = self.currentTask.relevantePMO;
+            task.estadoTask = self.currentTask.estadoTask;
+            task.inicioProyecto = self.currentTask.inicioProyecto;
+            task.finProyecto = self.currentTask.finProyecto;
+            task.setPeriodo = self.currentTask.setPeriodo;
+
+            if (task) {
+                task.rowElement.click();
+                task.rowElement.find("[name=name]").focus();
+            }
+
+            if (self.currentTask.parent) {
+                self.currentTask.moveUp();
+            }
+        }
+
+        self.endTransaction();
+        /*
+         * 26-06-2018 Nico: Se cambia la asignación por "self.gantt.redrawTasks();" ya que antes era "self.redrawTasks();" y daba un error en la consola del navegador
+         */
+        self.gantt.redrawTasks();
+        self.redraw();
+
     });
 };
 
@@ -248,7 +350,9 @@ GanttMaster.messages = {
     "GANTT_QUARTER_SHORT": "GANTT_QUARTER_SHORT",
     "GANTT_SEMESTER_SHORT": "GANTT_SEMESTER_SHORT",
     "GANTT_CANNOT_DELETE": "GANTT_CANNOT_DELETE",
-    "GANTT_CANNOT_ADD_HITOS_CHILDS": "GANTT_CANNOT_ADD_HITOS_CHILDS"
+    "GANTT_CANNOT_ADD_HITOS_CHILDS": "GANTT_CANNOT_ADD_HITOS_CHILDS",
+    "GANTT_CANNOT_CLONE_LEVEL_0": "GANTT_CANNOT_CLONE_LEVEL_0",
+    "GANTT_CANNOT_CLONE_EMPTY": "GANTT_CANNOT_CLONE_EMPTY"
 };
 
 
@@ -285,7 +389,7 @@ GanttMaster.prototype.addTask = function (task, row) {
     ////console.debug("master.addTask",task,row,this);
     task.master = this; // in order to access controller from task
 
-    //BRUNO 28-04-2017: quedamos con Carlos Facal en que no se pueden agregar hitos en los hitos.
+    //BRUNO 28-04-2017: quedamos con Carlos Facal en que no se pueden agregar hijos en los hitos.
     if (task.getParent()) {
         if (task.getParent().endIsMilestone) {
             this.setErrorOnTransaction(
@@ -353,6 +457,9 @@ GanttMaster.prototype.loadProject = function (project) {
     //console.log("project:");
     //console.log(project);
 
+    self = this;
+
+    console.log("loadProject GANTT");
     this.cronoPk = project.cronoPk;
     this.fichaPk = project.fichaPk;
     this.fichaTipo = project.fichaTipo;
@@ -386,12 +493,16 @@ GanttMaster.prototype.loadProject = function (project) {
     this.loadTasks(project.tasks, project.selectedRow);
     this.deletedTaskIds = [];
     this.endTransaction();
-    var self = this;
     this.gantt.element.oneTime(200, function () {
-        self.gantt.centerOnToday()
+        self.gantt.centerOnToday();
     });
 
-    if (self.estado == 4 || self.estado == 5) {
+    // 01-06-2018 Nico: Si fija si es PM para desactivar los botones del GANTT
+
+    var isPM = this.isPM;
+
+
+    if (self.estado == 4 || self.estado == 5 || !isPM) {
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');
         document.getElementById("addBelowBtn").setAttribute('disabled', 'true');
         document.getElementById("indentBtn").setAttribute('disabled', 'true');
@@ -399,8 +510,15 @@ GanttMaster.prototype.loadProject = function (project) {
         document.getElementById("moveUpBtn").setAttribute('disabled', 'true');
         document.getElementById("moveDownBtn").setAttribute('disabled', 'true');
         document.getElementById("deleteBtn").setAttribute('disabled', 'true');
+        document.getElementById("copyBtn").setAttribute('disabled', 'true');
     }
-    if (!self.canWrite && !self.isPMO) {
+
+    /*
+     *  12-06-2018 Nico: Se agrega como condición en este if que el estado del proyecto sea finalizado,
+     *          de esta manera, no se le permite al usuario clickear en el botón "Guardar"
+     */
+
+    if (!self.canWrite && !self.isPMO || self.estado == 5) {
         document.getElementById("guardarBtn").setAttribute('disabled', 'true');
     }
 };
@@ -431,7 +549,7 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
          }
          }*/
 
-        this.tasks.push(task);  //append task at the end
+        this.tasks.push(task);  //append task at the end  
     }
 
     //var prof=new Profiler("gm_loadTasks_addTaskLoop");
@@ -462,8 +580,16 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
 
     // re-select old row if tasks is not empty
     if (this.tasks && this.tasks.length > 0) {
+
+        //console.log("Entra al if de selected row?  ------> con el valor:  -------->  " + selectedRow + "   y con currentTask: ----->  " + this.currentTask +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
+
         selectedRow = selectedRow ? selectedRow : 0;
+
+        //console.log("Entre lineas del if de selected row?  ------> con el valor:  -------->  " + selectedRow + "               le damos un nivel mas de granularidad this.tasks[selectedRow].rowElement: ------> " + this.tasks[selectedRow].rowElement +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
+
         this.tasks[selectedRow].rowElement.click();
+
+        //console.log("Sale del if de selected row?  ------> con el valor:  -------->  " + selectedRow + "   y con currentTask: ----->  " + this.currentTask +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
     }
 };
 
@@ -500,6 +626,7 @@ GanttMaster.prototype.changeTaskDates = function (task, start, end) {
 
 
 GanttMaster.prototype.moveTask = function (task, newStart) {
+    console.debug("-> moveTask: " + task);
     return task.moveTo(newStart, true);
 };
 
@@ -510,22 +637,15 @@ GanttMaster.prototype.taskIsChanged = function () {
 
     //refresh is executed only once every 50ms
     this.element.stopTime("gnnttaskIsChanged");
-    //var profilerext = new Profiler("gm_taskIsChangedRequest");
     this.element.oneTime(50, "gnnttaskIsChanged", function () {
-        ////console.debug("task Is Changed real call to redraw");
-        //var profiler = new Profiler("gm_taskIsChangedReal");
         master.editor.redraw();
         master.gantt.refreshGantt();
-        //profiler.stop();
     });
-    //profilerext.stop();
-//    alert("taskIsChanged: before { ganttChange: "+ ganttChange +", firstChangeTask: " + firstChangeTask +" }");
     if (firstChangeTask) {
         firstChangeTask = false;
     } else {
         ganttChange = true;
     }
-//    alert("taskIsChanged: after { ganttChange: "+ ganttChange +", firstChangeTask: " + firstChangeTask +" }");
 
 };
 
@@ -748,6 +868,17 @@ GanttMaster.prototype.endTransaction = function () {
                 this.gantt.originalStartMillis = task.start;
             if (this.gantt.originalEndMillis < task.end)
                 this.gantt.originalEndMillis = task.end;
+
+            // 04-06-2018 Nico: Se agregan estas condiciones para que se analice la fecha de la línea base
+            //          y así se muestren las fechas en todo el header del diagrama
+
+
+            console.log("GanttMaster ---> Inicio:" + task.startLineaBase + "<-------------> " + "Fin: " + task.endLineaBase);
+
+            if ((task.startLineaBase != 0) && (this.gantt.originalStartMillis > task.startLineaBase))
+                this.gantt.originalStartMillis = task.startLineaBase;
+            if ((task.endLineaBase != 0) && (this.gantt.originalEndMillis < task.endLineaBase))
+                this.gantt.originalEndMillis = task.endLineaBase;
 
         }
         this.taskIsChanged(); //enqueue for gantt refresh

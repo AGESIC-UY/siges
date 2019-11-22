@@ -38,6 +38,8 @@ import org.xml.sax.SAXException;
 @LocalBean
 @Interceptors({LoggedInterceptor.class})
 public class InicializacionBean {
+    
+    private static final Logger logger = Logger.getLogger(InicializacionBean.class.getName());
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     EntityManager em;

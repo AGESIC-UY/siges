@@ -67,8 +67,8 @@ public class ProyectosDelegate {
         return proyectoBean.obtenerProyPorIdEager(proyPk);
     }
 
-    public Proyectos moverProyecto(Proyectos p, SsUsuario usaurio) throws GeneralException{
-        return proyectoBean.moverProyecto(p, usaurio);
+    public Proyectos moverProyecto(Proyectos p, SsUsuario usaurio, boolean mismoOrganismo) throws GeneralException{
+        return proyectoBean.moverProyecto(p, usaurio, mismoOrganismo);
     }
 
     public Set<Proyectos> obtenerProyPorProgId(Integer fichaFk) {
@@ -151,8 +151,8 @@ public class ProyectosDelegate {
         return proyectoBean.buscarPorFiltro(filtro);
     }
 
-    public Proyectos exportarVisualizador(Integer fichaFk, SsUsuario usuario) {
-        return proyectoBean.exportarVisualizador(fichaFk, usuario);
+    public Proyectos exportarVisualizador(Integer fichaFk, SsUsuario usuario, Boolean todosLosMedia) {
+        return proyectoBean.exportarVisualizador(fichaFk, usuario, todosLosMedia);
     }
 
     public List<IdNombreTO> obtenerProyIdNombre(Integer usuid, Integer orgPk) {

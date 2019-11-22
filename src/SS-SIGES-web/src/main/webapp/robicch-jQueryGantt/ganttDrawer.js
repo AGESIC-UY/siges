@@ -62,7 +62,7 @@ Ganttalendar.prototype.create = function (zoom, originalStartmillis, originalEnd
 	var start = new Date(stMil);
 	var end = new Date(endMillis);
 
-	//console.log("getPeriod1 "  +start + " " + zoomLevel);
+	//console.log("getPeriod1 ---> Inicio:"  +start + " " + zoomLevel + "Fin: "  +end + " " + zoomLevel);
 
 	//reset hours
 	if (zoomLevel == "d") {

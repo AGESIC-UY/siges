@@ -47,8 +47,7 @@ public class NomenclatorBean {
     private EntityManagementBean emb;
     
     
-    private static final Logger logger
-            = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(NomenclatorBean.class.getName());
 
     public List<Pais> obtenerPaises() {
         return emb.getEntities(Pais.class.getName());

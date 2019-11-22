@@ -41,7 +41,7 @@ public class ProyReplanificacionBean {
     private EntityManager em;
     @Inject
     private DatosUsuario du;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProyReplanificacionBean.class.getName());
 
     //private String usuario;
     //private String origen;
@@ -81,7 +81,7 @@ public class ProyReplanificacionBean {
             throw new BusinessException(ex.getMessage());
         }
     }
-
+    
     public ProyReplanificacion obtenerSolicitudActiva(Integer fichaFk) {
         ProyReplanificacionDAO dao = new ProyReplanificacionDAO(em);
         CriteriaTO criteriaProy = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectoFk.proyPk", fichaFk);

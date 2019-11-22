@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class AreaValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AreaValidacion.class.getName());
 
     public static boolean validar(Areas area) throws BusinessException {
         BusinessException be = new BusinessException();

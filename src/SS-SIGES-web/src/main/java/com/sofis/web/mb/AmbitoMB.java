@@ -1,10 +1,10 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Ambito;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.AmbitoDelegate;
+import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import javax.inject.Inject;
 public class AmbitoMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(AmbitoMB.class.getName());
     private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
     private static final String AMBITO_NOMBRE = "ambNombre";
@@ -52,9 +52,6 @@ public class AmbitoMB implements Serializable {
     private Ambito ambitoEnEdicion;
 
     public AmbitoMB() {
-        filtroNombre = "";
-        listaResultado = new ArrayList<>();
-        ambitoEnEdicion = new Ambito();
     }
 
     public SofisPopupUI getRenderPopupEdicion() {
@@ -119,6 +116,15 @@ public class AmbitoMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        /*
+        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
+        */                
+        
+        filtroNombre = "";
+        listaResultado = new ArrayList<Ambito>();
+        ambitoEnEdicion = new Ambito();
+        
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -153,7 +159,17 @@ public class AmbitoMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                /*
+                *  18-06-2018 Inspección de código.
+                */
+                
+                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                
+                for(String iterStr : e.getErrores()){
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
+                }
+                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -166,7 +182,7 @@ public class AmbitoMB implements Serializable {
      * @return
      */
     public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<>();
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
         mapFiltro.put(AMBITO_NOMBRE, filtroNombre);
         listaResultado = ambitoDelegate.busquedaAmbitoFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
 
@@ -197,7 +213,18 @@ public class AmbitoMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            /*
+            *  18-06-2018 Inspección de código.
+            */
+
+            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
+            
+            
+            for(String iterStr : be.getErrores()){
+                 JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+             }
+
         }
         return null;
     }

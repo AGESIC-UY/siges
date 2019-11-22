@@ -29,7 +29,7 @@ public class ProySitActHistoricoBean {
     private EntityManager em;
     @Inject
     private DatosUsuario du;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProySitActHistoricoBean.class.getName());
 
     public List<ProySitactHistorico> obtenerHistoricoSitActTodos(Integer proyPk) {
         ProySitactHistoricoDAO dao = new ProySitactHistoricoDAO(em);

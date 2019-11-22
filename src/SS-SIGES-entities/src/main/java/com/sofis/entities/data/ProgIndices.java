@@ -31,263 +31,278 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "prog_indices")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ProgIndices.findAll", query = "SELECT p FROM ProgIndices p"),
-    @NamedQuery(name = "ProgIndices.findByProgindPk", query = "SELECT p FROM ProgIndices p WHERE p.progindPk = :progindPk"),
-    @NamedQuery(name = "ProgIndices.findByProgindRiesgoExpo", query = "SELECT p FROM ProgIndices p WHERE p.progindRiesgoExpo = :progindRiesgoExpo"),
-    @NamedQuery(name = "ProgIndices.findByProgindRiesgoUltact", query = "SELECT p FROM ProgIndices p WHERE p.progindRiesgoUltact = :progindRiesgoUltact"),
+	@NamedQuery(name = "ProgIndices.findAll", query = "SELECT p FROM ProgIndices p")
+	,
+    @NamedQuery(name = "ProgIndices.findByProgindPk", query = "SELECT p FROM ProgIndices p WHERE p.progindPk = :progindPk")
+	,
+    @NamedQuery(name = "ProgIndices.findByProgindRiesgoExpo", query = "SELECT p FROM ProgIndices p WHERE p.progindRiesgoExpo = :progindRiesgoExpo")
+	,
+    @NamedQuery(name = "ProgIndices.findByProgindRiesgoUltact", query = "SELECT p FROM ProgIndices p WHERE p.progindRiesgoUltact = :progindRiesgoUltact")
+	,
     @NamedQuery(name = "ProgIndices.findByProgindRiesgoAlto", query = "SELECT p FROM ProgIndices p WHERE p.progindRiesgoAlto = :progindRiesgoAlto")})
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ProgIndices implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "progind_pk")
-    private Integer progindPk;
-    @Column(name = "progind_riesgo_expo")
-    private Double progindRiesgoExpo;
-    @Column(name = "progind_riesgo_ultact")
-    @Temporal(TemporalType.DATE)
-    private Date progindRiesgoUltact;
-    @Column(name = "progind_riesgo_alto")
-    private Integer progindRiesgoAlto;
-    @Column(name = "progind_metodo_estado")
-    private Double progindMetodologiaEstado;
-    @Column(name = "progind_metodo_sin_aprobar")
-    private Boolean progindMetodologiaSinAprobar;
-    @Column(name = "progind_periodo_inicio")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date progindPeriodoInicio;
-    @Column(name = "progind_periodo_fin")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date progindPeriodoFin;
-    @Column(name = "progind_proy_actualizacion")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date proyActualizacion;
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "progind_pk")
+	private Integer progindPk;
+	@Column(name = "progind_riesgo_expo")
+	private Double progindRiesgoExpo;
+	@Column(name = "progind_riesgo_ultact")
+	@Temporal(TemporalType.DATE)
+	private Date progindRiesgoUltact;
+	@Column(name = "progind_riesgo_alto")
+	private Integer progindRiesgoAlto;
+	@Column(name = "progind_metodo_estado")
+	private Double progindMetodologiaEstado;
+	@Column(name = "progind_metodo_sin_aprobar")
+	private Boolean progindMetodologiaSinAprobar;
+	@Column(name = "progind_periodo_inicio")
+	@Temporal(javax.persistence.TemporalType.DATE)
+	private Date progindPeriodoInicio;
+	@Column(name = "progind_periodo_fin")
+	@Temporal(javax.persistence.TemporalType.DATE)
+	private Date progindPeriodoFin;
+	@Column(name = "progind_proy_actualizacion")
+	@Temporal(javax.persistence.TemporalType.DATE)
+	private Date proyActualizacion;
 
-    @Column(name = "progind_cal_ind")
-    private Double progindCalInd;
-    @Column(name = "progind_cal_pend")
-    private Integer progindCalPend;
+	@Column(name = "progind_cal_ind")
+	private Double progindCalInd;
+	@Column(name = "progind_cal_pend")
+	private Integer progindCalPend;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "progindpreProgindFk", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
-    private Set<ProgIndicesPre> progIndPreSet;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "progindpreProgindFk", fetch = FetchType.EAGER, orphanRemoval = true)
+	@Fetch(FetchMode.SELECT)
+	private Set<ProgIndicesPre> progIndPreSet;
 
-    //Calculados diarios que se materializan
-    //Avance
-    @Column(name = "progind_avance_par_azul")
-    private Integer progindAvanceParAzul;
-    @Column(name = "progind_avance_par_verde")
-    private Integer progindAvanceParVerde;
-    @Column(name = "progind_anvance_par_rojo")
-    private Integer progindAvanceParRojo;
-    @Column(name = "progind_avance_fin_azul")
-    private Integer progindAvanceFinAzul;
-    @Column(name = "progind_avance_fin_verde")
-    private Integer progindAvanceFinVerde;
-    @Column(name = "progind_anvance_fin_rojo")
-    private Integer progindAvanceFinRojo;
-    
-    @Column(name = "progind_fecha_act")
-    private Date progindFechaAct;
+	//Calculados diarios que se materializan
+	//Avance
+	@Column(name = "progind_avance_par_azul")
+	private Integer progindAvanceParAzul;
+	@Column(name = "progind_avance_par_verde")
+	private Integer progindAvanceParVerde;
+	@Column(name = "progind_anvance_par_rojo")
+	private Integer progindAvanceParRojo;
+	@Column(name = "progind_avance_fin_azul")
+	private Integer progindAvanceFinAzul;
+	@Column(name = "progind_avance_fin_verde")
+	private Integer progindAvanceFinVerde;
+	@Column(name = "progind_anvance_fin_rojo")
+	private Integer progindAvanceFinRojo;
 
-    public ProgIndices() {
-    }
+	@Column(name = "progind_fecha_act")
+	private Date progindFechaAct;
 
-    public ProgIndices(Integer progindPk) {
-        this.progindPk = progindPk;
-    }
+	@Column(name = "progind_fecha_act_color")
+	private Integer progindFechaActColor;
 
-    public Integer getProgindPk() {
-        return progindPk;
-    }
+	public ProgIndices() {
+	}
 
-    public void setProgindPk(Integer progindPk) {
-        this.progindPk = progindPk;
-    }
+	public ProgIndices(Integer progindPk) {
+		this.progindPk = progindPk;
+	}
 
-    public Double getProgindRiesgoExpo() {
-        return progindRiesgoExpo;
-    }
+	public Integer getProgindPk() {
+		return progindPk;
+	}
 
-    public void setProgindRiesgoExpo(Double progindRiesgoExpo) {
-        this.progindRiesgoExpo = progindRiesgoExpo;
-    }
+	public void setProgindPk(Integer progindPk) {
+		this.progindPk = progindPk;
+	}
 
-    public Date getProgindRiesgoUltact() {
-        return progindRiesgoUltact;
-    }
+	public Double getProgindRiesgoExpo() {
+		return progindRiesgoExpo;
+	}
 
-    public void setProgindRiesgoUltact(Date progindRiesgoUltact) {
-        this.progindRiesgoUltact = progindRiesgoUltact;
-    }
+	public void setProgindRiesgoExpo(Double progindRiesgoExpo) {
+		this.progindRiesgoExpo = progindRiesgoExpo;
+	}
 
-    public Integer getProgindRiesgoAlto() {
-        return progindRiesgoAlto;
-    }
+	public Date getProgindRiesgoUltact() {
+		return progindRiesgoUltact;
+	}
 
-    public void setProgindRiesgoAlto(Integer progindRiesgoAlto) {
-        this.progindRiesgoAlto = progindRiesgoAlto;
-    }
+	public void setProgindRiesgoUltact(Date progindRiesgoUltact) {
+		this.progindRiesgoUltact = progindRiesgoUltact;
+	}
 
-    public Double getProgindMetodologiaEstado() {
-        return progindMetodologiaEstado;
-    }
+	public Integer getProgindRiesgoAlto() {
+		return progindRiesgoAlto;
+	}
 
-    public void setProgindMetodologiaEstado(Double progindMetodologiaEstado) {
-        this.progindMetodologiaEstado = progindMetodologiaEstado;
-    }
+	public void setProgindRiesgoAlto(Integer progindRiesgoAlto) {
+		this.progindRiesgoAlto = progindRiesgoAlto;
+	}
 
-    public Boolean getProgindMetodologiaSinAprobar() {
-        return progindMetodologiaSinAprobar;
-    }
+	public Double getProgindMetodologiaEstado() {
+		return progindMetodologiaEstado;
+	}
 
-    public void setProgindMetodologiaSinAprobar(Boolean progindMetodologiaSinAprobar) {
-        this.progindMetodologiaSinAprobar = progindMetodologiaSinAprobar;
-    }
+	public void setProgindMetodologiaEstado(Double progindMetodologiaEstado) {
+		this.progindMetodologiaEstado = progindMetodologiaEstado;
+	}
 
-    public Date getProgindPeriodoInicio() {
-        return progindPeriodoInicio;
-    }
+	public Boolean getProgindMetodologiaSinAprobar() {
+		return progindMetodologiaSinAprobar;
+	}
 
-    public void setProgindPeriodoInicio(Date progindPeriodoInicio) {
-        this.progindPeriodoInicio = progindPeriodoInicio;
-    }
+	public void setProgindMetodologiaSinAprobar(Boolean progindMetodologiaSinAprobar) {
+		this.progindMetodologiaSinAprobar = progindMetodologiaSinAprobar;
+	}
 
-    public Date getProgindPeriodoFin() {
-        return progindPeriodoFin;
-    }
+	public Date getProgindPeriodoInicio() {
+		return progindPeriodoInicio;
+	}
 
-    public void setProgindPeriodoFin(Date progindPeriodoFin) {
-        this.progindPeriodoFin = progindPeriodoFin;
-    }
+	public void setProgindPeriodoInicio(Date progindPeriodoInicio) {
+		this.progindPeriodoInicio = progindPeriodoInicio;
+	}
 
-    public Date getProyActualizacion() {
-        return proyActualizacion;
-    }
+	public Date getProgindPeriodoFin() {
+		return progindPeriodoFin;
+	}
 
-    public void setProyActualizacion(Date proyActualizacion) {
-        this.proyActualizacion = proyActualizacion;
-    }
+	public void setProgindPeriodoFin(Date progindPeriodoFin) {
+		this.progindPeriodoFin = progindPeriodoFin;
+	}
 
-    public Double getProgindCalInd() {
-        return progindCalInd;
-    }
+	public Date getProyActualizacion() {
+		return proyActualizacion;
+	}
 
-    public void setProgindCalInd(Double progindCalInd) {
-        this.progindCalInd = progindCalInd;
-    }
+	public void setProyActualizacion(Date proyActualizacion) {
+		this.proyActualizacion = proyActualizacion;
+	}
 
-    public Integer getProgindCalPend() {
-        return progindCalPend;
-    }
+	public Double getProgindCalInd() {
+		return progindCalInd;
+	}
 
-    public void setProgindCalPend(Integer progindCalPend) {
-        this.progindCalPend = progindCalPend;
-    }
+	public void setProgindCalInd(Double progindCalInd) {
+		this.progindCalInd = progindCalInd;
+	}
 
-    public Set<ProgIndicesPre> getProgIndPreSet() {
-        return progIndPreSet;
-    }
+	public Integer getProgindCalPend() {
+		return progindCalPend;
+	}
 
-    public void setProgIndPreSet(Set<ProgIndicesPre> progIndPreSet) {
-        this.progIndPreSet = progIndPreSet;
-    }
+	public void setProgindCalPend(Integer progindCalPend) {
+		this.progindCalPend = progindCalPend;
+	}
 
-    public Integer getProgindAvanceParAzul() {
-        return progindAvanceParAzul;
-    }
+	public Set<ProgIndicesPre> getProgIndPreSet() {
+		return progIndPreSet;
+	}
 
-    public void setProgindAvanceParAzul(Integer progindAvanceParAzul) {
-        this.progindAvanceParAzul = progindAvanceParAzul;
-    }
+	public void setProgIndPreSet(Set<ProgIndicesPre> progIndPreSet) {
+		this.progIndPreSet = progIndPreSet;
+	}
 
-    public Integer getProgindAvanceParVerde() {
-        return progindAvanceParVerde;
-    }
+	public Integer getProgindAvanceParAzul() {
+		return progindAvanceParAzul;
+	}
 
-    public void setProgindAvanceParVerde(Integer progindAvanceParVerde) {
-        this.progindAvanceParVerde = progindAvanceParVerde;
-    }
+	public void setProgindAvanceParAzul(Integer progindAvanceParAzul) {
+		this.progindAvanceParAzul = progindAvanceParAzul;
+	}
 
-    public Integer getProgindAvanceParRojo() {
-        return progindAvanceParRojo;
-    }
+	public Integer getProgindAvanceParVerde() {
+		return progindAvanceParVerde;
+	}
 
-    public void setProgindAvanceParRojo(Integer progindAvanceParRojo) {
-        this.progindAvanceParRojo = progindAvanceParRojo;
-    }
-    
-    public Integer getProgindAvanceFinAzul() {
-        return progindAvanceFinAzul;
-    }
+	public void setProgindAvanceParVerde(Integer progindAvanceParVerde) {
+		this.progindAvanceParVerde = progindAvanceParVerde;
+	}
 
-    public void setProgindAvanceFinAzul(Integer progindAvanceFinAzul) {
-        this.progindAvanceFinAzul = progindAvanceFinAzul;
-    }
+	public Integer getProgindAvanceParRojo() {
+		return progindAvanceParRojo;
+	}
 
-    public Integer getProgindAvanceFinVerde() {
-        return progindAvanceFinVerde;
-    }
+	public void setProgindAvanceParRojo(Integer progindAvanceParRojo) {
+		this.progindAvanceParRojo = progindAvanceParRojo;
+	}
 
-    public void setProgindAvanceFinVerde(Integer progindAvanceFinVerde) {
-        this.progindAvanceFinVerde = progindAvanceFinVerde;
-    }
+	public Integer getProgindAvanceFinAzul() {
+		return progindAvanceFinAzul;
+	}
 
-    public Integer getProgindAvanceFinRojo() {
-        return progindAvanceFinRojo;
-    }
+	public void setProgindAvanceFinAzul(Integer progindAvanceFinAzul) {
+		this.progindAvanceFinAzul = progindAvanceFinAzul;
+	}
 
-    public void setProgindAvanceFinRojo(Integer progindAvanceFinRojo) {
-        this.progindAvanceFinRojo = progindAvanceFinRojo;
-    }
+	public Integer getProgindAvanceFinVerde() {
+		return progindAvanceFinVerde;
+	}
 
-    public Date getProgindFechaAct() {
-        return progindFechaAct;
-    }
+	public void setProgindAvanceFinVerde(Integer progindAvanceFinVerde) {
+		this.progindAvanceFinVerde = progindAvanceFinVerde;
+	}
 
-    public void setProgindFechaAct(Date progindFechaAct) {
-        this.progindFechaAct = progindFechaAct;
-    }
+	public Integer getProgindAvanceFinRojo() {
+		return progindAvanceFinRojo;
+	}
 
-    public int[] getProgindAvanceParcial() {
-        int azul = progindAvanceParAzul != null ? progindAvanceParAzul : 0;
-        int verde = progindAvanceParVerde != null ? progindAvanceParVerde : 0;
-        int rojo = progindAvanceParRojo != null ? progindAvanceParRojo : 0;
-        return new int[]{azul, verde, rojo};
-    }
+	public void setProgindAvanceFinRojo(Integer progindAvanceFinRojo) {
+		this.progindAvanceFinRojo = progindAvanceFinRojo;
+	}
 
-    public int[] getProgindAvanceFinal() {
-        int azul = progindAvanceFinAzul != null ? progindAvanceFinAzul : 0;
-        int verde = progindAvanceFinVerde != null ? progindAvanceFinVerde : 0;
-        int rojo = progindAvanceFinRojo != null ? progindAvanceFinRojo : 0;
-        return new int[]{azul, verde, rojo};
-    }
+	public Date getProgindFechaAct() {
+		return progindFechaAct;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (progindPk != null ? progindPk.hashCode() : 0);
-        return hash;
-    }
+	public void setProgindFechaAct(Date progindFechaAct) {
+		this.progindFechaAct = progindFechaAct;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        
-        if (!(object instanceof ProgIndices)) {
-            return false;
-        }
-        ProgIndices other = (ProgIndices) object;
-        if ((this.progindPk == null && other.progindPk != null) || (this.progindPk != null && !this.progindPk.equals(other.progindPk))) {
-            return false;
-        }
-        return true;
-    }
+	public int[] getProgindAvanceParcial() {
+		int azul = progindAvanceParAzul != null ? progindAvanceParAzul : 0;
+		int verde = progindAvanceParVerde != null ? progindAvanceParVerde : 0;
+		int rojo = progindAvanceParRojo != null ? progindAvanceParRojo : 0;
+		return new int[]{azul, verde, rojo};
+	}
 
-    @Override
-    public String toString() {
-        return "com.sofis.entities.data.ProgIndices[ progindPk=" + progindPk + " ]";
-    }
+	public int[] getProgindAvanceFinal() {
+		int azul = progindAvanceFinAzul != null ? progindAvanceFinAzul : 0;
+		int verde = progindAvanceFinVerde != null ? progindAvanceFinVerde : 0;
+		int rojo = progindAvanceFinRojo != null ? progindAvanceFinRojo : 0;
+		return new int[]{azul, verde, rojo};
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (progindPk != null ? progindPk.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+
+		if (!(object instanceof ProgIndices)) {
+			return false;
+		}
+		ProgIndices other = (ProgIndices) object;
+		if ((this.progindPk == null && other.progindPk != null) || (this.progindPk != null && !this.progindPk.equals(other.progindPk))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.sofis.entities.data.ProgIndices[ progindPk=" + progindPk + " ]";
+	}
+
+	public Integer getProgindFechaActColor() {
+		return progindFechaActColor;
+	}
+
+	public void setProgindFechaActColor(Integer progindFechaActColor) {
+		this.progindFechaActColor = progindFechaActColor;
+	}
 }

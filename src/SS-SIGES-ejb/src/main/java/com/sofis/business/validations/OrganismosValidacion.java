@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author Usuario
  */
 public class OrganismosValidacion {
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(OrganismosValidacion.class.getName());   
 
     public static boolean validar(Organismos org) throws BusinessException {
         logger.finest("Validar Organismo.");

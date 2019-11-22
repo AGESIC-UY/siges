@@ -33,7 +33,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-                    <ace:messages id="busquedaMsg" />
+<!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{fuenteFinanciamientoMB.buscar()}"/>
@@ -95,7 +95,16 @@
                             <h:outputText value="#{fuente.fueNombre}"/>
                         </ace:column>
 
-                        <ace:column headerText="#{labels.hEditar}" styleClass="columnaBoton">
+                        <ace:column headerText="#{labels.hHabilitar}">
+                            <ice:panelGroup title="#{labels.habilitar_deshabilitar}">
+                                <ace:checkboxButton value="#{fuente.fueHabilitada}" 
+                                                    valueChangeListener="#{fuenteFinanciamientoMB.fuenteHabilitadaChange(fuente)}">
+                                    <ace:ajax/>
+                                </ace:checkboxButton>
+                            </ice:panelGroup>
+                        </ace:column>
+
+                        <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 
                                                 action="#{fuenteFinanciamientoMB.editar(fuente.fuePk)}" />

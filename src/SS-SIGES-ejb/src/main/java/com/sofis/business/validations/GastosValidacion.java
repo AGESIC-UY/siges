@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class GastosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(GastosValidacion.class.getName());
 
     public static boolean validar(Gastos gasto) throws BusinessException {
 

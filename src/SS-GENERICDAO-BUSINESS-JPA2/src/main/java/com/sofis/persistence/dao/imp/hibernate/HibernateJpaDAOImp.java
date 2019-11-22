@@ -25,7 +25,7 @@ import org.hibernate.envers.Audited;
  */
 public class HibernateJpaDAOImp<T, ID extends Serializable> extends JpaDAOImp<T, ID> implements Serializable {
 
-    private static EntityManagerFactory emFactoryCustom = null;
+    protected static EntityManagerFactory emFactoryCustom = null;
 
     public HibernateJpaDAOImp(EntityManager em) {
         super(em);

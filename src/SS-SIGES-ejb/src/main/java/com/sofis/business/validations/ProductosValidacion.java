@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class ProductosValidacion {
 
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(ProductosValidacion.class.getName());
 
     public static boolean validar(Productos prod) throws BusinessException {
         BusinessException be = new BusinessException();
@@ -27,7 +27,7 @@ public class ProductosValidacion {
                 be.addError(MensajesNegocio.ERROR_PRODUCTO_ENTREGABLE);
             }
             if (StringsUtils.isEmpty(prod.getProdDesc())) {
-                be.addError(MensajesNegocio.ERROR_PRODUCTO_DESC);
+                be.addError(MensajesNegocio.ERROR_PRODUCTO_NOM);
             }
             if (prod.getProdFechaCrea() == null) {
                 be.addError(MensajesNegocio.ERROR_PRODUCTO_FECHA);

@@ -58,7 +58,7 @@ public class EntregablesBean {
 
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(ConstanteApp.LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(EntregablesBean.class.getName());
     @EJB
     private ProductosBean productosBean;
     @EJB
@@ -191,6 +191,11 @@ public class EntregablesBean {
                     // [BRUNO] 21/06/2017 si el avance real es negativo, tomo 0. porque el avance acumulado real de los productos no puede ser 0.
                     avanceReal = avanceReal < 0 ? 0 : avanceReal;
                     avancePesoTotal += avanceReal > totalPlan ? totalPlan * prod.getProdPeso() : avanceReal * prod.getProdPeso();
+                }
+
+                if((pesoPlanTotal == 0)){
+                    Integer valorReal = 100;
+                    return valorReal.doubleValue();
                 }
 
                 return pesoPlanTotal > 0 ? avancePesoTotal * 100 / pesoPlanTotal : 0d;
@@ -508,6 +513,7 @@ public class EntregablesBean {
                 //Calculo lo real y lo proyectado.
                 if (cal != null) {
                     if (ent.getEntInicioDate() != null && ent.getEntFinDate() != null) {
+                        cal = new GregorianCalendar();
                         cal.setTime(ent.getEntFinDate());
                         mes = cal.get(Calendar.MONTH) + 1;
                         anio = cal.get(Calendar.YEAR);
@@ -899,5 +905,10 @@ public class EntregablesBean {
     public List<Integer> proyPkEntSinParent() {
         EntregablesDAO dao = new EntregablesDAO(em);
         return dao.proyPkEntSinParent();
+    }
+    
+    public boolean entregableEsHito(Integer entPk) {
+        EntregablesDAO dao = new EntregablesDAO(em);
+        return dao.entregableEsHito(entPk);
     }
 }
