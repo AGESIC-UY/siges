@@ -7,7 +7,6 @@ import com.sofis.business.utils.GastosUtils;
 import com.sofis.business.utils.ProyectosUtils;
 import com.sofis.business.utils.RegistroHorasUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Calidad;
 import com.sofis.entities.data.Configuracion;
@@ -916,7 +915,7 @@ public class RegistroHorasMB implements Serializable {
     }
 
     public String tipoCalidadStr(Integer tipo) {
-        return calidadDelegate.tipoCalidadStr(tipo);
+        return calidadDelegate.tipoCalidadStr(tipo, inicioMB.getOrganismoSeleccionado());
     }
 
     public String valorColorTabla(String cod) {

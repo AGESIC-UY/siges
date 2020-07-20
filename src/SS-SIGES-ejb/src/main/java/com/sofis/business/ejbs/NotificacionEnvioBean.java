@@ -2,6 +2,7 @@ package com.sofis.business.ejbs;
 
 import com.sofis.business.properties.LabelsEJB;
 import com.sofis.business.utils.MailsTemplateUtils;
+import com.sofis.business.utils.ProgProyUtils;
 import com.sofis.data.daos.NotificacionEnvioDAO;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.codigueras.SsRolCodigos;
@@ -468,7 +469,7 @@ public class NotificacionEnvioBean {
 			NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk);
 
 			if (ni != null) {
-				String subject = LabelsEJB.getValue("notif_envio_subjet");
+				String subject = LabelsEJB.getValue("notif_envio_subjet", orgPk);
 
 				List<SsUsuario> usuariosDest = new ArrayList<>();
 				if (ni.getNotinstGerenteAdjunto()) {
@@ -494,6 +495,13 @@ public class NotificacionEnvioBean {
 				if (org != null) {
 					valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 				}
+				
+				String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
+				valores.put(MailVariables.URL_SISTEMA, urlSistema);
+
+				String urlProyecto = ProgProyUtils.obtenerURL(urlSistema, proy);
+				valores.put(MailVariables.URL_PROYECTO, urlProyecto);
+				
 				String mensaje = MailsTemplateUtils.instanciarConHashMap(ni.getNotinstNotFk().getNotMsg(), valores);
 
 				final String subjectThread = subject;

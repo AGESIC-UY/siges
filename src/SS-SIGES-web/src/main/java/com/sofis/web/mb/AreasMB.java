@@ -113,7 +113,7 @@ public class AreasMB implements Serializable {
             area.setAreaHabilitada(!area.getAreaHabilitada());
             areasDelegate.guardarArea(area);
             buscar();
-            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success", inicioMB.getOrganismoSeleccionado()));
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);

@@ -69,6 +69,7 @@ public class NotificacionBean {
 		List<Organismos> organismos = organismoBean.obtenerTodos();
 		if (organismos != null) {
 			for (Organismos org : organismos) {
+				Integer orgPk = org.getOrgPk();
 				List<Notificacion> notifList = obtenerTodosPorOrg(org.getOrgPk());
 				Map<String, Notificacion> notifMap = new HashMap<>();
 				if (notifList != null) {
@@ -78,23 +79,21 @@ public class NotificacionBean {
 				}
 
 				Notificacion[] notifArr = new Notificacion[]{
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_1, LabelsEJB.getValue("notif_cod_riesgos_1_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_1_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_2, LabelsEJB.getValue("notif_cod_riesgos_2_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_2_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_INICIO, LabelsEJB.getValue("notif_cod_inicio_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_inicio_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PLANIFICACION, LabelsEJB.getValue("notif_cod_planificacion_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_planificacion_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, LabelsEJB.getValue("notif_cod_actualizacion_1_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_1_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, LabelsEJB.getValue("notif_cod_actualizacion_2_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_2_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_1, LabelsEJB.getValue("notif_cod_presupuesto_1_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_1_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, LabelsEJB.getValue("notif_cod_presupuesto_2_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_2_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, LabelsEJB.getValue("notif_cod_presupuesto_3_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_3_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, LabelsEJB.getValue("notif_cod_presupuesto_4_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_4_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, LabelsEJB.getValue("notif_cod_presupuesto_5_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_5_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, LabelsEJB.getValue("notif_cod_cronograma_1_desc"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cronograma_1_mail")),
-					/**
-					 * 26-07-2017
-					 */
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CAMBIO_FASE_PROY_1, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail")),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ELIMINACION_PROY_1, LabelsEJB.getValue("notif_cod_eliminar_1_mail"), null, true, false, false, false, LabelsEJB.getValue("notif_cod_eliminar_1_mail")),};
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_1, LabelsEJB.getValue("notif_cod_riesgos_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_1_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_2, LabelsEJB.getValue("notif_cod_riesgos_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_2_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_INICIO, LabelsEJB.getValue("notif_cod_inicio_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_inicio_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PLANIFICACION, LabelsEJB.getValue("notif_cod_planificacion_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_planificacion_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, LabelsEJB.getValue("notif_cod_actualizacion_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_1_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, LabelsEJB.getValue("notif_cod_actualizacion_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_2_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_1, LabelsEJB.getValue("notif_cod_presupuesto_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_1_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, LabelsEJB.getValue("notif_cod_presupuesto_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_2_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, LabelsEJB.getValue("notif_cod_presupuesto_3_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_3_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, LabelsEJB.getValue("notif_cod_presupuesto_4_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_4_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, LabelsEJB.getValue("notif_cod_presupuesto_5_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_5_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, LabelsEJB.getValue("notif_cod_cronograma_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cronograma_1_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CAMBIO_FASE_PROY_1, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail", orgPk)),
+					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ELIMINACION_PROY_1, LabelsEJB.getValue("notif_cod_eliminar_1_mail", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_eliminar_1_mail", orgPk))
+				};
 
 				for (int i = 0; i < notifArr.length; i++) {
 					if (!notifMap.containsKey(notifArr[i].getNotCod())) {

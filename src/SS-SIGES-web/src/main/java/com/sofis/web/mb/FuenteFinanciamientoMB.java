@@ -231,7 +231,7 @@ public class FuenteFinanciamientoMB implements Serializable {
 
             buscar();
             
-            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
         } catch (GeneralException ex) {

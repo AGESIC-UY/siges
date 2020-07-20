@@ -21,6 +21,9 @@ import java.util.HashSet;
  */
 public class ProgProyUtils {
 
+    public static final String URI_PROYECTO = "/SS-SIGES-web/paginasPrivadas/ficha.jsf?programaProyectoId=2-";
+    public static final String URI_PROGRAMA = "/SS-SIGES-web/paginasPrivadas/ficha.jsf?programaProyectoId=1-";
+    
 	public static Object fichaTOToProgProy(FichaTO fichaTO) {
 
 		if (fichaTO.isPrograma()) {
@@ -343,4 +346,15 @@ public class ProgProyUtils {
 		}
 		return false;
 	}
+	
+    public static String obtenerURL(String urlSistema, Proyectos proy) {
+
+        return urlSistema + URI_PROYECTO + proy.getProyPk();
+    }
+
+    public static String obtenerURL(String urlSistema, Programas prog) {
+
+        return urlSistema + URI_PROGRAMA + prog.getProgPk();
+    }
+
 }

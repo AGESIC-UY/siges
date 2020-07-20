@@ -78,7 +78,7 @@ public class FuenteProcedimientoCompraMB implements Serializable {
             fuenteProcedimientoCompraDelegate.guardar(fuenteProcedimientoCompra);
             this.cerrarPopup();
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("fue_proc_comp_form_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("fue_proc_comp_form_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
@@ -88,10 +88,10 @@ public class FuenteProcedimientoCompraMB implements Serializable {
             }
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formFueProCom", LabelsEJB.getValue("fue_proc_comp_form_error_tecnico"), null);
+            JSFUtils.agregarMsgError("formFueProCom", Labels.getValue("fue_proc_comp_form_error_tecnico"), null);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formFueProCom", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("formFueProCom", Labels.getValue("ERR_GRAL"), null);
         }
     }
 
@@ -119,20 +119,20 @@ public class FuenteProcedimientoCompraMB implements Serializable {
         try {
             fuenteProcedimientoCompraDelegate.eliminar(cenCos);
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("fue_proc_comp_delete_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("fue_proc_comp_delete_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
             logger.log(Level.INFO, ex.getMessage());
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("fue_proc_comp_delete_error_constraint"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("fue_proc_comp_delete_error_constraint"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("fue_proc_comp_delete_error_tecnico"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("fue_proc_comp_delete_error_tecnico"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("ERR_GRAL"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
     }

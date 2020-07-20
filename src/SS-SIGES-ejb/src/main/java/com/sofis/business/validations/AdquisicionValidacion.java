@@ -16,7 +16,7 @@ public class AdquisicionValidacion {
 
     private static final Logger logger = Logger.getLogger(AdquisicionValidacion.class.getName());
 
-    public static boolean validar(Adquisicion adq) throws BusinessException {
+    public static boolean validar(Adquisicion adq, Integer orgPk) throws BusinessException {
         logger.finest("Validar Adquisicion.");
         BusinessException be = new BusinessException();
 
@@ -26,7 +26,7 @@ public class AdquisicionValidacion {
             if (StringsUtils.isEmpty(adq.getAdqNombre())) {
                 be.addError(MensajesNegocio.ERROR_ADQISICION_NOMBRE);
             } else if (adq.getAdqNombre().length() > Adquisicion.NOMBRE_LENGHT) {
-                be.addError(Utils.mensajeLargoCampo("adquisicion_nombre", Adquisicion.NOMBRE_LENGHT));
+                be.addError(Utils.mensajeLargoCampo("adquisicion_nombre", orgPk, Adquisicion.NOMBRE_LENGHT));
             }
 
             if (adq.getAdqFuente() == null) {
@@ -38,10 +38,7 @@ public class AdquisicionValidacion {
             }
             if (adq.getAdqCompartida() != null && adq.getAdqCompartida() && adq.getSsUsuarioCompartida() == null) {
                 be.addError(MensajesNegocio.ERROR_ADQISICION_USUARIO_COMPARTIDA_REQUERIDO);
-            } 
-            if (adq.getAdqIdAdquisicion() == null || adq.getAdqIdAdquisicion() <= 0) {
-                be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_VACIO);
-            } 
+            }
         }
 
         if (be.getErrores().size() > 0) {

@@ -230,8 +230,8 @@
                 <ice:panelGrid rendered="#{not empty fichaMB.fichaTO.riesgos}" width="100%" >
                     <ice:panelGroup styleClass="funcionalidadesResultado">
                         <ace:dataExporter target="tblResultadosRiegos" 
-                                          label="Exportar a Planilla Electrónica" 
-                                          type="xls" fileName="Riesgos_Exportacion"
+                                          label="#{labels.exportarPlanilla}" 
+                                          type="xls" fileName="#{labels.exportarPlanillaRiesgos}"
                                           includeHeaders="true" />
                     </ice:panelGroup>
                     <ace:dataTable id="tblResultadosRiegos" 

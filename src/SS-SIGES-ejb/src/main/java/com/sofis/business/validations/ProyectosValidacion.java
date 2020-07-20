@@ -47,7 +47,7 @@ public class ProyectosValidacion {
                 if (StringsUtils.isEmpty(proy.getProyNombre())) {
                     be.addError(MensajesNegocio.ERROR_FICHA_NOMBRE);
                 } else if (proy.getProyNombre().length() > 100) {
-                    be.addError(Utils.mensajeLargoCampo("nombreProgProy", 100));
+                    be.addError(Utils.mensajeLargoCampo("nombreProgProy", orgPk, 100));
                 }
                 if (proy.getProyAreaFk() == null) {
                     be.addError(MensajesNegocio.ERROR_FICHA_AREA);
@@ -78,7 +78,7 @@ public class ProyectosValidacion {
 
                 if (!StringsUtils.isEmpty(proy.getProySituacionActual())
                         && proy.getProySituacionActual().length() > 20000) {
-                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", 20000));
+                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", orgPk, 20000));
                 }
 
                 if (proy.getProyPreFk() != null) {
@@ -119,12 +119,12 @@ public class ProyectosValidacion {
                         if (StringsUtils.isEmpty(proy.getProyObjetivo())) {
                             be.addError(MensajesNegocio.ERROR_FICHA_OBJETIVO);
                         } else if (proy.getProyObjetivo().length() > 4000) {
-                            be.addError(Utils.mensajeLargoCampo("objFicha", 4000));
+                            be.addError(Utils.mensajeLargoCampo("objFicha", orgPk, 4000));
                         }
                         if (StringsUtils.isEmpty(proy.getProyObjPublico())) {
                             be.addError(MensajesNegocio.ERROR_FICHA_PUBLICO_OBJ);
                         } else if (proy.getProyObjPublico().length() > 4000) {
-                            be.addError(Utils.mensajeLargoCampo("objPublicoFicha", 4000));
+                            be.addError(Utils.mensajeLargoCampo("objPublicoFicha", orgPk, 4000));
                         }
                     }
                 }

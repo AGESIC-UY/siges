@@ -127,4 +127,6 @@ public class ConfiguracionCodigos {
     public static String INCLUIR_CALCULAR_FINALIZADOS = "INCLUIR_CALCULAR_FINALIZADOS";
     public static String GERENTES_ASIGNAN_AREAS_TEMATICAS = "GERENTES_ASIGNAN_AREAS_TEMATICAS";
     public static String LARGO_MAXIMO_ID_ADQUISICION = "LARGO_MAXIMO_ID_ADQUISICION";
+
+    public static String URL_SISTEMA = "URL_SISTEMA";
 }

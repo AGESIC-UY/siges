@@ -69,8 +69,8 @@ public class CalidadDelegate {
         calidadBean.eliminar(calPk);
     }
 
-    public String tipoCalidadStr(Integer tipo) {
-        return calidadBean.tipoCalidadStr(tipo);
+    public String tipoCalidadStr(Integer tipo, Integer orgPk) {
+        return calidadBean.tipoCalidadStr(tipo, orgPk);
     }
     
     public String valorColorTabla(String cod) {

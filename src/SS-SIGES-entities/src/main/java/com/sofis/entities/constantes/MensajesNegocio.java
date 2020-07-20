@@ -103,6 +103,7 @@ public class MensajesNegocio {
     public final static String ERROR_ADQUISICION_FECHA_INICIO_MAYOR_FECHA_EJECUCION = "error_adquisicion_fecha_inicio_mayor_ejecucion";
     public final static String ERROR_ADQUISICION_TIPO_ADQUISICION_VACIO = "error_adquisicion_tipo_adquisicion_vacio";
     public final static String ERROR_ADQUISICION_ID_ADQUISICION_VACIO = "error_adquisicion_id_adquisicion_vacio";
+    public final static String ERROR_ADQUISICION_ID_ADQUISICION_NO_ENTERO = "error_adquisicion_id_adquisicion_no_entero";
     public final static String ERROR_ADQUISICION_ID_ADQUISICION_SUPERA_LARGO_MAXIMO = "error_adquisicion_id_adquisicion_supera_largo_maximo";
     public final static String ERROR_ADQUISICION_CENTRO_COSTO_VACIO = "error_adquisicion_centro_costo_vacio";
     public final static String ERROR_ADQUISICION_SIN_PROVEEDOR = "error_adquisicion_sin_proveedor";

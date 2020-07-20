@@ -1774,7 +1774,7 @@ public class FichaMB implements Serializable {
 
     public String solCambioEstadoStr() {
         if (fichaTO.getEstadoPendiente() != null) {
-            return String.format(Labels.getValue("ficha_msg_cambio_estado"), estadosDelegate.estadoStr(fichaTO.getEstadoPendiente().getEstPk()));
+            return String.format(Labels.getValue("ficha_msg_cambio_estado"), estadosDelegate.estadoStr(fichaTO.getEstadoPendiente().getEstPk(), inicioMB.getOrganismoSeleccionado()));
         }
         return "";
     }
@@ -4032,10 +4032,13 @@ public class FichaMB implements Serializable {
                 exigeClienteEnPago = true;
             }
 
-            FichaPagoValidacion.validar(pagos, fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id), exigeProveedorEnPago, exigeClienteEnPago);            
+            boolean esEstadoEjecucion = fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)
+                    || fichaTO.getEstado().isEstado(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id)
+                    || fichaTO.getEstado().isEstado(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
             
-
-            if ((fichaTO.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) && (!edicionPago)) {
+            FichaPagoValidacion.validar(pagos, esEstadoEjecucion, exigeProveedorEnPago, exigeClienteEnPago);            
+            
+            if (esEstadoEjecucion && !edicionPago) {
                 pagos.setPagFechaPlanificada(new Date());
                 pagos.setPagImportePlanificado((double) 0);
             }
@@ -4058,12 +4061,7 @@ public class FichaMB implements Serializable {
 
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            /*
-                    *  18-06-2018 Inspección de código.
-             */
-
-            //List<String> errores = be.getErrores();
-            //JSFUtils.agregarMsgs("formPagoMsg", errores);
+            
             for (String iterStr : be.getErrores()) {
                 JSFUtils.agregarMsgError("formPagoMsg", Labels.getValue(iterStr), null);
             }
@@ -4383,6 +4381,27 @@ public class FichaMB implements Serializable {
 
     public String verFormPagoAction(Integer pagPk, Integer adqPk) {
 
+        cargarPago(pagPk, adqPk);
+        
+        formPresupuestoRendered = 3;
+        setFocus("comboEntregablesPag");
+        return null;
+    }
+
+    public String verFormPagoReadOnlyAction(Integer pagPk, Integer adqPk) {
+
+        cargarPago(pagPk, adqPk);
+        pagosGastoChange(null);
+        
+        if (pagos.getEntregables() != null) {
+            EntregablesUtils.cargarCamposEntregable(pagos.getEntregables());
+        }
+
+        formPresupuestoRendered = 4;
+        return null;
+    }
+
+    private void cargarPago(Integer pagPk, Integer adqPk) {
         if (pagPk != null && pagPk != 0) {
             pagos = pagosDelegate.obtenerPagosPorId(pagPk);
             if (pagos.getEntregables() != null) {
@@ -4422,17 +4441,10 @@ public class FichaMB implements Serializable {
                         ? pagoFinal.getPagContrOrganizacionFk() : null);
             }
 
-            /*
-                        *   20-03-18 Nico: FIX para mostrar la inversión cuando carga el form de Pago
-             */
             pagosGastoChange(null);
 
-            // ACA TERMINA LO DE AGREGAR GASTO Y CLIENTE DE UNA ADQUISICIÓN
+            edicionPago = false;
         }
-//		this.listaOrganizacionCombo.setSelected(-1);
-        formPresupuestoRendered = 3;
-        setFocus("comboEntregablesPag");
-        return null;
     }
 
     /**
@@ -5460,21 +5472,26 @@ public class FichaMB implements Serializable {
             }
         }
 
-        if (fieldName.equalsIgnoreCase("editarPago") || fieldName.equalsIgnoreCase("duplicarPago")) {
-            /**
-             * 25-09-2017 (Bruno): se agrega el requerimiento que permite
-             * agregar pagos en ejecución
-             */
-//			if ((deshabilitarFinalizado && !usuAprobFact)
-//					|| !(isGerenteOAdjuntoPre || usuAprobFact)
-//					|| (isEstadoEjecucion && !(isGerenteOAdjuntoPre || usuAprobFact))) {
-            if ((deshabilitarFinalizado && !usuAprobFact)
+        if (fieldName.equalsIgnoreCase("editarPago")) {
+
+			Boolean confirmado = (param instanceof Boolean) && ((Boolean) param);
+            
+			if (confirmado || ((deshabilitarFinalizado && !usuAprobFact)
+                    || !isGerenteOAdjuntoPre
+                    || (isEstadoPlanificacion && !habilitadoReplan))) {
+                rendered = false;
+            }
+        }
+
+        if (fieldName.equalsIgnoreCase("duplicarPago")) {
+
+			if ((deshabilitarFinalizado && !usuAprobFact)
                     || !isGerenteOAdjuntoPre
                     || (isEstadoPlanificacion && !habilitadoReplan)) {
                 rendered = false;
             }
         }
-
+		
         if (fieldName.equalsIgnoreCase("eliminarPago")) {
             /**
              * 25-09-2017 (Bruno): se agrega el requerimiento que permite
@@ -5783,47 +5800,61 @@ public class FichaMB implements Serializable {
      */
     public String getLabelBtnAprobar() {
 
-        boolean isPMOF = SsUsuariosUtils.isUsuarioPMOF(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+        boolean isPM = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(fichaTO, inicioMB.getUsuario());
+
+        boolean isPMOF = SsUsuariosUtils.isUsuarioPMOF(fichaTO, inicioMB.getUsuario(),
+                inicioMB.getOrganismo().getOrgPk());
+                
         boolean isPMOT = inicioMB.isUsuarioOrgaPMOT();
 
         boolean isEstado = fichaTO.getEstado() != null;
+
         boolean isPendientePMOT = isEstado
                 && fichaTO.getEstado().getEstPk().equals(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
+                
         boolean isPendientePMOF = isEstado
                 && fichaTO.getEstado().getEstPk().equals(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
 
-        boolean isEstadoSolCerrarHaciaPMOF = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id);
-        boolean isEstadoSolCerrarHaciaPMOT = fichaTO.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+        boolean isEstadoSolCerrarHaciaPMOF = fichaTO
+                .isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id);
+
+        boolean isEstadoSolCerrarHaciaPMOT = fichaTO
+                .isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+
+        boolean isEstadoEjecucion = fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id);
 
         if (isPendientePMOF || isPendientePMOT) {
+
             return Labels.getValue("estado_aprobar");
-        } else {
-            StringBuffer label = new StringBuffer();
+        } 
 
-            if ((SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(fichaTO, inicioMB.getUsuario())
-                    || (isPMOF && !aprobPMOF && !fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id) && !isPendientePMOF))
-                    && ((!isPMOT))) {
-
-                label.append(Labels.getValue("estado_solicitar")).append(" ");
-
-                /*
-                        *       Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
-                        *   se chequea si es o no PMOF del proyecto.
-                 */
-            } else if ((isPMOT || (isPMOF && aprobPMOF)) && fichaTO.getEstadoPendiente() != null
-                    || isPMOT && (isEstadoSolCerrarHaciaPMOF || isEstadoSolCerrarHaciaPMOT) || isPMOF && isEstadoSolCerrarHaciaPMOF) {
-                label.append(Labels.getValue("estado_aprobar")).append(" ");
-            }
-
-            if (fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id)) {
-                label.append(Labels.getValue("estado_" + Estados.ESTADOS.PLANIFICACION.estado_id));
-            } else if (fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
-                label.append(Labels.getValue("estado_" + Estados.ESTADOS.EJECUCION.estado_id));
-            } else if (fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
-                label.append(Labels.getValue("estado_cierre"));
-            }
-            return label.toString();
+        StringBuffer label = new StringBuffer();
+       
+        // Estado de solicitud de cierre y aprueban PMOT o PMOF (segun configuracion)
+        if ((isEstadoSolCerrarHaciaPMOT && isPMOT)
+                || (isEstadoSolCerrarHaciaPMOF && (isPMOT || (isPMOF && aprobPMOF)))) {
+            label.append(Labels.getValue("estado_aprobar")).append(" ");
         }
+        // PMOT no realiza solicitudes, 
+        // PMOF debe solicitar (a menos que la config diga lo contrario)
+        // PM debe solicitar
+        else if (!isPMOT 
+                && ((isPMOF && !aprobPMOF) || (!isPMOF && isPM))) {
+
+            label.append(Labels.getValue("estado_solicitar")).append(" ");
+        } 
+
+        if (fichaTO.isEstado(Estados.ESTADOS.INICIO.estado_id)) {
+            label.append(Labels.getValue("estado_" + Estados.ESTADOS.PLANIFICACION.estado_id));
+
+        } else if (fichaTO.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+            label.append(Labels.getValue("estado_" + Estados.ESTADOS.EJECUCION.estado_id));
+
+        } else if (fichaTO.isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
+            label.append(Labels.getValue("estado_cierre"));
+        }
+
+        return label.toString();
     }
 
     public Resource fileResource(Documentos doc) {
@@ -5838,23 +5869,8 @@ public class FichaMB implements Serializable {
         return null;
     }
 
-//    public Resource fileResource(byte[] byteArr) {
-//	return getFileResource(byteArr);
-//    }
-//    public Resource getFileResource(byte[] byteArr) {
-//	fileResource = null;
-//	if (byteArr != null) {
-//	    try {
-//		fileResource = new ByteArrayResource(byteArr);
-//	    } catch (Exception e) {
-//		e.printStackTrace();
-//		logger.log(Level.WARNING, "No se pudo obtener el Resource del byteArray.");
-//	    }
-//	}
-//	return fileResource;
-//    }
     public String guardarCronograma() {
-//        logger.log(Level.FINE, "guardarCronograma: {0}", (dataCron != null ? dataCron : "null"));
+
         if (dataCron == null || !StringsUtils.isEmpty(dataCron)) {
 
             try {

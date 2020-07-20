@@ -19,14 +19,14 @@ public class AreaTematicaValidacion {
 
     public static boolean validar(AreasTags at) throws BusinessException {
         BusinessException be = new BusinessException();
-
+		
         if (at == null) {
             be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NULL);
         } else {
             if (StringsUtils.isEmpty(at.getAreatagNombre())) {
                 be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NOMBRE);
             } else if (at.getAreatagNombre().length() > AreasTags.NOMBRE_LENGHT) {
-                be.addError(Utils.mensajeLargoCampo("area_tem_busqueda_nombre", AreasTags.NOMBRE_LENGHT));
+                be.addError(Utils.mensajeLargoCampo("area_tem_busqueda_nombre", at.getAreatagOrgFk().getOrgPk(), AreasTags.NOMBRE_LENGHT));
             }
 
             if (at.getAreatagPadreFk() != null

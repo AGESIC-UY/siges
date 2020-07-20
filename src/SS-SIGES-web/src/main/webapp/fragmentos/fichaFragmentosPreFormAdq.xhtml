@@ -140,9 +140,12 @@
                     <ice:outputLabel value="#{labels.adquisicionIdAdquisicion.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
                     <ace:textEntry maxlength="#{fichaMB.largoMaximoIdAdquisicion}" 
                                    value="#{fichaMB.adquisicion.adqIdAdquisicion}"
-                                   converter="IdAdquisicionFormatConverter"
-                                   disabled="#{fichaMB.fieldDisabled('preAdqProcCompraGRP')}"/>            
-
+                                   disabled="#{fichaMB.fieldDisabled('preAdqProcCompraGRP')}">     
+                                   
+                        <f:converter converterId="IdAdquisicionFormatConverter" />
+                        <f:attribute name="exigido" value="#{fichaMB.camposExigidosEnAdquisicion()}"/>
+                    </ace:textEntry>
+                    
                     <ice:outputLabel value="#{labels.centroCosto.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
                     <ace:simpleSelectOneMenu id="comboCentroCosto" 
                                              value="#{fichaMB.listaCentroCostoCombo.selected}" 

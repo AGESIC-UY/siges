@@ -26,7 +26,7 @@ public class AmbitoValidacion {
             if (StringsUtils.isEmpty(ambito.getAmbNombre())) {
                 be.addError(MensajesNegocio.ERROR_AMBITO_NOMBRE);
             }else if (ambito.getAmbNombre().length() > Ambito.NOMBRE_LENGHT) {
-                be.addError(Utils.mensajeLargoCampo("ambito_head_nombre", Ambito.NOMBRE_LENGHT));
+                be.addError(Utils.mensajeLargoCampo("ambito_head_nombre", ambito.getAmbOrgFk().getOrgPk(), Ambito.NOMBRE_LENGHT));
             }
 
             if (ambito.getAmbOrgFk() == null) {

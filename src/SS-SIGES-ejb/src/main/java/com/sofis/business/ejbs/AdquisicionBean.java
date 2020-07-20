@@ -68,8 +68,8 @@ public class AdquisicionBean {
 
     private static final Logger logger = Logger.getLogger(AdquisicionBean.class.getName());
 
-    private Adquisicion guardar(Adquisicion adquisicion) throws GeneralException {
-        AdquisicionValidacion.validar(adquisicion);
+    private Adquisicion guardar(Adquisicion adquisicion, Integer orgPk) throws GeneralException {
+        AdquisicionValidacion.validar(adquisicion, orgPk);
         AdquisicionDAO preDao = new AdquisicionDAO(em);
 
         try {
@@ -107,7 +107,7 @@ public class AdquisicionBean {
             adquisicion.setDevengadoList(devList);
         }
 
-        return guardar(adquisicion);
+        return guardar(adquisicion, orgPk);
     }
 
     public List<AdqPagosTO> obtenerAdquisicionPagosList(Integer presupuestoId) {

@@ -32,7 +32,7 @@ public class EstadosDelegate {
         return estadosBean.isOrdenProcesoMenor(e1, e2);
     }
     
-    public String estadoStr(Integer estPk) {
-        return estadosBean.estadoStr(estPk);
+    public String estadoStr(Integer estPk, Integer orgPk) {
+        return estadosBean.estadoStr(estPk, orgPk);
     }
 }

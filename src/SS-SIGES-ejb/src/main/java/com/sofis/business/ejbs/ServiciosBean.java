@@ -781,7 +781,7 @@ public class ServiciosBean {
          */
         for (Documentos d : proy.getDocumentosSet()) {
             d.setDocsEntregable(null);
-            documentosBean.guardar(d);
+            documentosBean.guardar(d, proy.getProyOrgFk().getOrgPk());
         }
 
         /**

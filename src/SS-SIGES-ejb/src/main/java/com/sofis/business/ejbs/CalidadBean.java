@@ -501,14 +501,14 @@ public class CalidadBean {
         return list;
     }
 
-    public String tipoCalidadStr(Integer tipo) {
+    public String tipoCalidadStr(Integer tipo, Integer org) {
         if (tipo != null) {
             if (tipo == 0) {
-                return LabelsEJB.getValue("tca_general");
+                return LabelsEJB.getValue("tca_general", org);
             } else if (tipo == 1) {
-                return LabelsEJB.getValue("tca_entregable");
+                return LabelsEJB.getValue("tca_entregable", org);
             } else if (tipo == 2) {
-                return LabelsEJB.getValue("tca_producto");
+                return LabelsEJB.getValue("tca_producto", org);
             }
         }
         return "";

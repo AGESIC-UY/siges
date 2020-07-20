@@ -399,7 +399,7 @@ public class ReporteProyectoMB implements Serializable {
     }
 
     public String estadoStr(Estados est) {
-	return estadosDelegate.estadoStr(est.getEstPk());
+		return estadosDelegate.estadoStr(est.getEstPk(), inicioMB.getOrganismoSeleccionado());
     }
 
     public int calcularLeftDia() {

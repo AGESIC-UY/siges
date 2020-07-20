@@ -68,24 +68,24 @@ public class ObjetivoEstrategicoMB implements Serializable {
 	public void guardar() {
 		try {
 			if (obj.getObjEstNombre() == null || obj.getObjEstNombre().trim().isEmpty()) {
-				JSFUtils.agregarMsgError("formObjEst", LabelsEJB.getValue("error_obj_estra_nom"), null);
+				JSFUtils.agregarMsgError("formObjEst", Labels.getValue("error_obj_estra_nom"), null);
 				return;
 			}
 			objetivoEstrategicoDelegate.guardar(obj);
 			this.cerrarPopup();
 			this.buscar();
-			JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("obj_form_success"), null);
+			JSFUtils.agregarMsgInfo("", Labels.getValue("obj_form_success"), null);
                         inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		} catch (BusinessException ex) {
 			logger.log(Level.FINE, ex.getMessage(), ex);
 			logger.log(Level.INFO, ex.getMessage());
-			JSFUtils.agregarMsgError("formObjEst", LabelsEJB.getValue("obj_form_error_constraint"), null);
+			JSFUtils.agregarMsgError("formObjEst", Labels.getValue("obj_form_error_constraint"), null);
 		} catch (TechnicalException ex) {
 			logger.log(Level.SEVERE, ex.getMessage(), ex);
-			JSFUtils.agregarMsgError("formObjEst", LabelsEJB.getValue("obj_form_error_tecnico"), null);
+			JSFUtils.agregarMsgError("formObjEst", Labels.getValue("obj_form_error_tecnico"), null);
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, ex.getMessage(), ex);
-			JSFUtils.agregarMsgError("formObjEst", LabelsEJB.getValue("ERR_GRAL"), null);
+			JSFUtils.agregarMsgError("formObjEst", Labels.getValue("ERR_GRAL"), null);
 		}
 	}
 
@@ -112,20 +112,20 @@ public class ObjetivoEstrategicoMB implements Serializable {
 		try {
 			objetivoEstrategicoDelegate.eliminar(objEstPk);
 			this.buscar();
-			JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("obj_delete_success"), null);
+			JSFUtils.agregarMsgInfo("", Labels.getValue("obj_delete_success"), null);
                         inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		} catch (BusinessException ex) {
 			logger.log(Level.FINE, ex.getMessage(), ex);
 			logger.log(Level.INFO, ex.getMessage());
-			JSFUtils.agregarMsgError("", LabelsEJB.getValue("obj_delete_error_constraint"), null);
+			JSFUtils.agregarMsgError("", Labels.getValue("obj_delete_error_constraint"), null);
                         inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		} catch (TechnicalException ex) {
 			logger.log(Level.SEVERE, ex.getMessage(), ex);
-			JSFUtils.agregarMsgError("", LabelsEJB.getValue("obj_delete_error_tecnico"), null);
+			JSFUtils.agregarMsgError("", Labels.getValue("obj_delete_error_tecnico"), null);
                         inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, ex.getMessage(), ex);
-			JSFUtils.agregarMsgError("", LabelsEJB.getValue("ERR_GRAL"), null);
+			JSFUtils.agregarMsgError("", Labels.getValue("ERR_GRAL"), null);
                         inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		}
 	}
@@ -138,7 +138,7 @@ public class ObjetivoEstrategicoMB implements Serializable {
 
             buscar();
             
-            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
         } catch (GeneralException ex) {

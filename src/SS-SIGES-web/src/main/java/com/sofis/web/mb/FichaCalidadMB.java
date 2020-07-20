@@ -5,7 +5,6 @@ import com.sofis.business.utils.ComboItemTOUtils;
 import com.sofis.business.utils.EntregablesUtils;
 import com.sofis.business.utils.ProductosUtils;
 import com.sofis.business.utils.TemasCalidadUtils;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Calidad;
 import com.sofis.entities.data.Entregables;
@@ -211,12 +210,6 @@ public class FichaCalidadMB implements Serializable {
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage(), be);
-                
-                /*
-                *  18-06-2018 Inspección de código.
-                */
-
-                //JSFUtils.agregarMsgs(MSG_FORMULARIO, be.getErrores());
 
                 for(String iterStr : be.getErrores()){
                     JSFUtils.agregarMsgError(MSG_FORMULARIO, Labels.getValue(iterStr), null);                
@@ -278,12 +271,6 @@ public class FichaCalidadMB implements Serializable {
                 JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_ELIMINADO, null);
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage(), be);
-                
-                /*
-                *  18-06-2018 Inspección de código.
-                */
-
-                //JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
 
                 for(String iterStr : be.getErrores()){
                     JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
@@ -297,18 +284,14 @@ public class FichaCalidadMB implements Serializable {
     public String guardarTablaAction() {
         if (CollectionsUtils.isNotEmpty(listaResultado)) {
             try {
-                listaResultado = calidadDelegate.guardar(listaResultado, fichaMB.getInicioMB().getOrganismo().getOrgPk(), fichaMB.getInicioMB().getUsuario());
-                calcularIndiceCalidad();
+                listaResultado = calidadDelegate.guardar(listaResultado, 
+						fichaMB.getInicioMB().getOrganismo().getOrgPk(), fichaMB.getInicioMB().getUsuario());
+
+				calcularIndiceCalidad();
                 JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, null, be);
                 
-                /*
-                *  18-06-2018 Inspección de código.
-                */
-
-                //JSFUtils.agregarMsgs(MSG_CALIDAD, be.getErrores());
-
                 for(String iterStr : be.getErrores()){
                     JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
                 }                    
@@ -375,7 +358,8 @@ public class FichaCalidadMB implements Serializable {
     }
 
     public String tipoCalidadStr(Integer tipo) {
-        return calidadDelegate.tipoCalidadStr(tipo);
+        return calidadDelegate.tipoCalidadStr(tipo, 
+			fichaMB.getInicioMB().getOrganismoSeleccionado());
     }
 
     public String valorColorTabla(String cod) {

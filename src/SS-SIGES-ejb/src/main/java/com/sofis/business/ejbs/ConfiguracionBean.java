@@ -325,7 +325,7 @@ public class ConfiguracionBean {
                     new Configuracion(ConfiguracionCodigos.SHOW_MODULO_LOCALIZACIONES, "Mostrar el modulo de localizaciones", "true", org, new Date(), 1),
                     new Configuracion(ConfiguracionCodigos.SHOW_MODULO_CALIDAD, "Mostrar el modulo de calidad", "true", org, new Date(), 1),
                     new Configuracion(ConfiguracionCodigos.SHOW_MODULO_MULTIMEDIA, "Mostrar el modulo de multimedia", "true", org, new Date(), 1),
-                    new Configuracion(ConfiguracionCodigos.CAMPOS_SON_EXIGIDOS_EN_ADQUISICION, "Esta configuración es utilizada para que los campos \"ID de adquisición\", \"Tipo de adquisición\", y \"Centro de costo\" sean requeridos al crear/modificar una adquisición.", "true", org, new Date(), 1),
+                    new Configuracion(ConfiguracionCodigos.CAMPOS_SON_EXIGIDOS_EN_ADQUISICION, "Esta configuración es utilizada para que los campos \"ID de adquisición\", \"Tipo de adquisición\", y \"Centro de costo\" sean requeridos al crear/modificar una adquisición.", "false", org, new Date(), 1),
                     new Configuracion(ConfiguracionCodigos.GERENTES_ASIGNAN_AREAS_TEMATICAS, "Habilita a Gerente y Adjunto a asignar áreas temáticas a los proyectos en los cuales se encuentran asignados.", "false", org, new Date(), 1),
                     new Configuracion(ConfiguracionCodigos.LARGO_MAXIMO_ID_ADQUISICION, "Define el largo máximo del valor del campo \"Id. de Adquisición\" en Adquisición.", "5", org, new Date(), 1)
                 };
@@ -357,8 +357,10 @@ public class ConfiguracionBean {
                 new Configuracion(ConfiguracionCodigos.MEDIA_MIMETYPE_REGEX, "Regex que valida el mimetype de los media que se suben", "image\\/(jpeg|png)", null, new Date(), 1),
                 new Configuracion(ConfiguracionCodigos.DEBUG, "Modo depuración", "false", null, new Date(), 1),
                 new Configuracion(ConfiguracionCodigos.DEBUG_DESTINO, "Email destino en modo depuración", "prueba@prueba.com", null, new Date(), 1),
-                new Configuracion(ConfiguracionCodigos.INCLUIR_CALCULAR_FINALIZADOS, "Incluir lor pryectos finalizdos en el cáclulo de indicadores", "false", null, new Date(), 1)
-            };
+                new Configuracion(ConfiguracionCodigos.INCLUIR_CALCULAR_FINALIZADOS, "Incluir lor pryectos finalizdos en el cáclulo de indicadores", "false", null, new Date(), 1),
+                new Configuracion(ConfiguracionCodigos.URL_SISTEMA, "URL del Sistema", "https://siges.agesic.gub.uy", null, new Date(), 1),
+				new Configuracion(ConfiguracionCodigos.HABILITAR_MOVER_PROYECTO, "true/false: habilitar la posibilidad de mover proyectos", "false", null, new Date(), 1),
+			};
 
             List<Configuracion> confListGeneral = obtenerTodosPorOrg(null);
             Map<String, Configuracion> confMapPGE = new HashMap<>();

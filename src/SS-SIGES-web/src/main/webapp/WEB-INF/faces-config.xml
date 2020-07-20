@@ -13,7 +13,7 @@
         </message-bundle> 
         <resource-bundle>
             <base-name>com.sofis.generico.ejb.mensajes.Labels</base-name>
-            <var>labels</var>
+            <var>labelsBundle</var>
         </resource-bundle>
         
         

@@ -1,6 +1,5 @@
 package com.sofis.web.mb;
 
-import com.sofis.business.properties.LabelsEJB;
 import com.sofis.entities.data.TipoAdquisicion;
 import com.sofis.entities.tipos.FiltroTipoAdquisicionTO;
 import com.sofis.entities.validations.TipoAdquisicionValidacion;
@@ -70,7 +69,7 @@ public class TipoAdquisicionMB implements Serializable {
             tipoAdquisicionDelegate.guardar(tipoAdquisicion);
             this.cerrarPopup();
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("tip_adq_form_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("tip_adq_form_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
@@ -80,10 +79,10 @@ public class TipoAdquisicionMB implements Serializable {
             }
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formTipAdq", LabelsEJB.getValue("tip_adq_form_error_tecnico"), null);
+            JSFUtils.agregarMsgError("formTipAdq", Labels.getValue("tip_adq_form_error_tecnico"), null);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formTipAdq", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("formTipAdq", Labels.getValue("ERR_GRAL"), null);
         }
     }
 
@@ -109,20 +108,20 @@ public class TipoAdquisicionMB implements Serializable {
         try {
             tipoAdquisicionDelegate.eliminar(objEstPk);
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("tip_adq_delete_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("tip_adq_delete_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
             logger.log(Level.INFO, ex.getMessage());
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("tip_adq_delete_error_constraint"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("tip_adq_delete_error_constraint"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("tip_adq_delete_error_tecnico"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("tip_adq_delete_error_tecnico"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("ERR_GRAL"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
     }

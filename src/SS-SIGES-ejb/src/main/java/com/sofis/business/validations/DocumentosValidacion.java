@@ -20,16 +20,16 @@ public class DocumentosValidacion {
 
     private static final Logger logger = Logger.getLogger(DocumentosValidacion.class.getName());
 
-    public static boolean validar(Set<Documentos> docs) throws BusinessException {
+    public static boolean validar(Set<Documentos> docs, Integer orgPk) throws BusinessException {
         if (docs != null) {
             for (Documentos d : docs) {
-                validar(d);
+                validar(d, orgPk);
             }
         }
         return true;
     }
 
-    public static boolean validar(Documentos doc) throws BusinessException {
+    public static boolean validar(Documentos doc, Integer orgPk) throws BusinessException {
         logger.logp(Level.FINEST, DocumentosValidacion.class.getName(), "validar", "Validar Documentos.");
         BusinessException be = new BusinessException();
 
@@ -45,7 +45,7 @@ public class DocumentosValidacion {
                 be.addError(MensajesNegocio.ERROR_DOCS_NOMBRE);
             }
             if (doc.getDocsNombre() != null
-                    && doc.getDocsNombre().trim().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente").trim())) {
+                    && doc.getDocsNombre().trim().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente", orgPk).trim())) {
                 be.addError(MensajesNegocio.ERROR_DOCS_NOMBRE_INCORRECTO);
             }
             if (doc.getDocsFecha() == null) {

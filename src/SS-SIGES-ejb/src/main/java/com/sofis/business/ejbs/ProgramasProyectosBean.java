@@ -643,12 +643,10 @@ public class ProgramasProyectosBean {
 				&& proy.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id);
 			boolean isEjecucion = hasEstado
 				&& proy.isEstado(Estados.ESTADOS.EJECUCION.estado_id);
-
-			boolean isEstPendiente = proy.isEstPendienteFk();
-                        
-                        Configuracion cnfAprobPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_PMOF, orgPk);
-                        boolean aprobPMOF = cnfAprobPMOF.getCnfValor().equals("true") ? true : false;
-                        
+            
+			Configuracion cnfAprobPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_PMOF, orgPk);
+			boolean aprobPMOF = cnfAprobPMOF.getCnfValor().equals("true") ? true : false;
+			
 			if (isAlta) {
 				if (proy.getProyUsrPmofedFk().equals(usuario)) {
 					cambioEstado(proy, new Estados(Estados.ESTADOS.INICIO.estado_id));
@@ -669,35 +667,32 @@ public class ProgramasProyectosBean {
 				cambioEstado(proy, new Estados(Estados.ESTADOS.INICIO.estado_id));
 
 			} else if (isInicio) {
-                                /*
-                                *       Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
-                                *   se chequea si es o no PMOF del proyecto.
-                                */                            
-				
-                                if(isPMOT || (isPMOF && aprobPMOF)){ //((!aprobPMOF &&(!aprobPMOF && ((isEstPendiente && isPMOT) || isPMOT))) || (aprobPMOF && ((isEstPendiente && isPMOF || isPMOF)))){
+				/*
+				*   Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
+				*   se chequea si es o no PMOF del proyecto.
+				*/
+				if (isPMOT || (isPMOF && aprobPMOF)) { 
 					cambioEstado(proy, new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
 				} else {
 					proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
 				}
 			} else if (isPlanificacion) {
-                                /*
-                                *       Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
-                                *   se chequea si es o no PMOF del proyecto.
-                                */
-                                
-				if(isPMOT || (isPMOF && aprobPMOF)){ //(((!aprobPMOF && ((isEstPendiente && isPMOT) || isPMOT))) || (aprobPMOF && ((isEstPendiente && isPMOF || isPMOF)))){
+				/*
+				*   Al siguiente if se le agrega la condición para chequear si esta activada la configuración de aprobación de PMOF, y en caso de que sea PMOT
+				*   se chequea si es o no PMOF del proyecto.
+				*/             
+				if(isPMOT || (isPMOF && aprobPMOF)){
 					cambioEstado(proy, new Estados(Estados.ESTADOS.EJECUCION.estado_id));
 				} else {
 					proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.EJECUCION.estado_id));
 				}
-
 			} else if (isEjecucion) {
-				if (isPM && !isPMOT) {
+				if (isPMOT || (isPMOF && aprobPMOF)) {
+					cambioEstado(proy, new Estados(Estados.ESTADOS.FINALIZADO.estado_id));
+				} else if (isPM && !isPMOT) {
 					proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id));
 				} else if (isPMOF && !isPMOT && !aprobPMOF) {
 					proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id));
-				} else if (isPMOT || (isPMOF && aprobPMOF)) {
-					cambioEstado(proy, new Estados(Estados.ESTADOS.FINALIZADO.estado_id));
 				}
 			} else if (proy.getProyEstPendienteFk().isEstado(Estados.ESTADOS.SOLICITUD_CANCELAR_PMOT.estado_id)
 				&& isPMOT) {

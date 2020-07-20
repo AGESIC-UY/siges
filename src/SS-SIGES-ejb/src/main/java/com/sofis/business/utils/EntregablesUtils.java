@@ -421,11 +421,7 @@ public class EntregablesUtils {
 		if (CollectionsUtils.isNotEmpty(listEnt)) {
 			listEnt = cargarNivelStr(listEnt);
 			for (Entregables ent : listEnt) {
-				String ini = DatesUtils.toStringFormat(ent.getEntInicioDate(), ConstantesEstandares.CALENDAR_PATTERN);
-				String fin = DatesUtils.toStringFormat(ent.getEntFinDate(), ConstantesEstandares.CALENDAR_PATTERN);
-				String nivel = ent.getNivelStr() != null ? StringsUtils.concat(ent.getNivelStr(), " ") : "";
-				ent.setNivelNombreCombo(StringsUtils.concat(nivel, ent.getEntNombre()));
-				ent.setFechaNivelNombreCombo(StringsUtils.concat("(", ini, "-", fin, ") ", nivel, ent.getEntNombre()));
+				cargarCamposEntregable(ent);
 			}
 		}
 
@@ -440,19 +436,22 @@ public class EntregablesUtils {
 		if (CollectionsUtils.isNotEmpty(listEnt)) {
 			listEnt = cargarNivelStr(listEnt);
 			for (Entregables ent : listEnt) {
-				if(auxAsocCoordEnt.get(ent.getEntId())){
-                                    String ini = DatesUtils.toStringFormat(ent.getEntInicioDate(), ConstantesEstandares.CALENDAR_PATTERN);
-                                    String fin = DatesUtils.toStringFormat(ent.getEntFinDate(), ConstantesEstandares.CALENDAR_PATTERN);
-                                    String nivel = ent.getNivelStr() != null ? StringsUtils.concat(ent.getNivelStr(), " ") : "";
-                                    ent.setNivelNombreCombo(StringsUtils.concat(nivel, ent.getEntNombre()));
-                                    ent.setFechaNivelNombreCombo(StringsUtils.concat("(", ini, "-", fin, ") ", nivel, ent.getEntNombre()));
-                                }
+				if(auxAsocCoordEnt.get(ent.getEntId())) {
+					cargarCamposEntregable(ent);
+				}
 			}
 		}
 
 		return listEnt;
 	}
 
+	public static void cargarCamposEntregable(Entregables ent) {
+		String ini = DatesUtils.toStringFormat(ent.getEntInicioDate(), ConstantesEstandares.CALENDAR_PATTERN);
+		String fin = DatesUtils.toStringFormat(ent.getEntFinDate(), ConstantesEstandares.CALENDAR_PATTERN);
+		String nivel = ent.getNivelStr() != null ? StringsUtils.concat(ent.getNivelStr(), " ") : "";
+		ent.setNivelNombreCombo(StringsUtils.concat(nivel, ent.getEntNombre()));
+		ent.setFechaNivelNombreCombo(StringsUtils.concat("(", ini, "-", fin, ") ", nivel, ent.getEntNombre()));
+	}
 	/**
 	 * Retorna true si la fecha de fin del entregable es menor a hoy o si es
 	 * mayor al fin de la linea base.

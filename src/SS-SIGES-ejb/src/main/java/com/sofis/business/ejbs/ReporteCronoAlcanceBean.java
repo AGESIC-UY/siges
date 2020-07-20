@@ -66,7 +66,7 @@ public class ReporteCronoAlcanceBean {
 
 	public byte[] generarReportePlanillaPorFiltro(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
 
-		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance");
+		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
 
 		int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
 		int filaNro = -1;
@@ -96,11 +96,11 @@ public class ReporteCronoAlcanceBean {
 		}
 
 		HSSFCell celdaTitulo = rowTitulo.createCell(0);
-		celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_titulo"), ": ", hojaName));
+		celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_titulo", orgPk), ": ", hojaName));
 		celdaTitulo.setCellStyle(cellStyleTitle);
 
 		HSSFCell celdaAnio = rowTitulo.createCell(ReporteCroAlcColumnasEnum.ENERO.ordinal());
-		celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_anio"), ": ", filtro.getAnio().toString()));
+		celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_anio", orgPk), ": ", filtro.getAnio().toString()));
 		celdaAnio.setCellStyle(cellStyleTitle);
 
 		++filaNro;
@@ -119,17 +119,17 @@ public class ReporteCronoAlcanceBean {
 		cellStyleColTitulos.setFont(fontColTitulos);
 		cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog_id"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy_id"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_area"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_gerente"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_estado"), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog_id", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy_id", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_gerente", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
 		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal(), "", cellStyleColTitulos);
 		for (int mes = 1; mes <= 12; mes++) {
 			String mesName = StringsUtils.concat("date_mes_abreviado_", String.valueOf(mes));
-			HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName), cellStyleColTitulos);
+			HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName, orgPk), cellStyleColTitulos);
 		}
 
 		//Fila detalles
@@ -150,7 +150,7 @@ public class ReporteCronoAlcanceBean {
 					columnasProyecto(rowMon, proy, cellStyleAlc);
 
 					celda = rowMon.createCell(ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal());
-					celda.setCellValue(nombreTipoLinea(i + 1));
+					celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
 					celda.setCellStyle(cellStyleAlc);
 
 					ReporteAcumuladoMesTO valorMes = null;
@@ -243,7 +243,7 @@ public class ReporteCronoAlcanceBean {
 		celda.setCellValue(gerente);
 		celda.setCellStyle(cellStyle);
 		celda = row.createCell(ReporteCroAlcColumnasEnum.ESTADO.ordinal());
-		celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk()));
+		celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk(), proy.getProyOrgFk().getOrgPk()));
 		celda.setCellStyle(cellStyle);
 	}
 
@@ -254,14 +254,14 @@ public class ReporteCronoAlcanceBean {
 	 * @param i
 	 * @return String
 	 */
-	private String nombreTipoLinea(int i) {
+	private String nombreTipoLinea(int i, Integer orgPk) {
 		switch (i) {
 			case 1:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_base");
+				return LabelsEJB.getValue("rep_cro_alc_tipo_base", orgPk);
 			case 2:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_real");
+				return LabelsEJB.getValue("rep_cro_alc_tipo_real", orgPk);
 			case 3:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_proyectado");
+				return LabelsEJB.getValue("rep_cro_alc_tipo_proyectado", orgPk);
 			default:
 				return "";
 		}
@@ -308,7 +308,7 @@ public class ReporteCronoAlcanceBean {
 	//spio
 	public byte[] exportarCronogramaAction(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
 
-		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance");
+		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
 
 		int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
 		int filaNro = -1;
@@ -344,27 +344,27 @@ public class ReporteCronoAlcanceBean {
 
 		HSSFRow fila = hoja.createRow(++filaNro);
 		int nroCelda = 0;
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_prog"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_proy"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_responsable"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_orden"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_nombre"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_tipo"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorel"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorelhitos"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_coordinador"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado_hito"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_avance"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pendiente"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicioplan"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfinplan"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicio"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfin"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duraplan"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duracion"), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_responsable", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_orden", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_nombre", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_tipo", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorel", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorelhitos", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_coordinador", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado_hito", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_avance", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pendiente", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicioplan", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfinplan", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicio", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfin", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duraplan", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duracion", orgPk), cellStyleColTitulos);
 		int nroColumnas = nroCelda;
 
 		Calendar hoy = new GregorianCalendar();
@@ -419,7 +419,7 @@ public class ReporteCronoAlcanceBean {
 					//Nombre del entregable
 					HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntNombre());
 					//Tipo: tarea o hito
-					HSSFCellUtil.createCell(fila, nroCelda++, esHito ? LabelsEJB.getValue("rep_cro_alc_xls_col_hito") : LabelsEJB.getValue("rep_cro_alc_xls_col_tarea"));
+					HSSFCellUtil.createCell(fila, nroCelda++, esHito ? LabelsEJB.getValue("rep_cro_alc_xls_col_hito", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_tarea", orgPk));
 					//Peso relativo
 					Float esfuerzo = esfuerzoTotalProyecto != null && esfuerzoTotalProyecto.floatValue() > 0 && entregable.getEntEsfuerzo() != null ? 1f * entregable.getEntEsfuerzo() / esfuerzoTotalProyecto : 0;
 					HSSFCellUtil.createCell(fila, nroCelda++, esfuerzo != null ? String.format("%.2f", esfuerzo) : "");
@@ -433,7 +433,7 @@ public class ReporteCronoAlcanceBean {
 					Areas coordArea = coordinador != null ? coordinador.getUsuArea(proy.getProyOrgFk().getOrgPk()) : null;
 					HSSFCellUtil.createCell(fila, nroCelda++, coordArea != null ? coordArea.getAreaNombre() : "");
 					//Estado del hito (solo si es hito)
-					HSSFCellUtil.createCell(fila, nroCelda++, esHito && entregable.getEntProgreso() != null ? (entregable.getEntProgreso().intValue() == 100 ? LabelsEJB.getValue("rep_cro_alc_xls_col_finalizado") : LabelsEJB.getValue("rep_cro_alc_xls_col_nofinalizado")) : "");
+					HSSFCellUtil.createCell(fila, nroCelda++, esHito && entregable.getEntProgreso() != null ? (entregable.getEntProgreso().intValue() == 100 ? LabelsEJB.getValue("rep_cro_alc_xls_col_finalizado", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_nofinalizado", orgPk)) : "");
 					//Avance (solo si es tarea)
 					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntProgreso() != null ? entregable.getEntProgreso().toString() : "");
 					//Pendiente (solo si es tarea)
@@ -446,20 +446,20 @@ public class ReporteCronoAlcanceBean {
 								//Esta terminado
 								if (fechaPlan != null && fechaReal != null) {
 									if (fechaReal.after(fechaPlan)) {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadotarde");
+										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadotarde", orgPk);
 									} else {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadobien");
+										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadobien", orgPk);
 									}
 								} else {
-									estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminado");
+									estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminado", orgPk);
 								}
 							} else {
 
 								if (fechaPlan != null && fechaReal != null) {
 									if (fechaReal.before(hoy) || fechaReal.after(fechaPlan)) {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_atrasado");
+										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_atrasado", orgPk);
 									} else {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_enfecha");
+										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_enfecha", orgPk);
 									}
 								}
 							}

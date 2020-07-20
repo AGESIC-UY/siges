@@ -70,7 +70,7 @@ public class CentroCostoMB implements Serializable {
             tipoAdquisicionDelegate.guardar(centroCosto);
             this.cerrarPopup();
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("cen_cos_form_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("cen_cos_form_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
@@ -80,10 +80,10 @@ public class CentroCostoMB implements Serializable {
             }
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formCenCos", LabelsEJB.getValue("cen_cos_form_error_tecnico"), null);
+            JSFUtils.agregarMsgError("formCenCos", Labels.getValue("cen_cos_form_error_tecnico"), null);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("formCenCos", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("formCenCos", Labels.getValue("ERR_GRAL"), null);
         }
     }
 
@@ -109,20 +109,20 @@ public class CentroCostoMB implements Serializable {
         try {
             tipoAdquisicionDelegate.eliminar(cenCos);
             this.buscar();
-            JSFUtils.agregarMsgInfo("", LabelsEJB.getValue("cen_cos_delete_success"), null);
+            JSFUtils.agregarMsgInfo("", Labels.getValue("cen_cos_delete_success"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (BusinessException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
             logger.log(Level.INFO, ex.getMessage());
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("cen_cos_delete_error_constraint"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("cen_cos_delete_error_constraint"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (TechnicalException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("cen_cos_delete_error_tecnico"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("cen_cos_delete_error_tecnico"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            JSFUtils.agregarMsgError("", LabelsEJB.getValue("ERR_GRAL"), null);
+            JSFUtils.agregarMsgError("", Labels.getValue("ERR_GRAL"), null);
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
     }

@@ -1,6 +1,8 @@
 package com.sofis.web.mb;
 
 import com.icesoft.faces.context.effects.JavascriptContext;
+import com.sofis.business.properties.LabelsEJB;
+import com.sofis.data.daos.EtiquetaDAO;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.codigueras.SsRolCodigos;
 import com.sofis.entities.constantes.ConstantesEstandares;
@@ -32,6 +34,7 @@ import com.sofis.web.delegates.AreaTematicaDelegate;
 import com.sofis.web.delegates.AreasDelegate;
 import com.sofis.web.delegates.BusquedaFiltroDelegate;
 import com.sofis.web.delegates.ConfiguracionDelegate;
+import com.sofis.web.delegates.EtiquetaDelegate;
 import com.sofis.web.delegates.FuenteFinanciamientoDelegate;
 import com.sofis.web.delegates.ObjetivoEstrategicoDelegate;
 import com.sofis.web.delegates.OrganiIntProveDelegate;
@@ -120,6 +123,8 @@ public class InicioMB implements Serializable {
     private AreasDelegate areasDelegate;
     @Inject
     private ObjetivoEstrategicoDelegate objetivoEstrategicoDelegate;
+    @Inject
+    private EtiquetaDelegate etiquetaDelegate;
 
     //Variables
     private HashMap<String, Boolean> permisos = new HashMap<String, Boolean>();
@@ -189,7 +194,6 @@ public class InicioMB implements Serializable {
         String authLdapEnableString = configuracionDelegate.obtenerCnfValorPorCodigo("AUTH_LDAP_ENABLE", null);
         authLdapEnable = authLdapEnableString != null && "true".equals(authLdapEnableString.toLowerCase());
         datosPrincipal();
-//		redirectUsuarioPage();
         userkey = this.generateKey();
         initVector = this.generateInitVector();
     }
@@ -1016,6 +1020,7 @@ public class InicioMB implements Serializable {
                 if (todosOrganismos != null && !todosOrganismos.isEmpty()) {
                     this.organismo = todosOrganismos.get(0);
                     organismosUsuario.setSelected(this.organismo.getOrgPk());
+                    cargarEtiquetasOrganismo();
                 }
             } else {
                 //Inicializa los organismos del usuario
@@ -1072,7 +1077,9 @@ public class InicioMB implements Serializable {
                             }
                         }
                     }
-                    organismosUsuario.setSelected(this.organismo.getOrgPk());
+                    organismosUsuario.setSelected(this.organismo.getOrgPk());                    
+                    cargarEtiquetasOrganismo();
+
                 } else {
                     organismosUsuario = new SofisCombo(new ArrayList(), "orgNombre");
                 }
@@ -1084,6 +1091,7 @@ public class InicioMB implements Serializable {
         if (getOrganismoSeleccionado() != null) {
             setOrganismo(organismoDelegate.obtenerOrgPorId(getOrganismoSeleccionado(), true));
         }
+
         datosPrincipal();
     }
 
@@ -1096,13 +1104,21 @@ public class InicioMB implements Serializable {
             Organismos org = (Organismos) this.organismosUsuario.getSelectedObject();
             if (org != null) {
                 this.organismo = organismoDelegate.obtenerOrgPorId(org.getOrgPk(), true);
-                cargarPermisos();
+				
+				etiquetaDelegate.cargarEtiquetasOrganismo(organismo.getOrgPk());
+    
+				cargarPermisos();
                 cargarCombosFiltro();
             }
             redirectUsuarioPage();
             inicializarFiltro();
             //TODO: Se tendria que llamar a un inicializar al haber cambiado el organismo.
         }
+	}
+
+    private void cargarEtiquetasOrganismo() {
+
+        etiquetaDelegate.cargarEtiquetasOrganismo(getOrganismoSeleccionado());
     }
 
     public boolean isUsuarioOrgaPMO() {

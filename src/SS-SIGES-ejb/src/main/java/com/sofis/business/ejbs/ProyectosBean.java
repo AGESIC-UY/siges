@@ -450,7 +450,7 @@ public class ProyectosBean {
             if (hasDoc) {
                 List<Documentos> docsRemove = new ArrayList<>();
                 for (Documentos doc : proy.getDocumentosSet()) {
-                    if (doc.getDocsNombre().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente"))) {
+                    if (doc.getDocsNombre().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente", orgPk))) {
                         docsRemove.add(doc);
                     } else if (doc.getDocsFecha() == null) {
                         doc.setDocsFecha(new Date());
@@ -526,7 +526,7 @@ public class ProyectosBean {
                 if (!StringsUtils.isEmpty(proy.getProySituacionActual())
                         && proy.getProySituacionActual().length() > 20000) {
                     BusinessException be = new BusinessException();
-                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", 20000));
+                    be.addError(Utils.mensajeLargoCampo("ficha_situacionActualFicha", proy.getProyOrgFk().getOrgPk(), 20000));
                     throw be;
                 }
 
@@ -2632,7 +2632,7 @@ public class ProyectosBean {
                 NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk);
 
                 if (ni != null) {
-                    String subject = LabelsEJB.getValue("notif_envio_subjet");
+                    String subject = LabelsEJB.getValue("notif_envio_subjet", orgPk);
 
                     List<SsUsuario> usuariosDest = new ArrayList<>();
                     if (ni.getNotinstGerenteAdjunto()) {
@@ -2654,10 +2654,18 @@ public class ProyectosBean {
 
                     Map<String, String> valores = new HashMap<>();
                     valores.put(MailVariables.NOMBRE_PROYECTO, proy.getProyPk() + " - '" + proy.getProyNombre() + "'");
+                    
                     Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
                     if (org != null) {
                         valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
                     }
+                    
+                    String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
+                    valores.put(MailVariables.URL_SISTEMA, urlSistema);
+
+                    String urlProyecto = ProgProyUtils.obtenerURL(urlSistema, proy);
+                    valores.put(MailVariables.URL_PROYECTO, urlProyecto);
+                    
                     String mensaje = MailsTemplateUtils.instanciarConHashMap(ni.getNotinstNotFk().getNotMsg(), valores);
 
                     final String subjectThread = subject;

@@ -81,14 +81,17 @@
                         fileName="#{fichaMB.downloadFile[adq.pagoDoc.docsPk] != null ? fichaMB.downloadFile[adq.pagoDoc.docsPk].docFile.docfileNombre : 'file'}"/>
                 </ice:panelGroup>
             </ace:column>
+            
             <ace:column id="pagoAdqFuenteNombre" headerText=""
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
                 <h:outputText value="#{adq.fuenteNombre}" />
             </ace:column>
+            
             <ace:column id="pagoAdqMoneda" headerText=""
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colAdquisicion">
                 <h:outputText value="#{adq.monedaSigno}" />
             </ace:column>
+           
             <ace:column id="pagoFechaPlan" headerText="#{labels.head_pre_fechaPlan}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnBordeIzq">
                 <h:outputText value="#{adq.fechaPlan}" 
@@ -105,16 +108,19 @@
                 <h:outputText value="#{adq.fechaReal}" 
                               converter="fechaConverter"/>
             </ace:column>
+            
             <ace:column headerText="#{labels.head_pre_importeReal}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago colRight columnBordeDer">
                 <ice:outputText value="#{adq.importeReal != null ? adq.importeReal : ''}"
                                 converter="ImporteFormatConverter"/>
             </ace:column>
+            
             <ace:column headerText="#{labels.head_pre_saldo}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago colRight">
                 <ice:outputText value="#{adq.importeSaldo != null ? adq.importeSaldo : ''}"
                                 converter="ImporteFormatConverter"/>
             </ace:column>
+            
             <ace:column headerText="#{labels.head_pre_porcEjecucion}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago">
                 <ice:outputText value="#{adq.ejecucion != null ? adq.ejecucion : 0}"
@@ -147,16 +153,10 @@
             <ace:column headerText=""
                         rendered="#{fichaMB.fieldRendered('editarAdquisicion') and adq.tipo eq 1}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
-                <ace:tooltip id="tooltipAdqEditar" for="btnEditarAdq">
-                    <ice:outputText value="#{labels.editarAdqTooltip}" />
-                </ace:tooltip>
-                <ace:pushButton id="btnEditarAdq"
-                                styleClass="botonEditar iconoTabla" 
-                                action="#{fichaMB.verFormAdquisicionAction(adq.adqPk)}"/>
-            </ace:column>
-            <ace:column headerText=""
-                        rendered="#{!fichaMB.fieldRendered('editarAdquisicion') and adq.tipo eq 1 and fichaMB.fieldRendered('editarPago')}"
-                        styleClass="rowAdquisicion columnaBoton colAdquisicion">
+                <h:commandButton id="btnEditarAdq"
+                                 styleClass="botonEditar iconoTabla" 
+                                 title="#{labels.editarAdqTooltip}"
+                                 action="#{fichaMB.verFormAdquisicionAction(adq.adqPk)}"/>
             </ace:column>
 
             <ace:column headerText=""
@@ -172,46 +172,40 @@
             <ace:column headerText=""
                         rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
                         styleClass="rowAdquisicion columnaBoton colAdquisicion">
-                <ace:tooltip id="tooltipPagoAgregar" for="btnAgregarPag">
-                    <ice:outputText value="#{labels.agregarPagoTooltip}" />
-                </ace:tooltip>
-                <ace:pushButton id="btnAgregarPag"
-                                styleClass="botonAgregar iconoTabla" 
-                                action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
-            </ace:column>
-
-            <ace:column headerText=""
-                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
-                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
-            </ace:column>
-
-            <ace:column headerText=""
-                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
-                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
+                <h:commandButton id="btnAgregarPag"
+                                 styleClass="botonAgregar iconoTabla"
+                                 title="#{labels.agregarPagoTooltip}"    
+                                 action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
             </ace:column>
 
             <!-- Botones Pagos -->
             <ace:column headerText=""
-                        rendered="#{fichaMB.fieldRendered('duplicarPago') and adq.tipo eq 2}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
-                <ace:tooltip id="tooltipPagoEditar" for="btnEditarPag">
-                    <ice:outputText value="#{labels.editarPagoTooltip}" />
-                </ace:tooltip>
-                <ace:pushButton id="btnEditarPag"
-                                styleClass="botonEditar iconoTabla" 
-                                rendered="#{!adq.confirmado}"
-                                action="#{fichaMB.verFormPagoAction(adq.pagPk, adq.adqPk)}"/>
+
+                <h:panelGroup rendered="#{adq.tipo eq 2 and fichaMB.fieldRendered('editarPago', adq.confirmado)}">
+                    <h:commandButton id="btnEditarPag"
+                                     styleClass="botonEditar iconoTabla" 
+                                     title="#{labels.editarPagoTooltip}"   
+                                     action="#{fichaMB.verFormPagoAction(adq.pagPk, adq.adqPk)}"/>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{adq.tipo eq 2 and not fichaMB.fieldRendered('editarPago', adq.confirmado)}">
+                    <h:commandButton id="btnVerPago"
+                                     styleClass="botonVer iconoTabla" 
+                                     title="#{labels.verPagoTooltip}"   
+                                     action="#{fichaMB.verFormPagoReadOnlyAction(adq.pagPk, adq.adqPk)}"/>
+                </h:panelGroup>
+                
             </ace:column>
 
             <ace:column headerText=""
                         rendered="#{fichaMB.fieldRendered('duplicarPago') and adq.tipo eq 2}"
                         styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
-                <ace:tooltip id="tooltipPagoClone" for="btnClonePag">
-                    <ice:outputText value="#{labels.duplicarPagoTooltip}" />
-                </ace:tooltip>
-                <ace:pushButton id="btnClonePag"
-                                styleClass="botonDuplicar iconoTabla" 
-                                action="#{fichaMB.copiarPagoAction(adq.pagPk)}"/>
+
+                <h:commandButton id="btnClonePag"
+                                 styleClass="botonDuplicar iconoTabla" 
+                                 title="#{labels.duplicarPagoTooltip}"                              
+                                 action="#{fichaMB.copiarPagoAction(adq.pagPk)}"/>
             </ace:column>
 
             <ace:column headerText=""
@@ -222,11 +216,6 @@
                                  rendered="#{!adq.confirmado}"
                                  action="#{fichaMB.eliminarPagoAction(adq.pagPk)}"
                                  onclick="confirmationEliminarPago.show();" />
-            </ace:column>
-            <ace:column headerText=""
-                        styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton"
-                        rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 2}">
-                <ice:outputText value="" />
             </ace:column>
         </ace:dataTable>
 

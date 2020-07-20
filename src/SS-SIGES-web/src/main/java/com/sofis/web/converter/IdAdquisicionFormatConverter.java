@@ -11,27 +11,38 @@ import javax.faces.convert.ConverterException;
 
 public class IdAdquisicionFormatConverter implements Converter {
 
-    @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (StringsUtils.isEmpty(value)) {
-            return null;
-        }
-        try {
-            return Integer.valueOf(value);
-        } catch (Exception e) {
+	@Override
+	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 
-            throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    Labels.getValue("error_adquisicion_id_adquisicion_vacio"), null));
-        }
-    }
+		Boolean exigido = (Boolean) component.getAttributes().get("exigido");
 
-    @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
-        
-        if (value instanceof Integer) {
-            return ((Integer) value).toString();
-        } 
-        
-        return null;
-    }
+		if (StringsUtils.isEmpty(value)) {
+			return null;
+		}
+		try {
+			Integer id = Integer.valueOf(value);
+
+			if (id < 0 || (Boolean.TRUE.equals(exigido) && id == 0)) {
+
+				throw new ConverterException();
+			}
+
+			return id;
+
+		} catch (NumberFormatException | ConverterException e) {
+
+			throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					Labels.getValue("error_adquisicion_id_adquisicion_invalido"), null));
+		}
+	}
+
+	@Override
+	public String getAsString(FacesContext context, UIComponent component, Object value) {
+
+		if (value instanceof Integer) {
+			return ((Integer) value).toString();
+		}
+
+		return null;
+	}
 }

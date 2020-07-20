@@ -28,6 +28,7 @@
         <class>com.sofis.entities.data.Estados</class>
         <class>com.sofis.entities.data.EstadosPublicacion</class>
         <class>com.sofis.entities.data.Etapa</class>
+        <class>com.sofis.entities.data.Etiqueta</class>
         <class>com.sofis.entities.data.Error</class>
         <class>com.sofis.entities.data.FuenteFinanciamiento</class>
         <class>com.sofis.entities.data.ComponenteProducto</class>

@@ -20,12 +20,12 @@
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>5.9.1</version>
+        <version>5.10.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-web</artifactId>
-    <version>5.9.1</version>
+    <version>5.10.1</version>
     <packaging>war</packaging>
 
     <name>SS-SIGES-web</name>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-remotes</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.1</version>
             <!--<scope>compile</scope>-->
             <scope>provided</scope>
         </dependency>
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-ejb</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.1</version>
             <scope>provided</scope>
         </dependency>
         <!--        <dependency>

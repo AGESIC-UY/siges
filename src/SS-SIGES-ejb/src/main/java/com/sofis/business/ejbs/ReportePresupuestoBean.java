@@ -85,9 +85,9 @@ public class ReportePresupuestoBean {
 		boolean enviarMail = false;
 		String hojaName = "";
 		if (filtro.getTipoReporte().equals(1)) {
-			hojaName = LabelsEJB.getValue("rep_pre_xls_hoja_moneda");
+			hojaName = LabelsEJB.getValue("rep_pre_xls_hoja_moneda", orgPk);
 		} else if (filtro.getTipoReporte().equals(2)) {
-			hojaName = LabelsEJB.getValue("rep_pre_xls_hoja_adquisicion");
+			hojaName = LabelsEJB.getValue("rep_pre_xls_hoja_adquisicion", orgPk);
 		} else {
 			BusinessException be = new BusinessException();
 			be.addError(MensajesNegocio.ERROR_REPORTE_PRE_TIPO);
@@ -158,11 +158,11 @@ public class ReportePresupuestoBean {
 		}
                 
 		HSSFCell celdaTitulo = rowTitulo.createCell(0);
-		celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_pre_xls_titulo"), ": ", hojaName));
+		celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_pre_xls_titulo", orgPk), ": ", hojaName));
 		celdaTitulo.setCellStyle(cellStyleTitle);
 
 		HSSFCell celdaAnio = rowTitulo.createCell(ReportePreColumnasEnum.ENERO.ordinal());
-		celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_pre_xls_anio"), ": ", filtro.getAnio().toString()));
+		celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_pre_xls_anio", orgPk), ": ", filtro.getAnio().toString()));
 		celdaAnio.setCellStyle(cellStyleTitle);
 
 		++filaNro;
@@ -181,29 +181,28 @@ public class ReportePresupuestoBean {
 		cellStyleColTitulos.setFont(fontColTitulos);
 		cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prog_id"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prog"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proy_id"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proy"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_area"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_gerente"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_estado"), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prog_id", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prog", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proy_id", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proy", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_area", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_gerente", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_estado", orgPk), cellStyleColTitulos);
                 
-                // Se agrega el nombre de la adquisicion
-                HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.NOMBRE_ADQ.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_nom_adq"), cellStyleColTitulos);
-		
-                HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROCEDIMIENTO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proc"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROC_GRP.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_grp"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.FUENTE.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_fuente"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROVEEDOR.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prov"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.CONCEPTO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_concepto"), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.MONEDA.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_moneda"), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.NOMBRE_ADQ.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_nom_adq", orgPk), cellStyleColTitulos);
+
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROCEDIMIENTO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_proc", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROC_GRP.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_grp", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.FUENTE.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_fuente", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.PROVEEDOR.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_prov", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.CONCEPTO.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_concepto", orgPk), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.MONEDA.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_moneda", orgPk), cellStyleColTitulos);
 		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.TIPO_LINEA.ordinal(), "", cellStyleColTitulos);
 		for (int mes = 1; mes <= 12; mes++) {
 			String mesName = StringsUtils.concat("date_mes_abreviado_", String.valueOf(mes));
-			HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName), cellStyleColTitulos);
+			HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName, orgPk), cellStyleColTitulos);
 		}
-		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.TOTAL.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_total"), cellStyleColTitulos);
+		HSSFCellUtil.createCell(rowColTitulos, ReportePreColumnasEnum.TOTAL.ordinal(), LabelsEJB.getValue("rep_pre_xls_col_total", orgPk), cellStyleColTitulos);
                 
                     
 		Map<String, ReporteAcumuladoMesTO> mapTotales = null;
@@ -245,16 +244,16 @@ public class ReportePresupuestoBean {
 									cellStyleMon.setBorderBottom(CellStyle.BORDER_THIN);
 								}
 								HSSFRow rowMon = hoja.createRow(++filaNro);
-								columnasProyecto(rowMon, proy, cellStyleMon);
+								columnasProyecto(rowMon, proy, cellStyleMon, orgPk);
 
 								celda = rowMon.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-								celda.setCellValue(conceptoStr(1));
+								celda.setCellValue(conceptoStr(1, orgPk));
 								celda.setCellStyle(cellStyleMon);
 								celda = rowMon.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 								celda.setCellValue(mon.getMonSigno());
 								celda.setCellStyle(cellStyleMon);
 								celda = rowMon.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-								celda.setCellValue(nombreTipoLinea(i + 1));
+								celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
 								celda.setCellStyle(cellStyleMon);
 
                                                                 if(i < 3){
@@ -346,12 +345,6 @@ public class ReportePresupuestoBean {
 						if (listAdq != null) {
 							for (Adquisicion adq : listAdq) {
 
-								// filtrar adquisiciones
-                                //                                if (!StringsUtils.isEmpty(filtro.getProcedimientoGRP())
-                                //                                        && (adq.getAdqProcCompraGrp() == null
-                                //                                        || !adq.getAdqProcCompraGrp().matches("(.*)" + filtro.getProcedimientoGRP() + "(.*)"))) {
-                                //                                    continue;
-                                //                                }
 								//0-Planificado, 1-Real, 2-Proyectado, 3-Saldo
 								for (int i = 0; i < 4; i++) {
 									HSSFCellStyle cellStyleAdq = planilla.createCellStyle();
@@ -359,31 +352,19 @@ public class ReportePresupuestoBean {
 										cellStyleAdq.setBorderBottom(CellStyle.BORDER_THIN);
 									}
 									HSSFRow rowAdq = hoja.createRow(++filaNro);
-									columnasProyecto(rowAdq, proy, cellStyleAdq);
+									columnasProyecto(rowAdq, proy, cellStyleAdq, orgPk);
 
 									celda = rowAdq.createCell(ReportePreColumnasEnum.PROCEDIMIENTO.ordinal());
-                                                                        
-                                                                        
-                                                                        /*
-                                                                        *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
-                                                                        *           se maneja como una entidad nueva.
-                                                                        */                                                                        
-                                                                        
-//									celda.setCellValue(adq.getAdqProcCompra());
-
-                                                                        if(adq.getAdqProcedimientoCompra() != null){
-                                                                            celda.setCellValue(adq.getAdqProcedimientoCompra().getProcCompNombre());
-                                                                        }else{
-                                                                            celda.setCellValue("");
-                                                                        }
-                                                                        
-                                                                        /*
-                                                                        *       24-08-2018 Nico: Se agrega el valor del nombre de la Adquisición en el campo correspondiente.
-                                                                        */
-
-                                                                        celda.setCellStyle(cellStyleAdq);
-                                                                        celda = rowAdq.createCell(ReportePreColumnasEnum.NOMBRE_ADQ.ordinal());
-                                                                        celda.setCellValue(adq.getAdqNombre());
+									
+									if(adq.getAdqProcedimientoCompra() != null){
+										celda.setCellValue(adq.getAdqProcedimientoCompra().getProcCompNombre());
+									}else{
+										celda.setCellValue("");
+									}
+                                                                       
+									celda.setCellStyle(cellStyleAdq);
+									celda = rowAdq.createCell(ReportePreColumnasEnum.NOMBRE_ADQ.ordinal());
+									celda.setCellValue(adq.getAdqNombre());
                                                                         
 									celda.setCellStyle(cellStyleAdq);
 									celda = rowAdq.createCell(ReportePreColumnasEnum.PROC_GRP.ordinal());
@@ -396,88 +377,77 @@ public class ReportePresupuestoBean {
 									celda.setCellValue(adq.getAdqProvOrga() != null ? adq.getAdqProvOrga().getOrgaNombre() : "");
 									celda.setCellStyle(cellStyleAdq);
 									celda = rowAdq.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-									celda.setCellValue(conceptoStr(1));
+									celda.setCellValue(conceptoStr(1, orgPk));
 									celda.setCellStyle(cellStyleAdq);
 									celda = rowAdq.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 									celda.setCellValue(adq.getAdqMoneda().getMonSigno());
 									celda.setCellStyle(cellStyleAdq);
 									celda = rowAdq.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-									celda.setCellValue(nombreTipoLinea(i + 1));
+									celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
 									celda.setCellStyle(cellStyleAdq);
 
 									double total = 0;
 									double totalMeses = 0;
 									Double valorMes = null;
-                                                                        //Double valorMesReal;
-									
-                                                                        if(i != 3){
-                                                                            for (int mes = 1; mes <= 12; mes++) {
-                                                                                    if (i == 1 && (anio > calNow.get(Calendar.YEAR)
-                                                                                                    || (anio == calNow.get(Calendar.YEAR) && mes > calNow.get(Calendar.MONTH) + 1))) { // Real (1) pero futuro.
-                                                                                            valorMes = 0D;
-                                                                                    } else if (i == 2 && (anio > calNow.get(Calendar.YEAR)
-                                                                                                    || (anio == calNow.get(Calendar.YEAR) && mes > calNow.get(Calendar.MONTH) + 1))) { // Proyectado (2) pero futuro.
-                                                                                            valorMes = obtenerValorPrePorMesAnio(i, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
-                                                                                             //valorMesReal = obtenerValorPrePorMesAnio(i - 1, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), calNow.get(Calendar.MONTH) + 1, calNow.get(Calendar.YEAR), acumulado);
-                                                                                            /**
-                                                                                             * 16-12-2016 Esto lo decidió Juan
-                                                                                             * Pablo. En un momento quería que
-                                                                                             * para el acumulado tomara el
-                                                                                             * acumulado real del anterior.
-                                                                                             * Ahora nunca suma el valorMesReal.
-                                                                                             */
-                                                                                             //valorMes += valorMesReal != null ? valorMesReal : 0D;
+									//Double valorMesReal;
 
-                                                                                    } else { // Planificado, Real y Proyectado pero de este mes o anterior.
-                                                                                            valorMes = obtenerValorPrePorMesAnio(i, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
-                                                                                    }
+									if(i != 3){
+										for (int mes = 1; mes <= 12; mes++) {
+											if (i == 1 && (anio > calNow.get(Calendar.YEAR)
+															|| (anio == calNow.get(Calendar.YEAR) && mes > calNow.get(Calendar.MONTH) + 1))) { // Real (1) pero futuro.
+												valorMes = 0D;
+											} else if (i == 2 && (anio > calNow.get(Calendar.YEAR)
+															|| (anio == calNow.get(Calendar.YEAR) && mes > calNow.get(Calendar.MONTH) + 1))) { // Proyectado (2) pero futuro.
+													
+												valorMes = obtenerValorPrePorMesAnio(i, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
 
-                                                                                    total = valorMes != null ? valorMes : total;
-                                                                                    totalMeses = totalMeses + valorMes;
-                                                                                    celda = rowAdq.createCell(obtenerCeldaOrdinalMes(mes));
-                                                                                    celda.setCellValue(valorMes);
-                                                                                    celda.setCellStyle(cellStyleAdq);
+											} else { // Planificado, Real y Proyectado pero de este mes o anterior.
+												valorMes = obtenerValorPrePorMesAnio(i, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
+											}
 
-                                                                                    mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, mes, anio, valorMes);
-                                                                            }
-                                                                            
-                                                                            
-                                                                            if (acumulado) {
-                                                                                    celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
-                                                                                    celda.setCellValue(total);
-                                                                                    celda.setCellStyle(cellStyleAdq);
-                                                                                    mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, total);
-                                                                            } else {
-                                                                                    celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
-                                                                                    celda.setCellValue(totalMeses);
-                                                                                    celda.setCellStyle(cellStyleAdq);
-                                                                                    mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, totalMeses);
-                                                                            }
+											total = valorMes != null ? valorMes : total;
+											totalMeses = totalMeses + valorMes;
+											celda = rowAdq.createCell(obtenerCeldaOrdinalMes(mes));
+											celda.setCellValue(valorMes);
+											celda.setCellStyle(cellStyleAdq);
 
-                                                                        }else{ // Saldo
-                                                                            for (int mes = 1; mes <= 12; mes++) {
-                                                                                    celda = rowAdq.createCell(obtenerCeldaOrdinalMes(mes));
-                                                                                    final Double mensual = obtenerValorPrePorMesAnio(0, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado)
-                                                                                            - obtenerValorPrePorMesAnio(1, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado)
-                                                                                            - obtenerValorPrePorMesAnio(2, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
-                                                                                    celda.setCellValue(mensual);
-                                                                                    celda.setCellStyle(cellStyleAdq);
-                                                                                    
-                                                                                    mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, mes, anio, mensual);
-                                                                                    
-                                                                            }
-                                                                            
-                                                                            final Double anual = adq.getImporteSaldoAnio(anio);
-                                                                            celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
-                                                                            celda.setCellValue(anual);
-                                                                            celda.setCellStyle(cellStyleAdq);
-                                                                            
-                                                                            mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, anual);
-                                                                        } 
-                                                                        
+											mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, mes, anio, valorMes);
+										}
+
+										if (acumulado) {
+											celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
+											celda.setCellValue(total);
+											celda.setCellStyle(cellStyleAdq);
+											mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, total);
+										} else {
+											celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
+											celda.setCellValue(totalMeses);
+											celda.setCellStyle(cellStyleAdq);
+											mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, totalMeses);
+										}
+
+									}else{ // Saldo
+										for (int mes = 1; mes <= 12; mes++) {
+											celda = rowAdq.createCell(obtenerCeldaOrdinalMes(mes));
+											final Double mensual = obtenerValorPrePorMesAnio(0, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado)
+													- obtenerValorPrePorMesAnio(1, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado)
+													- obtenerValorPrePorMesAnio(2, pre.getPrePk(), adq.getAdqPk(), adq.getAdqMoneda(), mes, anio, acumulado);
+											celda.setCellValue(mensual);
+											celda.setCellStyle(cellStyleAdq);
+
+											mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, mes, anio, mensual);
+										}
+
+										final Double anual = adq.getImporteSaldoAnio(anio);
+										celda = rowAdq.createCell(ReportePreColumnasEnum.TOTAL.ordinal());
+										celda.setCellValue(anual);
+										celda.setCellStyle(cellStyleAdq);
+
+										mapTotales = sumarTotalesFactura(mapTotales, adq.getAdqMoneda().getMonPk(), i, 13, anio, anual);
+									}                    
 
 									totalesMonedas.put(adq.getAdqMoneda().getMonPk(), adq.getAdqMoneda());
-                                                                }        
+								}        
 							}
 						}
 					}
@@ -509,29 +479,16 @@ public class ReportePresupuestoBean {
 									cellStyleDev.setBorderBottom(CellStyle.BORDER_THIN);
 								}
 								HSSFRow rowDev = hoja.createRow(++filaNro);
-								columnasProyecto(rowDev, proy, cellStyleDev);
+								columnasProyecto(rowDev, proy, cellStyleDev, orgPk);
 
 								celda = rowDev.createCell(ReportePreColumnasEnum.PROCEDIMIENTO.ordinal());
 
+								if(adq.getAdqProcedimientoCompra() != null){
+									celda.setCellValue(adq.getAdqProcedimientoCompra().getProcCompNombre());
+								}else{
+									celda.setCellValue("");
+								}
 
-                                                                /*
-                                                                *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
-                                                                *           se maneja como una entidad nueva.
-                                                                */                                                                
-                                                                
-                                                                
-                                                                //celda.setCellValue(adq.getAdqProcCompra());
-                                                             
-                                                                if(adq.getAdqProcedimientoCompra() != null){
-                                                                    celda.setCellValue(adq.getAdqProcedimientoCompra().getProcCompNombre());
-                                                                }else{
-                                                                    celda.setCellValue("");
-                                                                }
-
-                                                                /*
-                                                                *       24-08-2018 Nico: Se agrega el valor del nombre de la Adquisición en el campo correspondiente.
-                                                                */
-                                                                
 								celda.setCellStyle(cellStyleDev);
 								celda = rowDev.createCell(ReportePreColumnasEnum.NOMBRE_ADQ.ordinal());
 								celda.setCellValue(adq.getAdqNombre());
@@ -547,13 +504,13 @@ public class ReportePresupuestoBean {
 								celda.setCellValue(adq.getAdqProvOrga() != null ? adq.getAdqProvOrga().getOrgaNombre() : "");
 								celda.setCellStyle(cellStyleDev);
 								celda = rowDev.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-								celda.setCellValue(conceptoStr(4));
+								celda.setCellValue(conceptoStr(4, orgPk));
 								celda.setCellStyle(cellStyleDev);
 								celda = rowDev.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 								celda.setCellValue(adq.getAdqMoneda().getMonSigno());
 								celda.setCellStyle(cellStyleDev);
 								celda = rowDev.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-								celda.setCellValue(nombreTipoLinea(i + 1));
+								celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
 								celda.setCellStyle(cellStyleDev);
 
 								double total = 0;
@@ -595,16 +552,16 @@ public class ReportePresupuestoBean {
 							cellStyleHora.setBorderBottom(CellStyle.BORDER_THIN);
 						}
 						HSSFRow rowHora = hoja.createRow(++filaNro);
-						columnasProyecto(rowHora, proy, cellStyleHora);
+						columnasProyecto(rowHora, proy, cellStyleHora, orgPk);
 
 						celda = rowHora.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-						celda.setCellValue(conceptoStr(2));
+						celda.setCellValue(conceptoStr(2, orgPk));
 						celda.setCellStyle(cellStyleHora);
 						celda = rowHora.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 						celda.setCellValue(mon.getMonSigno());
 						celda.setCellStyle(cellStyleHora);
 						celda = rowHora.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-						celda.setCellValue(LabelsEJB.getValue("rep_pre_tipo_aprobado"));
+						celda.setCellValue(LabelsEJB.getValue("rep_pre_tipo_aprobado", orgPk));
 						celda.setCellStyle(cellStyleHora);
 
 						double total = 0;
@@ -640,16 +597,16 @@ public class ReportePresupuestoBean {
 							cellStyleGasto.setBorderBottom(CellStyle.BORDER_THIN);
 						}
 						HSSFRow rowGasto = hoja.createRow(++filaNro);
-						columnasProyecto(rowGasto, proy, cellStyleGasto);
+						columnasProyecto(rowGasto, proy, cellStyleGasto, orgPk);
 
 						celda = rowGasto.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-						celda.setCellValue(conceptoStr(3));
+						celda.setCellValue(conceptoStr(3, orgPk));
 						celda.setCellStyle(cellStyleGasto);
 						celda = rowGasto.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 						celda.setCellValue(mon.getMonSigno());
 						celda.setCellStyle(cellStyleGasto);
 						celda = rowGasto.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-						celda.setCellValue(LabelsEJB.getValue("rep_pre_tipo_aprobado"));
+						celda.setCellValue(LabelsEJB.getValue("rep_pre_tipo_aprobado", orgPk));
 						celda.setCellStyle(cellStyleGasto);
 
 						double total = 0;
@@ -683,13 +640,13 @@ public class ReportePresupuestoBean {
 					}
 					HSSFRow rowMon = hoja.createRow(++filaNro);
 					celda = rowMon.createCell(ReportePreColumnasEnum.CONCEPTO.ordinal());
-					celda.setCellValue(conceptoStr(0));
+					celda.setCellValue(conceptoStr(0, orgPk));
 					celda.setCellStyle(cellStyleMon);
 					celda = rowMon.createCell(ReportePreColumnasEnum.MONEDA.ordinal());
 					celda.setCellValue(mon.getMonSigno());
 					celda.setCellStyle(cellStyleMon);
 					celda = rowMon.createCell(ReportePreColumnasEnum.TIPO_LINEA.ordinal());
-					celda.setCellValue(nombreTipoLinea(i + 1));
+					celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
 					celda.setCellStyle(cellStyleMon);
 
 					ReporteAcumuladoMesTO acuMes;
@@ -700,14 +657,14 @@ public class ReportePresupuestoBean {
 						double value = 0;
 						if (acuMes != null) {
 							if (i == 0) {
-                                                            value = acuMes.getValorPlan() != null ? acuMes.getValorPlan() : 0;
+								value = acuMes.getValorPlan() != null ? acuMes.getValorPlan() : 0;
 							} else if (i == 1) {
-                                                            value = acuMes.getValorRealFinalizado() != null ? acuMes.getValorRealFinalizado() : 0;
+								value = acuMes.getValorRealFinalizado() != null ? acuMes.getValorRealFinalizado() : 0;
 							} else if (i == 2) {
-                                                            value = acuMes.getValorProyectadoTotalFinalizado() != null ? acuMes.getValorProyectadoTotalFinalizado() : 0;
-							} else if (i == 3){
-                                                            value = acuMes.getValorSaldo() != null ? acuMes.getValorSaldo() : 0;
-                                                        }
+								value = acuMes.getValorProyectadoTotalFinalizado() != null ? acuMes.getValorProyectadoTotalFinalizado() : 0;
+							} else if (i == 3) {
+								value = acuMes.getValorSaldo() != null ? acuMes.getValorSaldo() : 0;
+							}
 						}
 						celda.setCellValue(value);
 						celda.setCellStyle(cellStyleMon);
@@ -750,7 +707,7 @@ public class ReportePresupuestoBean {
 	 * @param rowcellStyle@param proy
 	 * @param rowStyle
 	 */
-	private void columnasProyecto(HSSFRow row, Proyectos proy, HSSFCellStyle cellStyle) {
+	private void columnasProyecto(HSSFRow row, Proyectos proy, HSSFCellStyle cellStyle, Integer orgPk) {
 		HSSFCell celda;
 		celda = row.createCell(ReportePreColumnasEnum.ID_PROG.ordinal());
 		celda.setCellStyle(cellStyle);
@@ -776,7 +733,7 @@ public class ReportePresupuestoBean {
 		celda.setCellValue(gerente);
 		celda.setCellStyle(cellStyle);
 		celda = row.createCell(ReportePreColumnasEnum.ESTADO.ordinal());
-		celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk()));
+		celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk(), orgPk));
 		celda.setCellStyle(cellStyle);                
 		celda = row.createCell(ReportePreColumnasEnum.PROCEDIMIENTO.ordinal());
 		celda.setCellValue("");
@@ -802,18 +759,18 @@ public class ReportePresupuestoBean {
 	 * @param i
 	 * @return String
 	 */
-	private String conceptoStr(int i) {
+	private String conceptoStr(int i, Integer orgPk) {
 		switch (i) {
 			case 0:
-				return LabelsEJB.getValue("rep_pre_concepto_tot");
+				return LabelsEJB.getValue("rep_pre_concepto_tot", orgPk);
 			case 1:
-				return LabelsEJB.getValue("rep_pre_concepto_pre");
+				return LabelsEJB.getValue("rep_pre_concepto_pre", orgPk);
 			case 2:
-				return LabelsEJB.getValue("rep_pre_concepto_horas");
+				return LabelsEJB.getValue("rep_pre_concepto_horas", orgPk);
 			case 3:
-				return LabelsEJB.getValue("rep_pre_concepto_gastos");
+				return LabelsEJB.getValue("rep_pre_concepto_gastos", orgPk);
 			case 4:
-				return LabelsEJB.getValue("rep_pre_concepto_devengado");
+				return LabelsEJB.getValue("rep_pre_concepto_devengado", orgPk);
 			default:
 				return "";
 		}
@@ -826,16 +783,16 @@ public class ReportePresupuestoBean {
 	 * @param i
 	 * @return String
 	 */
-	private String nombreTipoLinea(int i) {
+	private String nombreTipoLinea(int i, Integer orgPk) {
 		switch (i) {
 			case 1:
-				return LabelsEJB.getValue("rep_pre_tipo_plan");
+				return LabelsEJB.getValue("rep_pre_tipo_plan", orgPk);
 			case 2:
-				return LabelsEJB.getValue("rep_pre_tipo_real");
+				return LabelsEJB.getValue("rep_pre_tipo_real", orgPk);
 			case 3:
-				return LabelsEJB.getValue("rep_pre_tipo_proyectado");
+				return LabelsEJB.getValue("rep_pre_tipo_proyectado", orgPk);
 			case 4:
-				return LabelsEJB.getValue("rep_pre_tipo_saldo");
+				return LabelsEJB.getValue("rep_pre_tipo_saldo", orgPk);
 			default:
 				return "";
 		}

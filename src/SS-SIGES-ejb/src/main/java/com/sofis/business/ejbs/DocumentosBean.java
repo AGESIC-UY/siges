@@ -90,7 +90,7 @@ public class DocumentosBean {
 
         private static final Logger logger = Logger.getLogger(DocumentosBean.class.getName());
 
-	public Documentos guardar(Documentos documento) throws GeneralException {
+	public Documentos guardar(Documentos documento, Integer orgPk) throws GeneralException {
 
 		if (documento.getDocsFecha() == null) {
 			documento.setDocsFecha(new Date());
@@ -99,7 +99,7 @@ public class DocumentosBean {
 			documento.setDocsEstado(0d);
 		}
 
-		DocumentosValidacion.validar(documento);
+		DocumentosValidacion.validar(documento, orgPk);
 		DocumentosDao docDao = new DocumentosDao(em);
 
 		try {
@@ -136,7 +136,7 @@ public class DocumentosBean {
 		if (documento.getDocsEstado() == null) {
 			documento.setDocsEstado(0d);
 		}
-		DocumentosValidacion.validar(documento);
+		DocumentosValidacion.validar(documento, orgPk);
 		if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
                     
                     InputStream is = null;

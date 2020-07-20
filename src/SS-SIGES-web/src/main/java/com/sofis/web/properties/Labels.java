@@ -2,21 +2,22 @@ package com.sofis.web.properties;
 
 import com.sofis.business.properties.LabelsEJB;
 import com.sofis.exceptions.GeneralException;
+import com.sofis.web.mb.InicioMB;
 import java.util.LinkedList;
 import java.util.List;
+import javax.faces.application.Application;
+import javax.faces.context.FacesContext;
 
-/**
- *
- * @author Usuario
- */
 public class Labels {
 
 	public static String getValue(String key) {
-		return LabelsEJB.getValue(key);
+
+		return LabelsEJB.getValue(key, obtenerOrganismoId());
 	}
 
 	public static List<String> getValues(List<String> key) {
-		List<String> ret = new LinkedList<String>();
+
+		List<String> ret = new LinkedList<>();
 		if (key != null && key.size() > 0) {
 			for (String k : key) {
 				ret.add(getValue(k));
@@ -45,4 +46,12 @@ public class Labels {
 		}
 	}
 
+	private static Integer obtenerOrganismoId() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		Application application = context.getApplication();
+		InicioMB inicioMB = application.evaluateExpressionGet(context, "#{inicioMB}", InicioMB.class);
+
+		return inicioMB.getOrganismoSeleccionado();
+	}
 }

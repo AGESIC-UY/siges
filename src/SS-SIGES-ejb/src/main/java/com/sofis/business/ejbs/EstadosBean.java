@@ -230,21 +230,21 @@ public class EstadosBean {
         return list;
     }
 
-    public String estadoStr(Integer estPk) {
+    public String estadoStr(Integer estPk, Integer orgPK) {
         if (estPk != null) {
-            return LabelsEJB.getValue("estado_" + estPk);
+            return LabelsEJB.getValue("estado_" + estPk, orgPK);
         }
         return "";
     }
 
-    public String estadoStr(Estados est) {
+    public String estadoStr(Estados est, Integer orgPK) {
         if (est != null) {
             if (!StringsUtils.isEmpty(est.getEstLabel()) && est.getEstLabel().trim().length() > 0) {
-                return LabelsEJB.getValue(est.getEstLabel());
+                return LabelsEJB.getValue(est.getEstLabel(), orgPK);
             } else if (!StringsUtils.isEmpty(est.getEstCodigo()) && est.getEstCodigo().trim().length() > 0) {
-                return LabelsEJB.getValue("estado_" + est.getEstCodigo());
+                return LabelsEJB.getValue("estado_" + est.getEstCodigo(), orgPK);
             }
-            return LabelsEJB.getValue("estado_" + est.getEstPk());
+            return LabelsEJB.getValue("estado_" + est.getEstPk(), orgPK);
         }
         return "";
     }

@@ -55,10 +55,15 @@ public class FichaAdquisicionValidacion {
                 }
             }
 
-            if (adq.getAdqIdAdquisicion() == null || adq.getAdqIdAdquisicion() == 0) {
-                if (camposExigidos) {
-                    be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_VACIO);
-                }
+            if (camposExigidos &&
+					(adq.getAdqIdAdquisicion() == null || adq.getAdqIdAdquisicion() <= 0)) {
+
+				be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_VACIO);
+                
+            } else if (adq.getAdqIdAdquisicion() < 0) {
+               
+                be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_NO_ENTERO);
+				
             } else if (String.valueOf(adq.getAdqIdAdquisicion()).length() > largoMaximoIdAdquisicion) {
                
                 be.addError(MensajesNegocio.ERROR_ADQUISICION_ID_ADQUISICION_SUPERA_LARGO_MAXIMO);

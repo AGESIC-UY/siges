@@ -152,11 +152,11 @@ public class CronogramasBean {
 
 			if (cantInicioPeriodo > 1 || cantFinPeriodo > 1) {
 				if (cantInicioPeriodo > 1) {
-					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_MULTIPLE_INI_PERIODO));
+					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_MULTIPLE_INI_PERIODO, orgPk));
 					error = true;
 				}
 				if (cantFinPeriodo > 1) {
-					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_MULTIPLE_FIN_PERIODO));
+					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_MULTIPLE_FIN_PERIODO, orgPk));
 					error = true;
 				}
 
@@ -164,7 +164,7 @@ public class CronogramasBean {
 
 			if (inicioProyecto != null && finProyecto != null) {
 				if (inicioProyecto.after(finProyecto)) {
-					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_INI_FIN_PERIODO_INCONSISTENTE));
+					be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR_INI_FIN_PERIODO_INCONSISTENTE, orgPk));
 					error = true;
 				}
 			}
@@ -174,8 +174,8 @@ public class CronogramasBean {
 			}
 
 			eliminarEntregablesBorrados(cro);
-			preProcesarEntregables(cro);
-                        setEsfuerzoPadres(cro);
+			preProcesarEntregables(cro, orgPk);
+            setEsfuerzoPadres(cro);
 
 			cro = guardar(cro);
 
@@ -193,7 +193,7 @@ public class CronogramasBean {
 			}
 		} catch (GeneralException ex) {
 			BusinessException be = new BusinessException(ex);
-			be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR));
+			be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_CRO_GUARDAR, orgPk));
 			be.addErrores(ex.getErrores());
 			throw be;
 		}
@@ -567,6 +567,7 @@ public class CronogramasBean {
 			}
 
 			if (!borradosList.isEmpty()) {
+				Integer org = cro.getProyecto().getProyOrgFk().getOrgPk();
 				Estados est = cro.getProyecto().getProyEstFk();
 				if (!(est.isEstado(Estados.ESTADOS.INICIO.estado_id) || est.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id))) {
 					BusinessException be = new BusinessException();
@@ -583,7 +584,7 @@ public class CronogramasBean {
 
 					if (tieneDependencias) {
 						BusinessException be = new BusinessException();
-						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_DEPEDENCIAS), borrado.getEntNombre()));
+						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_DEPEDENCIAS, org), borrado.getEntNombre()));
 						throw be;
 //                    } else if (tieneProductos) {
 //                        BusinessException be = new BusinessException();
@@ -591,15 +592,15 @@ public class CronogramasBean {
 //                        throw be;
 					} else if (avance) {
 						BusinessException be = new BusinessException();
-						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_AVANCE), borrado.getEntNombre()));
+						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_AVANCE, org), borrado.getEntNombre()));
 						throw be;
 					} else if (horasAsociadas) {
 						BusinessException be = new BusinessException();
-						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_HORAS), borrado.getEntNombre()));
+						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_HORAS, org), borrado.getEntNombre()));
 						throw be;
 					} else if (partAsociados) {
 						BusinessException be = new BusinessException();
-						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_PART), borrado.getEntNombre()));
+						be.addError(String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_ENTREGABLE_BORRAR_PART, org), borrado.getEntNombre()));
 						throw be;
 					}
 					documentosBean.quitarEntregable(borrado.getEntPk());
@@ -711,11 +712,12 @@ public class CronogramasBean {
 	 *
 	 * @param cro
 	 */
-	private void preProcesarEntregables(Cronogramas cro) {
+	private void preProcesarEntregables(Cronogramas cro, Integer orgPk) {
 		if (cro != null && cro.getEntregablesSet() != null) {
+	
 			for (Entregables ent : cro.getEntregablesSet()) {
 				if (StringsUtils.isEmpty(ent.getEntNombre())) {
-					ent.setEntNombre(LabelsEJB.getValue("entregable") + " " + (ent.getEntId() != null ? ent.getEntId() : ""));
+					ent.setEntNombre(LabelsEJB.getValue("entregable", orgPk) + " " + (ent.getEntId() != null ? ent.getEntId() : ""));
 				}
 				if (ent.getEntFinEsHito() != null && ent.getEntFinEsHito()) {
 					ent.setEntInicio(ent.getEntFin());

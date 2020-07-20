@@ -36,7 +36,7 @@ public class ProgramaValidacion {
                 if (StringsUtils.isEmpty(prog.getProgNombre())) {
                     be.addError(MensajesNegocio.ERROR_FICHA_NOMBRE);
                 } else if (prog.getProgNombre().length() > 100) {
-                    be.addError(Utils.mensajeLargoCampo("nombreProgProy", 100));
+                    be.addError(Utils.mensajeLargoCampo("nombreProgProy", orgPk, 100));
                 }
                 if (prog.getProgAreaFk() == null) {
                     be.addError(MensajesNegocio.ERROR_FICHA_AREA);

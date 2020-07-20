@@ -3,6 +3,7 @@ package com.sofis.business.ejbs;
 import com.sofis.business.interceptors.LoggedInterceptor;
 import com.sofis.business.properties.LabelsEJB;
 import com.sofis.business.utils.MailsTemplateUtils;
+import com.sofis.business.utils.ProgProyUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.ConstantesEstandares;
@@ -68,6 +69,8 @@ public class MailBean {
 	private MailsTemplateBean mailsTemplateBean;
 	@Inject
 	private OrganismoBean organismoBean;
+	@Inject
+	private ConfiguracionBean configuracionBean;
 	@EJB
 	private SsUsuarioBean ssUsuarioBean;
 
@@ -352,23 +355,23 @@ public class MailBean {
 
                                         // Attachment ----------------------------------------------------------------
                                         if (fileArr != null && fileArr.length > 0) {
-                                                // Create the message part
-                                                BodyPart messageBodyPart = new MimeBodyPart();
-                                                messageBodyPart.setText("Text MimeBodyPart");
+											// Create the message part
+											BodyPart messageBodyPart = new MimeBodyPart();
+											messageBodyPart.setText("Text MimeBodyPart");
 
-                                                // Now set the actual message
-                                                // messageBodyPart.setText("This is message body");
-                                                // Create a multipar message
-                                                Multipart multipart = new MimeMultipart();
+											// Now set the actual message
+											// messageBodyPart.setText("This is message body");
+											// Create a multipar message
+											Multipart multipart = new MimeMultipart();
 
-                                                MimeBodyPart mbp = new MimeBodyPart();
-                                                String fName = !StringsUtils.isEmpty(fileName) ? fileName : LabelsEJB.getValue("mail_file_name");
-                                                mbp.setFileName(fName);
-                                                DataSource ds = new ByteArrayDataSource(fileArr, "application/octet-stream");
-                                                mbp.setDataHandler(new DataHandler(ds));
-                                                multipart.addBodyPart(mbp);
+											MimeBodyPart mbp = new MimeBodyPart();
+											String fName = !StringsUtils.isEmpty(fileName) ? fileName : LabelsEJB.getValue("mail_file_name", orgPk);
+											mbp.setFileName(fName);
+											DataSource ds = new ByteArrayDataSource(fileArr, "application/octet-stream");
+											mbp.setDataHandler(new DataHandler(ds));
+											multipart.addBodyPart(mbp);
 
-                                                msg.setContent(multipart);
+											msg.setContent(multipart);
 
                                         }
                                         // Attachment fin ----------------------------------------------------------------
@@ -471,27 +474,36 @@ public class MailBean {
 			String mensaje = mt.getMailTmpMensaje();
 
 			Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
+			String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null); 
 
 			String tipo = "";
 			Integer fichaPk = null;
 			String nombre = "";
+			String url = "";
+
 			if (obj instanceof Programas) {
 				Programas p = (Programas) obj;
 				tipo = "programa";
 				fichaPk = p.getProgPk();
 				nombre = p.getProgNombre();
+				url = ProgProyUtils.obtenerURL(urlSistema, p);
+			
 			} else if (obj instanceof Proyectos) {
 				Proyectos p = (Proyectos) obj;
 				tipo = "proyecto";
 				fichaPk = p.getProyPk();
 				nombre = p.getProyNombre();
+				url = ProgProyUtils.obtenerURL(urlSistema, p);
 			}
+			
 			Map<String, String> valores = new HashMap<>();
 			valores.put(MailVariables.TIPO_PROG_PROY, tipo);
 			valores.put(MailVariables.ID_PROG_PROY, fichaPk.toString());
 			valores.put(MailVariables.NOMBRE_PROG_PROY, nombre);
 			valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 			valores.put(MailVariables.ORGANISMO_DIRECCION, org.getOrgDireccion());
+			valores.put(MailVariables.URL_SISTEMA, urlSistema); 
+			valores.put(MailVariables.URL_PROYECTO, url); 
 			mensaje = MailsTemplateUtils.instanciarConHashMap(mensaje, valores);
 
 			this.enviarMail(asunto, "", destinatario, mensaje, orgPk);
@@ -515,32 +527,40 @@ public class MailBean {
 			String mensaje = mt.getMailTmpMensaje();
 
 			Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
-
+			String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null); 
+			
 			String tipo = "";
 			Integer fichaPk = null;
 			String nombre = "";
 			Estados estado = null;
+			String url = "";
 			if (obj instanceof Programas) {
 				Programas p = (Programas) obj;
-				tipo = LabelsEJB.getValue("programa");
+				tipo = LabelsEJB.getValue("programa", orgPk);
 				fichaPk = p.getProgPk();
 				nombre = p.getProgNombre();
 				estado = p.getProgEstFk();
+				url = ProgProyUtils.obtenerURL(urlSistema, p);
+
 			} else if (obj instanceof Proyectos) {
 				Proyectos p = (Proyectos) obj;
-				tipo = LabelsEJB.getValue("proyecto");
+				tipo = LabelsEJB.getValue("proyecto", orgPk);
 				fichaPk = p.getProyPk();
 				nombre = p.getProyNombre();
 				estado = p.getProyEstFk();
+				url = ProgProyUtils.obtenerURL(urlSistema, p);
 			}
 
 			Map<String, String> valores = new HashMap<>();
 			valores.put(MailVariables.TIPO_PROG_PROY, tipo);
 			valores.put(MailVariables.ID_PROG_PROY, fichaPk.toString());
 			valores.put(MailVariables.NOMBRE_PROG_PROY, nombre);
-			valores.put(MailVariables.FASE_PROG_PROY, LabelsEJB.getValue("estado_" + estado.getEstPk()));
+			valores.put(MailVariables.FASE_PROG_PROY, LabelsEJB.getValue("estado_" + estado.getEstPk(), orgPk));
 			valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 			valores.put(MailVariables.ORGANISMO_DIRECCION, org.getOrgDireccion());
+			valores.put(MailVariables.URL_SISTEMA, urlSistema); 
+			valores.put(MailVariables.URL_PROYECTO, url); 
+
 			mensaje = MailsTemplateUtils.instanciarConHashMap(mensaje, valores);
 
 			this.enviarMail(asunto, "", destinatario, mensaje, orgPk);
@@ -564,20 +584,26 @@ public class MailBean {
 				String mensaje = mt.getMailTmpMensaje();
 
 				Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
+				String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null); 
 
 				String tipo = "";
 				Integer fichaPk = null;
 				String nombre = "";
+				String url = "";
+				
 				if (obj instanceof Programas) {
 					Programas p = (Programas) obj;
-					tipo = LabelsEJB.getValue("programa");
+					tipo = LabelsEJB.getValue("programa", orgPk);
 					fichaPk = p.getProgPk();
 					nombre = p.getProgNombre();
+					url = ProgProyUtils.obtenerURL(urlSistema, p);
+
 				} else if (obj instanceof Proyectos) {
 					Proyectos p = (Proyectos) obj;
-					tipo = LabelsEJB.getValue("proyecto");
+					tipo = LabelsEJB.getValue("proyecto", orgPk);
 					fichaPk = p.getProyPk();
 					nombre = p.getProyNombre();
+					url = ProgProyUtils.obtenerURL(urlSistema, p);
 				}
 
 				Map<String, String> valores = new HashMap<>();
@@ -586,6 +612,9 @@ public class MailBean {
 				valores.put(MailVariables.NOMBRE_PROG_PROY, nombre);
 				valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 				valores.put(MailVariables.ORGANISMO_DIRECCION, org.getOrgDireccion());
+				valores.put(MailVariables.URL_SISTEMA, urlSistema); 
+				valores.put(MailVariables.URL_PROYECTO, url); 
+
 				mensaje = MailsTemplateUtils.instanciarConHashMap(mensaje, valores);
 
 				this.enviarMail(asunto, "", null, null, destinatario, mensaje, orgPk);
@@ -617,6 +646,10 @@ public class MailBean {
 				valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 				valores.put(MailVariables.ORGANISMO_DIRECCION, org.getOrgDireccion());
 			}
+
+			String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
+			valores.put(MailVariables.URL_SISTEMA, urlSistema);
+
 			mensaje = MailsTemplateUtils.instanciarConHashMap(mensaje, valores);
 
 			String[] dests = new String[1];
@@ -637,9 +670,14 @@ public class MailBean {
 			Map<String, String> valores = new HashMap<>();
 			valores.put(MailVariables.USU_MAIL, mail);
 			valores.put(MailVariables.USU_PASSWORD, clave);
+
 			Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
 			valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
 			valores.put(MailVariables.ORGANISMO_DIRECCION, org.getOrgDireccion());
+			
+			String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
+			valores.put(MailVariables.URL_SISTEMA, urlSistema);
+
 			mensaje = MailsTemplateUtils.instanciarConHashMap(mensaje, valores);
 
 			String[] dests = new String[1];

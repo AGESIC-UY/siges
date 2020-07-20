@@ -13,12 +13,12 @@
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>5.9.1</version>
+        <version>5.10.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-data</artifactId>
-    <version>5.9.1</version>
+    <version>5.10.1</version>
     <packaging>ejb</packaging>
     <name>SS-SIGES-data</name>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-entities</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.1</version>
         </dependency>
        
         <dependency>

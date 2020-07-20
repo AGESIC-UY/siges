@@ -50,7 +50,7 @@ public class MoverProyectoValidacion {
             if (StringsUtils.isEmpty(proy.getProyNombre())) {
                 be.addError(MensajesNegocio.ERROR_FICHA_NOMBRE);
             } else if (proy.getProyNombre().length() > 100) {
-                be.addError(Utils.mensajeLargoCampo("nombreProgProy", 100));
+                be.addError(Utils.mensajeLargoCampo("nombreProgProy", proy.getProyOrgFk().getOrgPk(), 100));
             }
 
             if (fichaTo.getPreFk() != null) {

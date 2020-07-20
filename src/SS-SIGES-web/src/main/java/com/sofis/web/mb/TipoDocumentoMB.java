@@ -219,7 +219,7 @@ public class TipoDocumentoMB implements Serializable {
         }
         listaResultado = tipoDocumentoDelegate.busquedaTipoDocFiltro(mapFiltro, elementoOrdenacion, ascendente, inicioMB.getOrganismo().getOrgPk());
         for (TipoDocumento td : listaResultado) {
-            td.setExigidoDesdeStr(estadosDelegate.estadoStr(td.getTipodocExigidoDesde()));
+            td.setExigidoDesdeStr(estadosDelegate.estadoStr(td.getTipodocExigidoDesde(), inicioMB.getOrganismoSeleccionado()));
         }
 
         return null;
@@ -308,7 +308,7 @@ public class TipoDocumentoMB implements Serializable {
     }
 
     public String estadoStr(Integer estPk) {
-        return estadosDelegate.estadoStr(estPk);
+        return estadosDelegate.estadoStr(estPk, inicioMB.getOrganismoSeleccionado());
     }
 
 }

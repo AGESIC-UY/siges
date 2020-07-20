@@ -1,6 +1,5 @@
 package com.sofis.web.mb;
 
-import com.sofis.business.properties.LabelsEJB;
 import com.sofis.entities.data.Ambito;
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.exceptions.BusinessException;
@@ -318,7 +317,7 @@ public class OrganiIntProveMB implements Serializable {
             buscar();
             aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
             
-            JSFUtils.agregarMsgInfo(LabelsEJB.getValue("general_form_success"));
+            JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
         } catch (GeneralException ex) {

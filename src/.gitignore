@@ -1,0 +1,11 @@
+*/target/*
+*/target/**
+/target
+nb-configuration.xml
+*/nb-configuration.xml
+**/nb-configuration.xml
+
+/Borrar/nbproject/private/
+/Borrar/build/
+
+SS-SIGES-ear/

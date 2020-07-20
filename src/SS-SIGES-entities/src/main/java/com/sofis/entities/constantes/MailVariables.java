@@ -25,5 +25,7 @@ public class MailVariables {
     public static final String CONTRASENIA = "CONTRASENIA";
     public static final String USU_MAIL = "USU_MAIL";
     public static final String USU_PASSWORD = "USU_PASSWORD";
+    public static final String URL_SISTEMA = "URL_SISTEMA";
+    public static final String URL_PROYECTO = "URL_PROYECTO";
     
 }

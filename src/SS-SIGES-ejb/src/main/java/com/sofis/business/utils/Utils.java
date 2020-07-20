@@ -206,9 +206,11 @@ public class Utils {
 		logger.log(Level.INFO, "[GarbageCollector]Memoria liberada: " + (liberada / 1000 / 1000) + "MB de " + (runtime.maxMemory() / 1000 / 1000) + "MB (Asignada: " + (runtime.totalMemory() / 1000 / 1000) + "MB)");
 	}
 
-	public static String mensajeLargoCampo(String nombreCampo, int size) {
-		String campo = LabelsEJB.containsKey(nombreCampo) ? LabelsEJB.getValue(nombreCampo) : nombreCampo;
-		return String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_CAMPO_SIZE), campo, String.valueOf(size));
+	public static String mensajeLargoCampo(String nombreCampo, Integer orgPk, int size) {
+		
+		String campo = LabelsEJB.containsKey(nombreCampo, orgPk) ? LabelsEJB.getValue(nombreCampo, orgPk) : nombreCampo;
+		
+		return String.format(LabelsEJB.getValue(MensajesNegocio.ERROR_CAMPO_SIZE, orgPk), campo, String.valueOf(size));
 	}
 
 	public static String generarTokenUUID() {
