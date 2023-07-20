@@ -7,19 +7,13 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class ProcedimientoCompraDelegate {
 
-	//@Inject
-	//private FuenteFinanciamientoBean fuenteFinanciamientoBean;
 	@Inject
 	private ProcedimientoCompraBean componenteProductoBean;
 
-	public List<ProcedimientoCompra> obtenerProcedimientosComprasPorOrgId(Integer orgId) throws GeneralException {
-		return componenteProductoBean.obtenerProcedimientosComprasPorOrgId(orgId);
+	public List<ProcedimientoCompra> obtenerProcedimientosComprasHabilitadosPorOrgId(Integer orgId) throws GeneralException {
+		return componenteProductoBean.obtenerProcedimientosComprasHabilitadosPorOrgId(orgId);
 	}
 
 	public void eliminarProcedimientoCompra(Integer componenteProductoPk) {
@@ -37,8 +31,13 @@ public class ProcedimientoCompraDelegate {
 	public ProcedimientoCompra guardarProcedimientoCompra(ProcedimientoCompra componenteProducto) {
 		return componenteProductoBean.guardarProcedimientoCompra(componenteProducto);
 	}
-        
-        public void cargaMasiva(List<ProcedimientoCompra> datos, Integer orgPk){
-                componenteProductoBean.cargaMasiva(datos, orgPk);
-        }
+
+	public void cargaMasiva(List<ProcedimientoCompra> datos, Integer orgPk) {
+		componenteProductoBean.cargaMasiva(datos, orgPk);
+	}
+	
+	public List<ProcedimientoCompra> obtenerProcedimientosComprasPorOrgId(Integer orgId) {
+		
+		return componenteProductoBean.obtenerProcedimientosComprasPorOrgId(orgId);
+	}
 }

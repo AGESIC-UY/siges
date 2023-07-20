@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,444 +52,453 @@ import org.apache.poi.ss.usermodel.CellStyle;
 @LocalBean
 public class ReporteCronoAlcanceBean {
 
-	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-	private EntityManager em;
-	private static final Logger logger = Logger.getLogger(ReporteCronoAlcanceBean.class.getName());
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(ReporteCronoAlcanceBean.class.getName());
 
-	@Inject
-	private EstadosBean estadosBean;
-	@Inject
-	private ReportesBean reportesBean;
-	@Inject
-	private EntregablesBean entregablesBean;
-	@Inject
-	private CronogramasBean cronogramasBean;
+    @Inject
+    private EstadosBean estadosBean;
+    @Inject
+    private ReportesBean reportesBean;
+    @Inject
+    private EntregablesBean entregablesBean;
+    @Inject
+    private CronogramasBean cronogramasBean;
 
-	public byte[] generarReportePlanillaPorFiltro(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
+    public byte[] generarReportePlanillaPorFiltro(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
 
-		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
+        String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
 
-		int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
-		int filaNro = -1;
+        int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
+        int filaNro = -1;
 
-		//Proyectos obtenidos por medio del filtro.
-		List<Proyectos> listProy = reportesBean.buscarProyectosPorFiltro(filtro, orgPk, usuario);
+        //Proyectos obtenidos por medio del filtro.
+        List<Proyectos> listProy = reportesBean.buscarProyectosPorFiltro(filtro, orgPk, usuario);
 
-		HSSFWorkbook planilla = new HSSFWorkbook();
-		HSSFSheet hoja = planilla.createSheet(hojaName);
+        HSSFWorkbook planilla = new HSSFWorkbook();
+        HSSFSheet hoja = planilla.createSheet(hojaName);
 
-		HSSFPalette paletteAzul = planilla.getCustomPalette();
-		paletteAzul.setColorAtIndex(HSSFColor.BLUE.index, (byte) 3, (byte) 94, (byte) 159);
-		HSSFColor colorAzul = paletteAzul.getColor(HSSFColor.BLUE.index);
+        HSSFPalette paletteAzul = planilla.getCustomPalette();
+        paletteAzul.setColorAtIndex(HSSFColor.BLUE.index, (byte) 3, (byte) 94, (byte) 159);
+        HSSFColor colorAzul = paletteAzul.getColor(HSSFColor.BLUE.index);
 
-		HSSFCellStyle cellStyleTitle = planilla.createCellStyle();
-		cellStyleTitle.setFillForegroundColor(colorAzul.getIndex());
-		cellStyleTitle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		HSSFFont fontTitle = planilla.createFont();
-		fontTitle.setColor(HSSFColor.WHITE.index);
-		fontTitle.setBold(true);
-		cellStyleTitle.setFont(fontTitle);
+        HSSFCellStyle cellStyleTitle = planilla.createCellStyle();
+        cellStyleTitle.setFillForegroundColor(colorAzul.getIndex());
+        cellStyleTitle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        HSSFFont fontTitle = planilla.createFont();
+        fontTitle.setColor(HSSFColor.WHITE.index);
+        fontTitle.setBold(true);
+        cellStyleTitle.setFont(fontTitle);
 
-		HSSFRow rowTitulo = hoja.createRow(++filaNro);
-		for (int i = 0; i <= ReporteCroAlcColumnasEnum.DICIEMBRE.ordinal(); i++) {
-			HSSFCell celdaTit = rowTitulo.createCell(i);
-			celdaTit.setCellStyle(cellStyleTitle);
-		}
+        HSSFRow rowTitulo = hoja.createRow(++filaNro);
+        for (int i = 0; i <= ReporteCroAlcColumnasEnum.DICIEMBRE.ordinal(); i++) {
+            HSSFCell celdaTit = rowTitulo.createCell(i);
+            celdaTit.setCellStyle(cellStyleTitle);
+        }
 
-		HSSFCell celdaTitulo = rowTitulo.createCell(0);
-		celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_titulo", orgPk), ": ", hojaName));
-		celdaTitulo.setCellStyle(cellStyleTitle);
+        HSSFCell celdaTitulo = rowTitulo.createCell(0);
+        celdaTitulo.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_titulo", orgPk), ": ", hojaName));
+        celdaTitulo.setCellStyle(cellStyleTitle);
 
-		HSSFCell celdaAnio = rowTitulo.createCell(ReporteCroAlcColumnasEnum.ENERO.ordinal());
-		celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_anio", orgPk), ": ", filtro.getAnio().toString()));
-		celdaAnio.setCellStyle(cellStyleTitle);
+        HSSFCell celdaAnio = rowTitulo.createCell(ReporteCroAlcColumnasEnum.ENERO.ordinal());
+        celdaAnio.setCellValue(StringsUtils.concat(LabelsEJB.getValue("rep_cro_alc_xls_anio", orgPk), ": ", filtro.getAnio().toString()));
+        celdaAnio.setCellStyle(cellStyleTitle);
 
-		++filaNro;
-		//Fila titulos columnas
-		HSSFRow rowColTitulos = hoja.createRow(++filaNro);
-		HSSFCell celda;
+        ++filaNro;
+        //Fila titulos columnas
+        HSSFRow rowColTitulos = hoja.createRow(++filaNro);
+        HSSFCell celda;
 
-		HSSFCellStyle cellStyleColTitulos = planilla.createCellStyle();
-		cellStyleColTitulos.setBorderTop(CellStyle.BORDER_THIN);
-		cellStyleColTitulos.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyleColTitulos.setFillForegroundColor(colorAzul.getIndex());
-		cellStyleColTitulos.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		HSSFFont fontColTitulos = planilla.createFont();
-		fontColTitulos.setColor(HSSFColor.WHITE.index);
-		fontColTitulos.setBold(true);
-		cellStyleColTitulos.setFont(fontColTitulos);
-		cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        HSSFCellStyle cellStyleColTitulos = planilla.createCellStyle();
+        cellStyleColTitulos.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyleColTitulos.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyleColTitulos.setFillForegroundColor(colorAzul.getIndex());
+        cellStyleColTitulos.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        HSSFFont fontColTitulos = planilla.createFont();
+        fontColTitulos.setColor(HSSFColor.WHITE.index);
+        fontColTitulos.setBold(true);
+        cellStyleColTitulos.setFont(fontColTitulos);
+        cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog_id", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy_id", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_gerente", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal(), "", cellStyleColTitulos);
-		for (int mes = 1; mes <= 12; mes++) {
-			String mesName = StringsUtils.concat("date_mes_abreviado_", String.valueOf(mes));
-			HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName, orgPk), cellStyleColTitulos);
-		}
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog_id", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROG.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ID_PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy_id", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.PROY.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.AREA.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.GERENTE.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_gerente", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.ESTADO.ordinal(), LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(rowColTitulos, ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal(), "", cellStyleColTitulos);
+        for (int mes = 1; mes <= 12; mes++) {
+            String mesName = StringsUtils.concat("date_mes_abreviado_", String.valueOf(mes));
+            HSSFCellUtil.createCell(rowColTitulos, obtenerCeldaOrdinalMes(mes), LabelsEJB.getValue(mesName, orgPk), cellStyleColTitulos);
+        }
 
-		//Fila detalles
-		for (Proyectos proy : listProy) {
-			Set<Entregables> listEnt = proy.getProyCroFk() != null ? proy.getProyCroFk().getEntregablesSet() : null;
+        //Fila detalles
+        for (Proyectos proy : listProy) {
+            Set<Entregables> listEnt = proy.getProyCroFk() != null ? proy.getProyCroFk().getEntregablesSet() : null;
 
-			if (CollectionsUtils.isNotEmpty(listEnt)) {
+            if (CollectionsUtils.isNotEmpty(listEnt)) {
 
-				Map<String, ReporteAcumuladoMesTO> valoresCroMes = entregablesBean.obtenerAcumuladoMapMes(new ArrayList<Entregables>(listEnt));
+                Map<String, ReporteAcumuladoMesTO> valoresCroMes = entregablesBean.obtenerAcumuladoMapMes(new ArrayList<Entregables>(listEnt));
 
-				//0-Planificado, 1-Real, 2-Proyectado
-				for (int i = 0; i < 3; i++) {
-					HSSFCellStyle cellStyleAlc = planilla.createCellStyle();
-					if (i == 2) {
-						cellStyleAlc.setBorderBottom(CellStyle.BORDER_THIN);
-					}
-					HSSFRow rowMon = hoja.createRow(++filaNro);
-					columnasProyecto(rowMon, proy, cellStyleAlc);
+                //0-Planificado, 1-Real, 2-Proyectado
+                for (int i = 0; i < 3; i++) {
+                    HSSFCellStyle cellStyleAlc = planilla.createCellStyle();
+                    if (i == 2) {
+                        cellStyleAlc.setBorderBottom(CellStyle.BORDER_THIN);
+                    }
+                    HSSFRow rowMon = hoja.createRow(++filaNro);
+                    columnasProyecto(rowMon, proy, cellStyleAlc);
 
-					celda = rowMon.createCell(ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal());
-					celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
-					celda.setCellStyle(cellStyleAlc);
+                    celda = rowMon.createCell(ReporteCroAlcColumnasEnum.TIPO_LINEA.ordinal());
+                    celda.setCellValue(nombreTipoLinea(i + 1, orgPk));
+                    celda.setCellStyle(cellStyleAlc);
 
-					ReporteAcumuladoMesTO valorMes = null;
-					for (int mes = 1; mes <= 12; mes++) {
-						if (valoresCroMes != null) {
-							String clave = mes + "-" + anio;
-							valorMes = valoresCroMes.get(clave);
-						}
-						if (valorMes == null) {
-							valorMes = new ReporteAcumuladoMesTO();
-						}
+                    ReporteAcumuladoMesTO valorMes = null;
+                    for (int mes = 1; mes <= 12; mes++) {
+                        if (valoresCroMes != null) {
+                            String clave = mes + "-" + anio;
+                            valorMes = valoresCroMes.get(clave);
+                        }
+                        if (valorMes == null) {
+                            valorMes = new ReporteAcumuladoMesTO();
+                        }
 
-						celda = rowMon.createCell(obtenerCeldaOrdinalMes(mes));
-						celda.setCellStyle(cellStyleAlc);
+                        celda = rowMon.createCell(obtenerCeldaOrdinalMes(mes));
+                        celda.setCellStyle(cellStyleAlc);
 
-						Double valorTipo = 0D;
-						switch (i) {
-							case 0:
-								valorTipo = valorMes.getValorPlan();
-								break;
-							case 1:
-								valorTipo = valorMes.getValorRealFinalizado();
-								break;
-							case 2:
-								valorTipo = valorMes.getValorProyectadoTotalFinalizado();
-								break;
-						}
-						celda.setCellValue(Math.round(valorTipo));
-					}
-				}
-			}
-		}
+                        Double valorTipo = 0D;
+                        switch (i) {
+                            case 0:
+                                valorTipo = valorMes.getValorPlan();
+                                break;
+                            case 1:
+                                valorTipo = valorMes.getValorRealFinalizado();
+                                break;
+                            case 2:
+                                valorTipo = valorMes.getValorProyectadoTotalFinalizado();
+                                break;
+                        }
+                        celda.setCellValue(Math.round(valorTipo));
+                    }
+                }
+            }
+        }
 
-		ByteArrayOutputStream bos = null;
-		try {
-			bos = new ByteArrayOutputStream();
-			planilla.write(bos);
-			return bos.toByteArray();
+        ByteArrayOutputStream bos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            planilla.write(bos);
+            return bos.toByteArray();
 
-		} catch (IOException iOException) {
-			logger.log(Level.SEVERE, null, iOException);
-			BusinessException be = new BusinessException();
-			be.addError("Error al generar el Excel.");
-			throw be;
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
-			BusinessException be = new BusinessException();
-			be.addError("Error al generar el Excel.");
-			throw be;
-		} finally {
-			if (bos != null) {
-				try {
-					bos.close();
-				} catch (IOException ex) {
-					Logger.getLogger(ReporteCronoAlcanceBean.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		}
-	}
+        } catch (IOException iOException) {
+            logger.log(Level.SEVERE, null, iOException);
+            BusinessException be = new BusinessException();
+            be.addError("Error al generar el Excel.");
+            throw be;
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+            BusinessException be = new BusinessException();
+            be.addError("Error al generar el Excel.");
+            throw be;
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ReporteCronoAlcanceBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Carga las columnas que dependen del Proyecto.
-	 *
-	 * @param rowcellStyle@param proy
-	 * @param rowStyle
-	 */
-	private void columnasProyecto(HSSFRow row, Proyectos proy, HSSFCellStyle cellStyle) {
-		HSSFCell celda;
-		celda = row.createCell(ReporteCroAlcColumnasEnum.ID_PROG.ordinal());
-		celda.setCellStyle(cellStyle);
-		String progPk = proy.getProyProgFk() != null ? proy.getProyProgFk().getProgPk().toString() : "";
-		celda.setCellValue(progPk);
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.PROG.ordinal());
-		String progName = proy.getProyProgFk() != null ? proy.getProyProgFk().getProgNombre() : "";
-		celda.setCellValue(progName);
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.ID_PROY.ordinal());
-		celda.setCellValue(proy.getProyPk());
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.PROY.ordinal());
-		celda.setCellValue(proy.getProyNombre());
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.AREA.ordinal());
-		String area = proy.getProyAreaFk() != null ? proy.getProyAreaFk().getAreaNombre() : "";
-		celda.setCellValue(area);
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.GERENTE.ordinal());
-		String gerente = proy.getProyUsrGerenteFk() != null ? proy.getProyUsrGerenteFk().getUsuNombreApellido() : "";
-		celda.setCellValue(gerente);
-		celda.setCellStyle(cellStyle);
-		celda = row.createCell(ReporteCroAlcColumnasEnum.ESTADO.ordinal());
-		celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk(), proy.getProyOrgFk().getOrgPk()));
-		celda.setCellStyle(cellStyle);
-	}
+    /**
+     * Carga las columnas que dependen del Proyecto.
+     *
+     * @param rowcellStyle@param proy
+     * @param rowStyle
+     */
+    private void columnasProyecto(HSSFRow row, Proyectos proy, HSSFCellStyle cellStyle) {
+        HSSFCell celda;
+        celda = row.createCell(ReporteCroAlcColumnasEnum.ID_PROG.ordinal());
+        celda.setCellStyle(cellStyle);
+        String progPk = proy.getProyProgFk() != null ? proy.getProyProgFk().getProgPk().toString() : "";
+        celda.setCellValue(progPk);
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.PROG.ordinal());
+        String progName = proy.getProyProgFk() != null ? proy.getProyProgFk().getProgNombre() : "";
+        celda.setCellValue(progName);
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.ID_PROY.ordinal());
+        celda.setCellValue(proy.getProyPk());
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.PROY.ordinal());
+        celda.setCellValue(proy.getProyNombre());
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.AREA.ordinal());
+        String area = proy.getProyAreaFk() != null ? proy.getProyAreaFk().getAreaNombre() : "";
+        celda.setCellValue(area);
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.GERENTE.ordinal());
+        String gerente = proy.getProyUsrGerenteFk() != null ? proy.getProyUsrGerenteFk().getUsuNombreApellido() : "";
+        celda.setCellValue(gerente);
+        celda.setCellStyle(cellStyle);
+        celda = row.createCell(ReporteCroAlcColumnasEnum.ESTADO.ordinal());
+        celda.setCellValue(estadosBean.estadoStr(proy.getProyEstFk(), proy.getProyOrgFk().getOrgPk()));
+        celda.setCellStyle(cellStyle);
+    }
 
-	/**
-	 * Retorna el nombre del tipo de linea. 1-Plan, 2-Real, 3-Proyectado,
-	 * 4-Aprobado
-	 *
-	 * @param i
-	 * @return String
-	 */
-	private String nombreTipoLinea(int i, Integer orgPk) {
-		switch (i) {
-			case 1:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_base", orgPk);
-			case 2:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_real", orgPk);
-			case 3:
-				return LabelsEJB.getValue("rep_cro_alc_tipo_proyectado", orgPk);
-			default:
-				return "";
-		}
-	}
+    /**
+     * Retorna el nombre del tipo de linea. 1-Plan, 2-Real, 3-Proyectado,
+     * 4-Aprobado
+     *
+     * @param i
+     * @return String
+     */
+    private String nombreTipoLinea(int i, Integer orgPk) {
+        switch (i) {
+            case 1:
+                return LabelsEJB.getValue("rep_cro_alc_tipo_base", orgPk);
+            case 2:
+                return LabelsEJB.getValue("rep_cro_alc_tipo_real", orgPk);
+            case 3:
+                return LabelsEJB.getValue("rep_cro_alc_tipo_proyectado", orgPk);
+            default:
+                return "";
+        }
+    }
 
-	/**
-	 * Retorna la columna para el mes indicado.
-	 *
-	 * @param mes
-	 * @return Integer
-	 */
-	private Integer obtenerCeldaOrdinalMes(int mes) {
-		switch (mes) {
-			case 1:
-				return ReporteCroAlcColumnasEnum.ENERO.ordinal();
-			case 2:
-				return ReporteCroAlcColumnasEnum.FEBRERO.ordinal();
-			case 3:
-				return ReporteCroAlcColumnasEnum.MARZO.ordinal();
-			case 4:
-				return ReporteCroAlcColumnasEnum.ABRIL.ordinal();
-			case 5:
-				return ReporteCroAlcColumnasEnum.MAYO.ordinal();
-			case 6:
-				return ReporteCroAlcColumnasEnum.JUNIO.ordinal();
-			case 7:
-				return ReporteCroAlcColumnasEnum.JULIO.ordinal();
-			case 8:
-				return ReporteCroAlcColumnasEnum.AGOSTO.ordinal();
-			case 9:
-				return ReporteCroAlcColumnasEnum.SETIEMBRE.ordinal();
-			case 10:
-				return ReporteCroAlcColumnasEnum.OCTUBRE.ordinal();
-			case 11:
-				return ReporteCroAlcColumnasEnum.NOVIEMBRE.ordinal();
-			case 12:
-				return ReporteCroAlcColumnasEnum.DICIEMBRE.ordinal();
-			default:
-				return null;
-		}
+    /**
+     * Retorna la columna para el mes indicado.
+     *
+     * @param mes
+     * @return Integer
+     */
+    private Integer obtenerCeldaOrdinalMes(int mes) {
+        switch (mes) {
+            case 1:
+                return ReporteCroAlcColumnasEnum.ENERO.ordinal();
+            case 2:
+                return ReporteCroAlcColumnasEnum.FEBRERO.ordinal();
+            case 3:
+                return ReporteCroAlcColumnasEnum.MARZO.ordinal();
+            case 4:
+                return ReporteCroAlcColumnasEnum.ABRIL.ordinal();
+            case 5:
+                return ReporteCroAlcColumnasEnum.MAYO.ordinal();
+            case 6:
+                return ReporteCroAlcColumnasEnum.JUNIO.ordinal();
+            case 7:
+                return ReporteCroAlcColumnasEnum.JULIO.ordinal();
+            case 8:
+                return ReporteCroAlcColumnasEnum.AGOSTO.ordinal();
+            case 9:
+                return ReporteCroAlcColumnasEnum.SETIEMBRE.ordinal();
+            case 10:
+                return ReporteCroAlcColumnasEnum.OCTUBRE.ordinal();
+            case 11:
+                return ReporteCroAlcColumnasEnum.NOVIEMBRE.ordinal();
+            case 12:
+                return ReporteCroAlcColumnasEnum.DICIEMBRE.ordinal();
+            default:
+                return null;
+        }
 
-	}
+    }
 
-	//spio
-	public byte[] exportarCronogramaAction(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
+    //spio
+    public byte[] exportarCronogramaAction(Integer orgPk, FiltroReporteTO filtro, SsUsuario usuario) {
 
-		String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
+        String hojaName = LabelsEJB.getValue("rep_cro_alc_xls_hoja_alcance", orgPk);
 
-		int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
-		int filaNro = -1;
+        int anio = filtro.getAnio() != null ? filtro.getAnio() : new GregorianCalendar().get(Calendar.YEAR);
+        int filaNro = -1;
 
-		//Proyectos obtenidos por medio del filtro.
-		List<Proyectos> listProy = reportesBean.buscarProyectosPorFiltro(filtro, orgPk, usuario);
+        //Proyectos obtenidos por medio del filtro.
+        List<Proyectos> listProy = reportesBean.buscarProyectosPorFiltro(filtro, orgPk, usuario);
 
-		HSSFWorkbook planilla = new HSSFWorkbook();
-		HSSFSheet hoja = planilla.createSheet(hojaName);
+        HSSFWorkbook planilla = new HSSFWorkbook();
+        HSSFSheet hoja = planilla.createSheet(hojaName);
 
-		HSSFPalette paletteAzul = planilla.getCustomPalette();
-		paletteAzul.setColorAtIndex(HSSFColor.BLUE.index, (byte) 3, (byte) 94, (byte) 159);
-		HSSFColor colorAzul = paletteAzul.getColor(HSSFColor.BLUE.index);
+        HSSFPalette paletteAzul = planilla.getCustomPalette();
+        paletteAzul.setColorAtIndex(HSSFColor.BLUE.index, (byte) 3, (byte) 94, (byte) 159);
+        HSSFColor colorAzul = paletteAzul.getColor(HSSFColor.BLUE.index);
 
-		HSSFCellStyle cellStyleTitle = planilla.createCellStyle();
-		cellStyleTitle.setFillForegroundColor(colorAzul.getIndex());
-		cellStyleTitle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		HSSFFont fontTitle = planilla.createFont();
-		fontTitle.setColor(HSSFColor.WHITE.index);
-		fontTitle.setBold(true);
-		cellStyleTitle.setFont(fontTitle);
+        HSSFCellStyle cellStyleTitle = planilla.createCellStyle();
+        cellStyleTitle.setFillForegroundColor(colorAzul.getIndex());
+        cellStyleTitle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        HSSFFont fontTitle = planilla.createFont();
+        fontTitle.setColor(HSSFColor.WHITE.index);
+        fontTitle.setBold(true);
+        cellStyleTitle.setFont(fontTitle);
 
-		HSSFCellStyle cellStyleColTitulos = planilla.createCellStyle();
-		cellStyleColTitulos.setBorderTop(CellStyle.BORDER_THIN);
-		cellStyleColTitulos.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyleColTitulos.setFillForegroundColor(colorAzul.getIndex());
-		cellStyleColTitulos.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		HSSFFont fontColTitulos = planilla.createFont();
-		fontColTitulos.setColor(HSSFColor.WHITE.index);
-		fontColTitulos.setBold(true);
-		cellStyleColTitulos.setFont(fontColTitulos);
-		cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        HSSFCellStyle cellStyleColTitulos = planilla.createCellStyle();
+        cellStyleColTitulos.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyleColTitulos.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyleColTitulos.setFillForegroundColor(colorAzul.getIndex());
+        cellStyleColTitulos.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        HSSFFont fontColTitulos = planilla.createFont();
+        fontColTitulos.setColor(HSSFColor.WHITE.index);
+        fontColTitulos.setBold(true);
+        cellStyleColTitulos.setFont(fontColTitulos);
+        cellStyleColTitulos.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
-		HSSFRow fila = hoja.createRow(++filaNro);
-		int nroCelda = 0;
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_responsable", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_orden", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_nombre", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_tipo", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorel", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorelhitos", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_coordinador", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado_hito", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_avance", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pendiente", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicioplan", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfinplan", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicio", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfin", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duraplan", orgPk), cellStyleColTitulos);
-		HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duracion", orgPk), cellStyleColTitulos);
-		int nroColumnas = nroCelda;
+        HSSFRow fila = hoja.createRow(++filaNro);
+        int nroCelda = 0;
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_prog", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_proy", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_responsable", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_orden", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("riesgo_entregable", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_tipo", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorel", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pesorelhitos", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_coordinador", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_area_coordinador", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado_hito", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_avance", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_pendiente", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_estado", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicioplan", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfinplan", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecinicio", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_fecfin", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duraplan", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_duracion", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("rep_cro_alc_xls_col_nivel_entregable", orgPk), cellStyleColTitulos);
+        HSSFCellUtil.createCell(fila, nroCelda++, LabelsEJB.getValue("observaciones", orgPk), cellStyleColTitulos);
 
-		Calendar hoy = new GregorianCalendar();
-		hoy.set(Calendar.HOUR_OF_DAY, 0);
-		hoy.set(Calendar.MINUTE, 0);
-		hoy.set(Calendar.SECOND, 0);
-		hoy.set(Calendar.MILLISECOND, 0);
+        int nroColumnas = nroCelda;
 
-		for (Proyectos proy : listProy) {
-			Set<Entregables> entregables0 = proy.getProyCroFk() != null ? proy.getProyCroFk().getEntregablesSet() : null;
-			if (CollectionsUtils.isNotEmpty(entregables0)) {
-				List<Entregables> entregables = EntregablesUtils.sortById(new ArrayList(entregables0));
+        Calendar hoy = new GregorianCalendar();
+        hoy.set(Calendar.HOUR_OF_DAY, 0);
+        hoy.set(Calendar.MINUTE, 0);
+        hoy.set(Calendar.SECOND, 0);
+        hoy.set(Calendar.MILLISECOND, 0);
 
-				Integer esfuerzoTotalProyecto = cronogramasBean.esfuerzoTotal(proy.getProyCroFk());
-				Integer esfuerzoTotalProyectoHitos = cronogramasBean.esfuerzoTotalHitos(proy.getProyCroFk());
+        for (Proyectos proy : listProy) {
+            Set<Entregables> entregables0 = proy.getProyCroFk() != null ? proy.getProyCroFk().getEntregablesSet() : null;
 
-				for (Entregables entregable : entregables) {
-					fila = hoja.createRow(++filaNro);
-					nroCelda = 0;
+            if (CollectionsUtils.isNotEmpty(entregables0)) {
+                List<Entregables> entregables = EntregablesUtils.sortById(new ArrayList(entregables0));
 
-					boolean esHito = entregable.getEntFinEsHito() != null && entregable.getEntFinEsHito().booleanValue();
+                Integer esfuerzoTotalProyecto = cronogramasBean.esfuerzoTotal(proy.getProyCroFk());
+                Integer esfuerzoTotalProyectoHitos = cronogramasBean.esfuerzoTotalHitos(proy.getProyCroFk());
 
-					Calendar fechaPlan = null;
-					if (entregable.getEntFinLineaBaseDate() != null) {
-						fechaPlan = new GregorianCalendar();
-						fechaPlan.setTime(entregable.getEntFinLineaBaseDate());
-						fechaPlan.set(Calendar.HOUR_OF_DAY, 0);
-						fechaPlan.set(Calendar.MINUTE, 0);
-						fechaPlan.set(Calendar.SECOND, 0);
-						fechaPlan.set(Calendar.MILLISECOND, 0);
-					}
-					Calendar fechaReal = null;
-					if (entregable.getEntFinDate() != null) {
-						fechaReal = new GregorianCalendar();
-						fechaReal.setTime(entregable.getEntFinDate());
-						fechaReal.set(Calendar.HOUR_OF_DAY, 0);
-						fechaReal.set(Calendar.MINUTE, 0);
-						fechaReal.set(Calendar.SECOND, 0);
-						fechaReal.set(Calendar.MILLISECOND, 0);
-					}
+                for (Entregables entregable : entregables) {
+                    fila = hoja.createRow(++filaNro);
+                    nroCelda = 0;
 
-					//Nombre del programa
-					HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyProgFk() != null ? proy.getProyProgFk().getProgNombre() : "");
-					//Nombre del proyecto
-					HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyNombre());
-					//Area del responsable (gerente?)
-					HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyAreaFk() != null ? proy.getProyAreaFk().getAreaNombre() : "");
-					//Nombre del responsable (gerente?)
-					HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyUsrGerenteFk() != null ? proy.getProyUsrGerenteFk().getNombreApellido() : "");
-					//Orden del entregable
-					HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntId().toString());
-					//Nombre del entregable
-					HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntNombre());
-					//Tipo: tarea o hito
-					HSSFCellUtil.createCell(fila, nroCelda++, esHito ? LabelsEJB.getValue("rep_cro_alc_xls_col_hito", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_tarea", orgPk));
-					//Peso relativo
-					Float esfuerzo = esfuerzoTotalProyecto != null && esfuerzoTotalProyecto.floatValue() > 0 && entregable.getEntEsfuerzo() != null ? 1f * entregable.getEntEsfuerzo() / esfuerzoTotalProyecto : 0;
-					HSSFCellUtil.createCell(fila, nroCelda++, esfuerzo != null ? String.format("%.2f", esfuerzo) : "");
-					//Peso relativo a otros hitos (solo si es hito)
-					esfuerzo = esHito && esfuerzoTotalProyectoHitos != null && esfuerzoTotalProyectoHitos.floatValue() > 0 && entregable.getEntEsfuerzo() != null ? 1f * entregable.getEntEsfuerzo() / esfuerzoTotalProyectoHitos : 0;
-					HSSFCellUtil.createCell(fila, nroCelda++, esfuerzo != null ? String.format("%.2f", esfuerzo) : "");
-					//Nombre del coordinador
-					SsUsuario coordinador = entregable.getCoordinadorUsuFk();
-					HSSFCellUtil.createCell(fila, nroCelda++, coordinador != null ? coordinador.getNombreApellido() : "");
-					//Area del coordinador (en el organismo del proyecto)
-					Areas coordArea = coordinador != null ? coordinador.getUsuArea(proy.getProyOrgFk().getOrgPk()) : null;
-					HSSFCellUtil.createCell(fila, nroCelda++, coordArea != null ? coordArea.getAreaNombre() : "");
-					//Estado del hito (solo si es hito)
-					HSSFCellUtil.createCell(fila, nroCelda++, esHito && entregable.getEntProgreso() != null ? (entregable.getEntProgreso().intValue() == 100 ? LabelsEJB.getValue("rep_cro_alc_xls_col_finalizado", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_nofinalizado", orgPk)) : "");
-					//Avance (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntProgreso() != null ? entregable.getEntProgreso().toString() : "");
-					//Pendiente (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntProgreso() != null ? "" + (100 - entregable.getEntProgreso().intValue()) : "");
-					//Estado (solo si es tarea)
-					String estado = "";
-					if (!esHito) {
-						if (entregable.getEntProgreso() != null) {
-							if (entregable.getEntProgreso().intValue() == 100) {
-								//Esta terminado
-								if (fechaPlan != null && fechaReal != null) {
-									if (fechaReal.after(fechaPlan)) {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadotarde", orgPk);
-									} else {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadobien", orgPk);
-									}
-								} else {
-									estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminado", orgPk);
-								}
-							} else {
+                    boolean esHito = entregable.getEntFinEsHito() != null && entregable.getEntFinEsHito().booleanValue();
 
-								if (fechaPlan != null && fechaReal != null) {
-									if (fechaReal.before(hoy) || fechaReal.after(fechaPlan)) {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_atrasado", orgPk);
-									} else {
-										estado = LabelsEJB.getValue("rep_cro_alc_xls_col_enfecha", orgPk);
-									}
-								}
-							}
-						}
-					}
-					HSSFCellUtil.createCell(fila, nroCelda++, estado);
-					//Fecha de inicio planificada (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntInicioLineaBaseDate() != null ? DatesUtils.toStringFormat(entregable.getEntInicioLineaBaseDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
-					//Fecha de fin planificada
-					HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntFinLineaBaseDate() != null ? DatesUtils.toStringFormat(entregable.getEntFinLineaBaseDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
-					//Fecha de inicio real/proyectada (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntInicioDate() != null ? DatesUtils.toStringFormat(entregable.getEntInicioDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
-					//Fecha de fin real/proyectada
-					HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntFinDate() != null ? DatesUtils.toStringFormat(entregable.getEntFinDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
-					//Duracion planificada (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntDuracionLineaBase() != null ? entregable.getEntDuracionLineaBase().toString() : "");
-					//Duracion real/proyectada (solo si es tarea)
-					HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntDuracion() != null ? entregable.getEntDuracion().toString() : "");
-				}
+                    Calendar fechaPlan = null;
+                    if (entregable.getEntFinLineaBaseDate() != null) {
+                        fechaPlan = new GregorianCalendar();
+                        fechaPlan.setTime(entregable.getEntFinLineaBaseDate());
+                        fechaPlan.set(Calendar.HOUR_OF_DAY, 0);
+                        fechaPlan.set(Calendar.MINUTE, 0);
+                        fechaPlan.set(Calendar.SECOND, 0);
+                        fechaPlan.set(Calendar.MILLISECOND, 0);
+                    }
+                    Calendar fechaReal = null;
+                    if (entregable.getEntFinDate() != null) {
+                        fechaReal = new GregorianCalendar();
+                        fechaReal.setTime(entregable.getEntFinDate());
+                        fechaReal.set(Calendar.HOUR_OF_DAY, 0);
+                        fechaReal.set(Calendar.MINUTE, 0);
+                        fechaReal.set(Calendar.SECOND, 0);
+                        fechaReal.set(Calendar.MILLISECOND, 0);
+                    }
 
-			}
-		}
+                    //Area del responsable (gerente?)
+                    HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyAreaFk() != null ? proy.getProyAreaFk().getAreaNombre() : "");
+                    //Nombre del programa
+                    HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyProgFk() != null ? proy.getProyProgFk().getProgNombre() : "");
+                    //Nombre del proyecto
+                    HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyNombre());
 
-		//Ajustar todas las columnas
-		for (int i = 0; i < nroColumnas; i++) {
-			hoja.autoSizeColumn(i);
-		}
+                    //Nombre del responsable (gerente?)
+                    HSSFCellUtil.createCell(fila, nroCelda++, proy.getProyUsrGerenteFk() != null ? proy.getProyUsrGerenteFk().getNombreApellido() : "");
+                    //Orden del entregable
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntId().toString());
+                    //Nombre del entregable
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntNombre());
+                    //Tipo: tarea o hito
+                    HSSFCellUtil.createCell(fila, nroCelda++, esHito ? LabelsEJB.getValue("rep_cro_alc_xls_col_hito", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_tarea", orgPk));
+                    //Peso relativo
+                    Float esfuerzo = esfuerzoTotalProyecto != null && esfuerzoTotalProyecto.floatValue() > 0 && entregable.getEntEsfuerzo() != null ? 1f * entregable.getEntEsfuerzo() / esfuerzoTotalProyecto : 0;
+                    HSSFCellUtil.createCell(fila, nroCelda++, esfuerzo != null ? String.format("%.2f", esfuerzo) : "");
+                    //Peso relativo a otros hitos (solo si es hito)
+                    esfuerzo = esHito && esfuerzoTotalProyectoHitos != null && esfuerzoTotalProyectoHitos.floatValue() > 0 && entregable.getEntEsfuerzo() != null ? 1f * entregable.getEntEsfuerzo() / esfuerzoTotalProyectoHitos : 0;
+                    HSSFCellUtil.createCell(fila, nroCelda++, esfuerzo != null ? String.format("%.2f", esfuerzo) : "");
+                    //Nombre del coordinador
+                    SsUsuario coordinador = entregable.getCoordinadorUsuFk();
+                    HSSFCellUtil.createCell(fila, nroCelda++, coordinador != null ? coordinador.getNombreApellido() : "");
+                    //Area del coordinador (en el organismo del proyecto)
+                    Areas coordArea = coordinador != null ? coordinador.getUsuArea(proy.getProyOrgFk().getOrgPk()) : null;
+                    HSSFCellUtil.createCell(fila, nroCelda++, coordArea != null ? coordArea.getAreaNombre() : "");
+                    //Estado del hito (solo si es hito)
+                    HSSFCellUtil.createCell(fila, nroCelda++, esHito && entregable.getEntProgreso() != null ? (entregable.getEntProgreso().intValue() == 100 ? LabelsEJB.getValue("rep_cro_alc_xls_col_finalizado", orgPk) : LabelsEJB.getValue("rep_cro_alc_xls_col_nofinalizado", orgPk)) : "");
+                    //Avance (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntProgreso() != null ? entregable.getEntProgreso().toString() : "");
+                    //Pendiente (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntProgreso() != null ? "" + (100 - entregable.getEntProgreso().intValue()) : "");
+                    //Estado (solo si es tarea)
+                    String estado = "";
+                    if (!esHito) {
+                        if (entregable.getEntProgreso() != null) {
+                            if (entregable.getEntProgreso().intValue() == 100) {
+                                //Esta terminado
+                                if (fechaPlan != null && fechaReal != null) {
+                                    if (fechaReal.after(fechaPlan)) {
+                                        estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadotarde", orgPk);
+                                    } else {
+                                        estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminadobien", orgPk);
+                                    }
+                                } else {
+                                    estado = LabelsEJB.getValue("rep_cro_alc_xls_col_terminado", orgPk);
+                                }
+                            } else {
 
-		/*	
+                                if (fechaPlan != null && fechaReal != null) {
+                                    if (fechaReal.before(hoy) || fechaReal.after(fechaPlan)) {
+                                        estado = LabelsEJB.getValue("rep_cro_alc_xls_col_atrasado", orgPk);
+                                    } else {
+                                        estado = LabelsEJB.getValue("rep_cro_alc_xls_col_enfecha", orgPk);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    HSSFCellUtil.createCell(fila, nroCelda++, estado);
+                    //Fecha de inicio planificada (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntInicioLineaBaseDate() != null ? DatesUtils.toStringFormat(entregable.getEntInicioLineaBaseDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
+                    //Fecha de fin planificada
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntFinLineaBaseDate() != null ? DatesUtils.toStringFormat(entregable.getEntFinLineaBaseDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
+                    //Fecha de inicio real/proyectada (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntInicioDate() != null ? DatesUtils.toStringFormat(entregable.getEntInicioDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
+                    //Fecha de fin real/proyectada
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntFinDate() != null ? DatesUtils.toStringFormat(entregable.getEntFinDate(), ConstantesEstandares.CALENDAR_PATTERN) : "");
+                    //Duracion planificada (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntDuracionLineaBase() != null ? entregable.getEntDuracionLineaBase().toString() : "");
+                    //Duracion real/proyectada (solo si es tarea)
+                    HSSFCellUtil.createCell(fila, nroCelda++, !esHito && entregable.getEntDuracion() != null ? entregable.getEntDuracion().toString() : "");
+                    //Nivel entregable
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntNivel() != null ? entregable.getEntNivel().toString(): "");
+                    //Observaciones
+                    HSSFCellUtil.createCell(fila, nroCelda++, entregable.getEntDescripcion() != null ? entregable.getEntDescripcion() : "");
+                }
+
+            }
+        }
+
+        //Ajustar todas las columnas
+        for (int i = 0; i < nroColumnas; i++) {
+            hoja.autoSizeColumn(i);
+        }
+
+        /*	
 	HSSFRow fila = hoja.createRow(++filaNro);
 	for (int i = 0; i <= ReporteCroAlcColumnasEnum.DICIEMBRE.ordinal(); i++) {
 	    HSSFCell celdaTit = rowTitulo.createCell(i);
@@ -583,32 +593,32 @@ public class ReporteCronoAlcanceBean {
 		}
 	    }
 	}
-		 */
-		ByteArrayOutputStream bos = null;
-		try {
-			bos = new ByteArrayOutputStream();
-			planilla.write(bos);
-			return bos.toByteArray();
+         */
+        ByteArrayOutputStream bos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            planilla.write(bos);
+            return bos.toByteArray();
 
-		} catch (IOException iOException) {
-			logger.log(Level.SEVERE, null, iOException);
-			BusinessException be = new BusinessException();
-			be.addError("Error al generar el Excel.");
-			throw be;
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
-			BusinessException be = new BusinessException();
-			be.addError("Error al generar el Excel.");
-			throw be;
-		} finally {
-			if (bos != null) {
-				try {
-					bos.close();
-				} catch (IOException ex) {
-					Logger.getLogger(ReporteCronoAlcanceBean.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		}
-	}
+        } catch (IOException iOException) {
+            logger.log(Level.SEVERE, null, iOException);
+            BusinessException be = new BusinessException();
+            be.addError("Error al generar el Excel.");
+            throw be;
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+            BusinessException be = new BusinessException();
+            be.addError("Error al generar el Excel.");
+            throw be;
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ReporteCronoAlcanceBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
 
 }

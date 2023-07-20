@@ -24,6 +24,7 @@ public class ConstantesNavegacion {
     public static final String IR_A_REPORTE_PRESUPUESTO = "IR_A_REPORTE_PRESUPUESTO";
     public static final String IR_A_REPORTE_CRONOGRAMA_ALCANCE = "IR_A_REPORTE_CRONOGRAMA_ALCANCE";
     public static final String IR_A_REPORTE_MIS_TAREAS = "IR_A_REPORTE_MIS_TAREAS";
+    public static final String IR_A_MIS_ADQUISICIONES = "IR_A_MIS_ADQUISICIONES";
     
     public static final String IR_A_AYUDA = "IR_A_AYUDA";
     public static final String IR_A_INICIO_PUBLICO = "IR_A_INICIO_PUBLICO";

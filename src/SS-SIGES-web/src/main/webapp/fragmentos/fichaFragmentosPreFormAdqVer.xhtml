@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:panelPopup id="popupPresupuestoVerAdqForm"
+                    visible="#{fichaMB.formPreRendered == 5}"
+                    rendered="#{fichaMB.formPreRendered == 5}"
+                    draggable="true" 
+                    positionOnLoadOnly="true"
+                    modal="true">
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{labels.verAdquisicionTitulo}"/>
+                <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                   action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+            </ice:panelGroup>
+        </f:facet>
+        <f:facet name="body">
+            <ice:panelGroup id="presupuestoVerAdqForm" rendered="#{fichaMB.formPreRendered == 5}">
+                    
+                <ice:panelGroup styleClass="popupAnchoFijo">
+                    <ice:panelGrid  styleClass="formulario " columns="2">
+                        <ice:outputLabel value="#{labels.adquisicion_nombre}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqNombre}" />
+
+                        <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqProvOrga.orgaNombre}" />
+
+                        <ice:outputLabel value="#{labels.adquisicion_fuente}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqFuente.fueNombre}"/>
+
+                        <ice:outputLabel value="#{labels.moneda}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqMoneda.monSigno}"/>
+
+                        <ice:outputLabel value="#{labels.procedimientoCompra}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqProcedimientoCompra.procCompNombre}"/>
+                        
+                        <ice:outputLabel value="#{labels.causalCompra}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqCausalCompra.cauComNombre}"/>
+
+                        <ice:outputLabel value="#{labels.adquisicion_identificador_grp}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqIdGrpErpFk.idGrpErpNombre}" converter="porcentajeConverter"/>
+                        
+                        <ice:outputLabel value="#{labels.adquisicion_componente_producto}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqComponenteProducto.comNombre}"/>
+
+                        <ice:outputLabel value="#{labels.adquisicion_compartida}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqCompartida}" converter="sinoConverter"/>
+    
+                        <ice:outputLabel value="#{labels.adquisicion_compartida_usuario}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.ssUsuarioCompartida.nombreApellido}" />
+
+                        <ice:outputLabel value="#{labels.tipoRegistroAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqTipoRegistro.text}"/>
+
+                        <ice:outputLabel value="#{labels.arrastreAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqArrastre}" converter="sinoConverter"/>
+                        
+                        <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqFechaEstimadaInicioCompra}">
+                            <f:convertDateTime pattern="#{inicioMB.calendarPattern}" 
+                                               timeZone="#{inicioMB.calendarTimeZone}"/>
+                        </ice:outputText>
+                        
+                        <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqFechaEsperadaInicioEjecucion}">
+                            <f:convertDateTime pattern="#{inicioMB.calendarPattern}" 
+                                               timeZone="#{inicioMB.calendarTimeZone}"/>
+                        </ice:outputText>
+                        
+                        <ice:outputLabel value="#{labels.tipoAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqTipoAdquisicion.tipAdqNombre}" />
+                        
+                        <ice:outputLabel value="#{labels.adquisicionIdAdquisicion}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqIdAdquisicion}" />
+                        
+                        <ice:outputLabel value="#{labels.centroCosto}"/>
+                        <ice:outputText value="#{fichaMB.adquisicion.adqCentroCosto.cenCosNombre}" />
+            
+                    </ice:panelGrid>
+                </ice:panelGroup> 
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:linkButton value="#{labels.cerrar}" styleClass="boton secundario" 
+                                    immediate="true"
+                                    action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+                </ice:panelGroup>
+
+            </ice:panelGroup>
+        </f:facet>
+
+    </ice:panelPopup>
+
+</ui:composition>

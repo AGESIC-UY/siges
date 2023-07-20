@@ -34,7 +34,7 @@
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-<!--                    <ace:messages id="busquedaMsg" />-->
+                    <!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{areaTematicaMB.buscar()}"/>
@@ -71,8 +71,8 @@
                     </ace:simpleSelectOneMenu>
                     <ace:simpleSelectOneMenu value="#{areaTematicaMB.ascendente}" styleClass="textoMedio"
                                              valueChangeListener="#{areaTematicaMB.cambiarAscendenteOrdenacion}">
-                        <f:selectItem itemLabel="#{labels.ascendente}" itemValue="1"/>
-                        <f:selectItem itemLabel="#{labels.descendente}" itemValue="0"/>
+                        <f:selectItem itemLabel="#{labels.ascendente}" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="#{labels.descendente}" itemValue="#{false}"/>
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
 
@@ -92,7 +92,7 @@
                         <ace:column headerText="#{labels.area_tem_head_pk}" >
                             <h:outputText value="#{at.arastagPk}"/>
                         </ace:column>
-                        
+
                         <ace:column headerText="#{labels.area_tem_head_padre}">
                             <h:outputText value="#{at.areatagPadreFk.areatagNombre}"/>
                         </ace:column>
@@ -101,6 +101,10 @@
                             <h:outputText value="#{at.areatagNombre}"/>
                         </ace:column>
 
+                        <ace:column headerText="#{labels.area_tem_head_habilitada}">
+                            <ace:checkboxButton value="#{at.habilitada}" disabled="true"/>
+                        </ace:column>
+                        
                         <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 

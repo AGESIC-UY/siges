@@ -50,6 +50,9 @@
                 <ice:outputLabel value="#{labels.organismo_form_activo}"/>
                 <ace:checkboxButton value="#{organismoMB.organismoForm.orgActivo}" />
 
+                <ice:outputLabel value="#{labels.organismo_form_activo_siges_indicadores}"/>
+                <ace:checkboxButton value="#{organismoMB.organismoForm.activoSigesIndicadores}" />
+                
                 <ace:linkButton value="#{labels.organismo_form_copiar}" 
                                 styleClass="boton secundario" 
                                 rendered="#{organismoMB.organismoForm.orgPk == null}"

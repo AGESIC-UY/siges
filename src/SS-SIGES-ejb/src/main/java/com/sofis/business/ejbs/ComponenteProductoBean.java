@@ -126,6 +126,10 @@ public class ComponenteProductoBean {
 		CriteriaTO criterio = DAOUtils.createMatchCriteriaTOString("comNombre", nombre);
 		criterios.add(criterio);
 	    }
+            
+            if (mapFiltro.get("habilitada") != null) {
+                criterios.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "comHabilitada", (Boolean) mapFiltro.get("habilitada"))); 
+            }
 
 	    CriteriaTO condicion;
 	    if (criterios.size() == 1) {

@@ -73,192 +73,193 @@
         </form>
 
         <script type="text/javascript">
-                var ge;  
-                $(function() {
-                    //load templates
-                    $("#ganttemplates").loadTemplates();
+            var ge;
+            $(function () {
+                //load templates
+                $("#ganttemplates").loadTemplates();
 
-                    // here starts gantt initialization
-                    ge = new GanttMaster();
-                    var workSpace = $("#workSpace");
-                    workSpace.css({width: $(window).width() - 20, height: $(window).height() - 100});
-                    ge.init(workSpace);
-                    
-                    $(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>Limpiar</button>")
-                            .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-                    //.append("<button onclick='openResourceEditor();' class='button'>edit resources</button>")
-                    //.append("<button onclick='getFile();' class='button'>export</button>");
-                    $(".ganttButtonBar div").addClass('buttons');
-                    //overwrite with localized ones
-                    loadI18n();
+                // here starts gantt initialization
+                ge = new GanttMaster();
+                var workSpace = $("#workSpace");
+                workSpace.css({width: $(window).width() - 20, height: $(window).height() - 100});
+                ge.init(workSpace);
 
-                    loadGanttFromServer();
+                $(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>Limpiar</button>")
+                        .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+                //.append("<button onclick='openResourceEditor();' class='button'>edit resources</button>")
+                //.append("<button onclick='getFile();' class='button'>export</button>");
+                $(".ganttButtonBar div").addClass('buttons');
+                //overwrite with localized ones
+                loadI18n();
 
-                    if (!ge.roles || ge.roles.length == 0) {
-                        setRoles();
+                loadGanttFromServer();
+
+                if (!ge.roles || ge.roles.length == 0) {
+                    setRoles();
+                }
+
+                //fill default Resources roles if any
+                if (!ge.resources || ge.resources.length == 0) {
+                    setResource();
+                }
+
+                /*/debug time scale
+                 $(".splitBox2").mousemove(function(e){
+                 var x=e.clientX-$(this).offset().left;
+                 var mill=Math.round(x/(ge.gantt.fx) + ge.gantt.startMillis)
+                 $("#ndo").html(x+" "+new Date(mill))
+                 });*/
+            });
+
+            function loadGanttFromServer(taskId, callback) {
+                loadFromLocalStorage();
+            }
+
+
+            function saveGanttOnServer() {
+                saveInLocalStorage();
+            }
+
+            //-------------------------------------------  Create some demo data ------------------------------------------------------
+            function setRoles() {
+                ge.roles = [
+                    {
+                        id: "tmp_1",
+                        name: "Project Manager"
+                    },
+                    {
+                        id: "tmp_2",
+                        name: "Worker"
+                    },
+                    {
+                        id: "tmp_3",
+                        name: "Stakeholder/Customer"
                     }
+                ];
+            }
 
-                    //fill default Resources roles if any
-                    if (!ge.resources || ge.resources.length == 0) {
-                        setResource();
-                    }
+            function setResource() {
+                var res = [];
+                for (var i = 1; i <= 10; i++) {
+                    res.push({id: "tmp_" + i, name: "Resource " + i});
+                }
+                ge.resources = res;
+            }
 
-                    /*/debug time scale
-                     $(".splitBox2").mousemove(function(e){
-                     var x=e.clientX-$(this).offset().left;
-                     var mill=Math.round(x/(ge.gantt.fx) + ge.gantt.startMillis)
-                     $("#ndo").html(x+" "+new Date(mill))
-                     });*/
-                });
 
-                function loadGanttFromServer(taskId, callback) {
-                    loadFromLocalStorage();
+            function clearGantt() {
+                ge.reset();
+            }
+
+            function loadI18n() {
+                GanttMaster.messages = {
+                    "CHANGE_OUT_OF_SCOPE": "NO_RIGHTS_FOR_UPDATE_PARENTS_OUT_OF_EDITOR_SCOPE",
+                    "START_IS_MILESTONE": "START_IS_MILESTONE",
+                    "END_IS_MILESTONE": "END_IS_MILESTONE",
+                    "TASK_HAS_CONSTRAINTS": "TASK_HAS_CONSTRAINTS",
+                    "GANTT_ERROR_DEPENDS_ON_OPEN_TASK": "GANTT_ERROR_DEPENDS_ON_OPEN_TASK",
+                    "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK": "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK",
+                    "TASK_HAS_EXTERNAL_DEPS": "TASK_HAS_EXTERNAL_DEPS",
+                    "GANTT_ERROR_LOADING_DATA_TASK_REMOVED": "GANTT_ERROR_LOADING_DATA_TASK_REMOVED",
+                    "ERROR_SETTING_DATES": "ERROR_SETTING_DATES",
+                    "CIRCULAR_REFERENCE": "CIRCULAR_REFERENCE",
+                    "CANNOT_DEPENDS_ON_ANCESTORS": "CANNOT_DEPENDS_ON_ANCESTORS",
+                    "CANNOT_DEPENDS_ON_DESCENDANTS": "CANNOT_DEPENDS_ON_DESCENDANTS",
+                    "CANNOT_DEPENDS_WEKAN": "CANNOT_DEPENDS_WEKAN",
+                    "INVALID_DATE_FORMAT": "INVALID_DATE_FORMAT",
+                    "TASK_MOVE_INCONSISTENT_LEVEL": "TASK_MOVE_INCONSISTENT_LEVEL",
+                    "GANTT_QUARTER_SHORT": "trim.",
+                    "GANTT_SEMESTER_SHORT": "sem."
+                };
+            }
+
+
+            //-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------
+            function openResourceEditor() {
+                var editor = $("<div>");
+                editor.append("<h2>Resource editor</h2>");
+                editor.addClass("resEdit");
+
+                for (var i in ge.resources) {
+                    var res = ge.resources[i];
+                    var inp = $("<input type='text'>").attr("pos", i).addClass("resLine").val(res.name);
+                    editor.append(inp).append("<br>");
                 }
 
-
-                function saveGanttOnServer() {
-                    saveInLocalStorage();
-                }
-
-                //-------------------------------------------  Create some demo data ------------------------------------------------------
-                function setRoles() {
-                    ge.roles = [
-                        {
-                            id: "tmp_1",
-                            name: "Project Manager"
-                        },
-                        {
-                            id: "tmp_2",
-                            name: "Worker"
-                        },
-                        {
-                            id: "tmp_3",
-                            name: "Stakeholder/Customer"
-                        }
-                    ];
-                }
-
-                function setResource() {
-                    var res = [];
-                    for (var i = 1; i <= 10; i++) {
-                        res.push({id: "tmp_" + i, name: "Resource " + i});
-                    }
-                    ge.resources = res;
-                }
-
-
-                function clearGantt() {
-                    ge.reset();
-                }
-
-                function loadI18n() {
-                    GanttMaster.messages = {
-                        "CHANGE_OUT_OF_SCOPE": "NO_RIGHTS_FOR_UPDATE_PARENTS_OUT_OF_EDITOR_SCOPE",
-                        "START_IS_MILESTONE": "START_IS_MILESTONE",
-                        "END_IS_MILESTONE": "END_IS_MILESTONE",
-                        "TASK_HAS_CONSTRAINTS": "TASK_HAS_CONSTRAINTS",
-                        "GANTT_ERROR_DEPENDS_ON_OPEN_TASK": "GANTT_ERROR_DEPENDS_ON_OPEN_TASK",
-                        "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK": "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK",
-                        "TASK_HAS_EXTERNAL_DEPS": "TASK_HAS_EXTERNAL_DEPS",
-                        "GANTT_ERROR_LOADING_DATA_TASK_REMOVED": "GANTT_ERROR_LOADING_DATA_TASK_REMOVED",
-                        "ERROR_SETTING_DATES": "ERROR_SETTING_DATES",
-                        "CIRCULAR_REFERENCE": "CIRCULAR_REFERENCE",
-                        "CANNOT_DEPENDS_ON_ANCESTORS": "CANNOT_DEPENDS_ON_ANCESTORS",
-                        "CANNOT_DEPENDS_ON_DESCENDANTS": "CANNOT_DEPENDS_ON_DESCENDANTS",
-                        "INVALID_DATE_FORMAT": "INVALID_DATE_FORMAT",
-                        "TASK_MOVE_INCONSISTENT_LEVEL": "TASK_MOVE_INCONSISTENT_LEVEL",
-                        "GANTT_QUARTER_SHORT": "trim.",
-                        "GANTT_SEMESTER_SHORT": "sem."
-                    };
-                }
-
-
-                //-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------
-                function openResourceEditor() {
-                    var editor = $("<div>");
-                    editor.append("<h2>Resource editor</h2>");
-                    editor.addClass("resEdit");
-
-                    for (var i in ge.resources) {
-                        var res = ge.resources[i];
-                        var inp = $("<input type='text'>").attr("pos", i).addClass("resLine").val(res.name);
-                        editor.append(inp).append("<br>");
-                    }
-
-                    var sv = $("<div>save</div>").css("float", "right").addClass("button").click(function() {
-                        $(this).closest(".resEdit").find("input").each(function() {
-                            var el = $(this);
-                            var pos = el.attr("pos");
-                            ge.resources[pos].name = el.val();
-                        });
-                        ge.editor.redraw();
-                        closeBlackPopup();
+                var sv = $("<div>save</div>").css("float", "right").addClass("button").click(function () {
+                    $(this).closest(".resEdit").find("input").each(function () {
+                        var el = $(this);
+                        var pos = el.attr("pos");
+                        ge.resources[pos].name = el.val();
                     });
-                    editor.append(sv);
+                    ge.editor.redraw();
+                    closeBlackPopup();
+                });
+                editor.append(sv);
 
-                    var ndo = createBlackPage(800, 500).append(editor);
-                }
+                var ndo = createBlackPage(800, 500).append(editor);
+            }
 
-                //-------------------------------------------  Get project file as JSON (used for migrate project from gantt to Teamwork) ------------------------------------------------------
-                function getFile() {
-                    $("#gimBaPrj").val(JSON.stringify(ge.saveProject()));
-                    $("#gimmeBack").submit();
-                    $("#gimBaPrj").val("");
+            //-------------------------------------------  Get project file as JSON (used for migrate project from gantt to Teamwork) ------------------------------------------------------
+            function getFile() {
+                $("#gimBaPrj").val(JSON.stringify(ge.saveProject()));
+                $("#gimmeBack").submit();
+                $("#gimBaPrj").val("");
 
-                    /*  var uriContent = "data:text/html;charset=utf-8," + encodeURIComponent(JSON.stringify(prj));
-                     neww=window.open(uriContent,"dl");*/
-                }
+                /*  var uriContent = "data:text/html;charset=utf-8," + encodeURIComponent(JSON.stringify(prj));
+                 neww=window.open(uriContent,"dl");*/
+            }
 
-                //-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
-                Storage.prototype.setObject = function(key, value) {
-                    this.setItem(key, JSON.stringify(value));
-                };
+            //-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
+            Storage.prototype.setObject = function (key, value) {
+                this.setItem(key, JSON.stringify(value));
+            };
 
 
-                Storage.prototype.getObject = function(key) {
-                    return this.getItem(key) && JSON.parse(this.getItem(key));
-                };
+            Storage.prototype.getObject = function (key) {
+                return this.getItem(key) && JSON.parse(this.getItem(key));
+            };
 
-                function loadFromLocalStorage() {
-                    var ret;
-                    if (localStorage) {
-                        if (localStorage.getObject("teamworkGantDemo1")) {
-                            ret = localStorage.getObject("teamworkGantDemo1");
-                        }
-                    } else {
-                        $("#taZone").show();
+            function loadFromLocalStorage() {
+                var ret;
+                if (localStorage) {
+                    if (localStorage.getObject("teamworkGantDemo1")) {
+                        ret = localStorage.getObject("teamworkGantDemo1");
                     }
-                    if (!ret || !ret.tasks || ret.tasks.length == 0) {
-                        ret = JSON.parse($("#ta").val());
+                } else {
+                    $("#taZone").show();
+                }
+                if (!ret || !ret.tasks || ret.tasks.length == 0) {
+                    ret = JSON.parse($("#ta").val());
 
-                        //actualiza data
-                        var offset = new Date().getTime() - ret.tasks[0].start;
-                        for (var i = 0; i < ret.tasks.length; i++)
-                            ret.tasks[i].start = ret.tasks[i].start + offset;
-                    }
-
-                    ret = {"tasks": [
-                            {"id": -1, "name": "Gantt editor", "code": "", "level": 0, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 16, "end": 1348523999999, "startLineaBase": 1346623200000, "durationLineaBase": 16, "endLineaBase": 1348523999999, "startIsMilestone": true, "endIsMilestone": false, "assigs": [], "coordinador": "santiago", "esfuerzo": 100},
-                            {"id": -2, "name": "coding", "code": "", "level": 1, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 10, "end": 1347659999999, "startLineaBase": 1346623200000, "durationLineaBase": 10, "endLineaBase": 1347659999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "description": "", "progress": 0},
-                            {"id": -3, "name": "gant part", "code": "", "level": 2, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 2, "end": 1346795999999, "startLineaBase": 1346623200000, "durationLineaBase": 2, "endLineaBase": 1346795999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": ""},
-                            {"id": -4, "name": "editor part", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1346796000000, "duration": 4, "end": 1347314399999, "startLineaBase": 1346796000000, "durationLineaBase": 4, "endLineaBase": 1347314399999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "3"},
-                            {"id": -5, "name": "testing", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "start": 1347832800000, "duration": 6, "end": 1348523999999, "startLineaBase": 1347832800000, "durationLineaBase": 6, "endLineaBase": 1348523999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "2:5", "description": "", "progress": 0},
-                            {"id": -6, "name": "test on safari", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1347832800000, "duration": 2, "end": 1348005599999, "startLineaBase": 1347832800000, "durationLineaBase": 2, "endLineaBase": 1348005599999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": ""},
-                            {"id": -7, "name": "test on ie", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1348005600000, "duration": 3, "end": 1348264799999, "startLineaBase": 1348005600000, "durationLineaBase": 3, "endLineaBase": 1348264799999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "6"},
-                            {"id": -8, "name": "test on chrome", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1348005600000, "duration": 2, "end": 1348178399999, "startLineaBase": 1348005600000, "durationLineaBase": 2, "endLineaBase": 1348178399999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "6"}
-                        ], "selectedRow": 0, "deletedTaskIds": [], "canWrite": true, "canWriteOnParent": true}
-                    ge.loadProject(ret);
-                    ge.checkpoint(); //empty the undo stack
+                    //actualiza data
+                    var offset = new Date().getTime() - ret.tasks[0].start;
+                    for (var i = 0; i < ret.tasks.length; i++)
+                        ret.tasks[i].start = ret.tasks[i].start + offset;
                 }
 
-                function saveInLocalStorage() {
-                    var prj = ge.saveProject();
-                    if (localStorage) {
-                        localStorage.setObject("teamworkGantDemo1", prj);
-                    } else {
-                        $("#ta").val(JSON.stringify(prj));
-                    }
+                ret = {"tasks": [
+                        {"id": -1, "name": "Gantt editor", "code": "", "level": 0, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 16, "end": 1348523999999, "startLineaBase": 1346623200000, "durationLineaBase": 16, "endLineaBase": 1348523999999, "startIsMilestone": true, "endIsMilestone": false, "assigs": [], "coordinador": "santiago", "esfuerzo": 100},
+                        {"id": -2, "name": "coding", "code": "", "level": 1, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 10, "end": 1347659999999, "startLineaBase": 1346623200000, "durationLineaBase": 10, "endLineaBase": 1347659999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "description": "", "progress": 0},
+                        {"id": -3, "name": "gant part", "code": "", "level": 2, "status": "STATUS_ACTIVE", "start": 1346623200000, "duration": 2, "end": 1346795999999, "startLineaBase": 1346623200000, "durationLineaBase": 2, "endLineaBase": 1346795999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": ""},
+                        {"id": -4, "name": "editor part", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1346796000000, "duration": 4, "end": 1347314399999, "startLineaBase": 1346796000000, "durationLineaBase": 4, "endLineaBase": 1347314399999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "3"},
+                        {"id": -5, "name": "testing", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "start": 1347832800000, "duration": 6, "end": 1348523999999, "startLineaBase": 1347832800000, "durationLineaBase": 6, "endLineaBase": 1348523999999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "2:5", "description": "", "progress": 0},
+                        {"id": -6, "name": "test on safari", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1347832800000, "duration": 2, "end": 1348005599999, "startLineaBase": 1347832800000, "durationLineaBase": 2, "endLineaBase": 1348005599999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": ""},
+                        {"id": -7, "name": "test on ie", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1348005600000, "duration": 3, "end": 1348264799999, "startLineaBase": 1348005600000, "durationLineaBase": 3, "endLineaBase": 1348264799999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "6"},
+                        {"id": -8, "name": "test on chrome", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "start": 1348005600000, "duration": 2, "end": 1348178399999, "startLineaBase": 1348005600000, "durationLineaBase": 2, "endLineaBase": 1348178399999, "startIsMilestone": false, "endIsMilestone": false, "assigs": [], "depends": "6"}
+                    ], "selectedRow": 0, "deletedTaskIds": [], "canWrite": true, "canWriteOnParent": true}
+                ge.loadProject(ret);
+                ge.checkpoint(); //empty the undo stack
+            }
+
+            function saveInLocalStorage() {
+                var prj = ge.saveProject();
+                if (localStorage) {
+                    localStorage.setObject("teamworkGantDemo1", prj);
+                } else {
+                    $("#ta").val(JSON.stringify(prj));
                 }
+            }
         </script>
 
 
@@ -414,7 +415,7 @@
 
 
         <script type="text/javascript">
-            $.JST.loadDecorator("ASSIGNMENT_ROW", function(assigTr, taskAssig) {
+            $.JST.loadDecorator("ASSIGNMENT_ROW", function (assigTr, taskAssig) {
 
                 var resEl = assigTr.find("[name=resourceId]");
                 for (var i in taskAssig.task.master.resources) {
@@ -436,10 +437,10 @@
                         optr.attr("selected", "true");
                     roleEl.append(optr);
                 }
-
+                console.log('canwrite ganthtml ' + taskAssig.task.master.canWrite);
                 if (taskAssig.task.master.canWrite) {
-                    assigTr.find(".delAssig").click(function() {
-                        var tr = $(this).closest("[assigId]").fadeOut(200, function() {
+                    assigTr.find(".delAssig").click(function () {
+                        var tr = $(this).closest("[assigId]").fadeOut(200, function () {
                             $(this).remove();
                         });
                     });

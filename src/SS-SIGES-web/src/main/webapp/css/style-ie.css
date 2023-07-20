@@ -5723,6 +5723,16 @@ span.ayudaDebajo {
 .botonCerrar{
 	float:none;
 }
+
+.listaInterna{
+	color: red !important;
+}
+
+
+#ficha\:comboProveedorAdq_div {
+  font-size: 10px !important;
+}
+
 #menu{
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#008fb4', endColorstr='#007ea3',GradientType=0 ); /* IE6-8 */
 }

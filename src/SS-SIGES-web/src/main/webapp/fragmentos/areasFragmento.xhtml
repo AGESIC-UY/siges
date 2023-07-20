@@ -135,10 +135,10 @@
                             </ice:panelGroup>
                         </ace:column>
                         <ace:column headerText="" styleClass="columnaBoton">
-                            <ice:panelGroup title="#{labels.eliminar_area}">
+                            <ice:panelGroup title="#{areasMB.tituloBotonEliminar(area.areaPk)}">
                                 <h:commandButton onclick="confirmationEliminar#{area.areaPk}.show()"
                                                  styleClass="botonEliminar iconoTabla" 
-                                                 type="button"/>
+                                                 type="button" disabled="#{areasMB.desabilitarBotonEliminar(area.areaPk)}"/>
 
                                 <ace:confirmationDialog id="confirmDialogEliminar"
                                                         widgetVar="confirmationEliminar#{area.areaPk}"

@@ -3,11 +3,8 @@ package com.sofis.business.ejbs;
 import com.sofis.business.interceptors.LoggedInterceptor;
 import com.sofis.data.daos.DevengadoDAO;
 import com.sofis.entities.constantes.ConstanteApp;
-import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Devengado;
-import com.sofis.exceptions.BusinessException;
-import com.sofis.exceptions.TechnicalException;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.DatesUtils;
 import java.util.ArrayList;
@@ -15,44 +12,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "DevengadoBean")
 @LocalBean
 @Interceptors({LoggedInterceptor.class})
 public class DevengadoBean {
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
-    private static final Logger logger = Logger.getLogger(DevengadoBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DevengadoBean.class.getName());
     
-    @Inject
-    private DatosUsuario du;
-
-    public void eliminarDevPorAdqPk(Integer adqPk) {
-        DevengadoDAO dao = new DevengadoDAO(em);
-        try {
-            dao.eliminarDevPorAdqPk(adqPk);
-        } catch (TechnicalException te) {
-            logger.log(Level.SEVERE, null, te);
-            BusinessException be = new BusinessException();
-            be.addError(MensajesNegocio.ERROR_DEVENGADO_ELIMINAR);
-        }
-    }
-
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
+    
     public Devengado obtenerDevengado(Integer adqPk, short mesDev, short anioDev) {
         if (adqPk != null && mesDev > 0 && anioDev > 0) {
             DevengadoDAO dao = new DevengadoDAO(em);

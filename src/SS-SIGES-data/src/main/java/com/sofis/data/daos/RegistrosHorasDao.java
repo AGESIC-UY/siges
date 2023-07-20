@@ -107,17 +107,22 @@ public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Intege
         return null;
     }
 
-    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer monPk, Integer mes, Integer year, Integer usuPk) {
-        return this.obtenerImporteTotalHs(proyPk, monPk, mes, year, usuPk, Boolean.TRUE);
+    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer orgPk,Integer monPk, Integer mes, Integer year, Integer usuPk) {
+        return this.obtenerImporteTotalHs(proyPk, orgPk, monPk, mes, year, usuPk, Boolean.TRUE);
+    }
+    
+    public Boolean tieneHoraYValorEnMonedaAnio(Integer proyPk, Integer monPk, Integer year, Integer usuPk, Boolean aprobado) {
+        return this.tieneHoraRegistradaYValorEnMonedaAnio(proyPk, monPk, year, usuPk, aprobado);
     }
 
-    public Double obtenerImporteTotalHs(Integer proyPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
+    public Double obtenerImporteTotalHs(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
         if (proyPk != null && monPk != null) {
             String queryStr = "SELECT SUM(h.rhHoras * v.valHorValor)"
                     + " FROM RegistrosHoras h, ValorHora v"
                     + " WHERE h.rhUsuarioFk.usuId = v.valHorUsuarioFk.usuId"
                     + " AND h.rhProyectoFk.proyPk = :proyPk"
-                    + " AND v.valHorMonedaFk.monPk = :monPk";
+                    + " AND v.valHorMonedaFk.monPk = :monPk"
+                    + " AND v.valHorOrganismosFk.orgPk = :orgPk";
 
             Map<String, Object> mapParam = new HashMap<>();
             if (aprobado != null) {
@@ -133,7 +138,13 @@ public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Intege
                 mapParam.put("mes", mes);
             }
             if (year != null) {
-                queryStr = queryStr + " AND YEAR(h.rhFecha) = :anio";
+                queryStr = queryStr + " AND YEAR(h.rhFecha) = :anio";               
+                
+                queryStr = queryStr + " AND v.valHorAnio = (SELECT MAX(v2.valHorAnio) " +
+"						FROM ValorHora v2 " +
+"                                               WHERE h.rhUsuarioFk.usuId = v2.valHorUsuarioFk.usuId " + 
+                                                "AND v2.valHorAnio <= :anio)";
+                
                 mapParam.put("anio", year);
             }
             if (usuPk != null) {
@@ -144,6 +155,7 @@ public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Intege
             Query q = super.getEm().createQuery(queryStr);
             q.setParameter("proyPk", proyPk);
             q.setParameter("monPk", monPk);
+            q.setParameter("orgPk", orgPk);
 
             Set<String> keys = mapParam.keySet();
             for (String key : keys) {
@@ -158,9 +170,68 @@ public class RegistrosHorasDao extends HibernateJpaDAOImp<RegistrosHoras, Intege
         }
         return null;
     }
+    
+    public Boolean tieneHoraRegistradaYValorEnMonedaAnio(Integer proyPk, Integer monPk, Integer year, Integer usuPk, Boolean aprobado) {
+        if (proyPk != null) {
+            String queryStr = "SELECT COUNT(*)"
+                    + " FROM RegistrosHoras h, ValorHora v"
+                    + " WHERE h.rhUsuarioFk.usuId = v.valHorUsuarioFk.usuId"
+                    + " AND h.rhProyectoFk.proyPk = :proyPk";
+            
+            if (monPk != null) {
+                queryStr = queryStr + " AND v.valHorMonedaFk.monPk = :monPk";
+            }
+                    
+            Map<String, Object> mapParam = new HashMap<>();
+            if (aprobado != null) {
+                mapParam.put("aprobado", aprobado);
+                if (aprobado) {
+                    queryStr = queryStr + " AND h.rhAprobado = :aprobado";
+                } else {
+                    queryStr = queryStr + " AND (h.rhAprobado IS NULL OR h.rhAprobado = :aprobado)";
+                }
+            }
+            
+            if (year != null) {
+                queryStr = queryStr + " AND YEAR(h.rhFecha) = :anio";                
+                queryStr = queryStr + " AND v.valHorAnio = (SELECT MAX(v2.valHorAnio) " +
+                                      "	FROM ValorHora v2 " +
+                                      " WHERE h.rhUsuarioFk.usuId = v2.valHorUsuarioFk.usuId " + 
+                                      " AND v2.valHorAnio <= :anio)";
+                
+                
+                mapParam.put("anio", year);
+            }
+            if (usuPk != null) {
+                queryStr = queryStr + " AND h.rhUsuarioFk.usuId = :usuPk";
+                mapParam.put("usuPk", usuPk);
+            }
 
-    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer monPk, Integer mes, Integer year, Integer usuPk) {
-        return this.obtenerImporteTotalHs(proyPk, monPk, mes, year, usuPk, Boolean.FALSE);
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            
+            if (monPk != null) {
+                q.setParameter("monPk", monPk);
+            }
+            
+
+            Set<String> keys = mapParam.keySet();
+            for (String key : keys) {
+                q.setParameter(key, mapParam.get(key));
+            }
+
+            try {
+                Long result = (Long)q.getSingleResult();
+                return (result != 0);
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer orgPk,Integer monPk, Integer mes, Integer year, Integer usuPk) {
+        return this.obtenerImporteTotalHs(proyPk, orgPk, monPk, mes, year, usuPk, Boolean.FALSE);
     }
 
     public Date obtenerPrimeraFecha(Integer proyPk, boolean asc) {

@@ -49,6 +49,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "entImpNombre",
     "entImpPk",
     "entImpProgreso",
+    "entImpEsfuerzo",
     "entImpProyFk"
 })
 public class EntregablesImp {
@@ -67,6 +68,7 @@ public class EntregablesImp {
     protected String entImpNombre;
     protected Integer entImpPk;
     protected Integer entImpProgreso;
+    protected Integer entImpEsfuerzo;
     protected ProyectoImportado entImpProyFk;
 
     /**
@@ -331,6 +333,14 @@ public class EntregablesImp {
      */
     public void setEntImpProyFk(ProyectoImportado value) {
         this.entImpProyFk = value;
+    }
+
+    public Integer getEntImpEsfuerzo() {
+        return entImpEsfuerzo;
+    }
+
+    public void setEntImpEsfuerzo(Integer entImpEsfuerzo) {
+        this.entImpEsfuerzo = entImpEsfuerzo;
     }
 
 }

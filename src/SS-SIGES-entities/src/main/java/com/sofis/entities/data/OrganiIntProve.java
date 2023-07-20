@@ -1,5 +1,6 @@
 package com.sofis.entities.data;
 
+import com.sofis.generico.utils.generalutils.StringsUtils;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -30,16 +31,16 @@ import org.hibernate.annotations.FetchMode;
 @NamedQueries({
     @NamedQuery(name = "OrganiIntProve.findAll", query = "SELECT o FROM OrganiIntProve o")})
 public class OrganiIntProve implements Serializable {
-    
+
     public static final int NOMBRE_LENGHT = 50;
-    public static final int RAZON_SOCIAL_LENGHT = 50;
+    public static final int RAZON_SOCIAL_LENGHT = 250;
     public static final int RUT_LENGHT = 45;
     public static final int MAIL_LENGHT = 45;
     public static final int TELEFONO_LENGHT = 45;
     public static final int WEB_LENGHT = 45;
     public static final int DIRECCION_LENGHT = 100;
     public static final int AMBITO_LENGHT = 45;
-    
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,18 +65,18 @@ public class OrganiIntProve implements Serializable {
     private String orgaDireccion;
     @Column(name = "orga_ambito")
     private String orgaAmbito;
-    
+
     @JoinColumn(name = "orga_amb_fk", referencedColumnName = "amb_pk")
     @ManyToOne(optional = true)
     private Ambito orgaAmbFk;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaorgintprovOrgaFk")
     @Fetch(FetchMode.SELECT)
     private Set<AreaOrganiIntProve> areaOrganiIntProveSet;
     @JoinColumn(name = "orga_org_fk", referencedColumnName = "org_pk")
     @ManyToOne(optional = false)
     private Organismos orgaOrgFk;
-    
+
     @Column(name = "orga_habilitado")
     private Boolean orgaHabilitado;
 
@@ -84,6 +85,11 @@ public class OrganiIntProve implements Serializable {
 
     public OrganiIntProve(Integer orgaPk) {
         this.orgaPk = orgaPk;
+    }
+
+    public OrganiIntProve(Integer orgaPk, String orgaNombre) {
+        this.orgaPk = orgaPk;
+        this.orgaNombre = orgaNombre;
     }
 
     public Integer getOrgaPk() {
@@ -199,6 +205,28 @@ public class OrganiIntProve implements Serializable {
         this.orgaHabilitado = orgaHabilitado;
     }
 
+    public String getMix() {
+        if (this.orgaNombre != null) {
+
+            if (this.orgaRazonSocial != null) {
+
+                if (StringsUtils.isEmpty(orgaRazonSocial)) {
+                    return "- "+this.orgaNombre;
+                }
+
+                if (orgaNombre.equalsIgnoreCase(orgaRazonSocial)) {
+                    return "- "+this.orgaNombre;
+                }
+
+            } else {
+                return "- "+this.orgaNombre;
+            }
+
+        }
+
+        return "- "+ this.orgaNombre + " ( " + this.orgaRazonSocial + " )";
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -220,7 +248,7 @@ public class OrganiIntProve implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sofis.entities.data.OrganiIntProve[ orgaPk=" + orgaPk + " ]";
+        return this.orgaNombre + " ( " + this.orgaRazonSocial + " )";
     }
-    
+
 }

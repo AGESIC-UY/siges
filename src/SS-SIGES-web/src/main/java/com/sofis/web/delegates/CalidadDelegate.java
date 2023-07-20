@@ -7,10 +7,6 @@ import com.sofis.entities.tipos.FiltroCalidadTO;
 import java.util.List;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class CalidadDelegate {
 
     @Inject
@@ -31,30 +27,13 @@ public class CalidadDelegate {
     public List<Calidad> buscarPorFiltro(FiltroCalidadTO filtro, Integer orgPk) {
         return calidadBean.buscarPorFiltro(filtro, orgPk);
     }
-
-    /**
-     * Calcula el indice de calidad según el proyecto aportado.
-     *
-     * @param proyId
-     * @return Double
-     */
-    public Double calcularIndiceCalidad(Integer proyId, Integer orgPk) {
+    
+	public Double calcularIndiceCalidad(Integer proyId, Integer orgPk) {
         return calidadBean.calcularIndiceCalidad(proyId, orgPk);
     }
 
-    /**
-     * Retorna el color para el indice de calidad aportado.
-     *
-     * @param ind
-     * @param orgPk
-     * @return String
-     */
-    public String calcularIndiceCalidadColor(Double ind, Integer orgPk) {
+	public String calcularIndiceCalidadColor(Double ind, Integer orgPk) {
         return calidadBean.calcularIndiceCalidadColor(ind, orgPk);
-    }
-
-    private double obtenerValorCalidad(Calidad cal) {
-        return calidadBean.obtenerValorCalidad(cal);
     }
 
     public Calidad guardar(Calidad cal, Integer orgPk, SsUsuario usuario) {

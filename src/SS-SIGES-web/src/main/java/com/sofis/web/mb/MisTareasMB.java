@@ -4,8 +4,6 @@ import com.icesoft.faces.context.effects.JavascriptContext;
 import com.sofis.business.utils.ComboItemTOUtils;
 import com.sofis.business.utils.EntregablesUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
-import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.ProdMes;
 import com.sofis.entities.data.Productos;
@@ -82,8 +80,8 @@ public class MisTareasMB implements Serializable {
 	private ProductosDelegate productosDelegate;
 	@Inject
 	private ConfiguracionDelegate configuracionDelegate;
-        @Inject
-        private ProyectosDelegate proyectosDelegate;
+	@Inject
+	private ProyectosDelegate proyectosDelegate;
 
 	private SofisComboG<Programas> programaCombo = new SofisComboG<>();
 	private SofisComboG<SsUsuario> usuarioCombo = new SofisComboG<>();
@@ -102,12 +100,12 @@ public class MisTareasMB implements Serializable {
 	private Integer limiteRojoProd;
 	private Boolean hayProductos;
 	private Map<Integer, Boolean> editarProdMap = new HashMap<>();
-        
-        /*
+
+	/*
         *       Se agrega esta lista para poder tener un iterador por los meses en
         *   la página.
-        */
-        private List<Integer> listMesesInt = new ArrayList<Integer>();
+	 */
+	private List<Integer> listMesesInt = new ArrayList<Integer>();
 
 	public MisTareasMB() {
 	}
@@ -147,14 +145,6 @@ public class MisTareasMB implements Serializable {
 	public void setFiltro(FiltroMisTareasTO filtro) {
 		this.filtro = filtro;
 	}
-//
-//    public List<MisTareasTO> getMisTareas() {
-//        return misTareas;
-//    }
-//
-//    public void setMisTareas(List<MisTareasTO> misTareas) {
-//        this.misTareas = misTareas;
-//    }
 
 	public int getPrimerAnio() {
 		return primerAnio;
@@ -212,16 +202,14 @@ public class MisTareasMB implements Serializable {
 		this.usuarioCombo = usuarioCombo;
 	}
 
-    public List<Integer> getListMesesInt() {
-        return listMesesInt;
-    }
+	public List<Integer> getListMesesInt() {
+		return listMesesInt;
+	}
 
-    public void setListMesesInt(List<Integer> listMesesInt) {
-        this.listMesesInt = listMesesInt;
-    }
+	public void setListMesesInt(List<Integer> listMesesInt) {
+		this.listMesesInt = listMesesInt;
+	}
 
-        
-        
 	@PostConstruct
 	public void init() {
 		this.tarea = true;
@@ -235,16 +223,14 @@ public class MisTareasMB implements Serializable {
 				.obtenerCnfPorCodigoYOrg(
 						ConfiguracionCodigos.PRODUCTO_INDICE_LIMITE_ROJO,
 						inicioMB.getOrganismoSeleccionado()).getCnfValor());
-		
-                for(int i=1 ; i<13 ; i++){
-                    listMesesInt.add(i);
-                }
-                
-                cargarCombosFiltro();
+
+		for (int i = 1; i < 13; i++) {
+			listMesesInt.add(i);
+		}
+
+		cargarCombosFiltro();
 		buscarTareasAction();
-                
-                //filtro.setTareaFinalizada(Boolean.FALSE);
-                
+
 	}
 
 	public boolean esUsuarioExterno() {
@@ -351,27 +337,6 @@ public class MisTareasMB implements Serializable {
 		this.editarProdMap = editarProdMap;
 	}
 
-	public boolean editarRealProd(ProdMes prodMes, Entregables ent) {
-		Calendar today = new GregorianCalendar();
-		today.add(Calendar.MONTH, -1);
-
-		Calendar calMes = new GregorianCalendar();
-		calMes.set(Calendar.YEAR, prodMes.getProdmesAnio());
-		calMes.set(Calendar.MONTH, prodMes.getProdmesMes() - 1);
-		calMes.set(Calendar.DAY_OF_MONTH, 1);
-
-		GregorianCalendar cEntInicioDate = new GregorianCalendar();
-		cEntInicioDate.setTime(ent.getEntInicioDate());
-		cEntInicioDate.add(Calendar.MONTH, -1);
-
-		boolean esEntreFechas1 = DatesUtils.esEntreFechas(calMes.getTime(), cEntInicioDate.getTime(), ent.getEntFinDate(), "yyyyMM");
-		boolean esEntreFechas2 = DatesUtils.esEntreFechas(calMes.getTime(), today.getTime(), ent.getEntFinDate(), "yyyyMM");
-
-		//System.out.println("calMes.get(Calendar.YEAR)" +calMes.get(Calendar.YEAR));
-		//System.out.println("esEntreFechas2 " +esEntreFechas2 + calMes.getTime() + ":"+ today.getTime() + ":" + ent.getEntFinDate());
-		return esEntreFechas1 && esEntreFechas2;
-	}
-
 	private void cargarCombosFiltro() {
 
 		Calendar cal = new GregorianCalendar();
@@ -404,12 +369,12 @@ public class MisTareasMB implements Serializable {
 	public String buscarTareasAction() {
 		cargarCombosSeleccionados();
 
-                editarProdMap.clear();
-                if (this.misTareasGroupProgProy != null) {
-                    this.misTareasGroupProgProy.clear();
-                }
+		editarProdMap.clear();
+		if (this.misTareasGroupProgProy != null) {
+			this.misTareasGroupProgProy.clear();
+		}
 
-                misTareasGroupProgProy = entregablesDelegate
+		misTareasGroupProgProy = entregablesDelegate
 				.obtenerMisTareasPorFiltroGroupProyecto(filtro,
 						inicioMB.getOrganismo().getOrgPk(), producto,
 						Calendar.getInstance().get(Calendar.YEAR));
@@ -441,7 +406,7 @@ public class MisTareasMB implements Serializable {
 		isCoordBusqueda = filtro != null && filtro.getUsuCoordPk() != null && inicioMB.getUsuario().getUsuId().equals(filtro.getUsuCoordPk());
 		return null;
 	}
-        
+
 	public String limpiarFiltroAction() {
 		programaCombo.setSelected(-1);
 		usuarioCombo.setSelected(-1);
@@ -504,50 +469,31 @@ public class MisTareasMB implements Serializable {
 	}
 
 	public String guardar(MisTareasTO ent) {
-		//ComboItemTO comboItemSel = avanceCombo.getSelectedT() != null ? (ComboItemTO) avanceCombo.getSelectedT() : null;
-		//tareaEnEdicion.setEntProgreso((Integer) comboItemSel.getItemObject());
-
 		try {
-
-                    //  for (MisTareasTO ent : misTareas) {
-                    //     entregablesDelegate.actualizarAvance(ent.getProyPk(), ent.getEntPk(), ent.getEntProgreso(), inicioMB.getUsuario());
-                    //}
-                    
-                    boolean esHito = entregablesDelegate.entregableEsHito(ent.getEntPk());
-                    if (esHito && ent.getEntProgreso() != 0 && ent.getEntProgreso() != 100) {
-                        JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_rep_hito_progreso"), null);
                         
-                    } else if(ent.getEntProgreso() >= 0 && ent.getEntProgreso() <= 100){
-                        entregablesDelegate.actualizarAvance(ent.getProyPk(), ent.getEntPk(), ent.getEntProgreso(), inicioMB.getUsuario());
-                        
-                        JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("rep_tareas_avance_modif"), null);
+			boolean esHito = entregablesDelegate.entregableEsHito(ent.getEntPk());
+			if (esHito && ent.getEntProgreso() != 0 && ent.getEntProgreso() != 100) {
+				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_rep_hito_progreso"), null);
 
-                    }else{
-                        JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_rep_tareas_avance_cotas"), null);
-                    }
-                    
-                    inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+			} else if (ent.getEntProgreso() >= 0 && ent.getEntProgreso() <= 100) {
+				ent.setEntProgreso(ent.getEntProgresoTmp());
+                                entregablesDelegate.actualizarAvance(ent.getProyPk(), ent.getEntPk(), ent.getEntProgreso(), inicioMB.getUsuario());
 
-                /*
-                    if (ent != null) {
-                        renderPopupEdicion.cerrar();
-                        for (MisTareasTO tarea : misTareas) {
-                            if (tarea.equals(tareaEnEdicion)) {
-                                tarea = tareaEnEdicion;
-                                break;
-                            }  
-                        }
-                        JSFUtils.agregarMsg("msjPopup", Labels.getValue("rep_tareas_avance_modif"), null);
-                    }
-                */
+				JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("rep_tareas_avance_modif"), null);
+
+			} else {
+				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_rep_tareas_avance_cotas"), null);
+			}
+
+			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
 		} catch (BusinessException be) {
 			logger.log(Level.SEVERE, be.getMessage(), be);
 
-                        for(String iterStr : be.getErrores()){
-                            JSFUtils.agregarMsgError(MIS_TAREAS_MSG, Labels.getValue(iterStr), null);                
-                        }                        
-                        inicioMB.setRenderPopupMensajes(Boolean.TRUE);  
+			for (String iterStr : be.getErrores()) {
+				JSFUtils.agregarMsgError(MIS_TAREAS_MSG, Labels.getValue(iterStr), null);
+			}
+			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		}
 		return null;
 	}
@@ -639,16 +585,16 @@ public class MisTareasMB implements Serializable {
 			try {
 				prod = productosDelegate.guardarProducto(prod, true);
 				if (prod != null) {
-                                    editarProducto(prod);
-                                    JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_producto_guardado", null);                                    
-                                    inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+					editarProducto(prod);
+					JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_producto_guardado", null);
+					inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 				}
 			} catch (BusinessException be) {
-                            logger.log(Level.SEVERE, be.getMessage());
-                            JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, be.getErrores());
-                            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+				logger.log(Level.SEVERE, be.getMessage());
+				JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, be.getErrores());
+				inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
-                            return null;
+				return null;
 			}
 		}
 		return null;
@@ -671,57 +617,61 @@ public class MisTareasMB implements Serializable {
 			JSFUtils.removerMensages();
 			JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_producto_eliminado", null);
 			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-                        buscarTareasAction();
+			buscarTareasAction();
 		} catch (BusinessException be) {
-                        /*
-                        *  18-06-2018 Inspección de código.
-                        */
-
-                        //JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, be.getErrores());
-
-                        for(String iterStr : be.getErrores()){
-                            JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);                
-                        }                          
+			
+			for (String iterStr : be.getErrores()) {
+				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);
+			}
 			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 		}
 		return null;
 	}
 
-    /***
-     * Devuelve si se debería mostrar cierto campo dependiendo del usuario y el estado del proyecto
-     * @param proyPk Id del proyecto
-     * @param field Campo a mosrtar
-     * @return true or false
-     */
-    public Boolean renderField(Integer proyPk, String field) {
-        Boolean isUsuario = Objects.equals(usuarioCombo.getSelected(), inicioMB.getUsuario().getUsuId());
+	/**
+	 * *
+	 * Devuelve si se debería mostrar cierto campo dependiendo del usuario y el
+	 * estado del proyecto
+	 *
+	 * @param proyPk Id del proyecto
+	 * @param field Campo a mosrtar
+	 * @return true or false
+	 */
+	public Boolean renderField(Integer proyPk, String field) {
+		Boolean isUsuario = Objects.equals(usuarioCombo.getSelected(), inicioMB.getUsuario().getUsuId());
 
-        if (isUsuario) {
-            
-            if (field.equals("")) {
-                return true;
-            }
+		if (isUsuario) {
 
-            // Obtengo el proyecto para sacar el estado
-            Proyectos proyecto = proyectosDelegate.obtenerProyPorId(proyPk);
+			if (field.equals("")) {
+				return true;
+			}
 
-            // El botón de eliminar no se muestra si está en estado de Ejecución o Finalizado
-            if (field.equals("Eliminar")) {
-                if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) return false;
-                
-                if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.FINALIZADO.estado_id)) return false;
-            }
-            
-            // El botón de editar no se muestra si está en estado Finalizado
-            if (field.equals("Editar")) {
-                if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.FINALIZADO.estado_id)) return false;
-            }
+			// Obtengo el proyecto para sacar el estado
+			Proyectos proyecto = proyectosDelegate.obtenerProyPorId(proyPk);
 
-            // Los otros estados
-            return true;
-        }
+			// El botón de eliminar no se muestra si está en estado de Ejecución o Finalizado
+			if (field.equals("Eliminar")) {
+				if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
+					return false;
+				}
 
-        // Si no es el mismo usuario, no muestra los botones
-        return false;
-    }
+				if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.FINALIZADO.estado_id)) {
+					return false;
+				}
+			}
+
+			// El botón de editar no se muestra si está en estado Finalizado
+			if (field.equals("Editar")) {
+				if (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.FINALIZADO.estado_id)) {
+					return false;
+				}
+			}
+
+			// Los otros estados
+			return true;
+		}
+
+		// Si no es el mismo usuario, no muestra los botones
+		return false;
+	}
 }

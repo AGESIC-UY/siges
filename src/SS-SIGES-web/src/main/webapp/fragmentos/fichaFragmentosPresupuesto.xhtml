@@ -62,6 +62,13 @@
         </ice:panelGroup>
 
         <ice:panelGroup rendered="#{fichaMB.mostrar[4]}" styleClass="cuerpo">
+            
+            <ice:panelGroup styleClass="row" rendered="#{fichaMB.fieldRendered('mensajeReplanificacionPresupuestoNoEditable')}">
+                <ice:panelGroup styleClass="col-sm-12">
+                    <ice:outputLabel value="#{labels.replanificacionPresupuestoNoEditable}" style="color: red;"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
             <ice:panelGroup id="preHeader" styleClass="cabezalPresupuesto" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}">
                 <ice:panelGroup styleClass="row preBase">
                     <ice:outputLabel value="#{labels.presupuesto_base}:" styleClass="col-sm-2"/>
@@ -93,18 +100,24 @@
             <ice:panelGroup id="presupuestoFormData" rendered="#{not fichaMB.cargaPresupuestoDesdeArchivo}">
                 <ice:panelCollapsible id="collapsiblePre" expanded="#{fichaMB.formPreRendered != 0}">
 
-                    <!-- Formulario de Presupuesto -->
+                    <!-- 1 Formulario de Presupuesto -->
                     <ui:include src="./fichaFragmentosPreFormPre.xhtml" />
 
-                    <!-- Formulario de Adquisiciones -->
+                    <!-- 2 Formulario de Adquisiciones -->
                     <ui:include src="./fichaFragmentosPreFormAdq.xhtml" />
 
-                    <!-- Formulario de Pagos -->
+                    <!-- 3 Formulario de Pagos -->
                     <ui:include src="./fichaFragmentosPreFormPag.xhtml" />
 
-                    <!-- Formulario de Pagos read only-->
+                    <!-- 4 Formulario de Pagos read only-->
                     <ui:include src="./fichaFragmentosPreFormPagVer.xhtml" />
 
+                    <!-- 5 Formulario de Adquisiciones read only-->
+                    <ui:include src="./fichaFragmentosPreFormAdqVer.xhtml" />
+
+                    <!-- 6 Formulario de duplicacion de Adquisiciones -->
+                    <ui:include src="./fichaFragmentosPreFormAdqDuplicar.xhtml" />
+               
                 </ice:panelCollapsible>
             </ice:panelGroup>
 

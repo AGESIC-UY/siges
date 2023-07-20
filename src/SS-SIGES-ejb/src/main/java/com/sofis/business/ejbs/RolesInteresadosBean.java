@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -31,176 +30,168 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "RolesInteresadosBean")
 @LocalBean
 @Interceptors({LoggedInterceptor.class})
 public class RolesInteresadosBean {
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
-    private static final Logger logger = Logger.getLogger(RolesInteresadosBean.class.getName());
-    @Inject
-    private DatosUsuario du;
+	private static final Logger LOGGER = Logger.getLogger(RolesInteresadosBean.class.getName());
 
-    //private String usuario;
-    //private String origen;
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+	private EntityManager em;
 
-    @PostConstruct
-    public void init() {
-        //usuario = du.getCodigoUsuario();
-        //origen = du.getOrigen();
-    }
+	@Inject
+	private DatosUsuario du;
 
-    /**
-     * Devuelve el elemento RolesInteresados por el ID
-     *
-     * @param rolIntId
-     * @return
-     * @throws GeneralException
-     */
-    public RolesInteresados obtenerRolesInteresadosPorId(Integer rolIntId) throws GeneralException {
-        RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
-        try {
-            return rolesInteresadosDAO.findById(RolesInteresados.class, rolIntId);
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(ex.getMessage());
-            throw te;
-        }
+	public RolesInteresados obtenerRolesInteresadosPorId(Integer rolIntId) throws GeneralException {
+		RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
+		try {
+			return rolesInteresadosDAO.findById(RolesInteresados.class, rolIntId);
+		} catch (DAOGeneralException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException te = new TechnicalException(ex);
+			te.addError(ex.getMessage());
+			throw te;
+		}
+	}
 
-    }
+	/**
+	 * Devuelve todos los elementos de tipo RolesInteresados
+	 *
+	 * @return
+	 * @throws GeneralException
+	 */
+	public List<RolesInteresados> obtenerTodos() throws GeneralException {
+		RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
+		try {
+			return rolesInteresadosDAO.findAll(RolesInteresados.class);
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException te = new TechnicalException(ex);
+			te.addError(ex.getMessage());
+			throw te;
+		}
+	}
 
-    /**
-     * Devuelve todos los elementos de tipo RolesInteresados
-     *
-     * @return
-     * @throws GeneralException
-     */
-    public List<RolesInteresados> obtenerTodos() throws GeneralException {
-        RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
-        try {
-            return rolesInteresadosDAO.findAll(RolesInteresados.class);
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(ex.getMessage());
-            throw te;
-        }
-    }
+	public List<RolesInteresados> obtenerHabilitadosPorOrganismo(Integer orgPk) throws GeneralException {
+		RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
+		try {
+			return rolesInteresadosDAO.findHabilitadosByOrganismo(orgPk);
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException te = new TechnicalException(ex);
+			te.addError(ex.getMessage());
+			throw te;
+		}
+	}
 
-    public List<RolesInteresados> obtenerRolPorOrgPk(Integer orgPk) {
-        RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
-        try {
-//            return rolesInteresadosDAO.findByOneProperty(RolesInteresados.class, "rolintOrgFk.orgPk", orgPk);
-            return rolesInteresadosDAO.findByOrg(orgPk);
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(ex.getMessage());
-            throw te;
-        }
-    }
+	public List<RolesInteresados> obtenerRolPorOrgPk(Integer orgPk) {
+		RolesInteresadosDAO rolesInteresadosDAO = new RolesInteresadosDAO(em);
+		try {
+			return rolesInteresadosDAO.findByOrg(orgPk);
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException te = new TechnicalException(ex);
+			te.addError(ex.getMessage());
+			throw te;
+		}
+	}
 
-    public RolesInteresados guardarRol(RolesInteresados rolEnEdicion) {
-        if (rolEnEdicion != null) {
-            RolesInteresadosValidacion.validar(rolEnEdicion);
-            validarDuplicado(rolEnEdicion);
+	public RolesInteresados guardarRol(RolesInteresados rolEnEdicion) {
+		if (rolEnEdicion != null) {
+			RolesInteresadosValidacion.validar(rolEnEdicion);
+			validarDuplicado(rolEnEdicion);
 
-            RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
-            try {
-                return dao.update(rolEnEdicion, du.getCodigoUsuario(),du.getOrigen());
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_ROL_INT_GUARDAR);
-                throw be;
-            }
-        }
-        return null;
-    }
+			RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
+			try {
+				return dao.update(rolEnEdicion, du.getCodigoUsuario(), du.getOrigen());
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_ROL_INT_GUARDAR);
+				throw be;
+			}
+		}
+		return null;
+	}
 
-    public List<RolesInteresados> busquedaRolFiltro(Integer orgPk, Map<String, Object> mapFiltro, String elementoOrdenacion, int ascendente) {
-        if (orgPk != null) {
-            List<CriteriaTO> criterios = new ArrayList<>();
+	public List<RolesInteresados> busquedaRolFiltro(Integer orgPk, Map<String, Object> mapFiltro, String elementoOrdenacion, int ascendente) {
+		if (orgPk != null) {
+			List<CriteriaTO> criterios = new ArrayList<>();
 
-            MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
-                    MatchCriteriaTO.types.EQUALS, "rolintOrgFk.orgPk", orgPk);
-            criterios.add(criterioOrg);
+			MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
+					MatchCriteriaTO.types.EQUALS, "rolintOrgFk.orgPk", orgPk);
+			criterios.add(criterioOrg);
 
-            String nombre = mapFiltro != null ? (String) mapFiltro.get("nombre") : null;
-            if (!StringsUtils.isEmpty(nombre)) {
-//		MatchCriteriaTO criterio = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "rolintNombre", nombre);
-                CriteriaTO criterio = DAOUtils.createMatchCriteriaTOString("rolintNombre", nombre);
-                criterios.add(criterio);
-            }
+			String nombre = mapFiltro != null ? (String) mapFiltro.get("nombre") : null;
+			if (!StringsUtils.isEmpty(nombre)) {
+				CriteriaTO criterio = DAOUtils.createMatchCriteriaTOString("rolintNombre", nombre);
+				criterios.add(criterio);
+			}
 
-            CriteriaTO condicion;
-            if (criterios.size() == 1) {
-                condicion = criterios.get(0);
-            } else {
-                condicion = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
-            }
+			CriteriaTO condicion;
+			if (criterios.size() == 1) {
+				condicion = criterios.get(0);
+			} else {
+				condicion = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
+			}
 
-            String[] orderBy = {};
-            boolean[] asc = {};
-            if (!StringsUtils.isEmpty(elementoOrdenacion)) {
-                orderBy = new String[]{elementoOrdenacion};
-                asc = new boolean[]{(ascendente == 1)};
-            }
+			String[] orderBy = {};
+			boolean[] asc = {};
+			if (!StringsUtils.isEmpty(elementoOrdenacion)) {
+				orderBy = new String[]{elementoOrdenacion};
+				asc = new boolean[]{(ascendente == 1)};
+			}
 
-            RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
+			RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
 
-            try {
-                return dao.findEntityByCriteria(RolesInteresados.class, condicion, orderBy, asc, null, null);
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_ROL_INT_OBTENER);
-                throw be;
-            }
-        }
-        return null;
-    }
+			try {
+				return dao.findEntityByCriteria(RolesInteresados.class, condicion, orderBy, asc, null, null);
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_ROL_INT_OBTENER);
+				throw be;
+			}
+		}
+		return null;
+	}
 
-    public void eliminarRol(Integer rolPk) {
-        if (rolPk != null) {
-            RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
-            try {
-                RolesInteresados rol = obtenerRolesInteresadosPorId(rolPk);
-                dao.delete(rol);
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
+	public void eliminarRol(Integer rolPk) {
+		if (rolPk != null) {
+			RolesInteresadosDAO dao = new RolesInteresadosDAO(em);
+			try {
+				RolesInteresados rol = obtenerRolesInteresadosPorId(rolPk);
+				dao.delete(rol);
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
 
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_ROL_INT_ELIMINAR);
-                if (ex.getCause() instanceof javax.persistence.PersistenceException
-                        && ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-                    be.addError(MensajesNegocio.ERROR_ROL_INT_CONST_VIOLATION);
-                }
-                throw be;
-            }
-        }
-    }
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_ROL_INT_ELIMINAR);
+				if (ex.getCause() instanceof javax.persistence.PersistenceException
+						&& ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+					be.addError(MensajesNegocio.ERROR_ROL_INT_CONST_VIOLATION);
+				}
+				throw be;
+			}
+		}
+	}
 
-    private void validarDuplicado(RolesInteresados rol) {
-        Map<String, Object> filtroMap = new HashMap<>();
-        filtroMap.put("nombre", rol.getRolintNombre());
-        List<RolesInteresados> list = busquedaRolFiltro(rol.getRolintOrgFk().getOrgPk(), filtroMap, null, 0);
-        if (CollectionsUtils.isNotEmpty(list)) {
-            for (RolesInteresados r : list) {
-                if (!r.getRolintPk().equals(rol.getRolintPk())
-                        && r.getRolintNombre().equals(rol.getRolintNombre())) {
-                    BusinessException be = new BusinessException();
-                    be.addError(MensajesNegocio.ERROR_ROL_INT_NOMBRE_DUPLICADO);
-                    throw be;
-                }
-            }
-        }
-    }
+	private void validarDuplicado(RolesInteresados rol) {
+		Map<String, Object> filtroMap = new HashMap<>();
+		filtroMap.put("nombre", rol.getRolintNombre());
+		List<RolesInteresados> list = busquedaRolFiltro(rol.getRolintOrgFk().getOrgPk(), filtroMap, null, 0);
+		if (CollectionsUtils.isNotEmpty(list)) {
+			for (RolesInteresados r : list) {
+				if (!r.getRolintPk().equals(rol.getRolintPk())
+						&& r.getRolintNombre().equals(rol.getRolintNombre())) {
+					BusinessException be = new BusinessException();
+					be.addError(MensajesNegocio.ERROR_ROL_INT_NOMBRE_DUPLICADO);
+					throw be;
+				}
+			}
+		}
+	}
+
 }

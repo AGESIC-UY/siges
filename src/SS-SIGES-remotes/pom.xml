@@ -11,12 +11,12 @@
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>5.10.1</version>
+        <version>6.7.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-remotes</artifactId>
-    <version>5.10.1</version>
+    <version>6.7.1</version>
     <packaging>jar</packaging>
 
     <name>SS-SIGES-remotes</name>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-exceptions</artifactId>
-            <version>5.10.1</version>
+            <version>6.7.1</version>
             <scope>provided</scope>
         </dependency>
         

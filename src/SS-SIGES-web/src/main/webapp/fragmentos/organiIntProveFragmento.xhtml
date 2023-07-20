@@ -26,14 +26,29 @@
         <ice:panelGroup id="espacioTrabajo" styleClass="buscador recuadro margen-inf">
             <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
 
-            <ice:panelGrid styleClass="formulario" columns="6">
+            <ice:panelGrid styleClass="formulario" columns="4">
                 <ice:outputLabel value="#{labels.orga_busqueda_nombre}"/>
                 <ace:textEntry value="#{organiIntProveMB.filtroNombre}" />
+
+                <ice:outputLabel value="#{labels.orga_busqueda_razon_social}"/>
+                <ace:textEntry value="#{organiIntProveMB.filtroRazonSocial}" />
+
+                <ice:outputLabel value="#{labels.orga_busqueda_habilitado}"/>
+                <ace:simpleSelectOneMenu value="#{organiIntProveMB.filtroHabilitado}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.comboTodos}" itemValue=""/>
+                    <f:selectItem itemLabel="#{labels.si}" itemValue="1"/>
+                    <f:selectItem itemLabel="#{labels.no}" itemValue="0"/>
+                    <ace:ajax />
+                </ace:simpleSelectOneMenu>
+
+                <ice:outputLabel value="#{labels.orga_head_rut}"/>
+                <ace:textEntry value="#{organiIntProveMB.filtroRut}" />
+
             </ice:panelGrid>
-            
+
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-<!--                    <ace:messages id="busquedaMsg" />-->
+                    <!--                    <ace:messages id="busquedaMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{organiIntProveMB.buscar()}"/>
@@ -66,6 +81,8 @@
                                              styleClass="textoMedio"
                                              valueChangeListener="#{organiIntProveMB.cambiarCriterioOrdenacion}">
                         <f:selectItem itemLabel="#{labels.orga_busqueda_nombre}" itemValue="orgaNombre"/>
+                        <f:selectItem itemLabel="#{labels.orga_busqueda_razon_social}" itemValue="orgaRazonSocial"/>
+                        <f:selectItem itemLabel="#{labels.orga_head_rut}" itemValue="orgaRut"/>
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
                     <ace:simpleSelectOneMenu value="#{organiIntProveMB.ascendente}" styleClass="textoMedio"
@@ -75,12 +92,12 @@
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
 
-                    <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
+                    <ace:dataExporter target="tblResultados2" label="#{labels.exportarPlanilla}" 
                                       type="xls" fileName="#{labels.exportarPlantillaAmbito}"
                                       includeHeaders="true" excludeColumns="" />
                 </ice:panelGroup>
 
-                <ice:panelGroup rendered="#{organiIntProveMB.listaResultado != null and not empty organiIntProveMB.listaResultado}" 
+                  <ice:panelGroup rendered="#{organiIntProveMB.listaResultado != null and not empty organiIntProveMB.listaResultado}" 
                                 styleClass="cuerpo">
                     <ace:dataTable id="tblResultados" 
                                    value="#{organiIntProveMB.listaResultado}" 
@@ -88,10 +105,10 @@
                                    styleClass="tablaResultados table-responsive"
                                    paginator="true" pageCount="5" 
                                    rows="#{organiIntProveMB.cantElementosPorPagina}">
-                        <ace:column headerText="#{labels.orga_head_pk}" >
+                        <ace:column headerText="#{labels.orga_head_pk}"  >
                             <h:outputText value="#{orga.orgaPk}"/>
                         </ace:column>
-                        
+
                         <ace:column headerText="#{labels.orga_head_nombre}">
                             <h:outputText value="#{orga.orgaNombre}"/>
                         </ace:column>
@@ -100,15 +117,25 @@
                             <ace:checkboxButton value="#{orga.orgaProveedor}"
                                                 disabled="true"/>
                         </ace:column>
-                        
-                        <ace:column headerText="#{labels.orga_head_razon_social}" >
-                            <h:outputText value="#{orga.orgaRazonSocial}"/>
+
+                        <ace:column headerText="#{labels.orga_head_razon_social}"  >
+                            <h:outputText value="#{orga.orgaRazonSocial.length() gt 50 ? orga.orgaRazonSocial.substring(0,47).concat('...'):orga.orgaRazonSocial}"  
+                                          
+                                          >
+                            <ace:excludeFromExport />
+                            </h:outputText>
+                            
+                          
                         </ace:column>
                         
+                        <ace:column headerText="#{labels.orga_head_rut}" >
+                            <h:outputText value="#{orga.orgaRut}"/>
+                        </ace:column>
+
                         <ace:column headerText="#{labels.orga_head_mail}" >
                             <h:outputText value="#{orga.orgaMail}"/>
                         </ace:column>
-                                                
+
                         <ace:column headerText="#{labels.hHabilitar}">
                             <ice:panelGroup title="#{labels.habilitar_deshabilitar}">
                                 <ace:checkboxButton value="#{orga.orgaHabilitado}" 
@@ -124,7 +151,89 @@
                                                 action="#{organiIntProveMB.editar(orga.orgaPk)}" />
                             </ice:panelGroup>
                         </ace:column>
+
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.orga_elilminar}">
+                                <h:commandButton onclick="confirmationEliminar#{orga.orgaPk}.show()"
+                                                 styleClass="botonEliminar iconoTabla" 
+                                                 type="button"/>
+
+                                <ace:confirmationDialog id="confirmDialogEliminar"
+                                                        widgetVar="confirmationEliminar#{orga.orgaPk}"
+                                                        message="#{labels.confirmacionEliminacion}"
+                                                        header="#{labels.hConfirmacion}"
+                                                        closable="true"
+                                                        closeOnEscape="true"
+                                                        severity="info"
+                                                        modal="true"
+                                                        position="center">
+                                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                        <h:commandButton value="#{labels.si}"
+                                                         styleClass="boton principal botonContinuar"
+                                                         onclick="confirmationEliminar#{orga.orgaPk}.hide()" 
+                                                         actionListener="#{organiIntProveMB.eliminar(orga.orgaPk)}"/>
+                                        <h:commandButton value="#{labels.no}"
+                                                         styleClass="boton principal botonEliminar"
+                                                         onclick="confirmationEliminar#{orga.orgaPk}.hide()"  />
+                                    </h:panelGrid>
+                                </ace:confirmationDialog> 
+                            </ice:panelGroup>
+                        </ace:column>
+
+                    </ace:dataTable>
+                      
+                         <ace:dataTable id="tblResultados2" 
+                                   value="#{organiIntProveMB.listaResultado}" 
+                                   var="orga" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true" pageCount="5" 
+                                   rows="#{organiIntProveMB.cantElementosPorPagina}" rendered="false">
+                        <ace:column headerText="#{labels.orga_head_pk}"  >
+                            <h:outputText value="#{orga.orgaPk}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.orga_head_nombre}">
+                            <h:outputText value="#{orga.orgaNombre}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.orga_head_proveedor}">
+                            <ace:checkboxButton value="#{orga.orgaProveedor}"
+                                                disabled="true"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.orga_head_razon_social}"  >
+                           
+                            
+                            <h:outputText value="#{orga.orgaRazonSocial}" style="width: 0px;"  
+                                          
+                                          >
+                            </h:outputText>
+                        </ace:column>
                         
+                        <ace:column headerText="#{labels.orga_head_rut}" >
+                            <h:outputText value="#{orga.orgaRut}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.orga_head_mail}" >
+                            <h:outputText value="#{orga.orgaMail}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hHabilitar}">
+                            <ice:panelGroup title="#{labels.habilitar_deshabilitar}">
+                                <ace:checkboxButton value="#{orga.orgaHabilitado}" 
+                                                    valueChangeListener="#{organiIntProveMB.organismoHabilitadoChange(orga)}">
+                                    <ace:ajax/>
+                                </ace:checkboxButton>
+                            </ice:panelGroup>
+                        </ace:column>
+
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.editar}">
+                                <ace:pushButton styleClass="botonEditar iconoTabla" 
+                                                action="#{organiIntProveMB.editar(orga.orgaPk)}" />
+                            </ice:panelGroup>
+                        </ace:column>
+
                         <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.orga_elilminar}">
                                 <h:commandButton onclick="confirmationEliminar#{orga.orgaPk}.show()"

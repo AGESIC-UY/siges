@@ -56,7 +56,10 @@ jQuery.JST = {
 
 		var typeS = type + "";
 		var templateBody = "";
-
+                
+                var mostrarBotonEntregableRef = document.getElementById("ficha:mostrarBotonEntregableReferencia").cloneNode(true);
+                var mostrarBotonEntregableRefVal = mostrarBotonEntregableRef.value === "true";
+                
 		if ("GANTBUTTONS" == typeS) {
 		    templateBody = "<div class=\"ganttButtonBar noprint\">" +
 			    "<h1 style=\"float:left\"></h1>" +
@@ -81,9 +84,20 @@ jQuery.JST = {
 			    "<button onclick=\"jQuery('#workSpace').trigger('zoomPlus.gantt'); return false;\" class=\"button textual\" title=\"Acercar\">" +
 			    "<span class=\"teamworkIcon\">(</span></button><span class=\"ganttButtonSeparator\"></span>" +
 			    "<button onclick=\"jQuery('#workSpace').trigger('copyCurrentTask.gantt');\" class=\"button textual\" title=\"Duplicar\" id=\"copyBtn\">" +
-			    "<span class=\"teamworkIcon\">c</span></button><span class=\"ganttButtonSeparator\"></span>" +
-			    "<button onclick=\"jQuery('#workSpace').trigger('deleteCurrentTask.gantt');\" class=\"button textual\" title=\"Eliminar\" id=\"deleteBtn\">" +
-			    "<span class=\"teamworkIcon\">&cent;</span></button>&nbsp; &nbsp; &nbsp; &nbsp;" +
+			    "<span class=\"teamworkIcon\">c</span></button>";
+                            
+                            if (mostrarBotonEntregableRefVal){
+                                templateBody = templateBody  + 
+                                "<button onclick=\"jQuery('#workSpace').trigger('openTaskReferenceDialog.gantt');\" class=\"button textual\" title=\"Vincular un entregable\" id=\"referenciarBtn\">" +
+                                "<span class=\"teamworkIcon\">,</span></button>" +
+                                "<span class=\"ganttButtonSeparator\"></span>";
+                            }   
+                            
+			    
+                            templateBody = templateBody + "<button onclick=\"jQuery('#workSpace').trigger('deleteCurrentTask.gantt');\" class=\"button textual\" title=\"Eliminar\" id=\"deleteBtn\">" +
+			    "<span class=\"teamworkIcon\">&cent;</span>"+"</button><span class=\"ganttButtonSeparator\"></span>" +
+			    "<button onclick=\"jQuery('#workSpace').trigger('downloadSchedule.gantt');\" class=\"button textual\" title=\"Descargar\" id=\"downloadBtn\">" +
+                            "<span class=\"teamworkIcon\">Z</span></button>&nbsp; &nbsp; &nbsp; &nbsp;" +
 			    "<button onclick=\"saveGanttOnServer();\" class=\"boton principal guardar\" id=\"guardarBtn\" title=\"Guardar\">Guardar</button></div></div>";
 		}
 		if ("TASKSEDITHEAD" == typeS) {
@@ -105,7 +119,7 @@ jQuery.JST = {
                         "<span class=\"taskRowIndex\">(#=obj.getRow()+1#)</span>" +
                         "<span class=\"teamworkIcon\" style=\"font-size:11px;\">e</span>"+ 
                         "</th>" +
-                        "<td class=\"gdfCell indentCell\" style=\"padding-left:(#=obj.level*10#)px;\">" +
+                        "<td class=\"gdfCell indentCell\" style=\"padding-left:(#=obj.level*10#)px;\" title=\"(#=obj.name#)\">" +
                         "<span type=\"text\" name=\"name\" style=\"(#=obj.level>0?'border-left:2px dotted orange':''#)\">(#=obj.name + \"-\"+ obj.esfuerzo#)</span>"+
                         "</td>" +
                         "<td class=\"gdfCell\"><input type=\"text\" name=\"start\" value=\"\" class=\"date\"></td>" +
@@ -133,15 +147,17 @@ jQuery.JST = {
 		if ("TASKBAR" == typeS) {
 		    templateBody = "<div class=\"taskBox edit\" taskId=\"(#=obj.id#)\" >" +
 			    "<div class=\"(#=obj.endIsMilestone ? 'taskMilestone' : 'layout'#) (#=obj.hasExternalDep?'extDep':''#)\">" +
-			    "<div class=\"taskProgress (#=obj.progress > 100 ? 'taskProgressRed' : 'taskProgressBlue'#)\" style=\"height:(#=obj.endIsMilestone ? '16px' : '90%'#); width:(#=obj.progress > 100 ? 100 : obj.progress#)%;\">" +
-			    "<span class=\"(#=obj.parent ? 'parentTaskBar' : ''#)\" style=\"color: white;\">(#=obj.parent || obj.endIsMilestone ? '' : obj.progress#)</span>" +
+			    
+                            "<div class=\"taskProgress (#=obj.progress > 100 ? 'taskProgressRed' : 'taskProgressBlue'#)\"" +
+                            "style=\"height:(#=obj.endIsMilestone ? '16px' : (obj.isParent() ? '85%' : '91%')#); width:(#=obj.progress > 100 ? 100 : obj.progress#)%;\">" +
+		
+                            "<span class=\"(#=(obj.parent && !obj.esfuerzo) ? 'parentTaskBar' : ''#)\" style=\"color: white;\">(#=(obj.parent && !obj.esfuerzo) || obj.endIsMilestone ? '' : obj.progress#)</span>" +
 			    "</div>" +
-			    "<div class=\"taskProgress1 (#=obj.parent? 'parentTaskBar' : (obj.end < new Date()) ? 'taskProgressRed' : new Date(new Date(obj.end).setHours(0,0,0,0)) >= new Date(new Date(new Number(document.getElementById('ficha:diaHoraServer_input').value)).setHours(0,0,0,0)) ? 'taskProgressGreen' : 'taskProgressRed' #)\" style=\"float:right; height:(#=obj.endIsMilestone ? '16px' : '100%'#); width:(#=obj.progress > 100 ? 0 : 100-obj.progress#)%;\">" +
-			    "</div>" +
-// mgarcia -Se comenta porque originalmente genera una marca milestone para inicio y fin.
-//                            "<div class=\"milestone (#=obj.startIsMilestone?'active':''#)\" ></div>" +
-//                            "<div class=\"taskLabel\"></div>" +
-//                            "<div class=\"milestone end (#=obj.endIsMilestone?'active':''#)\" ></div>" +
+			    
+                            "<div class=\"taskProgress1 (#=(obj.parent && !obj.esfuerzo) ? 'parentTaskBar' : (obj.end < new Date()) ? 'taskProgressRed' : new Date(new Date(obj.end).setHours(0,0,0,0)) >= new Date(new Date(new Number(document.getElementById('ficha:diaHoraServer_input').value)).setHours(0,0,0,0)) ? 'taskProgressGreen' : 'taskProgressRed' #)\"" +
+                            "style=\"float:right; height:(#=obj.endIsMilestone ? '16px' : '100%'#); width:(#=obj.progress > 100 ? 0 : 100-obj.progress#)%;\">" +
+			    
+                            "</div>" +
 			    "</div>" +
 			    "</div>";
 		}
@@ -153,7 +169,7 @@ jQuery.JST = {
 		// Popup para editar los datos de una task.
 		if ("TASK_EDITOR" == typeS) {
 		    templateBody = "	<?xml version=\"1.0\" encoding=\"UTF-8\"?>	" +
-			    "	<div class=\"ganttTaskEditor icePnlPop\">	" +
+			    "	<div id=\"modalTask\" class=\"ganttTaskEditor icePnlPop\">	" +
 			    "	   <table width=\"100%\">	" +
 			    "	      <tbody>	" +
 			    "	         <tr>	" +
@@ -163,20 +179,19 @@ jQuery.JST = {
 			    "	         </tr>	" +
 			    "	         <tr>	" +
 			    "	            <td class=\"icePnlPopBody row\">	" +
-			    "	               <div class=\"col-sm-10 no-padding formulario\" style=\"margin-bottom: 21px;\">	" +
+			    "	               <div id=\"modalTaskNombre\" class=\"col-sm-10 no-padding formulario\" style=\"margin-bottom: 21px;\">	" +
 			    "	                  <label for=\"name\" class=\"col-sm-1\" style=\"margin-right: 17px;margin-top: 5px;\">Nombre</label>	" +
 			    "	                  <input type=\"text\" name=\"name\" id=\"name\" value=\"\" size=\"35\" class=\"formElements col-sm-10\" autofocus=\"\" style=\"height: 24px;\" />	" +
 			    "	               </div>	" +
-			    "	               <div class=\"col-sm-2 no-padding formulario\" style=\"margin-bottom: 21px;\">	" +
+			    "	               <div id=\"modalTaskHito\" class=\"col-sm-2 no-padding formulario\" style=\"margin-bottom: 21px;\">	" +
 			    "	                     <input type=\"checkbox\" id=\"endIsMilestone\" name=\"endIsMilestone\" />	" +
 			    "	                     <label for=\"endIsMilestone\">HITO</label> " +
 			    "	               </div>	" +
 			    "	               <div class=\"col-sm-12 no-padding formulario\">	" +
-			    "	                  <div class=\"col-sm-6\">	" +
+			    "	                  <div id=\"modalTaskCoordinador\" class=\"col-sm-6\">	" +
 			    "	                     <div>	" +
 			    "	                        <label for=\"coordinador\">Coordinador</label>	" +
-			    "	                        <select id=\"coordinador\" name=\"coordinador\" class=\"formElements\" style=\"width: 332px;margin-left: 9px;\">	" +
-			    "	                           <option value=\"-1\" />	" +
+			    "	                        <select id=\"coordinador\" name=\"coordinador\" class=\"formElements\" style=\"width: 332px;margin-left: 0px;\">	" +
 			    "	                        </select>	" +
 			    "	                     </div>	" +
 			    "	                  </div>	" +
@@ -184,13 +199,13 @@ jQuery.JST = {
 			    "	                     <input type=\"checkbox\" id=\"cambiarCoordHijos\" name=\"cambiarCoordHijos\" />	" +
 			    "	                     <label for=\"cambiarCoordHijos\">Cambiar el coordinador de sus hijos.</label>	" +
 			    "	                  </div>	" +
-			    "	                  <div class=\"col-sm-12 formulario bordeSup\">	" +
+			    "	                  <div id=\"modalTaskPlanificacion\" class=\"col-sm-12 formulario bordeSup\">	" +
 			    "	                     <div class=\"col-sm-12\" style=\"/* margin-left: -16px; */\">	" +
 			    "	                        <span>Planificaci\u00F3n</span>	" +
 			    "	                     </div>	" +
 			    "	                     <!-- Planificacion -->	" +
-			    "	                     <div id=\"esfuerzoDiv\" style=\" margin-left: 31px;\">	" +
-			    "	                        <label for=\"esfuerzo\">Esfuerzo</label>	" +
+			    "	                     <div id=\"esfuerzoDiv\" >	" +
+			    "	                        <label for=\"esfuerzo\">Ponderación</label>	" +
 			    "	                        <input type=\"text\" name=\"esfuerzo\" id=\"esfuerzo\" value=\"\" size=\"3\" class=\"formElements dateInput\" />	" +
 			    "	                     </div>	" +
 			    "	                     <div id=\"startPlanDiv\">	" +
@@ -220,11 +235,11 @@ jQuery.JST = {
                             "	                        <label for=\"periodo_fin\">Fin del Proyecto</label>	" +
 			    "	                     </div>	" +
 			    "	                  </div>	" +
-			    "	                  <div class=\"col-sm-12 formulario bordeSup\" style=\"\">	" +
+			    "	                  <div id=\"modalTaskEjecucion\" class=\"col-sm-12 formulario bordeSup\" style=\"\">	" +
 			    "	                     <div class=\"col-sm-12\" style=\"/* margin-left: -16px; */\">	" +
 			    "	                        <span>Ejecuci\u00F3n</span>	" +
 			    "	                     </div>	" +
-			    "	                     <div style=\"width: 172px;\" />	" +
+			    "	                     <div style=\"width: 172px; height: 1px;\" />	" +
 			    "	                     <!-- Ejecucion -->	" +
 			    "	                     <div id=\"startEjecDiv\" style=\" margin-left: 18px;\">	" +
 			    "	                        <label id=\"start_ejec_label\" for=\"start_ejec\">Inicio</label>	" +
@@ -243,7 +258,7 @@ jQuery.JST = {
 			    "	                        <input id=\"progress\" name=\"progress\" class=\"formElements\" />	" +
 			    "	                     </div>	" +
 			    "	                  </div>	" +
-			    "	                  <div class=\"col-sm-12 formulario bordeSup\" style=\"padding-top: 17px;\">	" +
+			    "	                  <div id=\"modalTaskObservacion\" class=\"col-sm-12 formulario bordeSup\" style=\"padding-top: 17px;\">	" +
 			    "	                     <div class=\"col-sm-7\" style=\"\">	" +
 			    "	                        <label for=\"description\" style=\"vertical-align: top;\">Observaciones</label>	" +
 			    "	                        <textarea rows=\"5\" cols=\"30\" id=\"description\" name=\"description\" class=\"formElements\" style=\" width: 362px;\" />	" +
@@ -257,11 +272,53 @@ jQuery.JST = {
 			    "	                           <input type=\"text\" name=\"tieneProductos\" id=\"tieneProductos\" value=\"\" class=\"formElements\" disabled=\"disabled\" />	" +
 			    "	                        </div>	" +
 			    "	                     </div>	" +
-			    "	                     <div id=\"taskDiv\" class=\"col-sm-12 formulario\">	" +
-			    "	                        <div style=\"text-align: right; padding-top: 20px; clear: both; float:right;\">	" +
-			    "	                           <button id=\"saveButton\" class=\"button big\">Confirmar</button>	" +
-			    "	                           <a id=\"closeEditor\" onclick=\"closeEditorDiv();\" name=\"closeEditor\">Cerrar</a>	" +
-			    "	                        </div>	" +
+                            
+                            
+			    "	                     </div>	" +
+                            
+			    "	                  <div id=\"referencia\" class=\"col-sm-12 formulario bordeSup\" style=\"padding-top: 17px;\">	" +
+                            "	                     <div class=\"col-sm-12\" \">	" +
+			    "	                        <span>Este entregable es una referencia</span>	" +
+			    "	                     </div>	" +
+                             "	                     <div class=\"col-sm-12\" \">	" +
+			    "	                        <span>  </span>	" +
+			    "	                     </div>	" +
+                            "                        <div class=\"col-sm-12 no-padding formulario\" style=\"margin-bottom: 12px;margin-right: 0px;\">	" +
+			    "                           <label for=\"codigo-proyecto-refereido\" class=\"col-sm-2\" style=\"margin-right: 17px;\">Código Proyecto</label>	" +
+			    "                           <span id=\"codigo-proyecto-refereido\" style=\"height: 24px;\"/>	" +
+			    "                        </div>	" +
+                            "                        <div class=\"col-sm-12 no-padding formulario\" style=\"margin-right: 0px;\">	" +
+			    "                           <label class=\"col-sm-2\" style=\"margin-right: 17px;\">Proyecto</label>	" +
+			    "                           <span id=\"proyecto-referencia\" style=\"height: 24px;\"/>	" +
+			    '                           <a id="link-proyecto-referencia" class="iceCmdLnk" href="javascript:;" title="Abrir en una nueva ventana.">' +
+                            '                               <img alt="" class="iceGphImg"  src="../img/nueva_ventana.png">' +
+                            '                           </a>' +
+                            "                        </div>	" +
+                            "                        <div class=\"col-sm-12 no-padding formulario\" style=\"margin-bottom: 12px;margin-right: 0px;\">	" +
+			    "                           <label for=\"numero-entregable\" class=\"col-sm-2\" style=\"margin-right: 17px;\">N° entregable</label>	" +
+			    "                           <span id=\"numero-entregable\" style=\"height: 24px;\"/>	" +
+			    "                        </div>	" +
+			    "                        <div class=\"col-sm-12 no-padding formulario\" style=\"margin-bottom: 12px;margin-right: 0px;\">	" +
+			    "                           <label for=\"nombre-referencia\" class=\"col-sm-2\" style=\"margin-right: 17px;\">Entregable referido</label>	" +
+			    "                           <span id=\"nombre-referencia\" style=\"height: 24px;\"/>	" +
+			    "                        </div>	" +
+			    
+                            "                        <div id=\"referido-eliminado\" class=\"col-sm-10 no-padding formulario\" >	" +
+			    "                           <span style=\"height: 24px;color:red;\">El entregable al que se hace referencia fue eliminado</span>" +
+                            "                        </div>	" +
+
+			    "	                 </div>	" +
+                            
+			    "	                 <div id=\"taskDiv\" class=\"col-sm-12 formulario\">	" +
+			    "	                    <div style=\"text-align: right; padding-top: 20px; clear: both; float:right;\">	" +
+			    "	                       <button id=\"saveButton\" class=\"button big\">Confirmar</button>	" +
+			    "	                       <a id=\"closeEditor\" onclick=\"closeEditorDiv();\" name=\"closeEditor\">Cerrar</a>	" +
+			    "	                    </div>	" +
+			    "	                 </div>	" +
+
+                            
+                            
+                            
 			    "	                     </div>	" +
 			    "	                     <script type=\"text/javascript\">" +
 			    "			    $(\"#relevantePMO\").change(function(){ " +

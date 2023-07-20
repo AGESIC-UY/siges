@@ -17,7 +17,7 @@
             <ice:outputLabel value="#{labels.mail_tmpl_titulo}"/>
         </ice:panelGroup>
 
-        <ice:panelGroup styleClass="btnAgregarABM">
+        <ice:panelGroup styleClass="btnAgregarABM" rendered="false">
             <ace:pushButton value="#{labels.mail_tmpl_agregar}" 
                             styleClass="boton principal agregar"
                             action="#{mailsTemplateMB.agregar()}" />
@@ -105,7 +105,7 @@
                                                 action="#{mailsTemplateMB.editar(mail.mailTmpPk)}" />
                             </ice:panelGroup>
                         </ace:column>
-                        <ace:column headerText="" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton" rendered="false">
                             <ice:panelGroup title="#{labels.mail_tmpl_eliminar}">
                                 <h:commandButton onclick="confirmationEliminar#{mail.mailTmpPk}.show()"
                                                  styleClass="botonEliminar iconoTabla" 

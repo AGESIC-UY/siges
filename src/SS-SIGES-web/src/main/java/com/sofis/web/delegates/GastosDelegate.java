@@ -22,8 +22,8 @@ public class GastosDelegate {
         return gastosBean.guardarGasto(gasto, orgPk);
     }
 
-    public List<Gastos> obtenerRegistrosGastos(Integer usuId, Integer proyPk, Date filtroFechaDesde, Date filtroFechaHasta, TipoGasto tipoGasto, Long desde, Long cant, Integer aprobado) {
-        return gastosBean.obtenerRegistrosGastos(usuId, proyPk, filtroFechaDesde, filtroFechaHasta, tipoGasto, desde, cant, aprobado);
+    public List<Gastos> obtenerRegistrosGastos(Integer usuId, Integer proyPk, Date filtroFechaDesde, Date filtroFechaHasta, TipoGasto tipoGasto, Long desde, Long cant, Integer aprobado, Integer orgPk) {
+        return gastosBean.obtenerRegistrosGastos(usuId, proyPk, filtroFechaDesde, filtroFechaHasta, tipoGasto, desde, cant, aprobado, orgPk);
     }
 
     public MonedaImporteTO[] obtenerGastosAbrobPorProyYMon(Integer proyPk, Integer usuId, Boolean aprobado) {

@@ -15,9 +15,13 @@
             <!-- FORMULARIO FILTRO BUSQUEDA -->
             <ui:include src="./../fragmentos/inicioFragmentoFiltro.xhtml" />
 
-            <!-- spio -->
             <h:panelGroup id="pnlExportar" layout="block"
-                          styleClass="panelAcciones panelBotonesExportarInicio" rendered="#{not empty ProgramasProyectosMB.filtroInicioResultado}">
+                          styleClass="panelAcciones panelBotonesExportarInicio" rendered="#{not empty ProgramasProyectosMB.resultados}">
+
+                <ice:panelGroup styleClass="cantidades-inicio" >
+                    <ice:outputText value="#{ProgramasProyectosMB.cantidadProgramas} #{labels.programas} - #{ProgramasProyectosMB.cantidadProyectos} #{labels.proyectos}" />
+                </ice:panelGroup>
+
                 <ice:panelGroup styleClass="panelBotones" >
                     <ace:pushButton value="#{labels.exportar}" 
                                     styleClass="boton principal descargar" 
@@ -25,11 +29,10 @@
                 </ice:panelGroup>
             </h:panelGroup>
 
-
             <ice:panelGroup id="programasProyectosResultadoBusqueda">
                 <ice:panelSeries id="principalAreas" 
                                  rows="10000"
-                                 value="#{ProgramasProyectosMB.filtroInicioResultado}" 
+                                 value="#{ProgramasProyectosMB.resultados}" 
                                  var="itemArea">
                     <ice:panelGroup styleClass="proyPendientes margen-sup">
                         <ice:panelGroup>
@@ -56,7 +59,7 @@
                                 </ice:panelGrid>
 
                                 <h:link id="linkEditarFicha1"
-                                        value="#{item.fichaFk} - #{item.nombre}" 
+                                        value="#{ProgramasProyectosMB.obtenerNombreMostrar(item.fichaFk,item.nombre)}" 
                                         styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
                                         outcome="IR_A_EDITAR_FICHA" 
                                         rendered="#{item.nombre != null}"

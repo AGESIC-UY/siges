@@ -124,7 +124,9 @@
 
                 <ace:column headerText="#{labels.revisionHoras_head_Aprobada}">
                     <ace:checkboxButton value="#{hora.rhAprobado}"
-                                        disabled="#{(!revisionHorasMB.participante.partActivo) or fichaMB.fieldDisabled('partCheckAprobado')}"/>
+                                        disabled="#{(!revisionHorasMB.participante.partActivo) or fichaMB.fieldDisabled('partCheckAprobado')}">
+                        <ace:ajax execute="@this" render="@form" />
+                    </ace:checkboxButton>
                 </ace:column>
 
                 <ace:column styleClass="columnaBoton"
@@ -159,7 +161,7 @@
 
             <ice:panelGroup id="panelAccionesHoras" 
                             styleClass="panelBotones margen-sup">
-                <ace:messages id="partHorasMsg"/>
+                <!--<ace:messages id="partHorasMsg"/>-->
                 <ice:commandButton value="#{labels.revisionHoras_generarHoras}" 
                                    action="#{revisionHorasMB.mostrarPopupGenerarHoras(revisionHorasMB.participante) }" 
                                    rendered="#{fichaMB.fieldRendered('partGenerarHoras') and revisionHorasMB.participante.participanteActivo}"

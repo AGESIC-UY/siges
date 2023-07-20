@@ -19,6 +19,7 @@ public class BusinessException extends GeneralException {
 
 	public BusinessException(String codigoError) {
 		super(codigoError);
+		
 		errores = new ArrayList<>();
 	}
 

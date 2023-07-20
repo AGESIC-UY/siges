@@ -19,15 +19,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "riesgos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Riesgos.findAll", query = "SELECT r FROM Riesgos r")})
+    @NamedQuery(name = "Riesgos.findIdProyectoByIdRiesgo", query = "SELECT r.riskProyFk.proyPk FROM Riesgos r WHERE r.riskPk = :idRiesgo")
+})
 public class Riesgos implements Serializable {
 
     public static final int NOMBRE_LENGHT = 3000;
@@ -37,53 +34,76 @@ public class Riesgos implements Serializable {
     public static final int CONTINGENCIA_LENGHT = 3000;
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "risk_pk")
     private Integer riskPk;
+
     @JoinColumn(name = "risk_proy_fk", referencedColumnName = "proy_pk", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Proyectos riskProyFk;
+
     @Column(name = "risk_nombre")
     private String riskNombre;
+
     @Column(name = "risk_fecha_actu")
     @Temporal(TemporalType.DATE)
     private Date riskFechaActualizacion;
+
     @Column(name = "risk_probabilidad")
     private Integer riskProbabilidad;
+
     @Column(name = "risk_impacto")
     private Integer riskImpacto;
+
     @JoinColumn(name = "risk_ent_fk", referencedColumnName = "ent_pk", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Entregables riskEntregable;
+
     @Column(name = "risk_fecha_limite")
     @Temporal(TemporalType.DATE)
     private Date riskFechaLimite;
+
     @Column(name = "risk_efecto")
     private String riskEfecto;
+
     @Column(name = "risk_estategia")
     private String riskEstrategia;
+
     @Column(name = "risk_disparador")
     private String riskDisparador;
+
     @Column(name = "risk_contingencia")
     private String riskContingencia;
+
     @Column(name = "risk_superado")
     private Boolean riskSuperado;
+
     @Column(name = "risk_fecha_superado")
     @Temporal(TemporalType.DATE)
     private Date riskFechaSuperado;
+
     @Column(name = "risk_usuario_superado_fk")
     private Integer riskUsuarioSuperadoFk;
+
     @Column(name = "risk_exposicion")
     private Double exposicion;
+
     @Column(name = "risk_observaciones")
     private String riskObservaciones;
+
     //Campos no persistidos
     @Transient
     private String exposicionColor;
+
     @Transient
     private String fechaLimiteColor;
+
+    @JoinColumn(name = "risk_tipo_riesgo_fk", referencedColumnName = "trs_pk")
+    @ManyToOne
+    private TipoRiesgo riskTipoRiesgoFk;
 
     public Riesgos() {
     }
@@ -240,6 +260,14 @@ public class Riesgos implements Serializable {
         this.riskObservaciones = observaciones;
     }
 
+    public TipoRiesgo getRiskTipoRiesgoFk() {
+        return riskTipoRiesgoFk;
+    }
+
+    public void setRiskTipoRiesgoFk(TipoRiesgo riskTipoRiesgoFk) {
+        this.riskTipoRiesgoFk = riskTipoRiesgoFk;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -47,7 +47,29 @@
         <script src="./../js/ie-emulation-modes-warning.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
         <script src="./../js/bootstrap-session-timeout.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
 
-
+        <!-- Matomo -->
+        <script type="text/javascript">
+          var _paq = window._paq || [];
+          _paq.push(['setUserId', '#{inicioMB.usuario.usuCorreoElectronico}']);          
+          
+          _paq.push(['setCustomDimension', #{inicioMB.idDimensionUsuarioMatomo}, '#{inicioMB.usuario.usuCorreoElectronico}']);
+          _paq.push(['setCustomDimension', #{inicioMB.idDimensionOrganismoMatomo}, '#{inicioMB.organismo.orgNombre}']);
+          
+          /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+          _paq.push(['trackPageView']);
+          _paq.push(['enableLinkTracking']);
+          
+          (function() {
+            var u="#{inicioMB.urlMatomo}";
+            
+            _paq.push(['setTrackerUrl', u+'matomo.php']);
+            _paq.push(['setSiteId', '#{inicioMB.idSitioMatomo}']);
+            
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+          })();
+        </script>
+        <!-- End Matomo Code -->
 
     </h:head>
 
@@ -56,21 +78,6 @@
 
         <icecore:config render="true"/>
 
-        <!--        <script type="text/javascript" >
-        
-                    $.sessionTimeout({
-                        message: 'Your session will be locked in one minute.',
-                        logoutUrl: 'login.html',
-                        redirUrl: 'locked.html',
-                        warnAfter: 1000,
-                        redirAfter: 2000
-                    });
-        
-                </script>-->
-
-<!--        <h:outputScript library="omnifaces" name="fixviewstate.js" target="head" />
-                
-        -->        
         <f:metadata>
             <o:enableRestorableView />
         </f:metadata>
@@ -87,12 +94,6 @@
                                         disconnectedLabel="#{labels.conn_status_disconnected}"
                                         displayHourglassWhenActive="false"
                                         showPopupOnDisconnect="true"/>
-            <!--            <ace:submitMonitor
-                            id="status"
-                            activeLabel="#{labels.conn_status_active}"
-                            networkErrorLabel="#{labels.conn_status_disconnected}"
-                            sessionExpiredLabel="#{labels.conn_status_session_expired}"
-                            blockUI="@all" />-->
         </o:form>
 
 
@@ -171,7 +172,7 @@
                     <div class="row texto-foot">
                         <div class="col-sm-6 izq">
                             <span id="footer_dir_name">#{labels.app_name}</span>
-                            <span>#{labels.version}:#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild} - #{aplicacionMB.releaseDate}</span>
+                            <span>#{labels.version}: #{aplicacionMB.appVersion}-#{aplicacionMB.appBuild} - #{aplicacionMB.releaseDate}</span>
                             <span>#{labels.pie_direccion}</span>
                             <span>#{labels.pie_correo}</span>
                             <span>#{labels.pie_telefono}</span>

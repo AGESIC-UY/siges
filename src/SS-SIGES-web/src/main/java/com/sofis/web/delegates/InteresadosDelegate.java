@@ -32,8 +32,8 @@ public class InteresadosDelegate {
         return interesadosBean.obtenerIntersadosPorFichaPk(fichaPk, tipoFicha);
     }
 
-    public void delete(Integer intPk, Integer fichaPk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
-        interesadosBean.delete(intPk, fichaPk, tipoFicha, usuario, orgPk);
+    public Object delete(Integer intPk, Integer fichaPk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
+        return interesadosBean.eliminar(intPk, fichaPk, tipoFicha, usuario, orgPk);
     }
 
     public Object guardarInteresados(Interesados interesado, Integer fichaPk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {

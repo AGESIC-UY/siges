@@ -20,7 +20,7 @@ public class MailsTemplateDelegate {
     }
 
     public void controlarMailTmpFaltantes() {
-        mailsTemplateBean.controlarMailTmpFaltantes();
+        mailsTemplateBean.controlarFaltantes();
     }
 
     public void eliminarMail(Integer mailPk) {

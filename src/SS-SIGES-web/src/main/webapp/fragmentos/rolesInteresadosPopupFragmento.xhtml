@@ -28,9 +28,12 @@
 
             <f:facet name="body">
                 <ice:panelGroup id="formRolInt">
-                    <ice:panelGrid styleClass="formulario" columns="4">
+                    <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.rol_int_head_nombre}:" styleClass="obligatorio"/>
                         <ace:textEntry value="#{rolesInteresadosMB.rolEnEdicion.rolintNombre}" />
+
+                        <ice:outputLabel value="#{labels.rol_int_head_hab}:" />
+                        <ace:checkboxButton value="#{rolesInteresadosMB.rolEnEdicion.habilitado}" label="checkbox" />
                     </ice:panelGrid>
 
                     <ice:panelGroup styleClass="panelBotones">

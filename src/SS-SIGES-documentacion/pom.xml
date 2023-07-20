@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.sofis.siges</groupId>
         <artifactId>SS-SIGES-base</artifactId>
-        <version>5.10.1</version>
+        <version>6.7.1</version>
     </parent>
     
     <groupId>com.sofis.generico.docs</groupId>
     <artifactId>SS-SIGES-documentacion</artifactId>
-    <version>5.10.1</version>
+    <version>6.7.1</version>
     <name>SS-SIGES-documentacion</name>
     <url>http://maven.apache.org</url>
     

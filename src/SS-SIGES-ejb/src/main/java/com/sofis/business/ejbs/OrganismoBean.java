@@ -12,7 +12,6 @@ import com.sofis.entities.data.AreasTags;
 import com.sofis.entities.data.FuenteFinanciamiento;
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.entities.data.Organismos;
-import com.sofis.entities.data.Programas;
 import com.sofis.entities.data.RolesInteresados;
 import com.sofis.entities.data.TipoDocumento;
 import com.sofis.entities.tipos.IdNombreTO;
@@ -30,7 +29,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
-import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,69 +36,55 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "OrganismoBean")
 @LocalBean
 @Interceptors({LoggedInterceptor.class})
 public class OrganismoBean {
 
-	private static final String HORA_EJECUCION = "08";
-	private static final String MINUTOS_EJECUCION = "00";
-
 	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
 	private EntityManager em;
-	@Inject
-	private ConsultaHistorico<Programas> ch;
+
 	@Inject
 	private DatosUsuario du;
+
 	@EJB
 	private MailsTemplateBean mailsTemplateBean;
+
 	@EJB
 	private ConfiguracionBean configuracionBean;
+
 	@EJB
 	private NotificacionBean notificacionBean;
+
 	@EJB
 	private AmbitoBean ambitoBean;
+
 	@EJB
 	private AreasConocimientoBean areasConocimientoBean;
+
 	@EJB
 	private AreaTematicaBean areaTematicaBean;
+
 	@EJB
 	private FuenteFinanciamientoBean fuenteFinanciamientoBean;
+
 	@EJB
 	private OrganiIntProveBean organiIntProveBean;
+
 	@EJB
 	private RolesInteresadosBean rolesInteresadosBean;
+
 	@EJB
 	private TipoDocumentoBean tipoDocumentoBean;
-	@EJB
-	private SsRolBean ssRolBean;
+
 	@EJB
 	private AreasBean areasBean;
-	@EJB
-	private EstadosPublicacionBean estadosPublicacionBean;
+
 	@EJB
 	private EtapaBean etapaBean;
-	@EJB
-	private TiposMediaBean tiposMediaBean;
-	@EJB
-	private EstadosBean estadosBean;
-	@EJB
-	private TipoLeccionBean tipoLeccionBean;
 
-        private static final Logger logger = Logger.getLogger(OrganismoBean.class.getName());
-
-	//private String usuario;
-	//private String origen;
-	@PostConstruct
-	public void init() {
-		//usuario = du.getCodigoUsuario();
-		//origen = du.getOrigen();
-	}
+	private static final Logger LOGGER = Logger.getLogger(OrganismoBean.class.getName());
 
 	public Organismos obtenerOrgPorId(Integer id, boolean conLogo) throws GeneralException {
 		if (id != null) {
@@ -112,7 +96,7 @@ public class OrganismoBean {
 				}
 				return org;
 			} catch (DAOGeneralException ex) {
-				logger.log(Level.SEVERE, ex.getMessage(), ex);
+				LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
 				TechnicalException te = new TechnicalException(ex);
 				te.addError(ex.getMessage());
 				throw te;
@@ -135,11 +119,14 @@ public class OrganismoBean {
 	}
 
 	private Organismos guardar(Organismos org) {
+
 		OrganismosValidacion.validar(org);
 		validarDuplicado(org);
-		OrganismoDAO dao = new OrganismoDAO(em);
-		boolean esNuevo = (org.getOrgPk() == null);
+
+		boolean esNuevo = org.getOrgPk() == null;
 		byte[] logo = org.getOrgLogo();
+
+		OrganismoDAO dao = new OrganismoDAO(em);
 		try {
 			org = dao.update(org, du.getCodigoUsuario(), du.getOrigen());
 			if (logo != null) {
@@ -147,10 +134,21 @@ public class OrganismoBean {
 			}
 
 			if (esNuevo) {
-				this.controlarDatosFaltantes();
+				LOGGER.log(Level.INFO, "Agregar Mail Templates");
+				mailsTemplateBean.controlarFaltantesOrganismo(org);
+
+				LOGGER.log(Level.INFO, "Agregar Configuraciones");
+				configuracionBean.controlarConfiguracionOrganismo(org);
+
+				LOGGER.log(Level.INFO, "Agregar Notificaciones");
+				notificacionBean.controlarFaltantesOrganismo(org);
+
+				LOGGER.log(Level.INFO, "Agregar Etapas");
+				etapaBean.controlarFaltantesOrganismo(org);
 			}
+
 		} catch (DAOGeneralException ex) {
-			logger.log(Level.SEVERE, ex.getMessage(), ex);
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		return org;
 	}
@@ -175,7 +173,6 @@ public class OrganismoBean {
 		OrganismoDAO dao = new OrganismoDAO(em);
 		List<Organismos> result = null;
 		try {
-//            result = dao.findAll(Organismos.class, "orgNombre");
 			result = dao.obtenerTodos();
 		} catch (DAOGeneralException ex) {
 			Logger.getLogger(OrganismoBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -186,10 +183,9 @@ public class OrganismoBean {
 	public List<Organismos> obtenerTodosActivos() {
 		OrganismoDAO dao = new OrganismoDAO(em);
 		try {
-//            return dao.findByOneProperty(Organismos.class, "orgActivo", Boolean.TRUE, "orgNombre");
 			return dao.obtenerTodosActivos();
 		} catch (DAOGeneralException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			LOGGER.log(Level.SEVERE, null, ex);
 		}
 		return null;
 	}
@@ -202,44 +198,6 @@ public class OrganismoBean {
 	public void guardarLogoOrg(Integer orgPk, byte[] logo) {
 		OrganismoDAO dao = new OrganismoDAO(em);
 		dao.guardarLogoOrg(orgPk, logo);
-	}
-
-	public void controlarDatosFaltantes() {
-		logger.log(Level.INFO, "CONTROLAR MAIL TMP FALTANTES");
-		//mails_template
-		mailsTemplateBean.controlarMailTmpFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR CONFIGURACIONES FALTANTES");
-		//ss_configuraciones
-		configuracionBean.controlarCnfFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR NOTIFICACIONES FALTANTES");
-		//notificacion
-		notificacionBean.controlarNotifFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR ROLES FALTANTES");
-		//Roles
-		ssRolBean.controlarRolesFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR ESTADOS PUBLICACION FALTANTES");
-		//Estados Publicacion
-		estadosPublicacionBean.controlarEstPubFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR ETAPAS FALTANTES");
-		//Etapas
-		etapaBean.controlarEtapasFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR TIPOS MULTIMEDIA FALTANTES");
-		//Tipos Multimedia
-		tiposMediaBean.controlarTiposMediaFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR ESTADOS FALTANTES");
-		//Estados
-		estadosBean.controlarEstadosFaltantes();
-
-		logger.log(Level.INFO, "CONTROLAR TIPO LECCION FALTANTES");
-		//Tipo Leccion(tipo_leccion)
-		tipoLeccionBean.controlarTipoLeccionFaltantes();
 	}
 
 	/**
@@ -293,7 +251,7 @@ public class OrganismoBean {
 
 				Boolean areasTem = (Boolean) mapCopiar.get("copiarAreasTematicas");
 				if (areasTem != null && areasTem) {
-					List<AreasTags> listATem = areaTematicaBean.obtenerAreasTematicasPorOrg(orgCopiar.getOrgPk());
+					List<AreasTags> listATem = areaTematicaBean.obtenerPorOrganismo(orgCopiar.getOrgPk());
 					List<Object[]> listPadres = new ArrayList<>();
 					for (AreasTags area : listATem) {
 						AreasTags newArea = new AreasTags();
@@ -394,21 +352,21 @@ public class OrganismoBean {
 			try {
 				return dao.findByOneProperty(Organismos.class, "orgNombre", nombre);
 			} catch (DAOGeneralException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				LOGGER.log(Level.SEVERE, null, ex);
 			}
 		}
 		return null;
 	}
 
 	private void validarDuplicado(Organismos org) {
-		logger.log(Level.INFO, "*** validarDuplicado ***");
+		LOGGER.log(Level.INFO, "*** validarDuplicado ***");
 		List<Organismos> list = obtenerPorNombre(org.getOrgNombre());
-		logger.log(Level.INFO, "org nombre:" + org.getOrgNombre());
-		logger.log(Level.INFO, "list:" + (list != null ? list.size() : "null"));
+		LOGGER.log(Level.INFO, "org nombre:{0}", org.getOrgNombre());
+		LOGGER.log(Level.INFO, "list:{0}", list != null ? list.size() : "null");
 		if (CollectionsUtils.isNotEmpty(list)) {
 			for (Organismos o : list) {
-				logger.log(Level.INFO, "for o:" + o.getOrgPk() + "-" + o.getOrgNombre());
-				logger.log(Level.INFO, "for org:" + org.getOrgPk() + "-" + org.getOrgNombre());
+				LOGGER.log(Level.INFO, "for o:{0}-{1}", new Object[]{o.getOrgPk(), o.getOrgNombre()});
+				LOGGER.log(Level.INFO, "for org:{0}-{1}", new Object[]{org.getOrgPk(), org.getOrgNombre()});
 				if (!o.getOrgPk().equals(org.getOrgPk())) {
 					BusinessException be = new BusinessException();
 					be.addError(MensajesNegocio.ERROR_ORGANISMO_NOMBRE_DUPLICADO);
@@ -426,7 +384,6 @@ public class OrganismoBean {
 		} catch (DAOGeneralException ex) {
 			throw new TechnicalException(ex);
 		}
-
 	}
 
 }

@@ -34,6 +34,9 @@
                 <ice:outputLabel value="#{labels.notif_head_desc}"/>
                 <ace:textEntry value="#{notificacionMB.filtroDesc}" />
                 
+                <ice:outputLabel value="#{labels.notif_head_asunto}"/>
+                <ace:textEntry value="#{notificacionMB.filtroAsunto}" />
+                
                 <ice:outputLabel value="#{labels.notif_head_mensaje}"/>
                 <ace:textEntry value="#{notificacionMB.filtroMsg}" />
             </ice:panelGrid>
@@ -73,6 +76,7 @@
                                              valueChangeListener="#{notificacionMB.cambiarCriterioOrdenacion}">
                         <f:selectItem itemLabel="#{labels.notif_busqueda_codigo}" itemValue="notCod"/>
                         <f:selectItem itemLabel="#{labels.notif_busqueda_desc}" itemValue="notDesc"/>
+                        <f:selectItem itemLabel="#{labels.notif_busqueda_asunto}" itemValue="notAsunto"/>
                         <f:selectItem itemLabel="#{labels.notif_busqueda_msg}" itemValue="notMsg"/>
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
@@ -120,6 +124,9 @@
                             <ace:checkboxButton value="#{notif.notSponsor}" disabled="true"/>
                         </ace:column>
                         
+                        <ace:column headerText="#{labels.notif_head_asunto}">
+                            <h:outputText value="#{notif.notAsunto}"/>
+                        </ace:column>
                         <ace:column headerText="#{labels.notif_head_mensaje}">
                             <h:outputText value="#{notif.notMsg}" escape="false"/>
                         </ace:column>
@@ -130,7 +137,7 @@
                                                 action="#{notificacionMB.editar(notif.notPk)}" />
                             </ice:panelGroup>
                         </ace:column>
-                        <ace:column headerText="" styleClass="columnaBoton">
+                        <ace:column headerText="" styleClass="columnaBoton" rendered="false">
                             <ice:panelGroup title="#{labels.notif_eliminar}">
                                 <h:commandButton onclick="confirmationEliminar#{notif.notPk}.show()"
                                                  styleClass="botonEliminar iconoTabla" 

@@ -60,12 +60,12 @@ a.linkRojo:link, a.linkRojo:visited{
 }
 .linkFichaRight a:link{
     font-weight:bold;
-    line-height: 28px;
+    line-height: 27px;
 }
 a.linkFichaRight {
     float: right;
     font-weight:bold;
-    line-height: 28px;
+    line-height: 27px;
 }
 div {
     /*overflow: hidden; lo comento para que funcione el menÃº desplegable*/
@@ -755,6 +755,11 @@ select{
 .filtroProyecto .col-sm-4 fieldset.iceSelMnyCb{
     margin-top: 5px;
 }
+
+
+.haciaIzquierda{/*cambiar por el checked*/
+    background: url("../img/atrasar-fase.png") no-repeat center center !important;
+}
 .iceSelMnyCb label {
     float: left;
     color: #3d3d3d;
@@ -1111,8 +1116,8 @@ select{
 }
 
 .panelBotonesExportarInicio{
-    margin-top: 9px;
-    margin-bottom: 48px;
+    margin-top: 8px;
+    margin-bottom: 20px;
 }
 
 .panelBotones.conMargen  {
@@ -1280,6 +1285,9 @@ input.iconoTabla, input.iconoTabla-dis, input.iconoTabla-dis:hover, input.iconoD
     border: none;
     margin:0;
 }
+input.iconoTabla[disabled="true"], input.iconoTabla[disabled="true"]:hover {
+    background-color: #97b1c4;
+}
 input.iconoTabla:hover, .ui-datepicker-trigger:hover {
     background-color: #024777;
 }
@@ -1319,6 +1327,9 @@ input.iconoTabla:hover, .ui-datepicker-trigger:hover {
 .botonContinuar button, input.botonContinuar {
     background-image: url("../img/continuar.png") !important;
 }
+.botonContinuarRef {
+    background-image: url("../img/continuar.png") !important;
+}
 .secundario.botonContinuar button, input.secundario.botonContinuar {
     background-image: url("../img/continuar-sec.png") !important;
 }
@@ -1330,6 +1341,13 @@ input.iconoTabla:hover, .ui-datepicker-trigger:hover {
 }
 .botonEditar button, input.botonEditar{
     background-image: url("../img/editar.png") !important;
+}
+.botonRestaurarVinculacion button{
+    background-image: url("../img/recargar.png") !important;
+}
+
+.botonCancelar button, input.botonCancelar{
+    background-image: url("../img/eliminar.png") !important;
 }
 .botonImporte button, input.botonImporte{
     background-image: url("../img/dinero.png") !important;
@@ -1378,6 +1396,9 @@ input[disabled].botonLoad:hover, input:disabled.botonLoad:hover{
     background-image: url("../img/restablecer.png") !important;
 }
 .botonEliminar button, input.botonEliminar{ 
+    background-image: url("../img/eliminar.png") !important;
+}
+.botonEliminarRef { 
     background-image: url("../img/eliminar.png") !important;
 }
 .secundario.botonEliminar button, input.secundario.botonEliminar{ 
@@ -1582,7 +1603,7 @@ input.guardar{
     background-image: url("../img/guardar.png");
 }
 .usuario span span button span{
-    background-image: url("../img/persona.png");
+    background-image: url("../img/persona.png") !important;
     padding-left: 25px !important;
 }
 .secundario.guardar span span button span{
@@ -2087,6 +2108,12 @@ div.ui-state-error, .ui-widget-content div.ui-state-error, .ui-widget-header div
     background-position: left center;
     width: 18px;
 }
+.ui-icon-info-ref{
+    background-image: url("../img/mens-adv.png") !important;
+    /*background-size: 18px auto;*/
+    background-repeat: no-repeat;
+    background-position: left center;
+}
 .ui-faces-messages .ui-corner-all {
     padding: 10px 0;
     text-align: left;
@@ -2407,6 +2434,12 @@ th.ui-state-active, .ui-widget-content th.ui-state-active {
     margin-right: 0;
     vertical-align: top;
 }
+
+.botonSemaforo-dis.small {
+    width: 12px;
+    height: 12px;
+}
+
 .exposicionRiesgo .botonSemaforo-dis, .actualizacionRiesgo .botonSemaforo-dis{
     margin-right: 0;
 }
@@ -2436,6 +2469,54 @@ th.ui-state-active, .ui-widget-content th.ui-state-active {
 }
 .popupMedio{
     width: 650px;
+}
+
+@media screen and (max-width: 2500px) {
+    .verImagenPopup {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .imgPopup {
+        width: 1600px;
+        height: 900px;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .verImagenPopup {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .imgPopup {
+        width: 900px;
+        height: 506px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .verImagenPopup {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .imgPopup {
+        width: 300px;
+        height: 169px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .verImagenPopup {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .imgPopup {
+        width: 200px;
+        height: 113px;
+    }
 }
 
 /*cronograma*/
@@ -3349,6 +3430,14 @@ td.tituloAcumulado{
     color: red;
 }
 
+.noHayImagenPrinEnExportProy{
+    display: inline-block;
+    /* float: left; */
+    margin-top: 5px;
+    margin-left: -105px;
+    color: red;
+}
+
 /* editor del crongrama 12-12-2016 */
 .ganttTaskEditor .formulario > div{
     float:left;
@@ -3497,4 +3586,450 @@ td.tituloAcumulado{
 /** Determina el largo de los textarea dentro de los popups.  */
 form.formularioConTextarea textarea {
     width: 100%;
+}
+
+.mis-adquisiciones-info-busqueda {
+    float: right;
+    color: red;
+}
+
+.mis-adquisiciones-info-busqueda > img {
+    margin-right: 8px;
+}
+
+.mis-adquisiciones-panel-proyecto, 
+.mis-adquisiciones-panel-proyectoColpsd {
+    background-color: #d6d6d6;
+    padding: 8px 4px;
+    margin: 0px 0px 16px 0px;
+    border: 0px;
+    border-radius: 0px;
+}
+
+.mis-adquisiciones-panel-proyecto:last-child, 
+.mis-adquisiciones-panel-proyectoColpsd:last-child {
+    margin: 0px;
+}
+
+.mis-adquisiciones-boton-colapsable {
+    padding: 8px;
+    text-align: center;
+    width: 32px;
+}
+
+.mis-adquisiciones-panel-proyectoHdr {
+    border-bottom: 1px solid #000000;
+    border-radius: 0px;
+    padding: 0px 0px 8px 0px;
+}
+
+.mis-adquisiciones-panel-proyectoCnt {
+    margin-top: 8px;
+}
+
+.mis-adquisiciones-panel-adquisicion, 
+.mis-adquisiciones-panel-adquisicionColpsd {
+    background-color: #f2f2f2;
+    padding: 8px 4px;
+    margin: 0px 0px 16px 0px;
+    border: 0px;
+    border-radius: 0px;
+    min-height: 100px;
+}
+
+.mis-adquisiciones-panel-adquisicion:last-child, 
+.mis-adquisiciones-panel-adquisicionColpsd:last-child {
+    margin: 0px;
+}
+
+.mis-adquisiciones-panel-adquisicionHdr {
+    border-bottom: 1px solid #000000;
+    border-radius: 0px;
+    padding: 0px 0px 8px 0px;
+    min-height: 94px;
+}
+
+.mis-adquisiciones-panel-adquisicionCnt {
+    margin: 4px 0px;
+    padding: 4px;
+    overflow-x: auto;
+}
+
+.mis-adquisiciones-tabla-pagos {
+    background-color: #FFFFFF !important;
+    margin-top: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos th {
+    padding: 8px 0px;
+}
+
+.mis-adquisiciones-columna-accion {
+    width: 36px;
+    padding: 0 !important;
+}
+
+.mis-adquisiciones-text-bold {
+    font-weight: bold;
+}
+
+.mis-adquisiciones-panel-proyecto-infogeneral {
+
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-proyecto-usuarios {
+    width: 300px;
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-proyecto-saldos {
+    width: 248px;
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-proyecto-acciones {
+    width: 20px;
+    padding-right: 12px;
+}
+
+.mis-adquisiciones-panel-adquisicion-infogeneral {
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-adquisicion-infocompra {
+    width: 452px;
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-adquisicion-importes {
+    width: 200px;
+    vertical-align: top;
+}
+
+.mis-adquisiciones-panel-adquisicion-accion {
+    width: 36px;
+    padding: 0px !important;
+}
+
+.mis-adquisiciones-dato-header {
+    padding-bottom: 4px;
+}
+
+.mis-adquisiciones-dato-header:last-child {
+    padding-bottom: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos-proveedor-input {
+    max-width: 200px;
+    margin-right: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos-cliente-input {
+    max-width: 200px;
+    margin-right: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos-referencia-input {
+    max-width: 224px;
+    margin-right: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos-fecha-input input {
+    width: 84px;
+    margin-right: 0px;
+}
+
+.mis-adquisiciones-tabla-pagos-importe-input {
+    width: 76px !important;
+    margin-right: 0px !important;
+}
+
+.mis-adquisiciones-panel-adquisicion-header {
+    display: flex;
+    padding-bottom: 4px;
+}
+
+.mis-adquisiciones-panel-adquisicion-header-label {
+    min-width: 98px;
+}
+
+.mis-adquisiciones-ocultar-pagos-confirmados label {
+    padding-top: 6px;
+}
+
+.popup-panel-pago {
+    width: 800px;
+    overflow: auto;
+    padding-right: 30px;
+    max-height: 75vh;
+}
+
+.popup-panel-pago tr:hover {
+    background-color: #ecf0f1 !important;
+}
+
+.popup-panel-adquisicion {
+    width: 800px;
+    overflow: auto;
+    padding-right: 30px;
+    max-height: 75vh;
+}
+
+.popup-panel-adquisicion tr:hover {
+    background-color: #ecf0f1 !important;
+}
+
+.expandir-colapsar-adquisiciones {
+    font-size: 12px;
+    margin-top: -8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.expandir-colapsar-proyectos {
+    font-size: 12px;
+}
+
+.mis-adquisiciones-acciones-proyecto {     
+    width: 33.3%
+}
+
+.oculto {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+}
+
+.paginator {
+    margin-top:8px;
+    margin-bottom:8px;
+}
+
+.paginatorCol1 {
+    float: right;
+}
+
+.paginatorCol1 div span {
+    margin-left: 0px;
+}
+
+.paginatorCol2 {
+    text-align: center;
+    width: 88px;
+}
+
+.paginatorCol3 {
+    float: left;
+}
+
+
+.paginator-prev {
+    float: right;
+    width: 50px;
+}
+
+.paginator-prev span span button span {
+    background-image: url("../img/atras2.png");
+    background-size: cover;
+    background-position: center;
+    padding: 6px;
+}
+
+.paginator-next {
+    float: left;
+    width: 50px;
+}
+.paginator-next span span button span {
+    background-image: url("../img/adelante2.png");
+    background-size: cover;
+    background-position: center;
+    padding: 6px;
+}
+
+/*wekan*/
+.w-cabezal {
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 20px;   
+}
+
+.w-row {
+    text-align: center;
+}
+
+.w-vinculacion {
+    max-width: 500px;
+}
+
+.w-formularioRow1, .w-formularioRow2 {
+    padding-bottom: 4px;
+}
+
+.w-center {
+    text-align: -webkit-center;
+}
+
+.w-label {
+    text-align: left;
+}
+
+.w-info {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.w-dato {
+    margin-bottom: 10px;
+    margin-right: -30px;
+    display: flex;    
+}
+
+.banner-vinculacion {
+    margin-bottom: -20px;
+    margin-right: -30px;
+    display: flex;    
+}
+
+.wekan-actividades-titulo {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.wekan-actividades-log {
+    margin-top: 10px;
+}
+
+.wekan-actividades {
+    margin-top: 20px;
+}
+
+.wekan-cambio-wekan-row {
+    background-color: #f0fff0 !important;
+}
+
+.wekan-cambio-siges-row {
+    background-color: #f0f8ff !important;
+}
+
+.wekan-mostrar-solo-entregables-vinculables label {
+    padding-top: 12px;
+}
+
+.wekan-boton-accion > span {
+    padding-left: 8px
+}
+
+.wekan-acciones-vincular-entregables {
+    text-align: right;
+    margin-top: 10px;
+}
+.wekan-acciones-vincular-entregables > div {
+    display: contents;
+}
+
+/* deshabilita seleccion en nodos de componente arbol*/
+.if-node.noselect {
+    pointer-events:none;
+    color: #808080;
+}
+
+.cantidades-inicio {
+    display: inline-block;  
+    margin-bottom: -12px;
+    margin-top: 12px;
+}
+
+.icono-ayuda {
+    background-color: #035e9f;
+    border: none;    
+    border-radius: 8px;
+    margin: 4px;
+}
+
+.vinculacionEntregableExitosa{
+    display: inline-block;
+    /* float: left; */
+    max-width: 75%;
+    color: green;
+}
+
+.vinculacionSinEntregable{
+    display: inline-block;
+    /* float: left; */
+    max-width: 75%;
+    color: red;
+}
+
+.botonDesvincularTablero span span button {
+    background-color: rgb(212,64,55) !important;   
+} 
+
+#relacionarEntregablePopup\:j_idt360-0-2 {
+    width: 300px;
+}
+
+#ficha\:comboProveedorAdq_div {
+    font-size: 12px !important;
+}
+
+#ficha\:comboClienteOrganizacionCombo_div{
+    font-size: 12px !important;
+}
+
+#ficha\:comboPagoProveedor_div{
+    font-size: 12px !important;
+}
+#ficha\:areaObservaciones_input {
+    width: 96% !important;
+}
+
+@media (max-height: 700px) {
+    #modalTaskNombre{
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #modalTaskHito{
+        margin-bottom: 5 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #modalTaskCoordinador{
+        margin-top: 5 !important;
+        margin-bottom: 5 !important;
+        margin-left: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #modalTaskPlanificacion div{
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #modalTaskEjecucion div{
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #modalTaskObservacion{
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #referencia div{
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+
+
 }

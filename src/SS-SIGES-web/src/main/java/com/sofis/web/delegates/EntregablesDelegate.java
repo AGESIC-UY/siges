@@ -57,6 +57,10 @@ public class EntregablesDelegate {
     public List<Entregables> obtenerEntPorProyPk(Integer proyPk) {
         return entregablesBean.obtenerEntPorProyPk(proyPk);
     }
+    
+    public List<Entregables> obtenerEntSinReferenciaPorProyPk(Integer proyPk) {
+        return entregablesBean.obtenerEntSinReferenciaPorProyPk(proyPk);
+    }
 
     public List<Entregables> obtenerEntPorProgPk(Integer progPk, Boolean proyActivo) {
         return entregablesBean.obtenerEntPorProgPk(progPk, proyActivo);
@@ -97,4 +101,9 @@ public class EntregablesDelegate {
     public boolean entregableEsHito(Integer entPk) {
         return entregablesBean.entregableEsHito(entPk);
     }
+    
+    public boolean tieneVinculacionWekan(Integer entPk) {
+        return entregablesBean.tieneVinculacionWekan(entPk);
+    }
+    
 }

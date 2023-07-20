@@ -13,8 +13,17 @@
                 xmlns:of="http://omnifaces.org/functions">
 
 
+
+    <script type="text/javascript">
+        function limpiarProvAdquisicion() {
+            if (document.getElementById('ficha:comboProveedorAdq_input')) {
+                document.getElementById('ficha:comboProveedorAdq_input').value = '';
+//            alert(document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value);
+            }
+        }
+    </script>
+
     <ice:panelPopup id="popupPresupuestoAdqForm"
-                    visible="#{fichaMB.formPreRendered == 2}"
                     rendered="#{fichaMB.formPreRendered == 2}"
                     draggable="true" 
                     positionOnLoadOnly="true"
@@ -23,43 +32,77 @@
             <ice:panelGroup styleClass="cabezalPopup">
                 <ice:outputText value="#{fichaMB.adquisicion ne null and fichaMB.adquisicion.adqPk ne null ? labels.editarAdquisicion : labels.agregarAdquisicion}"/>
                 <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
-                                   action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+                                   action="#{fichaMB.cerrarFormPreCollapsable()}" immediate="true"/>
             </ice:panelGroup>
         </f:facet>
         <f:facet name="body">
             <ice:panelGroup id="presupuestoAdqForm" rendered="#{fichaMB.formPreRendered == 2}">
-                <ice:panelGrid styleClass="formulario" columns="2">
-                    <ice:outputLabel value="#{labels.adquisicion_nombre}*"/>
+                <ice:panelGrid id="grilla" styleClass="formulario" columns="3">
+                    <ice:outputLabel value="#{labels.adquisicion_nombre}" styleClass="obligatorio"/>
                     <ace:textEntry value="#{fichaMB.adquisicion.adqNombre}"
                                    disabled="#{fichaMB.fieldDisabled('preAdqNombre')}"/>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
-                    <ace:simpleSelectOneMenu id="comboProveedorAdq"  disabled="#{fichaMB.fieldDisabled('preAdqProveedor')}"
-                                             value="#{fichaMB.listaProveedoresCombo.selected}">
-                        <f:selectItems value="#{fichaMB.listaProveedoresCombo.items}"/>
-                    </ace:simpleSelectOneMenu>
 
-                    <ice:outputLabel value="#{labels.adquisicion_fuente}*"/>
+                    <h:panelGroup id="hp5" >
+                        <ice:outputLabel value="#{fichaMB.provedorSeleccionado}" style="width: 270px; max-width: 100% " rendered="#{fichaMB.proveddorSelected}"/>
+                        <ace:autoCompleteEntry id="comboProveedorAdq"  filterMatchMode="contains"
+                                               disabled="#{fichaMB.fieldDisabled('preAdqProveedor')}"
+                                               value="#{fichaMB.provedorSeleccionado}" 
+                                               rendered="#{not fichaMB.proveddorSelected}" style="width: 91%; font-size: 14px "
+
+                                               >
+
+                            <f:selectItems value="#{fichaMB.listaProveedoresCombo2.items}"/>
+
+                            <ace:ajax event="valueChange" render="comboProveedorAdq"/>
+                            <ace:ajax event="blur" render="comboProveedorAdq"/>
+                        </ace:autoCompleteEntry>
+                    </h:panelGroup>
+
+
+                    <h:panelGroup id="hp6" >
+
+                        <ice:graphicImage styleClass="icono-ayuda" 
+                                          title="#{labels.ayudaAutoCompleteProveedor}" 
+                                          alt="#{labels.ayudaAutoCompleteProveedor}" 
+                                          value="../img/ayuda.png" rendered="#{not fichaMB.proveddorSelected}"  />
+                        <h:commandButton id="btnEditarProvAdq"
+                                         styleClass="botonEditar iconoTabla" 
+                                         title="#{labels.prod_tabla_btn_editar}"
+                                         action="#{fichaMB.provedorSelectedChange()}"
+                                         rendered="#{fichaMB.proveddorSelected}"
+                                         >
+
+                            <f:ajax execute="btnEditarProv" render="hp5 hp6" />
+                        </h:commandButton>
+                    </h:panelGroup>
+
+                    <ice:outputLabel value="#{labels.adquisicion_fuente}" styleClass="obligatorio"/>
                     <ace:simpleSelectOneMenu id="comboFuenteAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
                                              value="#{fichaMB.listaFuentesCombo.selected}"
                                              valueChangeListener="#{fichaMB.cambioFuente}">
                         <f:selectItems value="#{fichaMB.listaFuentesCombo.items}"/>
                         <ace:ajax render="comboCausalCompraLabel comboCausalCompraCombo" />
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.moneda}*" />
-                    <ace:simpleSelectOneMenu id="comboMonedaAdq"  disabled="#{fichaMB.fieldDisabled('preAdqMoneda')}"
+                    <ice:outputLabel value="#{labels.moneda}" styleClass="obligatorio" />
+                    <ace:simpleSelectOneMenu id="comboMonedaAdq" disabled="#{fichaMB.fieldDisabled('preAdqMoneda')}"
                                              value="#{fichaMB.listaMonedaCombo.selected}">
                         <f:selectItems value="#{fichaMB.listaMonedaCombo.items}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.procedimientoCompra}"/>
-                    <ace:simpleSelectOneMenu id="comboProcedimientoCompraAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                    <ace:simpleSelectOneMenu id="comboProcedimientoCompraAdq" disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
                                              value="#{fichaMB.listaProcedimientoCompraCombo.selected}" 
                                              valueChangeListener="#{fichaMB.cambioProcedimientoCompra}">
                         <f:selectItems value="#{fichaMB.listaProcedimientoCompraCombo.items}"/>
                         <ace:ajax render="comboCausalCompraLabel comboCausalCompraCombo" />
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
                     <h:panelGroup id="comboCausalCompraLabel">
                         <ice:outputLabel value="#{labels.causalCompra}" rendered="#{fichaMB.fieldRendered('preAdqCausal')}"/>
@@ -71,6 +114,8 @@
                             <f:selectItems value="#{fichaMB.listaCausalCompraCombo.items}"/>
                         </ace:simpleSelectOneMenu>
                     </h:panelGroup>
+                    <ice:outputLabel />
+                    
 
                     <ice:outputLabel value="#{labels.adquisicion_identificador_grp}"/>
                     <ace:simpleSelectOneMenu value="#{fichaMB.listaIdentificadorGrpErpCombo.selected}" 
@@ -78,12 +123,14 @@
                                              rendered="#{fichaMB.fieldRendered('preAdqIdGrpErp')}">
                         <f:selectItems value="#{fichaMB.listaIdentificadorGrpErpCombo.items}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.adquisicion_componente_producto}"/>
-                    <ace:simpleSelectOneMenu id="comboComponenteProductoAdq"   disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
-                                             value="#{fichaMB.listaComponenteProductoCombo.selected}" immediate="true">
+                    <ace:simpleSelectOneMenu id="comboComponenteProductoAdq" disabled="#{fichaMB.fieldDisabled('preAdqFuente')}"
+                                             value="#{fichaMB.listaComponenteProductoCombo.selected}">
                         <f:selectItems value="#{fichaMB.listaComponenteProductoCombo.items}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.adquisicion_compartida}"/>
                     <ace:checkboxButton value="#{fichaMB.adquisicion.adqCompartida}"
@@ -91,23 +138,24 @@
                                         valueChangeListener="#{fichaMB.adquisicionCompartidaValueChange}">
                         <ace:ajax execute="@this" render="comboCompartidaUsuario"/>
                     </ace:checkboxButton>
+                    <ice:outputLabel />
 
 
                     <ice:outputLabel value="#{labels.adquisicion_compartida_usuario}"/>
                     <ace:simpleSelectOneMenu id="comboCompartidaUsuario" disabled="#{fichaMB.fieldDisabled('preAdqFuente') or !fichaMB.adquisicion.adqCompartida}"
                                              value="#{fichaMB.ssUsuarioCompartidaId}" 
-                                             immediate="true"
                                              rendered="true">
                         <f:selectItems value="#{fichaMB.listaUsuariosAdqCompartidaCombo}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.tipoRegistroAdquisicion}*"/>
+                    <ice:outputLabel value="#{labels.tipoRegistroAdquisicion}" styleClass="obligatorio"/>
                     <ace:simpleSelectOneMenu id="comboTipoRegistroCompra" 
                                              value="#{fichaMB.listaTipoRegistroCompraCombo.selected}" 
-                                             immediate="true"
                                              rendered="true">
                         <f:selectItems value="#{fichaMB.listaTipoRegistroCompraCombo.items}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.arrastreAdquisicion}"/>
                     <ace:checkboxButton id="checkboxAdqArrastre"
@@ -115,6 +163,7 @@
                                         valueChangeListener="#{fichaMB.adquisicionArrastreValueChange}">
                         <ace:ajax execute="@this" render="@this"/>
                     </ace:checkboxButton>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}"/>
                     <ice:panelGroup styleClass="col-sm-9">
@@ -122,6 +171,7 @@
                                            pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
                                            timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
                     </ice:panelGroup>
+                    <ice:outputLabel />
 
                     <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}"/>
                     <ice:panelGroup styleClass="col-sm-9">
@@ -129,31 +179,119 @@
                                            pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
                                            timeZone="#{inicioMB.calendarTimeZone}" styleClass="hasDatepicker"/>
                     </ice:panelGroup>
+                    <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.tipoAdquisicion.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
+                    <ice:outputLabel value="#{labels.tipoAdquisicion}" styleClass="#{fichaMB.tipoAdquisicionRequerido ? 'obligatorio' : ''}"/>
                     <ace:simpleSelectOneMenu id="comboTipoAdquisicion" 
                                              value="#{fichaMB.listaTipoAdquisicionCombo.selected}" 
                                              rendered="true">
                         <f:selectItems value="#{fichaMB.listaTipoAdquisicionCombo.items}"/>
                     </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.adquisicionIdAdquisicion.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
-                    <ace:textEntry maxlength="#{fichaMB.largoMaximoIdAdquisicion}" 
+
+
+                    <ice:outputLabel value="#{labels.adquisicionIdAdquisicion}" styleClass="#{fichaMB.idAdquisicionRequerido ? 'obligatorio' : ''}"/>
+                    <ace:textEntry id="txtIdAdqAgregar" maxlength="#{fichaMB.largoMaximoIdAdquisicion}" 
                                    value="#{fichaMB.adquisicion.adqIdAdquisicion}"
                                    disabled="#{fichaMB.fieldDisabled('preAdqProcCompraGRP')}">     
-                                   
+                        <ace:ajax  execute="txtIdAdqAgregar"   listener="#{fichaMB.renderizarMensajeAdquisicion()}" render="ha3"/>
                         <f:converter converterId="IdAdquisicionFormatConverter" />
-                        <f:attribute name="exigido" value="#{fichaMB.camposExigidosEnAdquisicion()}"/>
-                    </ace:textEntry>
-                    
-                    <ice:outputLabel value="#{labels.centroCosto.concat(fichaMB.camposExigidosEnAdquisicion() ? '*' : '')}"/>
+                    </ace:textEntry> 
+
+                    <h:panelGroup  rendered="#{fichaMB.renderizarSugerenciaAdquisicion}" >
+                        <h:commandButton id="btnSelectIdAdq1"
+                                         styleClass="haciaIzquierda iconoTabla" 
+                                         action="#{fichaMB.seleccionarId()}"
+                                         title="#{labels.info_adquisicion_id_sugerencia_proximo_disponible}"
+                                         rendered="#{fichaMB.idAdquisicionSugerido gt 0}"
+                                         >
+
+                            <f:ajax execute="btnSelectIdAdq1" render="txtIdAdqAgregar"  />
+                        </h:commandButton>
+
+
+                        <h:commandButton id="btnSelectIdAdq2"
+                                         styleClass="ui-icon-check iconoTabla" 
+                                         action="#{fichaMB.renderizarMensajeAdquisicion()}"
+                                         title="#{labels.info_adquisicion_id_sugerencia_validar}"
+                                         >
+
+                            <ace:ajax  execute="txtIdAdqAgregar" render="ha3"/>
+                        </h:commandButton>
+
+
+                        <h:commandButton
+                            styleClass="botonBuscar iconoTabla" 
+                            action="#{fichaMB.renderizarAdquisiciones()}" id="btnRenderFiltro" immediate="true"
+                            title="#{labels.info_adquisicion_id_sugerencia_consulta}"
+                            >
+
+                            <ace:ajax execute="btnRenderFiltro" render="ha2"/>
+
+
+
+
+                        </h:commandButton>
+                    </h:panelGroup >
+
+                    <ice:outputLabel rendered="#{not fichaMB.renderizarSugerenciaAdquisicion}"  />
+
+                    <ice:outputLabel rendered="#{ fichaMB.renderizarSugerenciaAdquisicion}"  />
+
+                    <h:panelGroup  id="ha3" rendered="#{fichaMB.renderizarSugerenciaAdquisicion}" >
+                        <h:outputText value="#{fichaMB.adquisicionUsadaMensaje}" rendered="#{fichaMB.adquisicionMensajeRender}"/>
+                        <h:outputText value="#{fichaMB.adquisicionUsadaMensajeResultado}" style="font-weight: bold " rendered="#{fichaMB.adquisicionMensajeRender}"/>
+                    </h:panelGroup>
+
+                    <ice:outputLabel rendered="#{ fichaMB.renderizarSugerenciaAdquisicion}"  />
+                    <ice:outputLabel rendered="#{ fichaMB.renderizarSugerenciaAdquisicion}"  />
+
+                    <h:panelGroup  id="ha2" rendered="#{fichaMB.renderizarSugerenciaAdquisicion}"  >
+                        <h:panelGroup   styleClass="lineaDivision col-sm-12" >
+
+
+
+                            <ice:panelGrid rendered="#{not empty fichaMB.adquisicionesRango and fichaMB.filtroRender}" style="width: 270px; max-width: 100% " >
+
+                                <ace:dataTable  id="tblResultados2" value="#{fichaMB.adquisicionesRango}" var="proyecto"
+                                                paginator="true" pageCount="5" rows="#{fichaMB.cantElementosPorPagina}">
+
+
+                                    <ace:column headerText="#{labels.adquisicion_rango_proximo}" >
+                                        <h:outputText value="#{proyecto.adrUltimo}"/>
+                                    </ace:column>
+                                    <ace:column headerText="#{labels.reasignar_usuarios_filtro_area}" >
+                                        <h:outputText value="#{proyecto.adrArea.areaNombre}"/>
+                                    </ace:column>
+                                    <ace:column headerText="#{adquisicionRangoMB.labelObjEstValue}" >
+                                        <h:outputText value="#{proyecto.adrDivision != null ? proyecto.adrDivision.objEstNombre : '' }"/>
+                                    </ace:column>
+
+
+
+                                </ace:dataTable>
+                            </ice:panelGrid>
+
+                        </h:panelGroup>
+
+                    </h:panelGroup>
+
+
+                    <ice:outputLabel rendered="#{ fichaMB.renderizarSugerenciaAdquisicion}"  />
+
+
+
+                    <ice:outputLabel value="#{labels.centroCosto}"    styleClass="#{fichaMB.centroCostoExigido ? 'obligatorio' : ''}"/>
                     <ace:simpleSelectOneMenu id="comboCentroCosto" 
                                              value="#{fichaMB.listaCentroCostoCombo.selected}" 
                                              rendered="true">
                         <f:selectItems value="#{fichaMB.listaCentroCostoCombo.items}"/>
                     </ace:simpleSelectOneMenu>
-
+                    <ice:outputLabel />
                 </ice:panelGrid>
+
+
 
                 <ice:panelGroup styleClass="panelBotones">
                     <ace:messages id="formAdqMsg"/>
@@ -161,7 +299,7 @@
                                      styleClass="boton principal guardar" 
                                      action="#{fichaMB.agregarAdquisicionAction()}" />
                     <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
-                                     action="#{fichaMB.cerrarFormPreCollapsable()}"/>
+                                     action="#{fichaMB.cerrarFormPreCollapsable()}" immediate="true"/>
                 </ice:panelGroup>
             </ice:panelGroup>
         </f:facet>

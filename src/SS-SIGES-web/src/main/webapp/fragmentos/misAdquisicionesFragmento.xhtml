@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:ss="http://java.sun.com/jsf/composite/components">
+
+    <o:form id="MisAdquisiciones">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <h:outputLabel value="#{labels.mis_adquisiciones_titulo}"/>
+        </ice:panelGroup>
+        
+        <ice:panelGroup id="buscador"
+                        styleClass="buscador recuadro filtroProyecto margen-inf">
+
+            <ace:pushButton id="botonFiltro" styleClass="#{misAdquisicionesMB.mostrarFiltro ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                            action="#{misAdquisicionesMB.mostrarFiltroAction()}">
+                <ace:ajax execute="@this" render="MisAdquisiciones:botonFiltro"/>
+                <ace:ajax execute="@this" render="MisAdquisiciones:FiltroMisAdquisiciones"/>
+            </ace:pushButton>
+
+            <h:outputText value="#{labels.busqueda_inicio}" styleClass="subtitulo"/>
+        
+            <ice:panelGroup rendered="#{not misAdquisicionesMB.busquedaHabilitada()}"
+                            styleClass="mis-adquisiciones-info-busqueda">
+                <ice:graphicImage value="../img/mens-info-busqueda.png" />
+                <ice:outputText value="#{labels.mis_adquisiciones_filtro_busqueda_deshabilitada}"/>
+            </ice:panelGroup>
+            
+            <h:panelGroup id="FiltroMisAdquisiciones">
+                <h:panelGroup rendered="#{misAdquisicionesMB.mostrarFiltro}">
+
+                    <h:panelGrid styleClass="formulario" columns="2">
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_proyprog}"/>
+                            <ace:textEntry value="#{misAdquisicionesMB.filtro.nombreProyectoPrograma}"/>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_gerente}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.gerenteAdjuntoComboFiltro.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.gerenteAdjuntoComboFiltro.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_pmof}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.pmofComboFiltro.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.pmofComboFiltro.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_area}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.areaFiltroCombo.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.areaFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_fase}"/>
+                            <h:selectManyCheckbox value="#{misAdquisicionesMB.filtro.estados}">
+                                <f:selectItems value="#{misAdquisicionesMB.listaEstados}"/>
+                            </h:selectManyCheckbox>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_id_adquisicion}"/>
+                            <ace:textEntry value="#{misAdquisicionesMB.filtro.idAdquisicion}" converter="IntegerFormatConverter"/>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_proveedor}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.proveedorFiltroCombo.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.proveedorFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_fuente}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.fuenteFinanciamientoFiltroCombo.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.fuenteFinanciamientoFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_procedimiento}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.procedimientoCompraFiltroCombo.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.procedimientoCompraFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_moneda}"/>
+                            <h:selectOneMenu value="#{misAdquisicionesMB.monedaFiltroCombo.selected}">
+                                <f:selectItems value="#{misAdquisicionesMB.monedaFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <h:panelGroup styleClass="panelBotones">
+                        <ace:pushButton value="#{labels.buscar}" 
+                                        styleClass="boton buscar principal" 
+                                        action="#{misAdquisicionesMB.buscar()}"/>
+                                        
+                        <ace:linkButton  value="#{labels.limpiar}" styleClass="boton secundario" 
+                                         action="#{misAdquisicionesMB.limpiarFiltro()}"/>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:panelGroup>
+        </ice:panelGroup>
+        
+        <ice:panelGroup rendered="#{empty misAdquisicionesMB.misAdquisiciones.proyectos}">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+        </ice:panelGroup>
+        
+        <ice:panelGroup rendered="#{not empty misAdquisicionesMB.misAdquisiciones.proyectos}">
+            <ice:panelGroup styleClass="centrarDato">
+                <ice:outputText value="#{misAdquisicionesMB.misAdquisiciones.cantidadProyectos} #{labels.mis_adquisiciones_proyectos} - 
+                                #{misAdquisicionesMB.misAdquisiciones.cantidadAdquisiciones} #{labels.mis_adquisiciones_adquisiciones}"/>
+            </ice:panelGroup>
+
+            <ice:panelGrid columns="3" columnClasses="mis-adquisiciones-acciones-proyecto mis-adquisiciones-acciones-proyecto mis-adquisiciones-acciones-proyecto">
+                <ice:panelGroup styleClass="mis-adquisiciones-ocultar-pagos-confirmados">
+
+                    <h:selectBooleanCheckbox id="ocultarPagosCheckbox"
+                                             value="#{misAdquisicionesMB.ocultarPagosConfirmados}"
+                                             valueChangeListener="#{misAdquisicionesMB.ocultarPagosConfirmadosCheckboxListener}">
+                        <f:ajax immediate="true"/>
+                    </h:selectBooleanCheckbox>
+                    <ice:outputLabel for="ocultarPagosCheckbox" value="#{labels.mis_adquisiciones_ocultar_pagos_confirmados}" />
+                </ice:panelGroup>
+
+                <ice:panelGroup>
+                    <ss:repeatPaginator paginator="#{misAdquisicionesMB.paginator}"/>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="alinearDerecha">
+                    <ace:linkButton styleClass="boton secundario expandir-colapsar-proyectos"
+                                    value="#{labels.mis_adquisiciones_expandir_colapsar}" 
+                                    action="#{misAdquisicionesMB.expandirColapsarProyectos()}" 
+                                    immediate="true"/>
+                </ice:panelGroup>
+            </ice:panelGrid>
+
+            <h:panelGroup id="panelProyectos">
+
+                <ui:repeat id="repeatProyectos" var="proyecto" value="#{misAdquisicionesMB.paginator.model}">
+
+                    <ice:panelCollapsible styleClass="mis-adquisiciones-panel-proyecto" 
+                                          toggleOnClick="false" 
+                                          expanded="#{misAdquisicionesMB.proyectosExpandidos[proyecto.id]}">
+
+                        <f:facet name="header">
+                            <ice:panelGrid columns="2" columnClasses="mis-adquisiciones-boton-colapsable, nada">
+
+                                <ice:panelGroup>
+                                    <ice:commandLink rendered="#{misAdquisicionesMB.proyectosExpandidos[proyecto.id]}"
+                                                     action="#{misAdquisicionesMB.colapsarProyecto(proyecto)}" 
+                                                     title="#{labels.colapsar}">
+                                        <ice:graphicImage value="../img/panel-expanded.png" />
+                                    </ice:commandLink>
+
+                                    <ice:commandLink rendered="#{not misAdquisicionesMB.proyectosExpandidos[proyecto.id]}"
+                                                     action="#{misAdquisicionesMB.expandirProyecto(proyecto)}" 
+                                                     title="#{labels.expandir}">
+                                        <ice:graphicImage value="../img/panel-collapsed.png" />
+                                    </ice:commandLink>
+                                </ice:panelGroup>
+
+                                <!-- header proyecto -->
+                                <ice:panelGrid columns="4"
+                                               columnClasses="mis-adquisiciones-panel-proyecto-infogeneral mis-adquisiciones-panel-proyecto-usuarios mis-adquisiciones-panel-proyecto-saldos mis-adquisiciones-panel-proyecto-acciones">
+                                    <ice:panelGroup>
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_proyecto}: "/>
+                                            <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                            value="(#{proyecto.id}) #{proyecto.nombre}"/>
+                                        </ice:panelGroup>
+
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_programa}: "/>
+                                            <ice:outputText rendered="#{proyecto.idPrograma ne null}" 
+                                                            value="(#{proyecto.idPrograma}) #{proyecto.nombrePrograma}"/>
+                                        </ice:panelGroup>
+
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_estado}: "/>
+                                            <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                            value="#{proyecto.estado.nombre}"/>
+                                        </ice:panelGroup>
+
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header" rendered="#{proyecto.area ne null}">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_area}: #{proyecto.area.nombre}"/>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+
+                                    <ice:panelGroup>
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_gerente}: #{proyecto.gerente.nombreApellido}"/>
+                                        </ice:panelGroup>
+
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_adjunto}: #{proyecto.adjunto.nombreApellido}"/>
+                                        </ice:panelGroup>
+
+                                        <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                            <ice:outputText value="#{labels.mis_adquisiciones_pmof}: #{proyecto.pmof.nombreApellido}"/>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+
+                                    <ice:panelGroup>
+                                        <ui:repeat var="saldo" value="#{proyecto.saldos}" >
+                                            <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                <ice:outputText value="#{labels.mis_adquisiciones_saldo} #{saldo.moneda.signo}: "/>                        
+                                                <ice:outputText value="#{saldo.importe}" converter="ImporteFormatConverter" />
+                                            </ice:panelGroup>
+                                        </ui:repeat>
+                                    </ice:panelGroup>
+
+                                    <ice:panelGroup>
+                                        <ice:commandLink id="linkEditarFicha2"
+                                                         action="#{misAdquisicionesMB.irAEditarProyecto(proyecto.id)}" 
+                                                         title="#{labels.inicio_link_nombre}">
+                                            <ice:graphicImage value="../img/nueva_ventana.png" />
+                                        </ice:commandLink>
+                                    </ice:panelGroup>
+                                </ice:panelGrid>
+                            </ice:panelGrid>
+                        </f:facet>
+
+                        <ice:panelGrid id="panelAdquisiciones">
+
+                            <ice:panelGroup styleClass="alinearDerecha">
+                                <ace:linkButton styleClass="boton secundario expandir-colapsar-adquisiciones"
+                                                value="#{labels.mis_adquisiciones_expandir_colapsar}" 
+                                                action="#{misAdquisicionesMB.expandirColapsarAdquisiciones(proyecto)}" 
+                                                immediate="true"/>
+                            </ice:panelGroup>
+
+                            <ui:repeat id="repeatAdquisiciones" var="adquisicion" value="#{proyecto.adquisiciones}">
+
+                                <ice:panelCollapsible styleClass="mis-adquisiciones-panel-adquisicion" 
+                                                      toggleOnClick="false" 
+                                                      expanded="#{misAdquisicionesMB.adquisicionesExpandidas[proyecto.id][adquisicion.id]}">
+
+                                    <f:facet name="header">
+                                        <ice:panelGrid columns="2" columnClasses="mis-adquisiciones-boton-colapsable, nada">
+
+                                            <ice:panelGroup>
+                                                <ice:commandLink rendered="#{misAdquisicionesMB.adquisicionesExpandidas[proyecto.id][adquisicion.id]}"
+                                                                 action="#{misAdquisicionesMB.colapsarAdquisicion(adquisicion, proyecto)}" 
+                                                                 title="#{labels.colapsar}">
+                                                    <ice:graphicImage value="../img/panel-expanded.png" />
+                                                </ice:commandLink>
+
+                                                <ice:commandLink rendered="#{not misAdquisicionesMB.adquisicionesExpandidas[proyecto.id][adquisicion.id]}"
+                                                                 action="#{misAdquisicionesMB.expandirAdquisicion(adquisicion, proyecto)}" 
+                                                                 title="#{labels.expandir}">
+                                                    <ice:graphicImage value="../img/panel-collapsed.png" />
+                                                </ice:commandLink>
+                                            </ice:panelGroup>
+
+                                            <!-- header adquisicion lectura-->
+                                            <ice:panelGrid rendered="#{misAdquisicionesMB.adquisicionEnEdicion eq null or misAdquisicionesMB.adquisicionEnEdicion.id ne adquisicion.id}"
+                                                           columns="5"
+                                                           columnClasses="mis-adquisiciones-panel-adquisicion-infogeneral mis-adquisiciones-panel-adquisicion-infocompra mis-adquisiciones-panel-adquisicion-importes mis-adquisiciones-panel-adquisicion-accion mis-adquisiciones-panel-adquisicion-accion">
+
+                                                <ice:panelGroup>
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold"
+                                                                        value="#{adquisicion.idAdquisicion} - #{adquisicion.nombre}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_moneda}: "/>
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.moneda.signo}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{adquisicion.cantidadPagos} #{labels.mis_adquisiciones_pagos}"/>
+                                                    </ice:panelGroup>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_proveedor}: "/>
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.proveedor.nombre}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_fuente_financiamiento}: "/>
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.fuenteFinanciamiento.nombre}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_procedimiento_compra}: "/>
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.procedimientoCompra.nombre}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_causal_compra}: "/>
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.causalCompra.nombre}"/>
+                                                    </ice:panelGroup>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_importe_planificado}: "/>                        
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.importePlanificado}" 
+                                                                        converter="ImporteFormatConverter" />
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_importe_real}: "/>                        
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.importeReal}" 
+                                                                        converter="ImporteFormatConverter" />
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-dato-header">
+                                                        <ice:outputText value="#{labels.mis_adquisiciones_saldo}: "/>                        
+                                                        <ice:outputText styleClass="mis-adquisiciones-text-bold" 
+                                                                        value="#{adquisicion.saldo}" 
+                                                                        converter="ImporteFormatConverter" />
+                                                    </ice:panelGroup>
+
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:commandButton styleClass="botonVer iconoTabla" 
+                                                                       title="#{labels.verAdqTooltip}"
+                                                                       action="#{misAdquisicionesMB.verAdquisicion(adquisicion)}"/>                        
+
+                                                    <ss:panelAdquisicion adquisicion="#{misAdquisicionesMB.adquisicionEnVisualizacion}"
+                                                                         rendered="#{misAdquisicionesMB.adquisicionEnVisualizacion.id eq adquisicion.id}"
+                                                                         close="#{misAdquisicionesMB.cerrarPopupVerAdquisicion}"/>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:commandButton styleClass="botonEditar iconoTabla" 
+                                                                       title="#{labels.editarAdqTooltip}"
+                                                                       action="#{misAdquisicionesMB.editarAdquisicion(adquisicion)}"
+                                                                       disabled="#{not misAdquisicionesMB.esEditableAdquisicion(adquisicion)}"/>
+                                                </ice:panelGroup>  
+
+                                            </ice:panelGrid>
+
+                                            <!-- header adquisicion edicion -->
+                                            <ice:panelGrid id="adquisicion_#{adquisicion.id}"
+                                                           rendered="#{misAdquisicionesMB.adquisicionEnEdicion.id eq adquisicion.id}"
+                                                           columns="4"
+                                                           columnClasses="nada, mis-adquisiciones-panel-adquisicion-infogeneral, mis-adquisiciones-columna-accion, mis-adquisiciones-columna-accion">
+
+                                                <ice:panelGroup>
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+                                                            <ice:outputText styleClass="obligatorio"
+                                                                            value="#{labels.mis_adquisiciones_nombre_adquisicion}"/>
+                                                        </ice:panelGroup>
+                                                        <ice:inputText value="#{misAdquisicionesMB.adquisicionEnEdicion.nombre}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+                                                            <ice:outputText styleClass="#{misAdquisicionesMB.camposExigidosEnAdquisicion ? 'obligatorio' : ''}"
+                                                                            value="#{labels.mis_adquisiciones_id_adquisicion}"/>
+                                                        </ice:panelGroup>
+
+                                                        <ice:inputText value="#{misAdquisicionesMB.adquisicionEnEdicion.idAdquisicion}"/>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+                                                            <ice:outputText value="#{labels.mis_adquisiciones_proveedor}"/>
+                                                        </ice:panelGroup>
+
+                                                        <ice:selectOneMenu value="#{misAdquisicionesMB.proveedorAdquisicionCombo.selected}">
+                                                            <f:selectItems value="#{misAdquisicionesMB.proveedorAdquisicionCombo.items}"/>
+                                                        </ice:selectOneMenu>
+                                                    </ice:panelGroup>
+
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+                                                            <ice:outputText styleClass="obligatorio"
+                                                                            value="#{labels.mis_adquisiciones_fuente_financiamiento}"/>
+                                                        </ice:panelGroup>
+
+                                                        <ace:simpleSelectOneMenu id="comboFuenteFinanciamientoAdquisicion" 
+                                                                                 value="#{misAdquisicionesMB.fuenteFinanciamientoAdquisicionCombo.selected}"
+                                                                                 valueChangeListener="#{misAdquisicionesMB.cambioFuenteFinanciamiento}"
+                                                                                 immediate="true">
+                                                            <f:selectItems value="#{misAdquisicionesMB.fuenteFinanciamientoAdquisicionCombo.items}"/>
+                                                            <ace:ajax render="labelCausalCompraAdquisicion comboCausalCompraAdquisicion"/>
+                                                        </ace:simpleSelectOneMenu>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+                                                            <ice:outputText value="#{labels.mis_adquisiciones_procedimiento_compra}"/>
+                                                        </ice:panelGroup>
+
+                                                        <ace:simpleSelectOneMenu id="comboProcedimientoCompraAdquisicion"
+                                                                                 value="#{misAdquisicionesMB.procedimientoCompraAdquisicionCombo.selected}"
+                                                                                 valueChangeListener="#{misAdquisicionesMB.cambioProcedimientoCompra}" 
+                                                                                 immediate="true">
+                                                            <f:selectItems value="#{misAdquisicionesMB.procedimientoCompraAdquisicionCombo.items}"/>
+                                                            <ace:ajax render="labelCausalCompraAdquisicion comboCausalCompraAdquisicion"/>
+                                                        </ace:simpleSelectOneMenu>
+                                                    </ice:panelGroup>
+
+                                                    <ice:panelGroup styleClass="mis-adquisiciones-panel-adquisicion-header">
+
+                                                        <h:panelGroup id="labelCausalCompraAdquisicion" 
+                                                                      styleClass="mis-adquisiciones-panel-adquisicion-header-label">
+
+                                                            <ice:outputText styleClass="obligatorio"
+                                                                            value="#{labels.mis_adquisiciones_causal_compra}"
+                                                                            rendered="#{misAdquisicionesMB.causalCompraAdquisicionCombo.items.size() > 1}"/>
+                                                        </h:panelGroup>
+
+                                                        <h:panelGroup id="comboCausalCompraAdquisicion">
+                                                            <ice:selectOneMenu value="#{misAdquisicionesMB.causalCompraAdquisicionCombo.selected}"
+                                                                               rendered="#{misAdquisicionesMB.causalCompraAdquisicionCombo.items.size() > 1}">
+                                                                <f:selectItems value="#{misAdquisicionesMB.causalCompraAdquisicionCombo.items}"/>
+                                                            </ice:selectOneMenu>
+                                                        </h:panelGroup>
+                                                    </ice:panelGroup>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:commandButton id="guardarAdquisicion"
+                                                                       styleClass="botonGuardar iconoTabla" 
+                                                                       title="#{labels.guardar}"
+                                                                       action="#{misAdquisicionesMB.guardarAdquisicion(adquisicion, proyecto)}"/>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup>
+                                                    <ice:commandButton styleClass="botonCancelar iconoTabla" 
+                                                                       title="#{labels.cancelarEdicionPago}"
+                                                                       action="#{misAdquisicionesMB.cancelarEdicionAdquisicion(adquisicion)}"
+                                                                       immediate="true"/>
+                                                </ice:panelGroup>  
+
+                                                <ice:panelGroup>
+                                                    <ace:messages id="mensajesAdquisicion" for="guardarAdquisicion"/>
+                                                </ice:panelGroup>
+
+                                            </ice:panelGrid>
+                                        </ice:panelGrid>
+                                    </f:facet>
+
+                                    <ice:panelGroup>
+                                        <!--tabla pagos-->
+                                        <ice:panelGroup rendered="#{adquisicion.pagos.contains(misAdquisicionesMB.pagoEnEdicion) 
+                                                                    and (misAdquisicionesMB.cantidadPagosVisibles(adquisicion) >= 24)}">
+                                            <ace:messages id="mensajesPagoArriba" for="guardarPago"/>
+                                        </ice:panelGroup>
+
+                                        <ace:dataTable id="tablaPagos" styleClass="mis-adquisiciones-tabla-pagos" 
+                                                       value="#{misAdquisicionesMB.obtenerPagosVisibles(adquisicion, proyecto.estado)}" var="pago">
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_entregable}">
+                                                <ice:outputText value="#{pago.entregable.nombre}"/>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_proveedor}">
+                                                <ice:outputText value="#{pago.proveedor.nombre}" 
+                                                                rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}"/>
+
+                                                <ice:selectOneMenu styleClass="mis-adquisiciones-tabla-pagos-proveedor-input" 
+                                                                   value="#{misAdquisicionesMB.proveedorPagoCombo.selected}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion.id eq pago.id}">
+                                                    <f:selectItems value="#{misAdquisicionesMB.proveedorPagoCombo.items}"/>
+                                                </ice:selectOneMenu>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_cliente}">
+                                                <ice:outputText value="#{pago.cliente.nombre}" 
+                                                                rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}"/>
+
+                                                <ice:selectOneMenu styleClass="mis-adquisiciones-tabla-pagos-cliente-input"
+                                                                   value="#{misAdquisicionesMB.clientePagoCombo.selected}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion.id eq pago.id}">
+                                                    <f:selectItems value="#{misAdquisicionesMB.clientePagoCombo.items}"/>
+                                                </ice:selectOneMenu>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_referencia}">
+                                                <ice:outputText value="#{pago.referencia}" rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}"/>
+
+                                                <ice:inputText styleClass="mis-adquisiciones-tabla-pagos-referencia-input"
+                                                               value="#{misAdquisicionesMB.pagoEnEdicion.referencia}" 
+                                                               rendered="#{misAdquisicionesMB.pagoEnEdicion.id eq pago.id}"/>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_fecha_planificada}">
+                                                <ice:outputText value="#{pago.fechaPlanificada}" converter="fechaConverter" 
+                                                                rendered="#{not misAdquisicionesMB.valorPlanificadoEditable(pago, proyecto)}"/>
+
+                                                <ace:dateTimeEntry styleClass="mis-adquisiciones-tabla-pagos-fecha-input"
+                                                                   value="#{misAdquisicionesMB.pagoEnEdicion.fechaPlanificada}"
+                                                                   rendered="#{misAdquisicionesMB.valorPlanificadoEditable(pago, proyecto)}"
+                                                                   pattern="#{inicioMB.calendarPattern}" 
+                                                                   renderAsPopup="true" navigator="true"
+                                                                   timeZone="#{inicioMB.calendarTimeZone}"/>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_importe_planificado}">
+                                                <ice:outputText value="#{pago.importePlanificado}" converter="ImporteFormatConverter" 
+                                                                rendered="#{not misAdquisicionesMB.valorPlanificadoEditable(pago, proyecto)}"/>
+
+                                                <ace:textEntry value="#{misAdquisicionesMB.pagoEnEdicion.importePlanificado}" 
+                                                               rendered="#{misAdquisicionesMB.valorPlanificadoEditable(pago, proyecto)}"
+                                                               styleClass="mis-adquisiciones-tabla-pagos-importe-input alinearIzquierda"
+                                                               converter="ImporteFormatConverter" />
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_fecha_real}">
+                                                <ice:outputText value="#{pago.fechaReal}" converter="fechaConverter" 
+                                                                style="color: #{misAdquisicionesMB.obtenerColorPago(pago)}"
+                                                                rendered="#{not misAdquisicionesMB.valorRealEditable(pago, proyecto)}"/>
+
+                                                <ace:dateTimeEntry styleClass="mis-adquisiciones-tabla-pagos-fecha-input"
+                                                                   value="#{misAdquisicionesMB.pagoEnEdicion.fechaReal}"
+                                                                   rendered="#{misAdquisicionesMB.valorRealEditable(pago, proyecto)}"
+                                                                   pattern="#{inicioMB.calendarPattern}" 
+                                                                   renderAsPopup="true" navigator="true"
+                                                                   timeZone="#{inicioMB.calendarTimeZone}"/>
+                                            </ace:column>
+
+                                            <ace:column headerText="#{labels.mis_adquisiciones_importe_real}">
+                                                <ice:outputText value="#{pago.importeReal}" converter="ImporteFormatConverter" 
+                                                                rendered="#{not misAdquisicionesMB.valorRealEditable(pago, proyecto)}"/>
+
+                                                <ace:textEntry value="#{misAdquisicionesMB.pagoEnEdicion.importeReal}" 
+                                                               rendered="#{misAdquisicionesMB.valorRealEditable(pago, proyecto)}"
+                                                               styleClass="mis-adquisiciones-tabla-pagos-importe-input alinearIzquierda"
+                                                               converter="ImporteFormatConverter" />
+                                            </ace:column>
+
+                                            <ace:column styleClass="mis-adquisiciones-columna-accion"
+                                                        rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}">
+
+                                                <ice:panelGroup rendered="#{misAdquisicionesMB.puedeCambiarAprobacion(pago)}">
+                                                    <ice:commandButton styleClass="#{pago.confirmado ? 'botonRestablecer' : 'botonSuperar'} iconoTabla" 
+                                                                       title="#{pago.confirmado != null and pago.confirmado ? labels.noAprobarPagoTooltip : labels.aprobarPagoTooltip}"
+                                                                       action="#{misAdquisicionesMB.cambiarEstadoPago(pago)}"/> 
+
+                                                    <!-- Confirmacion de pago -->
+                                                    <ice:panelPopup id="popupPresupuestoVerPagForm"
+                                                                    visible="#{misAdquisicionesMB.pagoAConfirmar.id eq pago.id}"
+                                                                    rendered="#{misAdquisicionesMB.pagoAConfirmar.id eq pago.id}"
+                                                                    draggable="false" 
+                                                                    positionOnLoadOnly="true"
+                                                                    modal="true">
+                                                        <f:facet name="header">
+                                                            <ice:panelGroup styleClass="cabezalPopup">
+                                                                <ice:outputText value="#{misAdquisicionesMB.pagoAConfirmar.confirmado ? labels.noAprobarPagoTooltip : labels.confirmarPago}"/>
+                                                                <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                                                                   action="#{misAdquisicionesMB.cancelarCambioEstadoPago()}"
+                                                                                   immediate="true"/>
+                                                            </ice:panelGroup>
+                                                        </f:facet>
+                                                        <f:facet name="body">
+                                                            <ice:panelGroup id="popupConfirmacion">
+                                                                <ice:panelGroup rendered="#{not misAdquisicionesMB.mostrarMensajesConfirmacion}">
+
+                                                                    <h:commandButton id="noConfPag"
+                                                                                     value="#{labels.no}"
+                                                                                     styleClass="boton principal botonEliminar"
+                                                                                     actionListener="#{misAdquisicionesMB.cancelarCambioEstadoPago()}"
+                                                                                     immediate="true"/>
+
+                                                                    <h:commandButton id="botonConfrimarPago"
+                                                                                     value="#{labels.si}"
+                                                                                     styleClass="boton principal botonContinuar"
+                                                                                     actionListener="#{misAdquisicionesMB.cambiarEstadoPago()}"
+                                                                                     immediate="true"/>
+                                                                </ice:panelGroup>
+
+                                                                <ice:panelGroup rendered="#{misAdquisicionesMB.mostrarMensajesConfirmacion}">
+                                                                    <h:inputText id="confirmarPago" styleClass="oculto" disabled="true"/>
+                                                                    <ace:messages id="mensajesGenerales" for="confirmarPago"/>
+                                                                </ice:panelGroup>
+                                                            </ice:panelGroup>
+                                                        </f:facet>
+                                                    </ice:panelPopup>
+
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup rendered="#{not misAdquisicionesMB.puedeCambiarAprobacion(pago)}">
+                                                    <ace:checkboxButton id="checkConfirmado"
+                                                                        value="#{pago.confirmado}" 
+                                                                        disabled="true"/>
+                                                    <ace:tooltip id="tooltipCheckConfirmado" for="checkConfirmado">
+                                                        <h:panelGrid styleClass="tooltipBoxStyle"> 
+                                                            <h:outputText id="desc0" value="#{pago.confirmado ? labels.pago_confirmado : labels.pago_no_confirmado}"/>
+                                                        </h:panelGrid>
+                                                    </ace:tooltip>
+                                                </ice:panelGroup>
+                                            </ace:column>
+
+                                            <ace:column styleClass="mis-adquisiciones-columna-accion">
+
+                                                <ice:commandButton styleClass="botonVer iconoTabla" 
+                                                                   title="#{labels.verPagoTooltip}"
+                                                                   action="#{misAdquisicionesMB.verPago(pago)}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}"/>
+
+                                                <ice:commandButton styleClass="botonGuardar iconoTabla" 
+                                                                   title="#{labels.guardar}"
+                                                                   action="#{misAdquisicionesMB.guardarPago(pago, adquisicion, proyecto)}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion.id eq pago.id}"/>
+
+                                                <ss:panelPago pago="#{misAdquisicionesMB.pagoEnVisualizacion}"
+                                                              rendered="#{misAdquisicionesMB.pagoEnVisualizacion.id eq pago.id}"
+                                                              close="#{misAdquisicionesMB.cerrarPopupVerPago}"/>
+                                            </ace:column>
+
+                                            <ace:column styleClass="mis-adquisiciones-columna-accion">
+
+                                                <ice:commandButton styleClass="botonEditar iconoTabla" 
+                                                                   title="#{labels.editarPago}"
+                                                                   action="#{misAdquisicionesMB.editarPago(pago)}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion eq null or misAdquisicionesMB.pagoEnEdicion.id ne pago.id}"
+                                                                   disabled="#{not misAdquisicionesMB.esEditablePago(pago)}"/>
+
+                                                <ice:commandButton styleClass="botonCancelar iconoTabla" 
+                                                                   title="#{labels.cancelarEdicionPago}"
+                                                                   action="#{misAdquisicionesMB.cancelarEdicionPago(pago)}"
+                                                                   rendered="#{misAdquisicionesMB.pagoEnEdicion.id eq pago.id}"
+                                                                   immediate="true"/>
+                                            </ace:column>
+                                        </ace:dataTable>
+
+                                        <ice:panelGroup rendered="#{misAdquisicionesMB.pagoEnEdicion ne null and adquisicion.pagos.contains(misAdquisicionesMB.pagoEnEdicion)}">
+                                            <h:inputText id="guardarPago" styleClass="oculto" disabled="true"/>
+                                            <ace:messages id="mensajesPagoAbajo" for="guardarPago"/>
+                                        </ice:panelGroup>
+
+                                    </ice:panelGroup>
+                                </ice:panelCollapsible>
+                            </ui:repeat>
+                        </ice:panelGrid>
+                    </ice:panelCollapsible>
+                </ui:repeat>
+
+            </h:panelGroup>
+
+            <ice:panelGrid columns="1">
+                <ice:panelGroup>
+                    <ss:repeatPaginator paginator="#{misAdquisicionesMB.paginator}"/>
+                </ice:panelGroup>
+            </ice:panelGrid>
+            
+        </ice:panelGroup>
+    </o:form>
+
+</ui:composition>

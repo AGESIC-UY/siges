@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:remoteCommand id="myremote" update=" relacionarEntregablePopup "   action="#{moduloCronogramaMB.limpiarFiltroEntregables()}" />
+
+    <ace:dialog widgetVar="relacionarEntregablePopup" closable="true" modal="true" onHide="#{moduloCronogramaMB.overriteFiltro()}" header="#{labels.crono_entregable_referencia_agregar}"  onShow="myremote"  >
+
+        <o:form id="relacionarEntregablePopup">
+            <ice:panelGroup id="form">
+
+                <script type="text/javascript">
+                    function triggerAddReferenceTaskBelowCurrentTaskGantt(entregable) {
+
+
+                        jQuery('#workSpace').trigger('addReferenceTaskBelowCurrentTask.gantt', [entregable, true]);
+                        relacionarEntregablePopup.hide();
+                    }
+                    function triggerReplaceReferenceTaskBelowCurrentTaskGantt(entregable) {
+
+
+                        jQuery('#workSpace').trigger('addReferenceTaskBelowCurrentTask.gantt', [entregable, false]);
+                        relacionarEntregablePopup.hide();
+                    }
+                </script>
+
+                <ice:outputText value="#{labels.crono_entregable_referencia_agregar_texto}" style="margin-bottom: 20px !important;"/>
+                <br/>
+                <ice:panelGroup style="margin-top: 20px !important;"  styleClass="buscador recuadro filtroProyecto"
+                                >
+
+                    <ace:pushButton styleClass="#{moduloCronogramaMB.filtroRender ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                                    action="#{moduloCronogramaMB.renderizarFiltro()}" id="btnRenderFiltro">
+                        <ace:ajax execute="@this" render="filtroPanel"/>
+                        <ace:ajax execute="@this" render="filtroPanel"/>
+                    </ace:pushButton>
+
+                    <ice:outputText value="#{labels.busqueda_inicio}" styleClass="subtitulo"/>
+
+                    <h:panelGroup id="filtroPanel" >
+
+                        <h:panelGroup rendered="#{moduloCronogramaMB.filtroRender}" >
+                            <ice:panelGrid styleClass="formulario" style="margin-top: 20px" columns="2">
+                                <ice:outputLabel value="#{labels.codigo_filtro}" />
+
+                                <h:inputText value="#{moduloCronogramaMB.proyectoCodigoFiltro}" >
+
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="keyup"  render="comboProyectoReferencia" />
+                                </h:inputText>
+
+                                <ice:outputLabel value="#{labels.nombre_filtro}" />
+                                <h:inputText value="#{moduloCronogramaMB.proyectoNombreFiltro}">
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="keyup"  render="comboProyectoReferencia" />
+                                </h:inputText> 
+                                <ice:outputLabel value="#{labels.wekan_entregable_nombre_filtro}" />
+                                <h:inputText value="#{moduloCronogramaMB.entregableNombreFiltro}">
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarEntregableFiltrado()}" event="keyup"  render="comboEntregablesReferencia" />
+                                </h:inputText> 
+
+                            </ice:panelGrid>
+
+                        </h:panelGroup>
+
+                    </h:panelGroup>
+
+
+                </ice:panelGroup>
+
+                <ice:panelGrid styleClass="formulario" style="margin-top: 20px" columns="2">
+
+
+                    <ice:outputLabel value="#{labels.proyecto}" styleClass="obligatorio"/>
+                    <ace:simpleSelectOneMenu  id="comboProyectoReferencia"  value="#{moduloCronogramaMB.proyectosCombo.selected}"
+                                              valueChangeListener="#{moduloCronogramaMB.cambioProyecto}"
+                                              immediate="true">
+                        <f:selectItems value="#{moduloCronogramaMB.proyectosCombo.items}"/>
+                        <ace:ajax render="labelEntregablesReferencia comboEntregablesReferencia"/>
+                    </ace:simpleSelectOneMenu>
+
+
+
+                    <h:panelGroup id="labelEntregablesReferencia">
+                        <ice:outputLabel value="#{labels.entregable}" styleClass="obligatorio"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="comboEntregablesReferencia">
+                        <ice:selectOneMenu value="#{moduloCronogramaMB.entregablesCombo.selected}">
+                            <f:selectItems value="#{moduloCronogramaMB.entregablesCombo.items}"/>
+                        </ice:selectOneMenu>
+                    </h:panelGroup>
+
+                </ice:panelGrid>
+
+
+                <ice:panelGrid styleClass="formulario" style="margin-top: 20px;border-top: solid black 1px !important;" columns="3">
+
+
+                    <h:panelGroup id="panelInferior">
+
+
+                        <ice:outputLabel value="#{labels.wekan_entregable_Remplazar}" />
+
+                    </h:panelGroup>
+
+                    <ice:outputLabel/>
+
+                    <h:selectBooleanCheckbox   dir="ltr" value="#{moduloCronogramaMB.remplazarEntrgable}"  
+                                               >
+                        <ace:ajax  listener="#{moduloCronogramaMB.cargarEntregables()}" execute="@this" render="panel_entregables panel_entregables2 panel_entregables3" />
+                    </h:selectBooleanCheckbox>
+
+
+                    <h:panelGroup id="panel_entregables">
+                        <h:panelGroup  rendered="#{moduloCronogramaMB.remplazarEntrgable}">
+                            <ice:outputLabel value="#{labels.entregable_local}" />
+
+                        </h:panelGroup>    
+                    </h:panelGroup>
+                    <ice:outputLabel/>
+
+                    <h:panelGroup id="panel_entregables2">
+                        <h:panelGroup  rendered="#{moduloCronogramaMB.remplazarEntrgable}">
+                            <ice:selectOneMenu  value="#{moduloCronogramaMB.entregablesProyectoCombo.selected}">
+                                <f:selectItems value="#{moduloCronogramaMB.entregablesProyectoCombo.items}"/>
+                            </ice:selectOneMenu>
+                        </h:panelGroup>
+
+
+                    </h:panelGroup>
+
+
+
+                </ice:panelGrid>
+
+                <ice:panelGrid styleClass="formulario" style="margin-top: 20px;max-width: 450px !important;margin-bottom: 20px;" columns="2">
+                    <h:panelGroup id="panel_entregables3">
+                        <h:panelGroup  rendered="#{moduloCronogramaMB.remplazarEntrgable}" >
+
+                            <b><ice:outputText value="#{labels.entregable_no_aplica_resaltado}"/></b>
+                            <ice:outputText value="#{labels.entregable_no_aplica_descripcion}"/>
+
+                        </h:panelGroup>
+
+
+
+                    </h:panelGroup>
+
+                </ice:panelGrid>
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages />
+                    <h:commandButton id="guardarEntregableReferenciaBtn" value="#{labels.guardar}" 
+                                     action="#{fichaMB.guardarEntregableReferencia()}" 
+                                     styleClass="boton principal guardar">
+                        <f:ajax execute="@form" render="@form" />
+                    </h:commandButton>
+                </ice:panelGroup>
+
+            </ice:panelGroup>
+        </o:form>
+
+    </ace:dialog>
+</ui:composition>

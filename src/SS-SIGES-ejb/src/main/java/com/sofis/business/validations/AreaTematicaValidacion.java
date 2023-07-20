@@ -33,6 +33,10 @@ public class AreaTematicaValidacion {
                     && at.getAreatagPadreFk().getArastagPk().equals(at.getArastagPk())) {
                 be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_PADRE);
             }
+			
+            if (at.getHabilitada() == null) {
+                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_HABILITADA);
+            }
         }
 
         if (be.getErrores().size() > 0) {

@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -57,12 +56,6 @@ public class ReportesBean {
 	public List<Proyectos> buscarProyectosPorFiltro(FiltroReporteTO filtro, Integer orgPk, SsUsuario usuario) {
 		Set<Proyectos> setProyectos = new HashSet<>();
 
-		// List<Programas> programas = buscarProgPorFiltro(orgPk, usuario, filtro);
-		// if (programas != null) {
-		// for (Programas prog : programas) {
-		// setProyectos.addAll(proyectosBean.obtenerProyPorProgId(prog.getProgPk()));
-		// }
-		// }
 		List<Proyectos> proyectos = buscarProyPorFiltro(orgPk, usuario, filtro);
 		if (proyectos != null) {
 			setProyectos.addAll(proyectos);
@@ -137,7 +130,7 @@ public class ReportesBean {
 			}
 
 			if (estadosCriteria.size() > 1) {
-				criterios.add(CriteriaTOUtils.createORTO(estadosCriteria.toArray(new CriteriaTO[] {})));
+				criterios.add(CriteriaTOUtils.createORTO(estadosCriteria.toArray(new CriteriaTO[]{})));
 			} else if (!estadosCriteria.isEmpty()) {
 				criterios.add(estadosCriteria.get(0));
 			}
@@ -184,7 +177,7 @@ public class ReportesBean {
 			}
 
 			if (areaTemCriteria.size() > 1) {
-				criterios.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[] {})));
+				criterios.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[]{})));
 			} else {
 				criterios.add(areaTemCriteria.get(0));
 			}
@@ -200,7 +193,7 @@ public class ReportesBean {
 		ProgramasDAO progDao = new ProgramasDAO(em);
 		List<Programas> programasResult = null;
 		try {
-			programasResult = progDao.findEntityByCriteria(Programas.class, criteria, new String[] {}, new boolean[] {},
+			programasResult = progDao.findEntityByCriteria(Programas.class, criteria, new String[]{}, new boolean[]{},
 					null, null);
 		} catch (DAOGeneralException ex) {
 			logger.log(Level.SEVERE, null, ex);
@@ -246,11 +239,9 @@ public class ReportesBean {
 
 		// Nombre
 		if (!StringsUtils.isEmpty(filtro.getNombre())) {
-			// MatchCriteriaTO nombre1 =
-			// CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS,
-			// "proyNombre", filtro.getNombre());
-			CriteriaTO nombre1 = DAOUtils.createMatchCriteriaTOString("proyNombre", filtro.getNombre());
-			criterios.add(nombre1);
+			CriteriaTO nombreProy = DAOUtils.createMatchCriteriaTOString("proyNombre", filtro.getNombre());
+			CriteriaTO nombreProg = DAOUtils.createMatchCriteriaTOString("proyProgFk.progNombre", filtro.getNombre());
+			criterios.add(new OR_TO(nombreProy, nombreProg));
 		}
 
 		// Estados Filtro
@@ -276,7 +267,7 @@ public class ReportesBean {
 			}
 
 			if (estadosCriteria.size() > 1) {
-				criterios.add(CriteriaTOUtils.createORTO(estadosCriteria.toArray(new CriteriaTO[] {})));
+				criterios.add(CriteriaTOUtils.createORTO(estadosCriteria.toArray(new CriteriaTO[]{})));
 			} else if (!estadosCriteria.isEmpty()) {
 				criterios.add(estadosCriteria.get(0));
 			}
@@ -337,7 +328,7 @@ public class ReportesBean {
 			}
 
 			if (areaTemCriteria.size() > 1) {
-				criterios.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[] {})));
+				criterios.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[]{})));
 			} else {
 				criterios.add(areaTemCriteria.get(0));
 			}
@@ -381,18 +372,23 @@ public class ReportesBean {
 			calFin.set(Calendar.MONTH, 11);
 			calFin.set(Calendar.DAY_OF_MONTH, 31);
 
-			MatchCriteriaTO inicioIniCriteria = CriteriaTOUtils.createMatchCriteriaTO(
-					MatchCriteriaTO.types.GREATEREQUAL, "proyCroFk.entregablesSet.entInicio", calIni.getTimeInMillis());
+			MatchCriteriaTO inicioIniCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, 
+					"proyCroFk.entregablesSet.entInicio", calIni.getTimeInMillis());
+			
 			MatchCriteriaTO inicioFinCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
 					"proyCroFk.entregablesSet.entInicio", calFin.getTimeInMillis());
+			
 			MatchCriteriaTO finIniCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL,
 					"proyCroFk.entregablesSet.entFin", calIni.getTimeInMillis());
+			
 			MatchCriteriaTO finFinCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
 					"proyCroFk.entregablesSet.entFin", calFin.getTimeInMillis());
+			
 			MatchCriteriaTO inicioAntesCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
 					"proyCroFk.entregablesSet.entInicio", calIni.getTimeInMillis());
-			MatchCriteriaTO finDespuesCriteria = CriteriaTOUtils.createMatchCriteriaTO(
-					MatchCriteriaTO.types.GREATEREQUAL, "proyCroFk.entregablesSet.entFin", calFin.getTimeInMillis());
+			
+			MatchCriteriaTO finDespuesCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, 
+					"proyCroFk.entregablesSet.entFin", calFin.getTimeInMillis());
 
 			criterios.add(CriteriaTOUtils.createORTO(CriteriaTOUtils.createANDTO(inicioIniCriteria, inicioFinCriteria),
 					CriteriaTOUtils.createANDTO(finIniCriteria, finFinCriteria),
@@ -413,26 +409,37 @@ public class ReportesBean {
 			calFin.set(Calendar.MONTH, 11);
 			calFin.set(Calendar.DAY_OF_MONTH, 31);
 
-			MatchCriteriaTO inicioIniCriteria = CriteriaTOUtils.createMatchCriteriaTO(
-					MatchCriteriaTO.types.GREATEREQUAL, "proyCroFk.entregablesSet.entInicioLineaBase",
-					calIni.getTimeInMillis());
-			MatchCriteriaTO inicioFinCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
-					"proyCroFk.entregablesSet.entInicioLineaBase", calFin.getTimeInMillis());
-			MatchCriteriaTO finIniCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL,
-					"proyCroFk.entregablesSet.entFinLineaBase", calIni.getTimeInMillis());
-			MatchCriteriaTO finFinCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
-					"proyCroFk.entregablesSet.entFinLineaBase", calFin.getTimeInMillis());
-			MatchCriteriaTO inicioAntesCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
+			MatchCriteriaTO inicioIniLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL,
 					"proyCroFk.entregablesSet.entInicioLineaBase", calIni.getTimeInMillis());
-			MatchCriteriaTO finDespuesCriteria = CriteriaTOUtils.createMatchCriteriaTO(
-					MatchCriteriaTO.types.GREATEREQUAL, "proyCroFk.entregablesSet.entFinLineaBase",
-					calFin.getTimeInMillis());
 
-			criterios.add(CriteriaTOUtils.createORTO(CriteriaTOUtils.createANDTO(inicioIniCriteria, inicioFinCriteria),
-					CriteriaTOUtils.createANDTO(finIniCriteria, finFinCriteria),
+			MatchCriteriaTO inicioFinLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
+					"proyCroFk.entregablesSet.entInicioLineaBase", calFin.getTimeInMillis());
+
+			MatchCriteriaTO finIniLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL,
+					"proyCroFk.entregablesSet.entFinLineaBase", calIni.getTimeInMillis());
+
+			MatchCriteriaTO finFinLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
+					"proyCroFk.entregablesSet.entFinLineaBase", calFin.getTimeInMillis());
+
+			MatchCriteriaTO inicioAntesLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL,
+					"proyCroFk.entregablesSet.entInicioLineaBase", calIni.getTimeInMillis());
+
+			MatchCriteriaTO finDespuesLineaBaseCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL,
+					"proyCroFk.entregablesSet.entFinLineaBase", calFin.getTimeInMillis());
+
+			// si no se establecio la linea base, se decide en las fechas comunes de los entregables
+			MatchCriteriaTO lineaBaseNullCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS,
+					"proyCroFk.entregablesSet.entFinLineaBase", 0L);
+			
+			OR_TO criteriaFechasLineaBase = CriteriaTOUtils.createORTO(lineaBaseNullCriteria,
+					CriteriaTOUtils.createANDTO(inicioIniLineaBaseCriteria, inicioFinLineaBaseCriteria),
+					CriteriaTOUtils.createANDTO(finIniLineaBaseCriteria, finFinLineaBaseCriteria),
+					
 					// Lineas base que comienzan antes del año y terminan luego. Por ej: si
 					// comienzan en 2015 y terminan en 2017 deben mostrarse en el reporte de 2016
-					CriteriaTOUtils.createANDTO(inicioAntesCriteria, finDespuesCriteria)));
+					CriteriaTOUtils.createANDTO(inicioAntesLineaBaseCriteria, finDespuesLineaBaseCriteria));
+
+			criterios.add(criteriaFechasLineaBase);
 		}
 
 		CriteriaTO criteria;
@@ -445,8 +452,9 @@ public class ReportesBean {
 		ProyectosDAO proyDao = new ProyectosDAO(em);
 		List<Proyectos> proyectosResult = null;
 		try {
-			proyectosResult = proyDao.findEntityByCriteria(Proyectos.class, criteria, new String[] {}, new boolean[] {},
+			proyectosResult = proyDao.findEntityByCriteria(Proyectos.class, criteria, new String[]{}, new boolean[]{},
 					null, null);
+			
 			proyectosResult = filtrarAdquisiciones(proyectosResult, filtro);
 		} catch (DAOGeneralException ex) {
 			logger.log(Level.SEVERE, null, ex);
@@ -455,8 +463,8 @@ public class ReportesBean {
 	}
 
 	/**
-	 * Se filtran las adquisiciones de los proyectos según el filtro aportado. Las
-	 * adqusiciones que no coincidan se quitan.
+	 * Se filtran las adquisiciones de los proyectos según el filtro aportado.
+	 * Las adqusiciones que no coincidan se quitan.
 	 *
 	 * @param listProy
 	 * @param filtro
@@ -474,8 +482,8 @@ public class ReportesBean {
 
 						if (!StringsUtils.isEmpty(filtro.getProcedimiento())
 								&& ((adq.getAdqProcedimientoCompra() == null)
-										|| !StringsUtils.contains(adq.getAdqProcedimientoCompra().getProcCompNombre(),
-												filtro.getProcedimiento()))) {
+								|| !StringsUtils.contains(adq.getAdqProcedimientoCompra().getProcCompNombre(),
+										filtro.getProcedimiento()))) {
 							aplicaFiltro = false;
 						}
 

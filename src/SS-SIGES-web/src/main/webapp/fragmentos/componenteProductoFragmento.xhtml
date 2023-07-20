@@ -94,6 +94,15 @@
                         <ace:column headerText="#{labels.componenteProducto_head_nombre}">
                             <h:outputText value="#{componenteProducto.comNombre}"/>
                         </ace:column>
+                        
+                        <ace:column headerText="#{labels.hHabilitar}">
+                            <ice:panelGroup title="#{labels.habilitar_deshabilitar}">
+                                <ace:checkboxButton value="#{componenteProducto.comHabilitada}" 
+                                                    valueChangeListener="#{componenteProductoMB.componenteProductoChange(componenteProducto)}">
+                                    <ace:ajax/>
+                                </ace:checkboxButton>
+                            </ice:panelGroup>
+                        </ace:column>
 
                         <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">

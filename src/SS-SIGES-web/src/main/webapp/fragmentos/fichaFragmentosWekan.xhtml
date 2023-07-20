@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ice:panelGroup id="panelWekan"
+                    styleClass="cuadro"
+                    rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 10) and fichaMB.fieldRendered('panelWekan')}">
+
+        <ice:panelGroup id="cabezalWekan" styleClass="cabezal" >
+            <ice:outputText value="#{labels.wekan_modulo}"/>
+            <ace:pushButton value=""
+                            action="#{fichaMB.miMostrar(10)}" 
+                            styleClass="#{fichaMB.selectedMostrar == 10 ? 'botonMinimizar' : 'botonAgregar'} iconoTabla"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{not fichaMB.mostrar[10]}" styleClass="cuerpo">
+
+            <ice:panelGroup rendered="#{wekanMB.tablero ne null}">
+                <ace:linkButton value="#{labels.wekan_enlace_tablero}" 
+                                href="#{wekanMB.tablero.urlTablero}"
+                                target="_blank"/>
+            </ice:panelGroup>
+
+            <ice:panelGroup rendered="#{wekanMB.tablero eq null}">
+                <ice:outputLabel value="#{labels.wekan_cronograma_no_vinculado}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelGroup rendered="#{fichaMB.mostrar[10]}" styleClass="cuerpo">
+
+            <ace:messages id="vinculacionMsg"/>
+            <ice:panelGroup styleClass="no-padding w-center" rendered="#{wekanMB.tablero eq null}">
+                <ice:panelGroup styleClass="recuadro w-vinculacion">
+
+                    <ice:panelGroup styleClass="row w-dato">
+                        <ice:panelGroup styleClass="col-sm-12 w-info" rendered="#{fichaMB.fieldRendered('vincularTableroWekan')}">
+                            <p>
+                                La integración con Wekan permite actualizar entregables desde el tablero.
+                                Para poder vincular el proyecto con un tablero Wekan debe crear el cronograma y luego ingresar el enlace al tablero y las credenciales de un usuario administrador.
+                            </p>
+                        </ice:panelGroup>
+                        <ice:panelGroup styleClass="col-sm-12 w-info" rendered="#{not fichaMB.fieldRendered('vincularTableroWekan')}">
+                            <p>
+                                El usuario logueado no tiene permisos para vincular con Wekan.
+                            </p>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+                    <ice:panelGroup styleClass="row w-dato" rendered="#{fichaMB.fieldRendered('vincularTableroWekan')}">
+                        <ice:outputLabel value="#{labels.wekan_enlace_tablero}" styleClass="obligatorio col-sm-4 w-label"/>
+                        <ice:inputText value="#{wekanMB.urlTablero}" styleClass="col-sm-8" />
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="row w-dato" rendered="#{fichaMB.fieldRendered('vincularTableroWekan')}">
+                        <ice:outputLabel value="#{labels.wekan_usuario}" styleClass="obligatorio col-sm-4 w-label"/>
+                        <ice:inputText value="#{wekanMB.usuarioTablero}" styleClass="col-sm-8"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="row w-dato" rendered="#{fichaMB.fieldRendered('vincularTableroWekan')}">
+                        <ice:outputLabel value="#{labels.wekan_contrasenia}" styleClass="obligatorio col-sm-4 w-label"/>          
+                        <ice:inputSecret value="#{wekanMB.contraseniaTablero}" styleClass="col-sm-8"/>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="panelBotones" rendered="#{fichaMB.fieldRendered('vincularTableroWekan')}">
+                        <ace:pushButton value="#{labels.wekan_vincular_tablero}" 
+                                        action="#{wekanMB.vincularTablero()}" 
+                                        styleClass="boton principal"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="no-padding" rendered="#{wekanMB.tablero ne null}">
+
+                <ice:panelGroup styleClass="w-dato">
+                    <ice:panelGroup style="width: 50%; display: inherit;">
+                    <ace:pushButton value="#{labels.wekan_mostrar_vinculacion_entregables}" 
+                                    action="#{wekanMB.mostrarVinculacionEntregables()}" 
+                                    styleClass="wekan-boton-accion"
+                                    rendered="#{fichaMB.fieldRendered('vincularEntregablesWekan')}"/>
+
+                    <ace:linkButton value="#{labels.wekan_enlace_tablero}" 
+                                    href="#{wekanMB.tablero.urlTablero}"
+                                    target="_blank"/>
+                    </ice:panelGroup>
+                    
+                    <ice:panelGroup style="text-align: right; width: 50%;">
+                    
+                    <ace:pushButton value="#{labels.wekan_desvincular_tablero}" 
+                                    id="botonDesvincularTablero"
+                                    action="#{wekanMB.desvincularTablero()}" 
+                                    styleClass="botonDesvincularTablero"
+                                    style="padding-right:40px;"
+                                    rendered="#{fichaMB.fieldRendered('vincularEntregablesWekan')}"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup rendered="#{wekanMB.vinculandoEntregables}" styleClass="recuadro">
+                    
+                    <ice:panelGroup styleClass="banner-vinculacion">
+                    
+                        <ice:panelGroup styleClass="wekan-mostrar-solo-entregables-vinculables" style="width: 50%; display: inherit;">
+                            
+                        <h:selectBooleanCheckbox id="soloEntregablesVinculablesCheckbox"
+                                                 value="#{wekanMB.mostrarSoloEntregablesVinculables}">
+                            <f:ajax immediate="true" render="tablaSeleccionEntregables"/>
+                        </h:selectBooleanCheckbox>
+                        <ice:outputLabel for="soloEntregablesVinculablesCheckbox" value="#{labels.wekan_mostrar_solo_entregables_vinculables}" />
+
+                        
+                        </ice:panelGroup>
+                        
+                        <ice:panelGroup styleClass="col-sm-3 colCenter" style="text-align: right; width: 50%;" title="Restaurar Vinculación">
+                            <ice:outputLabel title="Restaurar Vinculación"/>
+                            <ace:pushButton  styleClass="iconoTabla botonRestaurarVinculacion"
+                                             style="text-align: right !important;"
+                                             action="#{wekanMB.restaurarVinculacion()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="row">
+                        <ace:dataTable id="tablaSeleccionEntregables" value="#{wekanMB.obtenerEntregablesVinculables()}" var="s">
+
+                            <ace:column>
+                                <ice:outputText value="#{s.objeto.entregable.numero}"/>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.wekan_entregable_nombre}">
+                                <ice:outputText value="#{s.objeto.entregable.nombre}"/>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.wekan_entregable_fecha_inicio}">
+                                <ice:outputText value="#{s.objeto.entregable.fechaInicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </ice:outputText>
+                            </ace:column>
+
+                            <ace:column headerText="#{labels.wekan_entregable_fecha_fin}" >
+                                <ice:outputText value="#{s.objeto.entregable.fechaFin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </ice:outputText>
+                            </ace:column>
+                            
+                            <ace:column headerText="#{labels.wekan_entregable_progreso}" >
+                                <ice:outputText value="#{s.objeto.entregable.progreso}"/>
+                            </ace:column>
+
+                            <ace:column headerText="">
+                                <h:selectBooleanCheckbox id="checkboxSeleccion"
+                                                         rendered="#{s.objeto.tarjeta eq null}"
+                                                         value="#{s.seleccionado}" 
+                                                         styleClass="formulario"
+                                                         disabled="#{not s.objeto.vinculable}">
+                                </h:selectBooleanCheckbox>
+                            </ace:column>
+                            
+                            <ace:column headerText="" >
+                                <ice:graphicImage rendered="#{not s.objeto.vinculable}"
+                                                  value="../img/mens-info.png"
+                                                  alt="#{s.objeto.razonNoVinculable}"
+                                                  title="#{s.objeto.razonNoVinculable}"/>
+                            </ace:column>
+                            
+                            <ace:column headerText=""
+                                        rendered="#{s.objeto.tarjeta != null}"
+                                        styleClass="columnaBoton">
+                                <h:commandButton id="btnDesvincular"
+                                                 styleClass="botonDesvincular iconoTabla"
+                                                 style="background-color: white;"
+                                                 image="../img/mens-error.png"
+                                                 title="#{labels.wekan_desvincular_entregable}"    
+                                                 action="#{wekanMB.desvincularEntregable(s)}"/>
+                            </ace:column>
+
+                                                       
+                            
+                        </ace:dataTable>
+                    </ice:panelGroup>
+
+                    <ice:panelGroup styleClass="alinearDerecha">
+                        <ice:panelGroup styleClass="wekan-acciones-vincular-entregables">
+                            <ace:pushButton styleClass="wekan-boton-accion" value="#{labels.wekan_vincular_entregables}" 
+                                            action="#{wekanMB.vincularEntregables()}" />
+
+                            <ace:linkButton value="#{labels.wekan_cancelar_vinculacion_entregables}" 
+                                            action="#{wekanMB.cerrarVinculacionEntregables()}" />
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+
+                <ice:panelGroup styleClass="wekan-actividades">
+                    <ice:outputText value="#{labels.wekan_actividades}" styleClass="wekan-actividades-titulo"/>
+                    <ace:dataTable value="#{wekanMB.actividades}" var="actividad"
+                                   rows="15" paginator="true" styleClass="wekan-actividades-log"
+                                   paginatorPosition="bottom" rowStyleClass="#{wekanMB.obtenerActividadesRowClasses(actividad)}">
+
+                        <ace:column headerText="#{labels.wekan_actividad_fecha_creacion}" >
+                            <ice:outputText value="#{actividad.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="both" />
+                            </ice:outputText>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.wekan_actividad_origen}">
+                            <h:outputText value="#{actividad.origen}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.entregable}">
+                            <h:outputText value="#{actividad.tarjeta.entregable.nombre}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.wekan_actividad_campo}">
+                            <h:outputText value="#{wekanMB.procesarActualizacionActividad(actividad.actualizacion)}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.wekan_actividad_valor_anterior}">
+                            <h:outputText value="#{wekanMB.procesarValorActividad(actividad.actualizacion, actividad.valorAnterior)}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.wekan_actividad_valor_nuevo}">
+                            <ice:outputText value="#{wekanMB.procesarValorActividad(actividad.actualizacion, actividad.valorNuevo)}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.wekan_actividad_fecha_aplicacion_cambio}" >
+                            <ice:outputText value="#{actividad.fechaAplicacionCambio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="both" />
+                            </ice:outputText>
+                        </ace:column>
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+
+    </ice:panelGroup>
+</ui:composition>

@@ -27,17 +27,33 @@
             <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
 
             <ice:panelGrid styleClass="formulario" columns="6">
-                <ice:outputLabel value="#{labels.usuario_busqueda_mail}"/>
-                <ace:textEntry value="#{ssUsuarioMB.bMail}" />
+                
                 <ice:outputLabel value="#{labels.usuario_busqueda_nombre}"/>
                 <ace:textEntry value="#{ssUsuarioMB.bNombre}" />
                 <ice:outputLabel value="#{labels.usuario_busqueda_apellido}"/>
                 <ace:textEntry value="#{ssUsuarioMB.bApellido}" />
+                <ice:outputLabel value="#{labels.usuario_busqueda_mail}"/>
+                <ace:textEntry value="#{ssUsuarioMB.bMail}" />
+                <ice:outputLabel value="#{labels.usuario_form_rol}"/>
+                <ice:selectOneMenu value="#{ssUsuarioMB.listaRolUsuarioCombo.selected}" 
+                                   styleClass="textoMedio"
+                                   >
+                    <f:selectItems value="#{ssUsuarioMB.listaRolUsuarioCombo.items}"/>
+                </ice:selectOneMenu>
+                
+                   <ice:outputLabel value="#{labels.habilitado}"/>
+                 
+                    <ace:simpleSelectOneMenu value="#{ssUsuarioMB.filtroHabilitado}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.comboTodos}" itemValue=""/>
+                    <f:selectItem itemLabel="#{labels.si}" itemValue="1"/>
+                    <f:selectItem itemLabel="#{labels.no}" itemValue="0"/>
+                    <ace:ajax />
+                </ace:simpleSelectOneMenu>
             </ice:panelGrid>
 
             <ice:panelGroup styleClass="panelAcciones" >
                 <ice:panelGroup styleClass="panelBotones" >
-<!--                    <ace:messages id="busquedaUsuarioMsg" />-->
+                    <!--                    <ace:messages id="busquedaUsuarioMsg" />-->
                     <ace:pushButton value="#{labels.buscar}" 
                                     styleClass="boton principal buscar" 
                                     action="#{ssUsuarioMB.buscar()}"/>
@@ -61,6 +77,8 @@
                         <f:selectItem itemLabel="25" itemValue="25"/>
                         <f:selectItem itemLabel="50" itemValue="50"/>
                         <f:selectItem itemLabel="100" itemValue="100"/>
+                         <f:selectItem itemLabel="500" itemValue="500"/>
+                         <f:selectItem itemLabel="1000" itemValue="1000"/>
                         <ace:ajax />
                     </ace:simpleSelectOneMenu>
 
@@ -81,7 +99,7 @@
 
                     <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
                                       type="xls" fileName="#{labels.exportarPlanillaUsuarios}"
-                                      includeHeaders="true" excludeColumns="5,6,7,8"  />
+                                      includeHeaders="true" excludeColumns="7,8,9,10"  />
                 </ice:panelGroup>
 
                 <ice:panelGroup rendered="#{ssUsuarioMB.listaResultado != null and not empty ssUsuarioMB.listaResultado}" 
@@ -107,9 +125,24 @@
                         <ace:column headerText="#{labels.hDescripcion}"  >
                             <ice:outputText value="#{usu.usuDescripcion}" escape="false"/>
                         </ace:column>
+                        
 
-                        <ace:column headerText="Organismos">
+                        <ace:column headerText="#{labels.hRol}"  >
+                          
+                            <ice:outputText  value="#{usu.getRolUsuario(inicioMB.organismo.orgPk) eq null?'':usu.getRolUsuario(inicioMB.organismo.orgPk).rolNombre}" >
+                            
+                            </ice:outputText> 
+                            <ice:outputText  value="#{usu.usuRolUsuario.rolNombre}" visible="false"  >
+                            <ace:excludeFromExport />
+                            </ice:outputText>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.hOrganismos}">
                             <ice:outputText value="#{usu.organismosStr}"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.hHabilitado}" style="display: none">
+                            <ice:outputText value="#{usu.perteneceAlOrg(inicioMB.organismo.orgPk)?'S':'N'}"/>
                         </ace:column>
 
                         <ace:column headerText="" styleClass="columnaBoton">

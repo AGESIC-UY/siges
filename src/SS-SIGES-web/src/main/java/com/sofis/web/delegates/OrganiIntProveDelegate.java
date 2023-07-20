@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class OrganiIntProveDelegate implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,6 +31,10 @@ public class OrganiIntProveDelegate implements Serializable {
         return organiIntProveBean.obtenerOrganiIntProvePorOrgPk(orgPk, proveedor);
     }
     
+    public List<OrganiIntProve> obtenerOrganiIntProveHabilitadosPorOrgPk(Integer orgPk, Boolean proveedor) throws GeneralException {
+        return organiIntProveBean.obtenerOrganiIntProveHabilitadosPorOrgPk(orgPk, proveedor);
+    }
+	
     public OrganiIntProve obtenerOrganiIntProvePorId(Integer id) throws GeneralException {
         return organiIntProveBean.obtenerOrganiIntProvePorId(id);
     }

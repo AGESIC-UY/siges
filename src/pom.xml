@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-base</artifactId>
-    <version>5.10.1</version>
+    <version>6.7.1</version>
     <packaging>pom</packaging>
     <name>SS-SIGES-base</name>
 
@@ -49,11 +49,6 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-<!--            <plugin>
-                <groupId>com.github.ferstl</groupId>
-                <artifactId>depgraph-maven-plugin</artifactId>
-                <version>2.1.0</version>
-            </plugin>-->
         </plugins>
     </build>
 
@@ -70,7 +65,6 @@
         <module>SS-GENERIDAO-TO-JPA2</module>
         <module>SS-GENERICDAO-BUSINESS-JPA2</module>
         <module>SS-SIGES-mysql-ear</module>
-        <module>SS-SIGES-postgresql-ear</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

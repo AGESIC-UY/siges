@@ -3,7 +3,6 @@ package com.sofis.data.daos;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.codigueras.SsRolCodigos;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.AreasTags;
 import com.sofis.entities.data.Configuracion;
@@ -27,18 +26,12 @@ import com.sofis.utils.CriteriaTOUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-/**
- *
- * @author Usuario
- */
 public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ProgramasProyectosDAO.class.getName());
 
     public ProgramasProyectosDAO(EntityManager em) {
         super(em);
@@ -71,7 +64,6 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         query.setParameter("activo", true);
 
         List<FichaTO> resultado = query.getResultList();
-//        logger.log(Level.INFO, "ProyProg pendientes: {0}", resultado.size());
         return resultado;
     }
 
@@ -226,12 +218,10 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
 
             // Interesado ambito
             if (filtro.getInteresadoAmbitoOrganizacion() != null) {
-//		MatchCriteriaTO ambito1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intOrgaFk.orgaAmbFk.amb_pk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
                 MatchCriteriaTO ambito1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "interesadosList.intOrgaFk.orgaAmbFk.ambPk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
                 if (soloProyecto) {
                     criterias.add(ambito1);
                 } else {
-//		    MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "proyProgFk.interesadosList.intOrgaFk.orgaAmbFk.amb_pk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
                     MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.interesadosList.intOrgaFk.orgaAmbFk.ambPk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
                     OR_TO orCriteria = new OR_TO();
                     orCriteria.setCriteria1(ambito1);
@@ -242,12 +232,10 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
 
             // Interesado Nombre
             if (!StringsUtils.isEmpty(filtro.getInteresadoNombre())) {
-//                MatchCriteriaTO nombre1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
                 CriteriaTO nombre1 = DAOUtils.createMatchCriteriaTOString("interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
                 if (soloProyecto) {
                     criterias.add(nombre1);
                 } else {
-//                    MatchCriteriaTO nombre2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "proyProgFk.interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
                     CriteriaTO nombre2 = DAOUtils.createMatchCriteriaTOString("proyProgFk.interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
                     OR_TO orCriteria = new OR_TO();
                     orCriteria.setCriteria1(nombre1);
@@ -287,13 +275,19 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             //Presupuesto Proveedor
             if (filtro.getOrgaProveedor() != null && !filtro.getOrgaProveedor().equals(-1)) {
                 MatchCriteriaTO orgProv1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
+                MatchCriteriaTO orgProv1plus = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPreFk.adquisicionSet.pagosSet.pagProveedorFk.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
+                CriteriaTO proveA = CriteriaTOUtils.createORTO(orgProv1, orgProv1plus);
+
                 if (soloProyecto) {
-                    criterias.add(orgProv1);
+                    criterias.add(proveA);
                 } else {
                     MatchCriteriaTO orgProv2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.progPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
+                    MatchCriteriaTO orgProv2plus = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPreFk.adquisicionSet.pagosSet.pagProveedorFk.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
+                    CriteriaTO proveB = CriteriaTOUtils.createORTO(orgProv2, orgProv2plus);
+
                     OR_TO orCriteria = new OR_TO();
-                    orCriteria.setCriteria1(orgProv1);
-                    orCriteria.setCriteria2(orgProv2);
+                    orCriteria.setCriteria1(proveA);
+                    orCriteria.setCriteria2(proveB);
                     criterias.add(orCriteria);
                 }
             }
@@ -517,318 +511,6 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
     }
 
     /**
-     * A partir del filtro crea los criterias para realizar la consulta sobre el
-     * Programa.
-     *
-     * @param usuario
-     * @param filtro
-     * @return
-     */
-    @Deprecated
-    private CriteriaTO crearFiltroPrograma(SsUsuario usuario, FiltroInicioTO filtro, boolean incProy) {
-
-        List<CriteriaTO> criterias = new ArrayList<>();
-        // Nombre
-        if (!StringsUtils.isEmpty(filtro.getNombre())) {
-//	    MatchCriteriaTO crit1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "progNombre", filtro.getNombre());
-            CriteriaTO crit1 = DAOUtils.createMatchCriteriaTOString("progNombre", filtro.getNombre());
-            if (!incProy) {
-                criterias.add(crit1);
-            } else {
-//		MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "proyectosSet.proyNombre", filtro.getNombre());
-                CriteriaTO crit2 = DAOUtils.createMatchCriteriaTOString("proyectosSet.proyNombre", filtro.getNombre());
-                CriteriaTO nombre = CriteriaTOUtils.createORTO(crit1, crit2);
-                criterias.add(nombre);
-            }
-        }
-
-        // Sponsor
-        if (filtro.getSponsor() != null && !filtro.getSponsor().equals(-1)) {
-            MatchCriteriaTO crit1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrSponsorFk.usuId", filtro.getSponsor());
-            if (!incProy) {
-                criterias.add(crit1);
-            } else {
-                MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyUsrSponsorFk.usuId", filtro.getSponsor());
-                CriteriaTO nombre = CriteriaTOUtils.createORTO(crit1, crit2);
-                criterias.add(nombre);
-            }
-        }
-
-        // Gerente o Adjunto
-        if (filtro.getGerenteOAdjunto() != null && !filtro.getGerenteOAdjunto().equals(-1)) {
-            MatchCriteriaTO gerente1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrGerenteFk.usuId", filtro.getGerenteOAdjunto());
-            MatchCriteriaTO adjunto1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrAdjuntoFk.usuId", filtro.getGerenteOAdjunto());
-            OR_TO orCriteria = CriteriaTOUtils.createORTO(gerente1, adjunto1);
-            if (!incProy) {
-                criterias.add(orCriteria);
-            } else {
-                MatchCriteriaTO gerente2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyUsrGerenteFk.usuId", filtro.getGerenteOAdjunto());
-                MatchCriteriaTO adjunto2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyUsrAdjuntoFk.usuId", filtro.getGerenteOAdjunto());
-                OR_TO orCriteria2 = CriteriaTOUtils.createORTO(gerente2, adjunto2);
-                criterias.add(CriteriaTOUtils.createORTO(orCriteria, orCriteria2));
-            }
-        }
-
-        // PMO Federada
-        if (filtro.getPmoFederada() != null && !filtro.getPmoFederada().equals(-1)) {
-            MatchCriteriaTO crit1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrPmofedFk.usuId", filtro.getPmoFederada());
-            if (!incProy) {
-                criterias.add(crit1);
-            } else {
-                MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyUsrPmofedFk.usuId", filtro.getPmoFederada());
-                criterias.add(CriteriaTOUtils.createORTO(crit1, crit2));
-            }
-        }
-
-        // Anio Desde
-        if (filtro.getFechaDesde() != null) {
-            MatchCriteriaTO anioDesde1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "progIndices.progindPeriodoInicio", filtro.getFechaDesde());
-            if (!incProy) {
-                criterias.add(anioDesde1);
-            } else {
-                MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "proyectosSet.proyIndices.proyindPeriodoInicio", filtro.getFechaDesde());
-                criterias.add(CriteriaTOUtils.createORTO(anioDesde1, crit2));
-            }
-        }
-
-        // Anio Hasta
-        if (filtro.getFechaHasta() != null) {
-            MatchCriteriaTO anioHasta1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "progIndices.progindPeriodoFin", filtro.getFechaHasta());
-            if (!incProy) {
-                criterias.add(anioHasta1);
-            } else {
-                MatchCriteriaTO anioHasta2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "proyectosSet.proyIndices.proyindPeriodoFin", filtro.getFechaHasta());
-                criterias.add(CriteriaTOUtils.createORTO(anioHasta1, anioHasta2));
-            }
-        }
-
-        //Area tematica
-        if (filtro.getAreasTematicas() != null && !filtro.getAreasTematicas().isEmpty()) {
-            List<CriteriaTO> areaTemCriteria = new ArrayList<>();
-            for (AreasTags areaTem : filtro.getAreasTematicas()) {
-                MatchCriteriaTO areaTag1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "areasTematicasSet.arastagPk", areaTem.getArastagPk());
-                if (!incProy) {
-                    areaTemCriteria.add(areaTag1);
-                } else {
-                    MatchCriteriaTO areaTag2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.areasTematicasSet.arastagPk", areaTem.getArastagPk());
-                    areaTemCriteria.add(CriteriaTOUtils.createORTO(areaTag1, areaTag2));
-                }
-            }
-
-            if (areaTemCriteria.size() > 1) {
-                criterias.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[]{})));
-            } else {
-                criterias.add(areaTemCriteria.get(0));
-            }
-        }
-
-        // Interesado ambito
-        if (filtro.getInteresadoAmbitoOrganizacion() != null) {
-//	    MatchCriteriaTO ambito1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intOrgaFk.orgaAmbFk.amb_pk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
-            MatchCriteriaTO ambito1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "interesadosList.intOrgaFk.orgaAmbFk.ambPk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
-            if (!incProy) {
-                criterias.add(ambito1);
-            } else {
-//		MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "proyectosSet.interesadosList.intOrgaFk.orgaAmbFk.amb_pk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
-                MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.interesadosList.intOrgaFk.orgaAmbFk.ambPk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
-                criterias.add(CriteriaTOUtils.createORTO(ambito1, ambito2));
-            }
-        }
-
-        // Interesado Nombre
-        if (!StringsUtils.isEmpty(filtro.getInteresadoNombre())) {
-//	    MatchCriteriaTO nombre1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
-            CriteriaTO nombre1 = DAOUtils.createMatchCriteriaTOString("interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
-            if (!incProy) {
-                criterias.add(nombre1);
-            } else {
-//		MatchCriteriaTO nombre2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "proyectosSet.interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
-                CriteriaTO nombre2 = DAOUtils.createMatchCriteriaTOString("proyectosSet.interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
-                criterias.add(CriteriaTOUtils.createORTO(nombre1, nombre2));
-            }
-        }
-
-        // Interesado Organizacion
-        if (filtro.getInteresadoOrganizacion() != null) {
-            MatchCriteriaTO nombre1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "interesadosList.intOrgaFk.orgaPk", filtro.getInteresadoOrganizacion().getOrgaPk());
-            criterias.add(nombre1);
-            if (!incProy) {
-                criterias.add(nombre1);
-            } else {
-                MatchCriteriaTO nombre2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.interesadosList.intOrgaFk.orgaPk", filtro.getInteresadoOrganizacion().getOrgaPk());
-                criterias.add(CriteriaTOUtils.createORTO(nombre1, nombre2));
-            }
-        }
-
-        //Interesado Rol
-        if (filtro.getInteresadoRol() != null && !filtro.getInteresadoRol().equals(-1)) {
-            MatchCriteriaTO nombre1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "interesadosList.intRolintFk.rolintPk", filtro.getInteresadoRol());
-            if (!incProy) {
-                criterias.add(nombre1);
-            } else {
-                MatchCriteriaTO nombre2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.interesadosList.intRolintFk.rolintPk", filtro.getInteresadoRol());
-                criterias.add(CriteriaTOUtils.createORTO(nombre1, nombre2));
-            }
-        }
-
-        //Presupuesto Proveedor
-        if (filtro.getOrgaProveedor() != null) {
-            MatchCriteriaTO orgProv1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
-            if (!incProy) {
-                criterias.add(orgProv1);
-            } else {
-                MatchCriteriaTO orgProv2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
-                criterias.add(CriteriaTOUtils.createORTO(orgProv1, orgProv2));
-            }
-        }
-
-        //Presupuesto Fuente
-        if (filtro.getFuenteFinanciamiento() != null) {
-            MatchCriteriaTO fuente1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progPreFk.fuenteFinanciamiento.fuePk", filtro.getFuenteFinanciamiento().getFuePk());
-            MatchCriteriaTO fuente2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progPreFk.adquisicionSet.adqFuente.fuePk", filtro.getFuenteFinanciamiento().getFuePk());
-            CriteriaTO fuenteA = CriteriaTOUtils.createORTO(fuente1, fuente2);
-            if (!incProy) {
-                criterias.add(fuenteA);
-            } else {
-                MatchCriteriaTO fuente3 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyPreFk.fuenteFinanciamiento.fuePk", filtro.getFuenteFinanciamiento().getFuePk());
-                MatchCriteriaTO fuente4 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyPreFk.adquisicionSet.adqFuente.fuePk", filtro.getFuenteFinanciamiento().getFuePk());
-                CriteriaTO fuenteB = CriteriaTOUtils.createORTO(fuente3, fuente4);
-                criterias.add(CriteriaTOUtils.createORTO(fuenteA, fuenteB));
-            }
-        }
-
-        // Riesgos Altos
-        if (filtro.getCantidadRiesgosAltos() != null && filtro.getCantidadRiesgosAltos() > 0) {
-            MatchCriteriaTO riesgoAlto1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "progIndices.progindRiesgoAlto", filtro.getCantidadRiesgosAltos());
-            criterias.add(riesgoAlto1);
-            if (!incProy) {
-                criterias.add(riesgoAlto1);
-            } else {
-                MatchCriteriaTO riesgoAlto2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "proyectosSet.proyIndices.proyindRiesgoAlto", filtro.getCantidadRiesgosAltos());
-                criterias.add(CriteriaTOUtils.createORTO(riesgoAlto1, riesgoAlto2));
-            }
-        }
-
-        // Riegos Exposicion(por colores)
-        if (CollectionsUtils.isNotEmpty(filtro.getGradoRiesgo())) {
-            List<CriteriaTO> listCriteriaTo = new ArrayList<>();
-
-            for (Object grado : filtro.getGradoRiesgo()) {
-                String g = (String) grado;
-                Configuracion confAmarillo = filtro.getConfiguracion().get("RIESGO_INDICE_LIMITE_AMARILLO");
-                Configuracion confRojo = filtro.getConfiguracion().get("RIESGO_INDICE_LIMITE_ROJO");
-
-                if (!g.isEmpty() && confAmarillo != null && confRojo != null) {
-                    switch (g) {
-                        case "1":
-                            MatchCriteriaTO riesgoBajo = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "progIndices.progindRiesgoExpo", Double.parseDouble(confAmarillo.getCnfValor()));
-                            MatchCriteriaTO sinRiesgo1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "progIndices.progindRiesgoExpo", 1);
-                            MatchCriteriaTO sinRiesgo2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progIndices.progindRiesgoExpo", 0d);
-                            if (!incProy) {
-                                listCriteriaTo.add(CriteriaTOUtils.createORTO(riesgoBajo, sinRiesgo1, sinRiesgo2));
-                            } else {
-                                MatchCriteriaTO riesgoBajoB = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "proyectosSet.proyIndices.progindRiesgoExpo", Double.parseDouble(confAmarillo.getCnfValor()));
-                                MatchCriteriaTO sinRiesgo1B = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "proyectosSet.proyIndices.progindRiesgoExpo", 1);
-                                MatchCriteriaTO sinRiesgo2B = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyIndices.progindRiesgoExpo", 0d);
-                                listCriteriaTo.add(CriteriaTOUtils.createORTO(riesgoBajo, sinRiesgo1, sinRiesgo2, riesgoBajoB, sinRiesgo1B, sinRiesgo2B));
-                            }
-                            break;
-
-                        case "2":
-                            MatchCriteriaTO riesgoMedio1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATER, "progIndices.progindRiesgoExpo", Double.parseDouble(confAmarillo.getCnfValor()));
-                            MatchCriteriaTO riesgoMedio2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESS, "progIndices.progindRiesgoExpo", Double.parseDouble(confRojo.getCnfValor()));
-                            AND_TO riesgoMedio = CriteriaTOUtils.createANDTO(riesgoMedio1, riesgoMedio2);
-                            if (!incProy) {
-                                listCriteriaTo.add(riesgoMedio);
-                            } else {
-                                MatchCriteriaTO riesgoMedio1B = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATER, "proyectosSet.proyIndices.progindRiesgoExpo", Double.parseDouble(confAmarillo.getCnfValor()));
-                                MatchCriteriaTO riesgoMedio2B = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESS, "proyectosSet.proyIndices.progindRiesgoExpo", Double.parseDouble(confRojo.getCnfValor()));
-                                AND_TO riesgoMedioB = CriteriaTOUtils.createANDTO(riesgoMedio1B, riesgoMedio2B);
-                                listCriteriaTo.add(CriteriaTOUtils.createORTO(riesgoMedio, riesgoMedioB));
-                            }
-                            break;
-
-                        case "3":
-                            MatchCriteriaTO riesgoAlto = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "progIndices.progindRiesgoExpo", Double.parseDouble(confRojo.getCnfValor()));
-                            if (!incProy) {
-                                listCriteriaTo.add(riesgoAlto);
-                            } else {
-                                MatchCriteriaTO riesgoAltoB = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "proyectosSet.proyIndices.progindRiesgoExpo", Double.parseDouble(confRojo.getCnfValor()));
-                                listCriteriaTo.add(CriteriaTOUtils.createORTO(riesgoAlto, riesgoAltoB));
-                            }
-                            break;
-                    }
-                }
-            }
-
-            if (!listCriteriaTo.isEmpty()) {
-                if (listCriteriaTo.size() > 1) {
-                    CriteriaTO[] arrCriteriaTo = listCriteriaTo.toArray(new CriteriaTO[listCriteriaTo.size()]);
-                    criterias.add(CriteriaTOUtils.createORTO(arrCriteriaTo));
-                } else {
-                    criterias.add(listCriteriaTo.get(0));
-                }
-            }
-        }
-
-        // Estados Filtro
-        List<Object> estados;
-        if (filtro.getEstados() != null && !filtro.getEstados().isEmpty()) {
-            estados = filtro.getEstados();
-        } else {
-            estados = new ArrayList<>();
-            estados.add(Estados.ESTADOS.INICIO.estado_id);
-            estados.add(Estados.ESTADOS.PLANIFICACION.estado_id);
-            estados.add(Estados.ESTADOS.EJECUCION.estado_id);
-            estados.add(Estados.ESTADOS.FINALIZADO.estado_id);
-            estados.add(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
-            estados.add(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
-        }
-
-        // Estados
-        if (estados != null) {
-            List<CriteriaTO> estadosCriteria = new ArrayList<>();
-            for (Object estadoId : estados) {
-                Integer estadoIdInt = Integer.parseInt(estadoId + "");
-                MatchCriteriaTO estado1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progEstFk.estPk", estadoIdInt);
-                if (!incProy) {
-                    estadosCriteria.add(estado1);
-                } else {
-                    MatchCriteriaTO estado2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.proyEstFk.estPk", estadoIdInt);
-                    OR_TO orCriteria = CriteriaTOUtils.createORTO(estado1, estado2);
-                    estadosCriteria.add(orCriteria);
-                }
-            }
-
-            if (!estadosCriteria.isEmpty()) {
-                criterias.add(CriteriaTOUtils.createORTO(estadosCriteria.toArray(new CriteriaTO[]{})));
-            }
-        }
-
-        // Activo
-        if (filtro.getActivo() != null) {
-            MatchCriteriaTO activo1 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "activo", filtro.getActivo());
-            criterias.add(activo1);
-            if (!incProy) {
-                criterias.add(activo1);
-            } else {
-                MatchCriteriaTO activo2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyectosSet.activo", filtro.getActivo());
-                criterias.add(CriteriaTOUtils.createORTO(activo1, activo2));
-            }
-        }
-
-        if (criterias.size() == 1) {
-            return criterias.get(0);
-        }
-        if (criterias.size() > 1) {
-            AND_TO criteria = CriteriaTOUtils.createANDTO(criterias.toArray(new CriteriaTO[]{}));
-            return criteria;
-        }
-
-        return null;
-    }
-
-    /**
      * Retorna los proyectos que no dependen de un programa y aplicando el
      * filtro.
      *
@@ -888,9 +570,9 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
     public List<Proyectos> buscarProyectosPorFiltro(Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro, boolean huerfanos) throws DAOGeneralException {
 
         List<CriteriaTO> criterios = new ArrayList<>();
-        
+
         // Id
-        if (filtro.getCodigo()!= null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
+        if (filtro.getCodigo() != null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
             MatchCriteriaTO crit = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPk", filtro.getCodigo());
             MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.progPk", filtro.getCodigo());
             OR_TO orCrit = CriteriaTOUtils.createORTO(crit, crit2);
@@ -1010,14 +692,52 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
      * @param areaId
      * @param usuario
      * @param filtro
-     * @param incProy
      * @return Lista de Programas
      * @throws DAOGeneralException
      */
-    public List<Programas> buscarProgPorFiltro(Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro, boolean incProy) throws DAOGeneralException {
+    public List<Programas> buscarProgramasNivel2(Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro) throws DAOGeneralException {
+
+        CriteriaTO criteria = obtenerCriteriosBusquedaProgramaProyecto(areaId, orgPk, usuario, filtro);
+
+        ProyectosDAO proyDao = new ProyectosDAO(super.getEm());
+
+        String[] orden;
+        if (filtro.getOrderBy() != null && filtro.getOrderBy().equals("1")) {
+            orden = new String[]{"proyProgFk.progNombre", "proyNombre"};
+        } else {
+            orden = new String[]{"proyProgFk.progPk", "proyPk"};
+        }
+
+        List<EntityReference<Integer>> entitiesReferences = proyDao.findEntityReferenceByCriteria(Proyectos.class, criteria, orden,
+                new boolean[]{true}, null, null, new String[]{"proyProgFk"});
+
+        List<Programas> programasResult = new ArrayList<>();
+        for (EntityReference<Integer> e : entitiesReferences) {
+            Programas progPk = (Programas) e.getPropertyMap().get("proyProgFk");
+            if (progPk != null) {
+                programasResult.add(progPk);
+            }
+        }
+
+        return programasResult;
+    }
+
+    public Long obtenerCantidadProyectosEnPrograma(Integer idPrograma, Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro) throws DAOGeneralException {
+
+        CriteriaTO criteria = obtenerCriteriosBusquedaProgramaProyecto(areaId, orgPk, usuario, filtro);
+
+        MatchCriteriaTO criteriaPrograma = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.progPk", idPrograma);
+
+        criteria = new AND_TO(criteria, criteriaPrograma);
+
+        ProyectosDAO proyDao = new ProyectosDAO(super.getEm());
+
+        return proyDao.countByCriteria(Proyectos.class, criteria, null, null);
+    }
+
+    private CriteriaTO obtenerCriteriosBusquedaProgramaProyecto(Integer areaId, Integer orgPk, SsUsuario usuario, FiltroInicioTO filtro) {
 
         List<CriteriaTO> criterios = new ArrayList<>();
-
         //Activo
         MatchCriteriaTO proyActivo = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "activo", !Boolean.FALSE);
 
@@ -1044,10 +764,6 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         criterios.add(progOrga);
 
         // Permisos de Lectura
-        if (!usuario.isUsuarioPMO(orgPk)) {
-//            CriteriaTO progAreaPermiso = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NOT_EQUALS, "proyProgFk.areasRestringidasSet.areaPk", usuario.getUsuArea(orgPk).getAreaPk());
-        }
-        // Permisos de Lectura
         if (!usuario.isUsuarioPMOT(orgPk)
                 && usuario.getUsuArea(orgPk) != null) {
             CriteriaTO proyUsuPM = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NOT_EQUALS, "proyUsrGerenteFk.usuId", usuario.getUsuId());
@@ -1069,7 +785,7 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         }
 
         if (filtro != null) {
-            CriteriaTO criteriaFiltroProg = crearFiltroProgramaPorProy(filtro);
+            CriteriaTO criteriaFiltroProg = crearFiltroProgramaPorProyecto(filtro);
             criterios.add(criteriaFiltroProg);
         }
 
@@ -1080,33 +796,22 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             criteria = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
         }
 
-        ProyectosDAO proyDao = new ProyectosDAO(super.getEm());
-        List<Programas> programasResult = new ArrayList<>();
-
-        String[] orden;
-        if (filtro.getOrderBy() != null && filtro.getOrderBy().equals("1")) {
-            orden = new String[]{"proyProgFk.progNombre", "proyNombre"};
-        } else {
-            orden = new String[]{"proyProgFk.progPk", "proyPk"};
-        }
-
-        List<EntityReference<Integer>> entitiesReferences = proyDao.findEntityReferenceByCriteria(Proyectos.class, criteria, orden,
-                new boolean[]{true}, null, null, new String[]{"proyProgFk"});
-
-        for (EntityReference<Integer> e : entitiesReferences) {
-            Programas progPk = (Programas) e.getPropertyMap().get("proyProgFk");
-            if (progPk != null) {
-                programasResult.add(progPk);
-            }
-        }
-
-        return programasResult;
+        return criteria;
     }
 
-    public List<Programas> buscarProgPorFiltro2(Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro, boolean incProy) throws DAOGeneralException {
+    public List<Programas> buscarProgramasNivel1(Integer orgPk, Integer areaId, SsUsuario usuario, FiltroInicioTO filtro, boolean incProy) throws DAOGeneralException {
+
+        CriteriaTO criteriaProg = obtenerCriteriosBusquedaPrograma(areaId, orgPk, usuario, filtro);
+
+        ProgramasDAO progDao = new ProgramasDAO(super.getEm());
+
+        return progDao.findEntityByCriteria(Programas.class, criteriaProg,
+                new String[]{"progNombre"}, new boolean[]{true}, null, null);
+    }
+
+    private CriteriaTO obtenerCriteriosBusquedaPrograma(Integer areaId, Integer orgPk, SsUsuario usuario, FiltroInicioTO filtro) {
 
         List<CriteriaTO> criterios = new ArrayList<>();
-        CriteriaTO proyEmpty = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EMPTY, "proyectosSet", 1);
 
         //Activo
         MatchCriteriaTO progActivo = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "activo", Boolean.TRUE);
@@ -1148,8 +853,8 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         }
 
         if (filtro != null) {
-            CriteriaTO criteriaFiltroProg = crearFiltroProgramaPorProy2(filtro);
-            criterios.add(CriteriaTOUtils.createANDTO(proyEmpty, criteriaFiltroProg));
+            CriteriaTO criteriaFiltroProg = crearFiltroPrograma(filtro);
+            criterios.add(criteriaFiltroProg);
         }
 
         CriteriaTO criteriaProg;
@@ -1159,45 +864,10 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             criteriaProg = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
         }
 
-        ProgramasDAO progDao = new ProgramasDAO(super.getEm());
-        List<Programas> programasResult = progDao.findEntityByCriteria(Programas.class, criteriaProg,
-                new String[]{"progNombre"}, new boolean[]{true}, null, null);
-        return programasResult;
+        return criteriaProg;
     }
 
-    private void printCriteria(CriteriaTO c, int i, int k) {
-        if (c == null) {
-            logger.info(k + " :" + sps(i) + " NULL");
-        } else if (c instanceof MatchCriteriaTO) {
-            MatchCriteriaTO m = (MatchCriteriaTO) c;
-            logger.info(k + " :" + sps(i) + " " + m.getProperty() + " " + m.getMatchType() + " " + m.getValue());
-
-        } else if (c instanceof AND_TO) {
-            AND_TO a = (AND_TO) c;
-            printCriteria(a.getCriteria1(), i + 1, k++);
-            logger.info(k + " :" + sps(i) + " AND ");
-            printCriteria(a.getCriteria2(), i + 1, k++);
-
-        } else if (c instanceof OR_TO) {
-            OR_TO a = (OR_TO) c;
-            printCriteria(a.getCriteria1(), i + 1, k++);
-            logger.info(k + " :" + sps(i) + " OR ");
-            printCriteria(a.getCriteria2(), i + 1, k++);
-
-        } else {
-            logger.info(k + " :--" + c.toString());
-        }
-    }
-
-    private String sps(int i) {
-        String s = "";
-        for (int j = 0; j < i; j++) {
-            s += "  ";
-        }
-        return s;
-    }
-
-    private CriteriaTO crearFiltroProgramaPorProy(FiltroInicioTO filtro) {
+    private CriteriaTO crearFiltroProgramaPorProyecto(FiltroInicioTO filtro) {
 
         List<CriteriaTO> criterias = new ArrayList<>();
 
@@ -1211,9 +881,9 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
                 criterias.add(crit1);
             }
         }
-        
+
         // Id
-        if (filtro.getCodigo()!= null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
+        if (filtro.getCodigo() != null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
             MatchCriteriaTO crit = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPk", filtro.getCodigo());
             MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.progPk", filtro.getCodigo());
             OR_TO orCrit = CriteriaTOUtils.createORTO(crit, crit2);
@@ -1277,18 +947,12 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
 
         // Interesado ambito
         if (filtro.getInteresadoAmbitoOrganizacion() != null) {
-            /**
-             * Bruno 10-04-17: cambio en el atributo amb_pk, este es el nombre
-             * de la columna en la bbdd, se cambia por el nombre del atributo
-             */
-//	    MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intOrgaFk.orgaAmbFk.amb_pk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
             MatchCriteriaTO ambito2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "interesadosList.intOrgaFk.orgaAmbFk.ambPk", filtro.getInteresadoAmbitoOrganizacion().getAmbPk());
             criterias.add(ambito2);
         }
 
         // Interesado Nombre
         if (!StringsUtils.isEmpty(filtro.getInteresadoNombre())) {
-//	    MatchCriteriaTO nombre2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
             CriteriaTO nombre2 = DAOUtils.createMatchCriteriaTOString("interesadosList.intPersonaFk.persNombre", filtro.getInteresadoNombre());
             criterias.add(nombre2);
         }
@@ -1308,7 +972,10 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         //Presupuesto Proveedor
         if (filtro.getOrgaProveedor() != null) {
             MatchCriteriaTO orgProv2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPreFk.adquisicionSet.adqProvOrga.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
-            criterias.add(orgProv2);
+            MatchCriteriaTO orgProv3 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyPreFk.adquisicionSet.pagosSet.pagProveedorFk.orgaPk", filtro.getOrgaProveedor().getOrgaPk());
+            CriteriaTO proveB = CriteriaTOUtils.createORTO(orgProv3, orgProv2);
+            criterias.add(proveB);
+//                        criterias.add(orgProv2);
         }
 
         //Presupuesto Fuente
@@ -1445,9 +1112,6 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             criterias.add(fechaAct);
         }
 
-        /*
-            *   30-04-2018 Nico: Para colores de Fecha Actual
-         */
         if (filtro.getColorActSem() != null) {
             MatchCriteriaTO colorActProy = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyIndices.proyindFechaActColor", filtro.getColorActSem());
             criterias.add(colorActProy);
@@ -1464,7 +1128,7 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
         return null;
     }
 
-    private CriteriaTO crearFiltroProgramaPorProy2(FiltroInicioTO filtro) {
+    private CriteriaTO crearFiltroPrograma(FiltroInicioTO filtro) {
 
         List<CriteriaTO> criterias = new ArrayList<>();
 
@@ -1475,19 +1139,19 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
                 criterias.add(crit1);
             }
         }
-        
+
         // Id
-        if (filtro.getCodigo()!= null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
+        if (filtro.getCodigo() != null && !StringsUtils.isEmpty(Integer.toString(filtro.getCodigo())) && filtro.getCodigo() != 0) {
             MatchCriteriaTO crit = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progPk", filtro.getCodigo());
             criterias.add(crit);
         }
-        
+
         // Nombre
         if (!StringsUtils.isEmpty(filtro.getNombre())) {
             MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "progNombre", filtro.getNombre());
             criterias.add(crit2);
         }
-        
+
         // Sponsor
         if (filtro.getSponsor() != null && !filtro.getSponsor().equals(-1)) {
             MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrSponsorFk.usuId", filtro.getSponsor());
@@ -1507,7 +1171,7 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "progUsrPmofedFk.usuId", filtro.getPmoFederada());
             criterias.add(crit2);
         }
-        
+
         // Estados Filtro
         List<Object> estados;
         if (filtro.getEstados() != null && !filtro.getEstados().isEmpty()) {
@@ -1537,11 +1201,38 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
                 criterias.add(estadosCriteria.get(0));
             }
         }
-        
+
         // Objetivo Estrategico
         if (filtro.getObjEst() != null) {
             MatchCriteriaTO progObjEst = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "objetivoEstrategico.objEstPk", filtro.getObjEst().getObjEstPk());
             criterias.add(progObjEst);
+        }
+
+        // Anio Desde
+        if (filtro.getFechaDesde() != null) {
+            MatchCriteriaTO crit2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.GREATEREQUAL, "progIndices.progindPeriodoInicio", filtro.getFechaDesde());
+            criterias.add(crit2);
+        }
+
+        // Anio Hasta
+        if (filtro.getFechaHasta() != null) {
+            MatchCriteriaTO anioHasta2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "progIndices.progindPeriodoFin", filtro.getFechaHasta());
+            criterias.add(anioHasta2);
+        }
+
+        //Area tematica
+        if (filtro.getAreasTematicas() != null && !filtro.getAreasTematicas().isEmpty()) {
+            List<CriteriaTO> areaTemCriteria = new ArrayList<>();
+            for (AreasTags areaTem : filtro.getAreasTematicas()) {
+                MatchCriteriaTO areaTag2 = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "areasTematicasSet.arastagPk", areaTem.getArastagPk());
+                areaTemCriteria.add(areaTag2);
+            }
+
+            if (areaTemCriteria.size() > 1) {
+                criterias.add(CriteriaTOUtils.createORTO(areaTemCriteria.toArray(new CriteriaTO[]{})));
+            } else {
+                criterias.add(areaTemCriteria.get(0));
+            }
         }
 
         // Activo
@@ -1571,6 +1262,24 @@ public class ProgramasProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer
             throw new DAOGeneralException(ex);
         }
 
+    }
+
+    public Long obtenerCantidadProyectosPorAreaYOrganismo(Integer orgPk, Integer areaId) throws DAOGeneralException  {
+
+        List<CriteriaTO> criterios = new ArrayList<>();
+        MatchCriteriaTO progOrga = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyOrgFk.orgPk", orgPk);
+        criterios.add(progOrga);
+
+     // MatchCriteriaTO progArea = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyProgFk.progAreaFk.areaPk", areaId);
+        MatchCriteriaTO proyArea = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "proyAreaFk.areaPk", areaId);
+
+      // criterios.add(progArea);
+        criterios.add(proyArea);
+
+        ProyectosDAO proyDao = new ProyectosDAO(super.getEm());
+        AND_TO criteria = CriteriaTOUtils.createANDTO(progOrga,proyArea);
+
+        return proyDao.countByCriteria(Proyectos.class, criteria, null, null);
     }
 
 }

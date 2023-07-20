@@ -636,6 +636,7 @@ public class ServiciosBean {
        
         pre.setPreMoneda(m);
         pre.setFuenteFinanciamiento(ff);
+        pre.setPreOcultarPagosConfirmados(presupuestoTO.getPreOcultarPagosConfirmados());
         return pre;
     }
 

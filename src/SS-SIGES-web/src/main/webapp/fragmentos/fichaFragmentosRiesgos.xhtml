@@ -82,10 +82,10 @@
             <ice:panelGroup id="riesgosForm" styleClass="formulario formularioPopup">
 
                 <h:panelGrid columns="1">
-                    <h:commandButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
-                                     action="#{fichaMB.abrirRiesgoAction()}"
-                                     styleClass="boton principal #{fichaMB.riesgo.riskPk ne null ? 'botonEditar' : 'botonAgregar'}" 
-                                     rendered="#{fichaMB.fieldRendered('agregarRiesgo')}"/>
+                    <ace:pushButton value="#{fichaMB.riesgo.riskPk ne null ? labels.editarRiesgo : labels.agregarRiesgo}" 
+                                    action="#{fichaMB.abrirRiesgoAction()}"
+                                    styleClass="boton principal agregar"
+                                    rendered="#{fichaMB.fieldRendered('agregarRiesgo')}"/>
                 </h:panelGrid>
 
                 <ice:panelPopup id="popupRiesgosForm"
@@ -106,22 +106,22 @@
 
                         <ice:panelGroup id="riesgosFormData">
                             <ice:panelGrid  styleClass="formulario " columns="4">
-                                <ice:outputLabel value="#{labels.riesgo_nombre}"/>
+                                <ice:outputLabel value="#{labels.riesgo_nombre}" styleClass="obligatorio"/>
                                 <ace:textEntry value="#{fichaMB.riesgo.riskNombre}" />
 
-                                <ice:outputLabel value="#{labels.riesgo_fechaLimite}"/>
+                                <ice:outputLabel value="#{labels.riesgo_fechaLimite}" styleClass="obligatorio"/>
                                 <ace:dateTimeEntry value="#{fichaMB.riesgo.riskFechaLimite}"
                                                    pattern="#{inicioMB.calendarPattern}" 
                                                    renderAsPopup="true" navigator="true"
                                                    timeZone="#{inicioMB.calendarTimeZone}"/>
 
-                                <ice:outputLabel value="#{labels.riesgo_probabilidad}"/>
+                                <ice:outputLabel value="#{labels.riesgo_probabilidad}" styleClass="obligatorio"/>
                                 <ace:simpleSelectOneMenu id="comboProbabilidad"
                                                          value="#{fichaMB.listaRiskProbabilidadCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaRiskProbabilidadCombo.items}"/>
                                 </ace:simpleSelectOneMenu>
 
-                                <ice:outputLabel value="#{labels.riesgo_impacto}"/>
+                                <ice:outputLabel value="#{labels.riesgo_impacto}" styleClass="obligatorio"/>
                                 <ace:simpleSelectOneMenu id="comboImpacto"
                                                          value="#{fichaMB.listaRiskImpactoCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaRiskImpactoCombo.items}"/>
@@ -132,9 +132,12 @@
                                                          value="#{fichaMB.listaRiskEntregablesCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaRiskEntregablesCombo.items}"/>
                                 </ace:simpleSelectOneMenu>
-                                
-                                <ice:outputLabel value="#{labels.riesgo_observaciones}"/>
-                                <ace:textAreaEntry value="#{fichaMB.riesgo.riskObservaciones}" />
+
+                                <ice:outputLabel value="#{labels.tituloTipoRiesgo}"/>
+                                <ace:simpleSelectOneMenu id="comboTipoRiesgo"
+                                                         value="#{fichaMB.listaRiskTipoRiesgoCombo.selected}">
+                                    <f:selectItems value="#{fichaMB.listaRiskTipoRiesgoCombo.items}"/>
+                                </ace:simpleSelectOneMenu>
 
                                 <ice:outputLabel value="#{labels.riesgo_efecto}"/>
                                 <ace:textAreaEntry value="#{fichaMB.riesgo.riskEfecto}" />
@@ -148,6 +151,11 @@
                                 <ice:outputLabel value="#{labels.riesgo_contingencia}"/>
                                 <ace:textAreaEntry value="#{fichaMB.riesgo.riskContingencia}" />
                             </ice:panelGrid>
+                            <ice:panelGrid  styleClass="formulario " >
+                                <ice:outputLabel value="#{labels.riesgo_observaciones}"/>
+                                <ace:textAreaEntry id="areaObservaciones" value="#{fichaMB.riesgo.riskObservaciones}" />    
+                            </ice:panelGrid>
+
 
                             <ice:panelGroup styleClass="panelBotones">
                                 <ace:messages id="riesgosMsg"/>
@@ -288,7 +296,9 @@
                         <ace:column headerText="#{labels.riesgo_efecto}" style="display:none;">
                             <h:outputText value="#{risk.riskEfecto}" />
                         </ace:column>
-
+                        <ace:column headerText="#{labels.riesgo_observaciones}" style="display:none;">
+                            <h:outputText value="#{risk.riskObservaciones}" />
+                        </ace:column>
                         <ace:column styleClass="columnaBoton">
                             <ace:tooltip id="tooltipVer" for="btnVerRiesgos">
                                 <ice:outputText value="#{labels.riesgoVer}" />
@@ -299,32 +309,64 @@
                         </ace:column>
 
                         <ace:column styleClass="columnaBoton"
-                                    rendered="#{fichaMB.fieldRendered('superarRiesgo')}">
-                            <h:commandButton id="btnSuperar"
-                                             styleClass="botonSuperar iconoTabla"
-                                             rendered="#{!risk.riskSuperado}"
-                                             title="#{labels.riesgoSuperarTooltip}"
-                                             onclick="confirmationSuperarRiesgo#{risk.riskPk}.show();" />
-                            <ace:confirmationDialog widgetVar="confirmationSuperarRiesgo#{risk.riskPk}" 
-                                                    message="#{labels.riesgoSuperarTooltip}: &#13;#{risk.riskNombre}"
-                                                    header="#{labels.hConfirmacion}"
-                                                    closable="true"
-                                                    closeOnEscape="true"
-                                                    severity="info"
-                                                    modal="true"
-                                                    position="center">
-                                <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesDelSuperar" 
-                                                     value="#{labels.si}" 
-                                                     styleClass="boton principal botonContinuar"
-                                                     onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();" 
-                                                     actionListener="#{fichaMB.superarRiesgoAction(risk.riskPk)}"/>
-                                    <h:commandButton id="noDelSuperar"
-                                                     value="#{labels.no}"
-                                                     styleClass="boton principal botonEliminar"
-                                                     onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();"  />
-                                </h:panelGrid>
-                            </ace:confirmationDialog>
+                                    rendered="#{fichaMB.fieldRendered('superarRiesgo') or fichaMB.fieldRendered('revertirSuperacionRiesgo')}">
+
+                            <h:panelGroup rendered="#{fichaMB.fieldRendered('superarRiesgo') and not risk.riskSuperado}">
+
+                                <ice:commandButton id="btnSuperar"
+                                                 styleClass="botonSuperar iconoTabla"
+                                                 title="#{labels.riesgoSuperarTooltip}"
+                                                 onclick="confirmationSuperarRiesgo#{risk.riskPk}.show();" />
+                                <ace:confirmationDialog widgetVar="confirmationSuperarRiesgo#{risk.riskPk}" 
+                                                        message="#{labels.riesgoSuperarTooltip}: &#13;#{risk.riskNombre}"
+                                                        header="#{labels.hConfirmacion}"
+                                                        closable="true"
+                                                        closeOnEscape="true"
+                                                        severity="info"
+                                                        modal="true"
+                                                        position="center">
+                                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                        <ice:commandButton id="yesDelSuperar" 
+                                                         value="#{labels.si}" 
+                                                         styleClass="boton principal botonContinuar"
+                                                         onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();" 
+                                                         actionListener="#{fichaMB.superarRiesgoAction(risk.riskPk)}"/>
+                                        <h:commandButton id="noDelSuperar"
+                                                         value="#{labels.no}"
+                                                         styleClass="boton principal botonEliminar"
+                                                         onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();"  />
+                                    </h:panelGrid>
+                                </ace:confirmationDialog>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{fichaMB.fieldRendered('revertirSuperacionRiesgo') and risk.riskSuperado}">
+
+                                <h:commandButton id="btnRevertir"
+                                                 styleClass="botonRestablecer iconoTabla"
+                                                 title="#{labels.riesgoRevertirSuperacion}"
+                                                 onclick="confirmationRevertirSuperacionRiesgo#{risk.riskPk}.show();" />
+                                <ace:confirmationDialog widgetVar="confirmationRevertirSuperacionRiesgo#{risk.riskPk}" 
+                                                        message="#{labels.riesgoRevertirSuperacion}: &#13;#{risk.riskNombre}"
+                                                        header="#{labels.hConfirmacion}"
+                                                        closable="true"
+                                                        closeOnEscape="true"
+                                                        severity="info"
+                                                        modal="true"
+                                                        position="center">
+                                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                        <ice:commandButton id="yesRevertir" 
+                                                         value="#{labels.si}" 
+                                                         styleClass="boton principal botonContinuar"
+                                                         onclick="confirmationRevertirSuperacionRiesgo#{risk.riskPk}.hide();" 
+                                                         actionListener="#{fichaMB.revertirSuperacionRiesgoAction(risk.riskPk)}"/>
+                                        <h:commandButton id="noRevertir"
+                                                         value="#{labels.no}"
+                                                         styleClass="boton principal botonEliminar"
+                                                         onclick="confirmationRevertirSuperacionRiesgo#{risk.riskPk}.hide();"  />
+                                    </h:panelGrid>
+                                </ace:confirmationDialog>
+                            </h:panelGroup>
+
                         </ace:column>
 
                         <ace:column styleClass="columnaBoton"
@@ -355,7 +397,7 @@
                                                     modal="true"
                                                     position="center">
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesDelRiesgo" 
+                                    <ice:commandButton id="yesDelRiesgo" 
                                                      value="#{labels.si}" 
                                                      styleClass="boton principal botonContinuar"
                                                      onclick="confirmationEliminarRiesgo#{risk.riskPk}.hide();" 

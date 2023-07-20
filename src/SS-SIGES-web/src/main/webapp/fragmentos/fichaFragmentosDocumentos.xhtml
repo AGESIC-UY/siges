@@ -10,7 +10,13 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
-    <!--    <o:form id="frmDocumentos">-->
+    <script type="text/javascript">
+        function recargar() {
+            console.log('recargando...');
+            window.location.reload();
+        }
+    </script>
+
 
     <ice:panelPopup draggable="true"
                     positionOnLoadOnly="true"
@@ -128,7 +134,7 @@
                     </ice:panelGrid>
 
                     <ice:panelGroup>
-<!--                        <ace:messages id="messages"/>-->
+                        <!--                        <ace:messages id="messages"/>-->
                         <ace:pushButton value="#{labels.guardar}"
                                         action="#{fichaMB.guardarDocumentoPopupAction()}"
                                         rendered="#{fichaMB.fieldRendered('guardarDocPopup') or fichaMB.isCoordinadordeEntregable(fichaMB.documentoPopup)}"
@@ -190,17 +196,15 @@
             <ice:panelGroup id="documentosForm" styleClass="formulario">
 
                 <h:panelGrid columns="1">
-                    <h:commandButton value="#{labels.agregarDocumento}" 
-                                     action="#{fichaMB.abrirDocumentoAction()}"
-                                     styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'botonEditar' : 'botonAgregar'}"
-                                     rendered="#{fichaMB.fieldRendered('btnAgregarDocumento') or fichaMB.isCoordAlgunEntregable()}" />
+                    <ace:pushButton value="#{labels.agregarDocumento}" 
+                                    action="#{fichaMB.abrirDocumentoAction()}"
+                                    styleClass="boton principal agregar"
+                                    rendered="#{fichaMB.fieldRendered('btnAgregarDocumento') or fichaMB.isCoordAlgunEntregable()}" />
                 </h:panelGrid>
 
                 <ice:panelPopup id="popupDocumentosForm"
                                 visible="#{fichaMB.docsFormDataExpanded}"
-                                rendered="#{fichaMB.docsFormDataExpanded}"
-                                draggable="true"
-                                positionOnLoadOnly="true"
+
                                 modal="true">
                     <f:facet name="header">
                         <ice:panelGroup styleClass="cabezalPopup">
@@ -213,14 +217,15 @@
 
                         <ice:panelGroup id="documentosFormData">
 
+
                             <ice:panelGrid  styleClass="formulario " columns="4">
-                                <ice:outputLabel value="#{labels.tipoDocumento}"/>
+                                <ice:outputLabel value="#{labels.tipoDocumento}" styleClass="obligatorio"/>
                                 <ace:simpleSelectOneMenu id="comboTipoDocumento"
                                                          value="#{fichaMB.listaTipoDocCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaTipoDocCombo.items}"/>
                                 </ace:simpleSelectOneMenu>
 
-                                <ice:outputLabel value="#{labels.nombreDocumento}"/>
+                                <ice:outputLabel value="#{labels.nombreDocumento}" styleClass="obligatorio"/>
                                 <ace:textEntry value="#{fichaMB.documento.docsNombre}" />
 
                                 <ice:outputLabel value="#{labels.privadoDocumento}"/>
@@ -244,40 +249,69 @@
                                     <f:selectItems value="#{fichaMB.listaDocPagoCombo.items}"/>
                                 </ace:simpleSelectOneMenu>
 
-                                <ice:outputLabel value="#{labels.fileDocumento}"/>
-                                <ice:panelGroup>
-                                    <ace:fileEntry id="fileEntryDoc"
-                                                   label="#{labels.fileDocumento}"
-                                                   callback=""
-                                                   relativePath="/files/"
-                                                   maxFileCount="1" 
-                                                   maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
-                                                   fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
-                                                   maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
-                                                   maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
-                                                   useOriginalFilename="true" 
-                                                   useSessionSubdir="true"
-                                                   immediate="true"
-                                                   style="width: 280px;"/>
-                                    <ace:messages for="fileEntryDoc" />
-                                </ice:panelGroup>
+                                <ice:outputLabel value="#{labels.fileDocumento}" styleClass="obligatorio"/>
+                                
+
+
+                                    <ice:panelGroup>
+                                        <ice:panelGrid  styleClass="formulario" columns="3">
+                                            <ace:fileEntry id="fileEntryDoc"
+                                                           label="#{labels.fileDocumento}"
+                                                           callback=""
+                                                           relativePath="/files/"
+                                                           maxFileCount="1" 
+                                                           maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                                                           fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
+                                                           maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
+                                                           maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
+                                                           useOriginalFilename="true" 
+                                                           useSessionSubdir="true"
+                                                           immediate="true"
+
+                                                           style="width: 280px;"/>
+                                            <ace:messages for="fileEntryDoc" />
+                                            <h:commandButton id="btnSubmitLogo" type="submit"
+                                                             styleClass="iconoTabla subir" rendered = "#{fichaMB.isFirefox}"/>
+                                        </ice:panelGrid>
+                                    </ice:panelGroup>
+
+
+
+
+                              
 
                             </ice:panelGrid>
 
+
+
                             <ice:panelGroup styleClass="panelBotones">
-<!--                                <ace:messages for="ficha:btnAgregar"/>
-                                <ace:messages globalOnly="true"/>-->
-                                <ace:messages for="ficha:btnAgregar"/>
-                                <h:commandButton id="btnAgregar" action="#{fichaMB.agregarDocumentoAction()}"
+                                <!--                                <ace:messages for="ficha:btnAgregar"/>
+                                                                <ace:messages globalOnly="true"/>-->
+                                <ace:messages for="ficha:btnAgregar" rendered = "#{fichaMB.isFirefox}"/>
+                                <ice:commandButton id="btnAgregar" actionListener="#{fichaMB.agregarDocumentoAction1()}"
+                                                   value="#{labels.guardar}" 
+                                                   styleClass="boton principal botonGuardar"   
+                                                   rendered = "#{fichaMB.fieldRendered('agregarDocumento') and (fichaMB.isFirefox)}"   >
+
+                                </ice:commandButton>
+                                <ace:messages for="ficha:btnAgregar2"  rendered = "#{not fichaMB.isFirefox}"/>
+                                <h:commandButton id="btnAgregar2" actionListener="#{fichaMB.agregarDocumentoAction1()}"
                                                  value="#{labels.guardar}" 
-                                                 styleClass="boton principal botonGuardar" 
-                                                 type="submit"
-                                                 rendered = "#{fichaMB.fieldRendered('agregarDocumento')}" />
+                                                 styleClass="boton principal botonGuardar"   
+                                                 rendered = "#{fichaMB.fieldRendered('agregarDocumento') and (not fichaMB.isFirefox)}"   >
+
+                                </h:commandButton>
+
+
+
+
+
+
                                 <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
                                                  action="#{fichaMB.cerrarFormCollapsable()}"/>
                             </ice:panelGroup>
 
-                        </ice:panelGroup> 
+                        </ice:panelGroup>
 
                     </f:facet>
                 </ice:panelPopup>
@@ -362,7 +396,7 @@
                         <ace:tooltip id="tooltipVer" for="btnVerDocumentos">
                             <ice:outputText value="#{labels.documentoVer}" />
                         </ace:tooltip>
-                        <h:commandButton id="btnVerDocumentos"
+                        <ace:pushButton  id="btnVerDocumentos"
                                          action="#{fichaMB.documentosPopup(doc.docsPk)}" 
                                          styleClass="iconoTabla botonVer"/>
                     </ace:column>
@@ -405,7 +439,7 @@
                                                 modal="true"
                                                 position="center">
                             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                <h:commandButton value="#{labels.si}"
+                               <ice:commandButton  value="#{labels.si}"
                                                  styleClass="boton principal botonContinuar"
                                                  onclick="confirmationEliminarDoc#{doc.docsPk}.hide();" 
                                                  actionListener="#{fichaMB.eliminarDocumentoAction(doc.docsPk)}"/>

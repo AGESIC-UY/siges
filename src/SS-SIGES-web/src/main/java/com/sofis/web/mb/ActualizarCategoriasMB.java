@@ -1,7 +1,6 @@
 package com.sofis.web.mb;
 
 import com.sofis.business.ejbs.CategoriaProyectosBean;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.genericos.constantes.ConstantesNavegacion;
 import com.sofis.web.utils.JSFUtils;
@@ -22,44 +21,48 @@ import javax.inject.Inject;
 @SessionScoped
 public class ActualizarCategoriasMB implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ActualizarCategoriasMB.class.getName());
-    
-    @ManagedProperty("#{inicioMB}")
-    private InicioMB inicioMB;
-    
-    @Inject
-    private CategoriaProyectosBean categoriaProyectosBean;
-    
-    /**
-     * Creates a new instance of ActualizarCategoriasMB
-     */
-    public ActualizarCategoriasMB() {
-    }
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ActualizarCategoriasMB.class.getName());
 
-    @PostConstruct
-    public void init() {
-	
-    }
+	@ManagedProperty("#{inicioMB}")
+	private InicioMB inicioMB;
 
-    public void setInicioMB(InicioMB inicioMB) {
-        this.inicioMB = inicioMB;
-    }
-    
-    public String actualizarAction() {
-        logger.log(Level.INFO, "-- Actualizar Categorias desde el Visualizador");
-        try {
-            categoriaProyectosBean.actualizarCategorias(inicioMB.getOrganismo().getOrgPk());
-            JSFUtils.agregarMsgInfo("Las Categorias se actualizaron correctamente.");
-        } catch (BusinessException be) {
-            logger.log(Level.SEVERE, "Error al actualizar las Categorias.", be);
-            JSFUtils.agregarMsgError("Error al actualizar las Categorias.");
-        }
-                
-        return null;
-    }
-    
-    public String salirAction() {
-        return ConstantesNavegacion.IR_A_INICIO;
-    }
+	@Inject
+	private CategoriaProyectosBean categoriaProyectosBean;
+
+	/**
+	 * Creates a new instance of ActualizarCategoriasMB
+	 */
+	public ActualizarCategoriasMB() {
+	}
+
+	@PostConstruct
+	public void init() {
+
+	}
+
+	public void setInicioMB(InicioMB inicioMB) {
+		this.inicioMB = inicioMB;
+	}
+
+	public String actualizarAction() {
+		logger.log(Level.INFO, "-- Actualizar Categorias desde el Visualizador");
+		try {
+			categoriaProyectosBean.actualizarCategorias(inicioMB.getOrganismo().getOrgPk());
+			JSFUtils.agregarMsgInfo("Las Categorias se actualizaron correctamente.");
+		} catch (BusinessException be) {
+			logger.log(Level.SEVERE, "Error al actualizar las Categorias.", be);
+
+			String mensaje = be.getErrores().isEmpty() ? "Error al actualizar categorías"
+					: be.getErrores().get(0);
+
+			JSFUtils.agregarMsgError(mensaje);
+		}
+
+		return null;
+	}
+
+	public String salirAction() {
+		return ConstantesNavegacion.IR_A_INICIO;
+	}
 }

@@ -14,53 +14,53 @@
 
     <ice:panelGroup styleClass="indicadoresCronograma">
 
-        <c:if test="#{(fichaMB.indiceAvanceFinalizado[0] == 0 and fichaMB.indiceAvanceFinalizado[1] == 0 and fichaMB.indiceAvanceFinalizado[2] == 0) or (fichaMB.indiceAvanceParcial[0] == 0 and fichaMB.indiceAvanceParcial[1] == 0 and fichaMB.indiceAvanceParcial[2] == 0)}">
+        <c:if test="#{(moduloCronogramaMB.indiceAvanceFinalizado[0] == 0 and moduloCronogramaMB.indiceAvanceFinalizado[1] == 0 and moduloCronogramaMB.indiceAvanceFinalizado[2] == 0) or (moduloCronogramaMB.indiceAvanceParcial[0] == 0 and moduloCronogramaMB.indiceAvanceParcial[1] == 0 and moduloCronogramaMB.indiceAvanceParcial[2] == 0)}">
             <ice:outputText value="#{labels.crono_ind_falta_esfuerzo}" />
         </c:if>
         
-        <c:if test="#{!(fichaMB.indiceAvanceFinalizado[0] == 0 and fichaMB.indiceAvanceFinalizado[1] == 0 and fichaMB.indiceAvanceFinalizado[2] == 0)}">
+        <c:if test="#{!(moduloCronogramaMB.indiceAvanceFinalizado[0] == 0 and moduloCronogramaMB.indiceAvanceFinalizado[1] == 0 and moduloCronogramaMB.indiceAvanceFinalizado[2] == 0)}">
             <ace:tooltip id="tooltipAvanceFinalizado#{ganttIndice}" for="indiceAvanceFinalizado#{ganttIndice}">
                 <ice:outputLabel value="#{labels.crono_ind_avance_finalizado}"/>
-                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[0]}%" style="font-weight: bold; color: blue; "/> -
-                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[1]}%" style="font-weight: bold; color: green"/> -
-                <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[2]}%" style="font-weight: bold; color: red"/>
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[0]}%" style="font-weight: bold; color: blue; "/> -
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[1]}%" style="font-weight: bold; color: green"/> -
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[2]}%" style="font-weight: bold; color: red"/>
             </ace:tooltip>
             <c:set var="porc" value="%"/>
             <ice:panelGroup id="indiceAvanceFinalizado#{ganttIndice}" styleClass="indice3color">
-                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[0]}#{porc}"
+                <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceFinalizado[0]}#{porc}"
                                 styleClass="indice3colorBlue">
-                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[0]}%" rendered="#{fichaMB.indiceAvanceFinalizado[0] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[0]}%" rendered="#{moduloCronogramaMB.indiceAvanceFinalizado[0] gt 10}" />
                 </ice:panelGroup>
-                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[1]}#{porc}"
+                <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceFinalizado[1]}#{porc}"
                                 styleClass="indice3colorGreen">
-                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[1]}%" rendered="#{fichaMB.indiceAvanceFinalizado[1] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[1]}%" rendered="#{moduloCronogramaMB.indiceAvanceFinalizado[1] gt 10}" />
                 </ice:panelGroup>
-                <ice:panelGroup style="width:#{fichaMB.indiceAvanceFinalizado[2]}#{porc}"
+                <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceFinalizado[2]}#{porc}"
                                 styleClass="indice3colorRed">
-                    <ice:outputText value="#{fichaMB.indiceAvanceFinalizado[2]}%" rendered="#{fichaMB.indiceAvanceFinalizado[2] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceFinalizado[2]}%" rendered="#{moduloCronogramaMB.indiceAvanceFinalizado[2] gt 10}" />
                 </ice:panelGroup>
             </ice:panelGroup>
         </c:if>
 
-        <c:if test="#{!(fichaMB.indiceAvanceParcial[0] == 0 and fichaMB.indiceAvanceParcial[1] == 0 and fichaMB.indiceAvanceParcial[2] == 0)}">
+        <c:if test="#{!(moduloCronogramaMB.indiceAvanceParcial[0] == 0 and moduloCronogramaMB.indiceAvanceParcial[1] == 0 and moduloCronogramaMB.indiceAvanceParcial[2] == 0)}">
             <ace:tooltip id="tooltipAvanceParcial#{ganttIndice}" for="indiceAvanceParcial#{ganttIndice}">
                 <ice:outputLabel value="#{labels.crono_ind_avance_parcial}"/>
-                <ice:outputText value="#{fichaMB.indiceAvanceParcial[0]}%" style="font-weight: bold; color: blue; "/> -
-                <ice:outputText value="#{fichaMB.indiceAvanceParcial[1]}%" style="font-weight: bold; color: green"/> -
-                <ice:outputText value="#{fichaMB.indiceAvanceParcial[2]}%" style="font-weight: bold; color: red"/>
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[0]}%" style="font-weight: bold; color: blue; "/> -
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[1]}%" style="font-weight: bold; color: green"/> -
+                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[2]}%" style="font-weight: bold; color: red"/>
             </ace:tooltip>
             <ice:panelGroup id="indiceAvanceParcial#{ganttIndice}" styleClass="indice3color">
-                <ice:panelGroup style="width:#{fichaMB.indiceAvanceParcial[0]}#{porc}"
+                <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceParcial[0]}#{porc}"
                                 styleClass="indice3colorBlue">
-                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[0]}%" rendered="#{fichaMB.indiceAvanceParcial[0] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[0]}%" rendered="#{moduloCronogramaMB.indiceAvanceParcial[0] gt 10}" />
                 </ice:panelGroup>
-                <ice:panelGroup style="width: #{fichaMB.indiceAvanceParcial[1]}#{porc}"
+                <ice:panelGroup style="width: #{moduloCronogramaMB.indiceAvanceParcial[1]}#{porc}"
                                 styleClass="indice3colorGreen">
-                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[1]}%" rendered="#{fichaMB.indiceAvanceParcial[1] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[1]}%" rendered="#{moduloCronogramaMB.indiceAvanceParcial[1] gt 10}" />
                 </ice:panelGroup>
-                <ice:panelGroup style="width: #{fichaMB.indiceAvanceParcial[2]}#{porc}"
+                <ice:panelGroup style="width: #{moduloCronogramaMB.indiceAvanceParcial[2]}#{porc}"
                                 styleClass="indice3colorRed">
-                    <ice:outputText value="#{fichaMB.indiceAvanceParcial[2]}%" rendered="#{fichaMB.indiceAvanceParcial[2] gt 10}" />
+                    <ice:outputText value="#{moduloCronogramaMB.indiceAvanceParcial[2]}%" rendered="#{moduloCronogramaMB.indiceAvanceParcial[2] gt 10}" />
                 </ice:panelGroup>
             </ice:panelGroup>
         </c:if>

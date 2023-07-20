@@ -19,7 +19,7 @@ public class ProgramasDelegate {
 	private ProgramasBean programasBean;
 
 	public Programas guardarPrograma(Programas prog, SsUsuario usuario, Integer orgPk) throws GeneralException {
-		return programasBean.guardarPrograma(prog, usuario, orgPk);
+		return programasBean.guardarPrograma(prog, usuario, orgPk, false);
 	}
 
 	/**
@@ -71,6 +71,10 @@ public class ProgramasDelegate {
 
 	public void guardarIndicadoresSimple(Integer progPk, Integer orgPk) {
 		programasBean.guardarIndicadoresSimple(progPk, orgPk);
+	}
+        
+        public Programas guardarCopiaPrograma(Integer progPk, String nombre, SsUsuario usu, Integer orgPk) {
+		return programasBean.guardarCopiaPrograma(progPk, nombre, usu, orgPk);
 	}
 
 	public void actualizarEstadoPrograma(Proyectos proy, SsUsuario usuario, Integer orgPk) {

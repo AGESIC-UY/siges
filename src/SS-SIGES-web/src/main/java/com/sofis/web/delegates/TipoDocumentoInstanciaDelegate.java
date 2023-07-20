@@ -39,4 +39,9 @@ public class TipoDocumentoInstanciaDelegate {
     public List<TipoDocumentoInstancia> obtenerTipoDocsNoContenidosPorProgramaId(Integer progId, Integer orgId) {
         return tipoDocumentoInstanciaBean.obtenerTipoDocsNoContenidosPorProgramaId(progId, orgId);
     }
+    
+    public List<TipoDocumentoInstancia> copiarTiposDocsIntancia(Integer prgOriginalId,Integer prgNuevoId, Integer orgPk) {
+        return tipoDocumentoInstanciaBean.guardarCopiaTDIPrograma(prgOriginalId, prgNuevoId, orgPk);
+    }
+    
 }

@@ -15,6 +15,7 @@ import com.sofis.entities.data.Documentos;
 import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.LatlngProyectos;
 import com.sofis.entities.data.MediaProyectos;
+import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.enums.TipoFichaEnum;
@@ -50,6 +51,7 @@ import org.agesic.siges.visualizador.web.ws.DocumentosImp;
 import org.agesic.siges.visualizador.web.ws.EntregablesImp;
 import org.agesic.siges.visualizador.web.ws.EstadoProyectos;
 import org.agesic.siges.visualizador.web.ws.MediaImpProyectos;
+import org.agesic.siges.visualizador.web.ws.ObtenerCategoriasXml;
 import org.agesic.siges.visualizador.web.ws.ProyectoImportado;
 import org.agesic.siges.visualizador.web.ws.PublicarProyecto;
 import org.agesic.siges.visualizador.web.ws.PublicarProyecto_Service;
@@ -188,7 +190,9 @@ public class ExportarVisualizadorBean {
     }
 
     public List<CategoriaProyectos> obtenerCategorias(Integer orgPk) {
-
+		
+		Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
+		
         CategoriaProyectosResponse response = null;
 
         String expPorPGE = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.VISUALIZADOR_EXPORTACION_POR_PGE, orgPk);
@@ -196,46 +200,49 @@ public class ExportarVisualizadorBean {
         if (StringsUtils.isEmpty(expPorPGE) || expPorPGE.equalsIgnoreCase("true")) {
             //Por PGE
             try {
-                response = proxyBean.proxyObtenerCategorias(ConstanteApp.APP_NAME, orgPk);
-            } catch (PGEProxyException pGEProxyException) {
+                response = proxyBean.proxyObtenerCategorias(ConstanteApp.APP_NAME, orgPk, org.getOrgToken());
+            
+			} catch (PGEProxyException pGEProxyException) {
                 logger.log(Level.SEVERE, null, pGEProxyException);
                 BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_EXP_VISUA_PGE_PROXY);
+                be.addError("Error al conectar con el visualizador");
                 throw be;
             }
         } else {
             //Sin PGE
             try {
                 PublicarProyecto port = publicarProyectoSinPGE(orgPk);
-                response = port.obtenerCategoriasXml();
+                response = port.obtenerCategoriasXml(org.getOrgToken());
+				
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, "Error Obtener Categorias Sin PGE.", ex);
                 BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_EXP_VISUA_WS_PROXY);
+                be.addError("Error al conectar con el visualizador");
                 throw be;
             }
         }
 
-        if (response != null) {
-            if (response.getListCatProy() != null) {
-                List<CategoriaProyectos> listCP = new ArrayList<>();
-                for (org.agesic.siges.visualizador.web.ws.CategoriaProyectos categoriaProyectos : response.getListCatProy()) {
-                    CategoriaProyectos cp = VisualizadorWSUtils.convertCategoriaProyectos(categoriaProyectos, orgPk);
-                    listCP.add(cp);
-                }
-                return listCP;
-            }
-        }
-        return null;
+		if (response.getError() != null && !response.getError().equals("0")) {
+
+			BusinessException be = new BusinessException();
+			be.addError(response.getError());
+			
+			throw be;
+		}
+
+		List<CategoriaProyectos> listCP = new ArrayList<>();
+		for (org.agesic.siges.visualizador.web.ws.CategoriaProyectos categoriaProyectos : response.getListCatProy()) {
+			CategoriaProyectos cp = VisualizadorWSUtils.convertCategoriaProyectos(categoriaProyectos, orgPk);
+			listCP.add(cp);
+		}
+		
+		return listCP;
     }
 
     private PublicarProyecto publicarProyectoSinPGE(Integer orgPk) {
         String paramURLWSDL = conf.obtenerCnfValorPorCodigo(ConfiguracionCodigos.VISUALIZADOR_PUBLICARSERVICIO_WSDL, orgPk);
         String paramendpointURL = conf.obtenerCnfValorPorCodigo(ConfiguracionCodigos.VISUALIZADOR_PUBLICARSERVICIO_SOAPACTION, orgPk);
 
-        // String paramendpointURL = "http://VISUALIZADOR-GA:8080/SigesVisualizadorPrivado/PublicarProyecto?wsdl";
-//        logger.info("paramURLWSDL:" + paramURLWSDL);
-//        logger.info("paramendpointURL:" + paramendpointURL);
         try {
             URL url = new URL(paramURLWSDL);
             QName qname = new QName("http://ws.web.visualizador.siges.agesic.org/", "PublicarProyecto");
@@ -253,12 +260,12 @@ public class ExportarVisualizadorBean {
         } catch (MalformedURLException malformedURLException) {
             logger.log(Level.SEVERE, "Error WS Sin PGE:" + paramendpointURL, malformedURLException);
             BusinessException be = new BusinessException();
-            be.addError(MensajesNegocio.ERROR_EXP_VISUA_WS_PROXY);
+            be.addError("Error al conectar con visualizador");
             throw be;
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "Error WS Sin PGE:" + paramendpointURL, ex);
             BusinessException be = new BusinessException();
-            be.addError(MensajesNegocio.ERROR_EXP_VISUA_WS_PROXY);
+            be.addError("Error al conectar con visualizador");
             throw be;
         }
     }
@@ -510,7 +517,7 @@ public class ExportarVisualizadorBean {
         List<MediaImpProyectos> listImpMP = mediaProyectosBean.crearMediaProyFromImp(listMP);
 
         if (listImpMP != null) {
-            //proyVisualizador.setMediaImpProyectosList(new ArrayList<MediaImpProyectos>());
+			
             proyVisualizador.getMediaImpProyectosList().addAll(listImpMP);
         }
 
@@ -519,15 +526,10 @@ public class ExportarVisualizadorBean {
             // No pongo media
             proyVisualizador.setMediaImpProyectosIds(null);
 
-            // No pogo los documentos y solo agrego una locaclización
+            // No pongo los documentos y solo agrego una localización
             Set<LatlngProyectos> latLngInsert = proySiges.getLatLngProyList();
 
             proyVisualizador.getLatlngProyectoImpList().add(latlngBean.crearLatlngProyecto(latLngInsert.iterator().next()));
-            /*
-                    ArrayList<DocumentosImp> colDummy = new ArrayList<DocumentosImp>();
-                    
-                    proyVisualizador.getDocsImpList().addAll(colDummy);
-             */
 
             proyVisualizador.setDocsImpList(null);
 
@@ -566,10 +568,8 @@ public class ExportarVisualizadorBean {
                 }
                 List<Documentos> listDocs = documentosBean.cargarArchivosDocumentos(toImportDocs);
                 List<DocumentosImp> listDocsImp = documentosBean.crearDocsImpFromDocs(listDocs, proySigesOrgPk);
-                if (listDocsImp != null) {
-                    /*
-                                * Nico 23-04-2018 : Se crea la colección nueva porque antes se creaba en el getter.
-                     */
+
+				if (listDocsImp != null) {
 
                     proyVisualizador.setDocsImpList(new ArrayList<DocumentosImp>());
                     proyVisualizador.getDocsImpList().addAll(listDocsImp);

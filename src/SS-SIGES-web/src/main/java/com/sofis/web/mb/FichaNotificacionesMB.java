@@ -23,7 +23,7 @@ import javax.inject.Inject;
  */
 @ManagedBean(name = "fichaNotificacionesMB")
 @ViewScoped
-public class FichaNotificacionesMB implements Serializable{
+public class FichaNotificacionesMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(FichaNotificacionesMB.class.getName());
@@ -72,24 +72,27 @@ public class FichaNotificacionesMB implements Serializable{
     }
 
     public String guardarNotifInst() {
+        // logger.info("guardarNotificacion");
         if (CollectionsUtils.isNotEmpty(notifInstList)) {
             try {
-                notifInstList = notificacionInstanciaDelegate.guardarNotificacionInstancia(notifInstList);
+
+                notificacionInstanciaDelegate.guardarListaNotificacionInstancia(notifInstList);
                 if (notifInstList != null) {
+
                     JSFUtils.agregarMsg("", Labels.getValue("info_notif_inst_guardado"), null);
                     fichaMB.cerrarPopupNotificacion();
+                    //  logger.info("pasó cierro popup");
                 }
             } catch (BusinessException be) {
                 logger.log(Level.SEVERE, be.getMessage());
                 /*
                 *  18-06-2018 Inspección de código.
-                */
+                 */
 
                 //JSFUtils.agregarMsg("", Labels.getValue("error_notif_inst_guardar"), null);
-
-                for(String iterStr : be.getErrores()){
-                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-                }                  
+                for (String iterStr : be.getErrores()) {
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+                }
 
             }
         }

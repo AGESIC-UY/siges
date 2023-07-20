@@ -36,27 +36,22 @@ import org.hibernate.annotations.FetchMode;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "proyectos")
 @XmlRootElement
 @NamedQueries({
-	@NamedQuery(name = "Proyectos.findAll", query = "SELECT p FROM Proyectos p")
-	,
-    @NamedQuery(name = "Proyectos.findByProyPk", query = "SELECT p FROM Proyectos p WHERE p.proyPk = :proyPk")
-	,
-    @NamedQuery(name = "Proyectos.findByProyPeso", query = "SELECT p FROM Proyectos p WHERE p.proyPeso = :proyPeso")
-	,
-    @NamedQuery(name = "Proyectos.findByProyObjetivo", query = "SELECT p FROM Proyectos p WHERE p.proyObjetivo = :proyObjetivo")
-	,
-    @NamedQuery(name = "Proyectos.findByProyObjPublico", query = "SELECT p FROM Proyectos p WHERE p.proyObjPublico = :proyObjPublico")
-	,
-    @NamedQuery(name = "Proyectos.findByProySituacionActual", query = "SELECT p FROM Proyectos p WHERE p.proySituacionActual = :proySituacionActual")
-	,
-    @NamedQuery(name = "Proyectos.findByProyNombre", query = "SELECT p FROM Proyectos p WHERE p.proyNombre = :proyNombre")
+	@NamedQuery(name = "Proyectos.findAll", query = "SELECT p FROM Proyectos p"),
+    @NamedQuery(name = "Proyectos.findByProyPk", query = "SELECT p FROM Proyectos p WHERE p.proyPk = :proyPk"),
+    @NamedQuery(name = "Proyectos.findByProyPeso", query = "SELECT p FROM Proyectos p WHERE p.proyPeso = :proyPeso"),
+    @NamedQuery(name = "Proyectos.findByProyObjetivo", query = "SELECT p FROM Proyectos p WHERE p.proyObjetivo = :proyObjetivo"),
+    @NamedQuery(name = "Proyectos.findByProyObjPublico", query = "SELECT p FROM Proyectos p WHERE p.proyObjPublico = :proyObjPublico"),
+    @NamedQuery(name = "Proyectos.findByProySituacionActual", query = "SELECT p FROM Proyectos p WHERE p.proySituacionActual = :proySituacionActual"),
+    @NamedQuery(name = "Proyectos.findByProyNombre", query = "SELECT p FROM Proyectos p WHERE p.proyNombre = :proyNombre"),
+    @NamedQuery(name = "Proyectos.findEstadoByIdPresupuesto", query = "SELECT p.proyEstFk FROM Proyectos p WHERE p.proyPreFk.prePk = :idPresupuesto"),
+    @NamedQuery(name = "Proyectos.findEstadoByIdCronograma", query = "SELECT p.proyEstFk FROM Proyectos p WHERE p.proyCroFk.croPk = :idCronograma"),
+    @NamedQuery(name = "Proyectos.findByIdCronograma", query = "SELECT p FROM Proyectos p WHERE p.proyCroFk.croPk = :idCronograma"),
+    @NamedQuery(name = "Proyectos.findIdByIdCronograma", query = "SELECT p.proyPk FROM Proyectos p WHERE p.proyCroFk.croPk = :idCronograma"),
+    @NamedQuery(name = "Proyectos.updateFechaActualizacionById", query = "UPDATE Proyectos p SET p.proyFechaAct = :fechaModificacion WHERE p.proyPk = :idProyecto")
 })
 @NamedNativeQueries({
 	@NamedNativeQuery(name = "Proyectos.findByProyProgCodigo", query = "SELECT DISTINCT p.proy_prog_fk, p.proy_pk FROM proyectos p WHERE p.proy_pk LIKE :codigo OR p.proy_prog_fk LIKE :codigo")
@@ -231,12 +226,22 @@ public class Proyectos implements Serializable {
 	 */
 	@Column(name = "proy_activo")
 	private Boolean activo;
+	
+	@Column(name = "fecha_cambio_activacion")
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	private Date fechaCambioActivacion;
+	
+	@Column(name = "usuario_cambio_activacion")
+	private String usuarioCambioActivacion;
+	
 	@Column(name = "proy_fecha_crea")
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	private Date proyFechaCrea;
+	
 	@Column(name = "proy_fecha_act")
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	private Date proyFechaAct;
+	
 	@Column(name = "proy_fecha_est_act")
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	private Date proyFechaEstadoAct;
@@ -319,11 +324,11 @@ public class Proyectos implements Serializable {
 	}
 
 	public void setProyDescripcion(String proyDescripcion) {
-                if (proyDescripcion != null) {
-                    this.proyDescripcion = Jsoup.clean(
-                            proyDescripcion, Whitelist.basic()
-                    );
-                }
+		if (proyDescripcion != null) {
+			this.proyDescripcion = Jsoup.clean(
+					proyDescripcion, Whitelist.basic()
+			);
+		}
 	}
 
 	public String getProyObjetivo() {
@@ -331,9 +336,9 @@ public class Proyectos implements Serializable {
 	}
 
 	public void setProyObjetivo(String proyObjetivo) {
-                if (proyObjetivo != null) {
-                    this.proyObjetivo = Jsoup.clean(proyObjetivo, Whitelist.basic());
-                }
+		if (proyObjetivo != null) {
+			this.proyObjetivo = Jsoup.clean(proyObjetivo, Whitelist.basic());
+		}
 	}
 
 	public String getProyObjPublico() {
@@ -341,9 +346,9 @@ public class Proyectos implements Serializable {
 	}
 
 	public void setProyObjPublico(String proyObjPublico) {
-                if (proyObjPublico != null) {
-                    this.proyObjPublico = Jsoup.clean(proyObjPublico, Whitelist.basic());
-                }
+		if (proyObjPublico != null) {
+			this.proyObjPublico = Jsoup.clean(proyObjPublico, Whitelist.basic());
+		}
 	}
 
 	public String getProySituacionActual() {
@@ -351,9 +356,12 @@ public class Proyectos implements Serializable {
 	}
 
 	public void setProySituacionActual(String proySituacionActual) {
-                if (proySituacionActual != null) {
-                    this.proySituacionActual = Jsoup.clean(proySituacionActual, Whitelist.basic());
-                }
+		if (proySituacionActual != null) {
+			this.proySituacionActual = Jsoup.clean(proySituacionActual, Whitelist.basic());
+		}
+		else {
+			this.proySituacionActual = null;			
+		}
 	}
 
 	public String getProyFactorImpacto() {
@@ -361,9 +369,9 @@ public class Proyectos implements Serializable {
 	}
 
 	public void setProyFactorImpacto(String proyFactorImpacto) {
-                if (proyFactorImpacto != null) {
-                    this.proyFactorImpacto = Jsoup.clean(proyFactorImpacto, Whitelist.basic());
-                }
+		if (proyFactorImpacto != null) {
+			this.proyFactorImpacto = Jsoup.clean(proyFactorImpacto, Whitelist.basic());
+		}
 	}
 
 	public String getProyNombre() {
@@ -717,8 +725,8 @@ public class Proyectos implements Serializable {
 	public boolean isEstado(Integer estPk) {
 		return this.getProyEstFk().isEstado(estPk);
 	}
-        
-        public boolean isEstadoPendiente(Integer estPenPk) {
+
+	public boolean isEstadoPendiente(Integer estPenPk) {
 		return this.proyEstPendienteFk.getEstPk() == estPenPk;
 	}
 
@@ -790,6 +798,8 @@ public class Proyectos implements Serializable {
 		proy.setProyVersion(proyVersion);
 		proy.setProyectoOriginal(proyectoOriginal);
 		proy.setActivo(activo);
+		proy.setFechaCambioActivacion(fechaCambioActivacion);
+		proy.setUsuarioCambioActivacion(usuarioCambioActivacion);
 		proy.setProyPublicable(proyPublicable);
 		proy.setAreasRestringidasSet(areasRestringidasSet);
 		proy.setAreasTematicasSet(areasTematicasSet);
@@ -803,23 +813,10 @@ public class Proyectos implements Serializable {
 		return proy;
 	}
 
-	public void toSystemOut() {
-		System.out.println("-- Proyectos --");
-		System.out.println("Pk:" + this.proyPk != null ? this.proyPk : "");
-		System.out.println("Nombre:" + this.proyNombre != null ? this.proyNombre : "");
-		System.out.println("Estado:" + this.proyEstFk != null ? this.proyEstFk : "");
-	}
-
-	/**
-	 * @return the objetivoEstrategico
-	 */
 	public ObjetivoEstrategico getObjetivoEstrategico() {
 		return objetivoEstrategico;
 	}
 
-	/**
-	 * @param objetivoEstrategico the objetivoEstrategico to set
-	 */
 	public void setObjetivoEstrategico(ObjetivoEstrategico objetivoEstrategico) {
 		this.objetivoEstrategico = objetivoEstrategico;
 	}
@@ -839,4 +836,21 @@ public class Proyectos implements Serializable {
 	public void setProyFechaActPub(Date proyFechaActPub) {
 		this.proyFechaActPub = proyFechaActPub;
 	}
+
+	public Date getFechaCambioActivacion() {
+		return fechaCambioActivacion;
+	}
+
+	public void setFechaCambioActivacion(Date fechaCambioActivacion) {
+		this.fechaCambioActivacion = fechaCambioActivacion;
+	}
+
+	public String getUsuarioCambioActivacion() {
+		return usuarioCambioActivacion;
+	}
+
+	public void setUsuarioCambioActivacion(String usuarioCambioActivacion) {
+		this.usuarioCambioActivacion = usuarioCambioActivacion;
+	}
+	
 }

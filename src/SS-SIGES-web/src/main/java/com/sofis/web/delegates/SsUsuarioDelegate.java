@@ -3,6 +3,7 @@ package com.sofis.web.delegates;
 import com.sofis.business.ejbs.SsUsuarioBean;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.SsRol;
+import com.sofis.entities.data.SsUsuOfiRoles;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.GeneralException;
@@ -110,7 +111,7 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerTodosPorOrganismo");
         return ssUsuarioBean.obtenerTodosPorOrganismo(orgId);
     }
-
+    
     public List<SsUsuario> obtenerTodosPorOrganismo(Integer orgId, Boolean activos) {
         //System.out.println("obtenerTodosPorOrganismo");
         return ssUsuarioBean.obtenerTodosPorOrganismo(orgId, activos);
@@ -121,19 +122,14 @@ public class SsUsuarioDelegate {
         return ssUsuarioBean.obtenerInactivosPorOrganismo(orgId);
     }
 
-    public String obtenerTodosPorOrgCronograma(Integer orgId) {
-        //System.out.println("obtenerTodosPorOrgCronograma");
-        return ssUsuarioBean.obtenerTodosPorOrgCronograma(orgId);
-    }
-
-    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido) {
+    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido,SsRol rol) {
         //System.out.println("busquedaUsuFiltro");
-        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido);
+        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido,rol);
     }
 
-    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido, Boolean activo) {
+    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido, Boolean activo,SsRol rol,String elementoOrdenacion, String ascendente) {
        // System.out.println("busquedaUsuFiltro");
-        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido, activo);
+        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido, activo,rol,elementoOrdenacion,ascendente);
     }
 
     public boolean resetearContrasenia(String email, Integer orgPk) throws BusinessException {

@@ -42,6 +42,10 @@ public class ComponenteProducto implements Serializable {
     @NotNull
     @Column(name = "com_nombre")
     private String comNombre;
+    
+    @Column(name = "com_habilitada")
+    private Boolean comHabilitada;
+    
     @JoinColumn(name = "com_org_fk", referencedColumnName = "org_pk")
     @ManyToOne(optional = false)
     private Organismos comOrgFk;
@@ -74,6 +78,14 @@ public class ComponenteProducto implements Serializable {
         this.comNombre = comNombre;
     }
 
+    public Boolean getComHabilitada() {
+        return comHabilitada;
+    }
+
+    public void setComHabilitada(Boolean comHabilitada) {
+        this.comHabilitada = comHabilitada;
+    }
+    
     public Organismos getComOrgFk() {
         return comOrgFk;
     }

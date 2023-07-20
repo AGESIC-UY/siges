@@ -55,6 +55,11 @@
                         </ice:panelGroup>
                     </ice:panelGrid>
 
+                    <ice:panelGroup>
+                        <ice:outputLabel value="#{labels.ficha_notif_head_asunto}:" />
+                        <ace:textEntry value="#{notificacionMB.notifEnEdicion.notAsunto}" />
+                    </ice:panelGroup>
+                    
                     <ice:panelGrid styleClass="formulario" >
                         <ice:outputLabel value="#{labels.notif_head_mensaje}:" />
                         <ace:richTextEntry id="notifMensaje"

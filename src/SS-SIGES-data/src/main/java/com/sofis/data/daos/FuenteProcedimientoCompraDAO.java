@@ -106,28 +106,35 @@ public class FuenteProcedimientoCompraDAO extends HibernateJpaDAOImp<FuenteProce
     }
 
     public FuenteProcedimientoCompra obtenerPorFuenteProcedimientoCompra(FuenteFinanciamiento fuente, ProcedimientoCompra procedimientoCompra) throws DAOGeneralException {
-        String queryStr = "";
-        queryStr = "SELECT fpc FROM FuenteProcedimientoCompra fpc"
+
+		return obtenerPorFuenteProcedimientoCompra(fuente.getFueNombre(), procedimientoCompra.getProcCompNombre(), fuente.getFueOrgFk().getOrgPk());
+    }
+
+	public FuenteProcedimientoCompra obtenerPorFuenteProcedimientoCompra(String nombreFuenteFinanciamiento, 
+			String nombreProcedimientoCompra, Integer orgPk) throws DAOGeneralException {
+	
+		String queryStr = "SELECT fpc FROM FuenteProcedimientoCompra fpc"
                 + " WHERE :fuente LIKE CONCAT(fpc.fueProComFuente, '%')"
                 + " and :procedimientoCompra LIKE CONCAT(fpc.fueProComProcedimientoCompra, '%')"
                 + " and fpc.fueProComHabilitado IS TRUE"
-                + " and fpc.fueProComOrgFk = :orgFk";
+                + " and fpc.fueProComOrgFk.orgPk = :orgFk";
+		
         Query query = super.getEm().createQuery(queryStr);
-        query.setParameter("orgFk", fuente.getFueOrgFk());
-        query.setParameter("fuente", fuente.getFueNombre());
-        query.setParameter("procedimientoCompra", procedimientoCompra.getProcCompNombre());
+        query.setParameter("fuente", nombreFuenteFinanciamiento);
+        query.setParameter("procedimientoCompra", nombreProcedimientoCompra);
+        query.setParameter("orgFk", orgPk);
         query.setMaxResults(1);
-        List<FuenteProcedimientoCompra> result = null;
+		
         try {
-            result = query.getResultList();
+            List<FuenteProcedimientoCompra> result = query.getResultList();
             if (result != null && result.size() > 0) {
                 return result.get(0);
             }
             return null;
+			
         } catch (Exception e) {
             logger.log(Level.SEVERE, queryStr, e);
             throw e;
         }
-    }
-
+	}
 }

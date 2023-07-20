@@ -24,27 +24,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "pagos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pagos.findAll", query = "SELECT p FROM Pagos p")
-    ,
-    @NamedQuery(name = "Pagos.findByPagPk", query = "SELECT p FROM Pagos p WHERE p.pagPk = :pagPk")
-    ,
-    @NamedQuery(name = "Pagos.findByPagObservacion", query = "SELECT p FROM Pagos p WHERE p.pagObservacion = :pagObservacion")
-    ,
-    @NamedQuery(name = "Pagos.findByPagFechaPlanificada", query = "SELECT p FROM Pagos p WHERE p.pagFechaPlanificada = :pagFechaPlanificada")
-    ,
-    @NamedQuery(name = "Pagos.findByPagImportePlanificado", query = "SELECT p FROM Pagos p WHERE p.pagImportePlanificado = :pagImportePlanificado")
-    ,
-    @NamedQuery(name = "Pagos.findByPagFechaReal", query = "SELECT p FROM Pagos p WHERE p.pagFechaReal = :pagFechaReal")
-    ,
-    @NamedQuery(name = "Pagos.findByPagImporteReal", query = "SELECT p FROM Pagos p WHERE p.pagImporteReal = :pagImporteReal")})
+    @NamedQuery(name = "Pagos.findAll", query = "SELECT p FROM Pagos p"),
+    @NamedQuery(name = "Pagos.findByPagPk", query = "SELECT p FROM Pagos p WHERE p.pagPk = :pagPk"),
+    @NamedQuery(name = "Pagos.findByPagObservacion", query = "SELECT p FROM Pagos p WHERE p.pagObservacion = :pagObservacion"),
+    @NamedQuery(name = "Pagos.findByPagFechaPlanificada", query = "SELECT p FROM Pagos p WHERE p.pagFechaPlanificada = :pagFechaPlanificada"),
+    @NamedQuery(name = "Pagos.findByPagImportePlanificado", query = "SELECT p FROM Pagos p WHERE p.pagImportePlanificado = :pagImportePlanificado"),
+    @NamedQuery(name = "Pagos.findByPagFechaReal", query = "SELECT p FROM Pagos p WHERE p.pagFechaReal = :pagFechaReal"),
+    @NamedQuery(name = "Pagos.findByPagImporteReal", query = "SELECT p FROM Pagos p WHERE p.pagImporteReal = :pagImporteReal"),
+    @NamedQuery(name = "Pagos.findIdProyectoByIdPago", query = "SELECT p.pagAdqFk.adqPreFk.proyecto.proyPk FROM Pagos p WHERE p.pagPk = :idPago"),
+})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -94,9 +86,6 @@ public class Pagos implements Serializable {
     @JoinColumn(name = "pag_proveedor_fk", referencedColumnName = "orga_pk")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private OrganiIntProve pagProveedorFk;    
-
-    //@OneToOne(mappedBy = "docsPagoFk", fetch = FetchType.EAGER)
-    //private Documentos documento;
 
     public Pagos(Integer pagPk) {
         this.pagPk = pagPk;
@@ -184,13 +173,6 @@ public class Pagos implements Serializable {
         return pagConfirmar != null ? pagConfirmar : false;
     }
 
-    /* public Documentos getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(Documentos documento) {
-        this.documento = documento;
-    }*/
     public Entregables getEntregables() {
         return entregables;
     }
@@ -279,11 +261,6 @@ public class Pagos implements Serializable {
         copy.setPagImporteReal(this.getPagImporteReal());
         copy.setPagObservacion(this.getPagObservacion());
         copy.setPagTxtReferencia(this.getPagTxtReferencia());
-
-        /*
-                * 14-03-18 Nico: Se agregan estos atributos a la clase 
-                *       porque fallaba al copiar un pago.
-         */
         copy.setPagGasto(this.getPagGasto());
         copy.setPagInversion(this.getPagInversion());
         copy.setPagContrOrganizacionFk(this.getPagContrOrganizacionFk());

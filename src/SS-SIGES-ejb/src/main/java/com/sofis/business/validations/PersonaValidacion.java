@@ -23,7 +23,7 @@ public class PersonaValidacion {
 
     public static boolean validar(Personas persona) throws BusinessException {
         logger.finest("Validar Personas.");
-        BusinessException be = new BusinessException("Validación de la persona");
+        BusinessException be = new BusinessException();
 
         if (persona == null) {
             be.addError(MensajesNegocio.ERROR_PERSONA_NULL);
@@ -34,7 +34,7 @@ public class PersonaValidacion {
             if (StringsUtils.isEmpty(persona.getPersNombre())) {
                 be.addError(MensajesNegocio.ERROR_PERSONA_NOMBRE);
             }
-            if (persona.getPersRolFk() == null || persona.getPersRolFk().intValue() < 1) {
+            if (persona.getPersRolFk() == null || persona.getPersRolFk() < 1) {
                 be.addError(MensajesNegocio.ERROR_PERSONA_ROL);
             }
             if(persona.getPersMail() != null && !EmailValidator.validateEmail(persona.getPersMail())){

@@ -2,32 +2,35 @@ package com.sofis.web.delegates;
 
 import com.sofis.business.ejbs.AreaTematicaBean;
 import com.sofis.entities.data.AreasTags;
-import com.sofis.entities.data.Organismos;
-import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FiltroAreaTematicaTO;
 import java.util.List;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class AreaTematicaDelegate {
     
     @Inject
-    AreaTematicaBean areaTematicaBean;
+    private AreaTematicaBean areaTematicaBean;
     
-    public List<AreasTags> obtenerAreasTematicasPorOrganizacion(int organismoId) {
-        return areaTematicaBean.obtenerAreasTematicasPorOrg(organismoId);
+    public List<AreasTags> obtenerPorOrganismo(int organismoId) {
+        return areaTematicaBean.obtenerPorOrganismo(organismoId);
+    }
+    
+    public List<AreasTags> obtenerHabilitadasPorOrganismo(int organismoId) {
+        return areaTematicaBean.obtenerHabilitadasPorOrganismo(organismoId);
     }
 
     public List<AreasTags> obtenerAreasTematicasPorFichaPk(int fichaPk, int tipoFicha) {
         return areaTematicaBean.obtenerAreasTematicasPorFichaPk(fichaPk, tipoFicha);
     }
 
-    public List<AreasTags> busquedaAreaTemFiltro(Integer orgPk, String filtroNombre, String elementoOrdenacion, int ascendente) {
-        return areaTematicaBean.busquedaAreaTemFiltro(orgPk, filtroNombre, elementoOrdenacion, ascendente);
+    public List<AreasTags> buscar(FiltroAreaTematicaTO filtro, String elementoOrdenacion, boolean ascendente) {
+        return areaTematicaBean.buscar(filtro, elementoOrdenacion, ascendente);
     }
-
+	
+    public List<AreasTags> buscar(FiltroAreaTematicaTO filtro, String elementoOrdenacion) {
+        return areaTematicaBean.buscar(filtro, elementoOrdenacion);
+    }
+	
     public AreasTags obtenerAreaTemPorPk(Integer atPk) {
         return areaTematicaBean.obtenerAreaTemPorPk(atPk);
     }
@@ -38,5 +41,9 @@ public class AreaTematicaDelegate {
 
     public AreasTags guardarAreaTematica(AreasTags areaTemEnEdicion) {
         return areaTematicaBean.guardar(areaTemEnEdicion);
+    }
+	
+	public List<AreasTags> obtenerPadres(List<AreasTags> hijas) {
+		return areaTematicaBean.obtenerPadres(hijas);
     }
 }

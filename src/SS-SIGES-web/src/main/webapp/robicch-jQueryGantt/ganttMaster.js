@@ -38,6 +38,7 @@ function GanttMaster() {
     this.coordinadores = [];
     this.usuarioId;
     this.isPM;
+     this.isPMOEditor;
     this.isPMO;
     this.esfuerzoTotal = 0;
     this.horasTotal;
@@ -64,7 +65,6 @@ function GanttMaster() {
     this.__redoStack = [];
 
     this.periodoEntregable = false;
-
     var self = this;
 
 
@@ -73,7 +73,6 @@ function GanttMaster() {
 
 GanttMaster.prototype.init = function (place) {
     this.element = place;
-
     var self = this;
 
     //load templates
@@ -99,7 +98,6 @@ GanttMaster.prototype.init = function (place) {
     //prepend buttons
     place.before($.JST.createFromTemplate({}, "GANTBUTTONS"));
 
-
     //bindings
     place.bind("refreshTasks.gantt", function () {
         self.redrawTasks();
@@ -114,9 +112,21 @@ GanttMaster.prototype.init = function (place) {
                 && !(self.currentTask.parent || self.currentTask.getChildren() > 0)
                 && self.currentTask.canDelete) {
 
-            if (self.currentTask.progress > 0) {
+            if (self.currentTask.progress > 0 && !self.currentTask.esReferencia) {
                 $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_DELETE_PROGRESS"]);
                 ganttDialogUtils.show();
+                return;
+            }
+
+            if (self.currentTask.tieneVincWekan) {
+                $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_DELETE_WEKAN"]);
+                ganttDialogUtils.show();
+                return;
+            }
+
+            if (self.currentTask.esReferidoDesdeOtroProyecto) {
+                $('#ganttDialogConfirmDeleteMsgDiv').text(GanttMaster.messages["GANTT_IS_REFERRED_FROM_OTHER_PROJECT"]);
+                ganttDialogConfirmDelete.show();
                 return;
             }
 
@@ -144,7 +154,33 @@ GanttMaster.prototype.init = function (place) {
             $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_DELETE"]);
             ganttDialogUtils.show();
         }
+    }).bind("confirmDeleteCurrentTask.gantt", function (e) {
+        var row = self.currentTask.getRow();
 
+        self.beginTransaction();
+
+        self.currentTask.deleteTask();
+
+        self.currentTask = undefined;
+
+        self.updateDependsStrings();
+
+        //redraw
+        self.redraw();
+
+        //focus next row
+        row = row > self.tasks.length - 1 ? self.tasks.length - 1 : row;
+        if (row >= 0) {
+            self.currentTask = self.tasks[row];
+            self.currentTask.rowElement.click();
+            self.currentTask.rowElement.find("[name=name]").focus();
+        }
+        self.endTransaction();
+
+        ganttDialogConfirmDelete.hide();
+
+    }).bind("cancelDeleteCurrentTask.gantt", function (e) {
+        ganttDialogConfirmDelete.hide();
     }).bind("addAboveCurrentTask.gantt", function () {
         var factory = new TaskFactory();
 
@@ -155,14 +191,14 @@ GanttMaster.prototype.init = function (place) {
             //cannot add brothers to root
             if (self.currentTask.level <= 0)
                 return;
-            ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1, null, this.usuarioId);
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1, null, self.usuarioId);
             row = self.currentTask.getRow();
         } else {
-            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, self.usuarioId);
         }
 
         self.beginTransaction();
-        var task = self.addTask(ch, row);
+        var task = self.addTask(ch, row, true);
         if (task) {
             task.rowElement.click();
             task.rowElement.find("[name=name]").focus();
@@ -171,10 +207,11 @@ GanttMaster.prototype.init = function (place) {
 
     }).bind("addBelowCurrentTask.gantt", function () {
         var factory = new TaskFactory();
-        self.beginTransaction();
         var ch;
         var row = 0;
         var doAdd = true;
+
+        self.beginTransaction();
 
         if (self.currentTask) {
             if (self.currentTask.endIsMilestone) {
@@ -183,16 +220,22 @@ GanttMaster.prototype.init = function (place) {
             } else if (self.currentTask.tieneProd) {
                 self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
                 doAdd = false;
+            } else if (self.currentTask.esReferencia) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_CHILDS"], self.currentTask);
+                doAdd = false;
+            } else if (self.currentTask.tieneVincWekan) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_WEKAN_CHILDS"], self.currentTask);
+                doAdd = false;
             } else {
-                ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1, null, this.usuarioId);
+                ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1, null, self.usuarioId);
                 row = self.currentTask.getRow() + 1;
             }
         } else {
-            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, self.usuarioId);
         }
 
         if (doAdd) {
-            var task = self.addTask(ch, row);
+            var task = self.addTask(ch, row, true);
             if (task) {
                 task.rowElement.click();
                 task.rowElement.find("[name=name]").focus();
@@ -204,44 +247,52 @@ GanttMaster.prototype.init = function (place) {
     }).bind("indentCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
-            
+
             var taskAbove = self.tasks[self.currentTask.getRow() - 1];
-            
             // Check if task above has a product when current task will be the child
             if (taskAbove !== null && taskAbove.tieneProd && taskAbove.level === self.currentTask.level) {
                 self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+            } else if (taskAbove !== null && taskAbove.esReferencia && taskAbove.level === self.currentTask.level) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_CHILDS"], self.currentTask);
+            } else if (taskAbove !== null && taskAbove.tieneVincWekan && taskAbove.level <= self.currentTask.level) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_WEKAN_CHILDS"], self.currentTask);
             } else {
                 self.currentTask.indent();
             }
-            
+
             self.endTransaction();
         }
 
     }).bind("outdentCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
-            
+
             var taskBelow = self.tasks[self.currentTask.getRow() + 1];
-            
+
             // Check if outdent generate children when current task has a product
             if (taskBelow !== undefined && taskBelow !== null && taskBelow.level === self.currentTask.level && self.currentTask.tieneProd) {
                 self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+            } else if (taskBelow !== undefined && taskBelow !== null && taskBelow.level === self.currentTask.level && self.currentTask.esReferencia) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_CHILDS"], self.currentTask);
+            } else if (taskBelow !== undefined && taskBelow !== null && taskBelow.level === self.currentTask.level && self.currentTask.tieneVincWekan) {
+                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_WEKAN_CHILDS"], self.currentTask);
             } else {
                 self.currentTask.outdent();
             }
-            
+
             self.endTransaction();
         }
 
     }).bind("moveUpCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
+            addReferenceTaskBelowCurrentTask
             self.currentTask.moveUp();
             self.endTransaction();
         }
     }).bind("moveDownCurrentTask.gantt", function () {
         if (self.currentTask) {
-            self.beginTransaction();
+            self.beginTransaction()
             self.currentTask.moveDown();
             self.endTransaction();
         }
@@ -281,7 +332,7 @@ GanttMaster.prototype.init = function (place) {
             ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
         }
         if (doAdd) {
-            var task = self.addTask(ch, row);
+            var task = self.addTask(ch, row, true);
 
             task.name = self.currentTask.name;
             //task.code = self.currentTask.code;
@@ -299,10 +350,7 @@ GanttMaster.prototype.init = function (place) {
             task.coordinador = self.currentTask.coordinador;
             task.esfuerzo = self.currentTask.esfuerzo;
             task.horasEstimadas = self.currentTask.horasEstimadas;
-            //No se copia la línea base
-            //task.startLineaBase = self.currentTask.startLineaBase;
-            //task.durationLineaBase = self.currentTask.durationLineaBase;
-            //task.endLineaBase = self.currentTask.endLineaBase;
+
             task.parent = self.currentTask.parent;
 
             task.canDelete = true;
@@ -324,11 +372,245 @@ GanttMaster.prototype.init = function (place) {
         }
 
         self.endTransaction();
-        /*
-         * 26-06-2018 Nico: Se cambia la asignación por "self.gantt.redrawTasks();" ya que antes era "self.redrawTasks();" y daba un error en la consola del navegador
-         */
+
         self.gantt.redrawTasks();
         self.redraw();
+
+    }).bind("openTaskReferenceDialog.gantt", function () {
+
+//        entregableReferenciaPopup.show();
+        if (self.tasks.length > 0) {
+            relacionarEntregablePopup.show();
+        } else {
+            $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK"]);
+            ganttDialogUtils.show();
+            return;
+        }
+
+    }).bind("addReferenceTaskBelowCurrentTask.gantt", function (e, taskInfo, doAdd) {
+        var factory = new TaskFactory();
+        self.beginTransaction();
+        var ch;
+        var row = 0;
+
+
+        if (self.currentTask) {
+//            if (self.currentTask.endIsMilestone) {
+//                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_HITOS_CHILDS"], self.currentTask);
+//                doAdd = false;
+//            } else if (self.currentTask.tieneProd) {
+//                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_PRODUCTOS_CHILDS"], self.currentTask);
+//                doAdd = false;
+//            } else if (self.currentTask.esReferencia) {
+//                self.setErrorOnTransaction(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_CHILDS"], self.currentTask);
+//                doAdd = false;
+//            } else {
+            if (self.currentTask.level == 0) {
+                ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1, null, this.usuarioId);
+                row = self.currentTask.getRow() + 1;
+            } else {
+                ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1, null, this.usuarioId);
+                row = self.currentTask.getRow();
+            }
+//            }
+        } else {
+            ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1, null, this.usuarioId);
+        }
+
+        if (doAdd) {
+            var task = self.addTask(ch, row);
+
+            task.name = taskInfo.name;
+
+            task.status = taskInfo.status;
+            task.start = taskInfo.start;
+            task.duration = taskInfo.duration;
+            task.end = taskInfo.end;
+            task.startIsMilestone = taskInfo.startIsMilestone;
+            task.endIsMilestone = taskInfo.endIsMilestone;
+            task.collapsed = taskInfo.collapsed;
+            task.progress = taskInfo.progress;
+
+            task.description = taskInfo.description;
+            task.coordinador = taskInfo.coordinador;
+            task.esfuerzo = taskInfo.esfuerzo;
+            task.horasEstimadas = taskInfo.horasEstimadas;
+            task.relevantePMO = taskInfo.relevantePMO;
+
+            task.canDelete = true;
+            task.tieneProd = false;
+
+            task.esReferencia = taskInfo.esReferencia;
+            task.referido = taskInfo.referido;
+            task.proyectoReferido = taskInfo.proyectoReferido;
+
+            if (task) {
+                task.rowElement.click();
+                task.rowElement.find("[name=name]").focus();
+            }
+            if (self.currentTask.parent) {
+                self.currentTask.moveUp();
+            }
+        } else {
+            console.log('remplazo');
+
+            var task = self.getTaskByName(taskInfo.name);
+            //var task = self.addTask(taskInfo, row);
+
+            task.name = taskInfo.name;
+
+            task.status = taskInfo.status;
+            task.start = taskInfo.start;
+            task.duration = taskInfo.duration;
+            task.end = taskInfo.end;
+            task.startIsMilestone = taskInfo.startIsMilestone;
+            task.endIsMilestone = taskInfo.endIsMilestone;
+            task.collapsed = taskInfo.collapsed;
+            task.progress = taskInfo.progress;
+
+            task.description = taskInfo.description;
+            task.coordinador = taskInfo.coordinador;
+            task.esfuerzo = taskInfo.esfuerzo;
+            task.horasEstimadas = taskInfo.horasEstimadas;
+            task.relevantePMO = taskInfo.relevantePMO;
+
+            task.canDelete = true;
+            task.tieneProd = false;
+
+            task.esReferencia = taskInfo.esReferencia;
+            task.referido = taskInfo.referido;
+            task.proyectoReferido = taskInfo.proyectoReferido;
+            task.depends = taskInfo.depends;
+
+            /*  if (task) {
+             task.rowElement.click();
+             task.rowElement.find("[name=name]").focus();
+             }
+             if (self.currentTask.parent) {
+             self.currentTask.moveUp();
+             }*/
+        }
+        self.endTransaction();
+
+        self.gantt.redrawTasks();
+        self.redraw();
+
+    }).bind("downloadSchedule.gantt", function () {
+        crono = document.getElementById("ficha:panelGannt").cloneNode(true);
+        var ganttButtonBar = crono.getElementsByClassName("ganttButtonBar");
+        var accesosCronograma = crono.getElementsByClassName("accesosCronograma");
+        var maximizarFrame = crono.getElementsByClassName("maximizarFrame");
+
+        ganttButtonBar[0].remove();
+        accesosCronograma[0].remove();
+        maximizarFrame[0].remove();
+
+        var rows = crono.getElementsByClassName("taskEditRow");
+        crono.getElementsByClassName("ganttHighLight")[0].remove();
+        var row = 0;
+        for (row in rows) {
+
+            if (typeof rows[row].childNodes !== 'undefined' &&
+                    typeof rows[row].childNodes[2].childNodes !== 'undefined' &&
+                    rows[row].childNodes[2].childNodes.length !== 0) {
+
+                rows[row].className = rows[row].className.replace("rowSelected", "");
+
+
+                rows[row].childNodes[4].childNodes[0].remove();
+                if (typeof self.tasks[row].depends !== 'undefined') {
+                    var node = document.createTextNode(self.tasks[row].depends);
+                } else {
+                    var node = document.createTextNode("");
+                }
+                rows[row].childNodes[4].appendChild(node);
+
+                rows[row].getElementsByClassName("teamworkIcon")[0].remove();
+                rows[row].childNodes[2].childNodes[0].remove();
+                rows[row].childNodes[3].childNodes[0].remove();
+
+                var date = new Date(self.tasks[row].start);
+                var day = date.getDate()
+                if (day < 10) {
+                    day = "0" + day
+                }
+                var month = date.getMonth() + 1
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var year = date.getFullYear()
+                var node = document.createTextNode(day + "/" + month + "/" + year);
+                rows[row].childNodes[2].appendChild(node);
+
+
+                date = new Date(self.tasks[row].end);
+                day = date.getDate()
+                if (day < 10) {
+                    day = "0" + day
+                }
+                month = date.getMonth() + 1
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                year = date.getFullYear()
+                node = document.createTextNode(day + "/" + month + "/" + year);
+                rows[row].childNodes[3].appendChild(node);
+            }
+
+        }
+
+        var list = crono.getElementsByTagName("IMG")
+        var im = 0;
+        for (im in list) {
+            if (typeof list[im] !== 'undefined' && typeof list[im].src !== 'undefined') {
+                var imgName = list[im].src.split("/");
+                var result = imgName[imgName.length - 1];
+
+                if (result === "linkArrow.png") {
+                    list[im].src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAKCAYAAAB8OZQwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAAArSURBVBhXY5g58/9/BnQAEsSQgAmiSCALwiXQBcESRAmCHYLXIhSnYnM8ACLiX6EvUoAzAAAAAElFTkSuQmCC";
+                }
+            }
+        }
+
+
+        function readTextFile(file) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function ()
+            {
+                if (rawFile.readyState === 4)
+                {
+                    if (rawFile.status === 200 || rawFile.status == 0)
+                    {
+                        var css = rawFile.responseText;
+                        var text = "<style> " + css + " </style> <div class=\"row\" id=\"top\">";
+                        text += crono.innerHTML + "</div>";
+                        var filename = "Cronograma.html";
+                        download(filename, text);
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+
+        function download(filename, text) {
+            if (navigator.msSaveBlob) { // IE10+
+                var blob = new Blob([text], {type: 'text/html'});
+                window.navigator.msSaveBlob(blob, filename);
+            } else {
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+        }
+
+        readTextFile("../robicch-jQueryGantt/downloadGantt/downloadGantt.css");
+
 
     });
 };
@@ -352,13 +634,13 @@ GanttMaster.messages = {
     "GANTT_CANNOT_DELETE": "GANTT_CANNOT_DELETE",
     "GANTT_CANNOT_ADD_HITOS_CHILDS": "GANTT_CANNOT_ADD_HITOS_CHILDS",
     "GANTT_CANNOT_CLONE_LEVEL_0": "GANTT_CANNOT_CLONE_LEVEL_0",
-    "GANTT_CANNOT_CLONE_EMPTY": "GANTT_CANNOT_CLONE_EMPTY"
+    "GANTT_CANNOT_CLONE_EMPTY": "GANTT_CANNOT_CLONE_EMPTY",
+    "GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK": "GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK"
 };
 
 
 GanttMaster.prototype.createTask = function (id, name, code, level, start, duration, taskPk, coordId) {
     var factory = new TaskFactory();
-
     return factory.build(id, name, code, level, start, duration, taskPk, coordId);
 };
 
@@ -375,7 +657,6 @@ GanttMaster.prototype.updateDependsStrings = function () {
     for (var i = 0; i < this.tasks.length; i++) {
         this.tasks[i].depends = "";
     }
-
     for (var i = 0; i < this.links.length; i++) {
         var link = this.links[i];
         var dep = link.to.depends;
@@ -385,7 +666,7 @@ GanttMaster.prototype.updateDependsStrings = function () {
 };
 
 //------------------------------------  ADD TASK --------------------------------------------
-GanttMaster.prototype.addTask = function (task, row) {
+GanttMaster.prototype.addTask = function (task, row, doAdd) {
     ////console.debug("master.addTask",task,row,this);
     task.master = this; // in order to access controller from task
 
@@ -454,12 +735,9 @@ GanttMaster.prototype.addTask = function (task, row) {
  * @param project
  */
 GanttMaster.prototype.loadProject = function (project) {
-    //console.log("project:");
-    //console.log(project);
 
     self = this;
 
-    console.log("loadProject GANTT");
     this.cronoPk = project.cronoPk;
     this.fichaPk = project.fichaPk;
     this.fichaTipo = project.fichaTipo;
@@ -472,13 +750,14 @@ GanttMaster.prototype.loadProject = function (project) {
     this.esfuerzoTotal = project.esfuerzoTotal;
     this.horasTotal = project.horasTotal;
     this.rowsGantt = project.rowsGantt;
-
+    this.isGerenteOAdjunto = project.isGerenteOAdjunto;
     this.beginTransaction();
     this.resources = project.resources;
     this.roles = project.roles;
     this.canWrite = project.canWrite;
     this.periodoEntregable = project.periodoEntregable;
     this.canWriteOnParent = project.canWriteOnParent;
+    this.isPMOEditor=project.isPMOEditor;
 
     if (project.minEditableDate)
         this.minEditableDate = computeStart(project.minEditableDate);
@@ -500,9 +779,10 @@ GanttMaster.prototype.loadProject = function (project) {
     // 01-06-2018 Nico: Si fija si es PM para desactivar los botones del GANTT
 
     var isPM = this.isPM;
+    var isGerenteOAdjunto = this.isGerenteOAdjunto;
+var isPMOEditor=this.isPMOEditor;
 
-
-    if (self.estado == 4 || self.estado == 5 || !isPM) {
+    if (self.estado == 4 || self.estado == 5 || (!isPM && !isPMOEditor)) {
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');
         document.getElementById("addBelowBtn").setAttribute('disabled', 'true');
         document.getElementById("indentBtn").setAttribute('disabled', 'true');
@@ -511,6 +791,20 @@ GanttMaster.prototype.loadProject = function (project) {
         document.getElementById("moveDownBtn").setAttribute('disabled', 'true');
         document.getElementById("deleteBtn").setAttribute('disabled', 'true');
         document.getElementById("copyBtn").setAttribute('disabled', 'true');
+        //document.getElementById("referenciarBtn")
+    }
+
+    var element = document.getElementById('referenciarBtn');
+    if (typeof (element) != 'undefined' && element != null)
+    {
+        element.setAttribute('disabled', 'true');
+    }
+    //document.getElementById("copyBtn").setAttribute('disabled', 'true');
+
+    if (self.estado == 2 || self.estado == 3) {
+        if ((isGerenteOAdjunto || isPMOEditor) && element != null) {
+            element.removeAttribute('disabled');
+        }
     }
 
     /*
@@ -540,19 +834,9 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
         }
         task.master = this; // in order to access controller from task
 
-        /*//replace if already exists
-         var pos = -1;
-         for (var i=0;i<this.tasks.length;i++) {
-         if (task.id == this.tasks[i].id) {
-         pos = i;
-         break;
-         }
-         }*/
-
         this.tasks.push(task);  //append task at the end  
     }
 
-    //var prof=new Profiler("gm_loadTasks_addTaskLoop");
     for (var i = 0; i < this.tasks.length; i++) {
         var task = this.tasks[i];
 
@@ -560,8 +844,6 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
         var linkLoops = !this.updateLinks(task);
 
         if (linkLoops || !task.setPeriod(task.start, task.end)) {
-//	    alert(GanttMaster.messages.GANNT_ERROR_LOADING_DATA_TASK_REMOVED + "\n" + task.name + "\n" +
-//		    (linkLoops ? GanttMaster.messages.CIRCULAR_REFERENCE : GanttMaster.messages.ERROR_SETTING_DATES));
             $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages.GANNT_ERROR_LOADING_DATA_TASK_REMOVED + "\n" + task.name + "\n" +
                     (linkLoops ? GanttMaster.messages.CIRCULAR_REFERENCE : GanttMaster.messages.ERROR_SETTING_DATES));
             ganttDialogUtils.show();
@@ -581,15 +863,9 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
     // re-select old row if tasks is not empty
     if (this.tasks && this.tasks.length > 0) {
 
-        //console.log("Entra al if de selected row?  ------> con el valor:  -------->  " + selectedRow + "   y con currentTask: ----->  " + this.currentTask +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
-
         selectedRow = selectedRow ? selectedRow : 0;
 
-        //console.log("Entre lineas del if de selected row?  ------> con el valor:  -------->  " + selectedRow + "               le damos un nivel mas de granularidad this.tasks[selectedRow].rowElement: ------> " + this.tasks[selectedRow].rowElement +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
-
         this.tasks[selectedRow].rowElement.click();
-
-        //console.log("Sale del if de selected row?  ------> con el valor:  -------->  " + selectedRow + "   y con currentTask: ----->  " + this.currentTask +  " .............. a ver firstChangeTask ----->  " + firstChangeTask);
     }
 };
 
@@ -599,6 +875,18 @@ GanttMaster.prototype.getTask = function (taskId) {
     for (var i = 0; i < this.tasks.length; i++) {
         var tsk = this.tasks[i];
         if (tsk.id == taskId) {
+            ret = tsk;
+            break;
+        }
+    }
+    return ret;
+};
+
+GanttMaster.prototype.getTaskByName = function (taskName) {
+    var ret;
+    for (var i = 0; i < this.tasks.length; i++) {
+        var tsk = this.tasks[i];
+        if (tsk.name == taskName) {
             ret = tsk;
             break;
         }
@@ -626,7 +914,6 @@ GanttMaster.prototype.changeTaskDates = function (task, start, end) {
 
 
 GanttMaster.prototype.moveTask = function (task, newStart) {
-    console.debug("-> moveTask: " + task);
     return task.moveTo(newStart, true);
 };
 
@@ -678,16 +965,22 @@ GanttMaster.prototype.saveProject = function () {
 };
 
 GanttMaster.prototype.saveGantt = function (forTransaction) {
-    //var prof = new Profiler("gm_saveGantt");
+    console.log("guardamos gantt");
     var saved = [];
     for (var i = 0; i < this.tasks.length; i++) {
-        var task = this.tasks[i];
-        var cloned = task.clone();
-        delete cloned.master;
-        delete cloned.rowElement;
-        delete cloned.ganttElement;
+        try {
+            var task = this.tasks[i];
+            var cloned = task.clone();
+            delete cloned.master;
+            delete cloned.rowElement;
+            delete cloned.ganttElement;
 
-        saved.push(cloned);
+            saved.push(cloned);
+        } catch (e) {
+            conole.log("Error linea  977 GM ");
+        }
+
+
     }
 
     var ret = {tasks: saved};
@@ -704,7 +997,6 @@ GanttMaster.prototype.saveGantt = function (forTransaction) {
         ret.canWrite = this.canWrite;
         ret.canWriteOnParent = this.canWriteOnParent;
 
-        //console.log("cronoPk in Save :" + this.cronoPk);
         ret.cronoPk = this.cronoPk;
         ret.fichaPk = this.fichaPk;
         ret.fichaTipo = this.fichaTipo;
@@ -806,6 +1098,10 @@ GanttMaster.prototype.updateLinks = function (task) {
                     this.setErrorOnTransaction(task.name + "\n" + GanttMaster.messages.CANNOT_DEPENDS_ON_DESCENDANTS + "\n" + sup.name);
                     todoOk = false;
 
+                } else if (task.tieneVincWekan) {
+                    this.setErrorOnTransaction(task.name + "\n" + GanttMaster.messages.CANNOT_DEPENDS_WEKAN);
+                    todoOk = false;
+
                 } else if (isLoop(sup, task, visited)) {
                     todoOk = false;
                     this.setErrorOnTransaction(GanttMaster.messages.CIRCULAR_REFERENCE + "\n" + task.name + " -> " + sup.name);
@@ -868,13 +1164,6 @@ GanttMaster.prototype.endTransaction = function () {
                 this.gantt.originalStartMillis = task.start;
             if (this.gantt.originalEndMillis < task.end)
                 this.gantt.originalEndMillis = task.end;
-
-            // 04-06-2018 Nico: Se agregan estas condiciones para que se analice la fecha de la línea base
-            //          y así se muestren las fechas en todo el header del diagrama
-
-
-            console.log("GanttMaster ---> Inicio:" + task.startLineaBase + "<-------------> " + "Fin: " + task.endLineaBase);
-
             if ((task.startLineaBase != 0) && (this.gantt.originalStartMillis > task.startLineaBase))
                 this.gantt.originalStartMillis = task.startLineaBase;
             if ((task.endLineaBase != 0) && (this.gantt.originalEndMillis < task.endLineaBase))
@@ -991,11 +1280,6 @@ GanttMaster.prototype.getTaskInicioPeriodo = function () {
             break;
         }
     }
-    if (ret != null) {
-        console.log("getTaskInicioPeriodo: " + ret.id);
-    } else {
-        console.log("getTaskInicioPeriodo: " + null);
-    }
     return ret;
 }
 
@@ -1008,11 +1292,6 @@ GanttMaster.prototype.getTaskFinPeriodo = function () {
             ret = tsk;
             break;
         }
-    }
-    if (ret != null) {
-        console.log("getTaskFinPeriodo: " + ret.id);
-    } else {
-        console.log("getTaskFinPeriodo: " + null);
     }
     return ret;
 }

@@ -23,7 +23,7 @@
 
         <ice:outputText value="#{labels.busqueda_inicio}" styleClass="subtitulo"/>
 
-        <ice:panelGroup rendered="#{!(ProgramasProyectosMB.filtroInicioResultado ne null and ProgramasProyectosMB.filtroInicioResultado.size() gt 0)}"
+        <ice:panelGroup rendered="#{!(ProgramasProyectosMB.resultados ne null and ProgramasProyectosMB.resultados.size() gt 0)}"
                         styleClass="mensajeBusqueda">
             <ice:graphicImage value="../img/mens-info-busqueda.png" />
             <ice:outputText value=" #{labels.info_sin_resultados_busqueda}" />
@@ -44,7 +44,7 @@
                     <ice:outputLabel value="#{labels.codigo_filtro}:"/>
                     <ace:textEntry id="filtroCodigo" value="#{inicioMB.filtro.codigo}" />
 
-                    <ice:outputLabel value="#{labels.inicio_col_obj_est}:"/>
+                    <ice:outputLabel value="#{inicioMB.labelObjetivoEstrategico}:"/>
                     <ice:selectOneMenu value="#{inicioMB.listaObjetivosEstrategicosCombo.selected}" 
                                        styleClass="textoMedio">
                         <f:selectItems value="#{inicioMB.listaObjetivosEstrategicosCombo.items}"/>

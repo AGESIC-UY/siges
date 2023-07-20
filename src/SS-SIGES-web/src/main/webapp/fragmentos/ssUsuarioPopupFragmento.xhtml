@@ -72,7 +72,8 @@
                     <ice:panelGrid styleClass="formulario" columns="4">
                         <ice:outputLabel value="#{labels.usuario_form_mail}:" styleClass="obligatorio"/>
                         <ace:textEntry value="#{ssUsuarioMB.usuarioEnEdicion.usuCorreoElectronico}"
-                                       validatorMessage="#{labels.error_email_formato}">
+                                       validatorMessage="#{labels.error_email_formato}" 
+                                       converter="toLowerCaseConverter">
                         </ace:textEntry>
 
                         <ace:pushButton value="#{labels.buscar}" 

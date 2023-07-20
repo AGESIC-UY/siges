@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmPopup">
+        <ice:panelPopup rendered="#{procedimientoCompraInfoMB.renderPopupEdicion.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.procedimiento_compra_titulo}"/>
+                    <ice:commandButton styleClass="botonCerrar"
+                                       action="#{procedimientoCompraInfoMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formFuente">
+                    <ice:panelGrid styleClass="formulario" columns="2">
+                        <ice:outputLabel value="#{labels.procedimiento_compra_head_nombre}:" styleClass="obligatorio"/>
+                        <ace:textEntry disabled="true" value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciNombre}" maxlength="100" style="width: 820px"/>
+
+                        <ice:outputLabel value="#{labels.procedimiento_compra_head_descripcion}:" />
+                        <ace:textEntry disabled="true"  value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciDescripcion}" maxlength="300"   />
+                        
+                        <ice:outputLabel value="#{labels.procedimiento_compra_info_codigo_proyecto}:" />
+                        <ace:textEntry disabled="true"  value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciProyectoFK}" maxlength="300"   />
+                        
+                        
+                        <ice:outputLabel value="#{labels.adquisicionIdAdquisicion}:" />
+                        <ace:textEntry disabled="true"  value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciAdquisicionId}" maxlength="300"   />
+
+                        <ice:outputLabel value="#{labels.adquisicionNombre}:" />
+                        <ace:textEntry disabled="true"  value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciAdquisicionFK.adqNombre}" maxlength="300"   />
+                        
+                        <ice:outputLabel value="#{labels.inicio_col_Fecha}:" />
+                        <ace:textEntry converter="#{localDateTimeConverter}"  disabled="true"  value="#{procedimientoCompraInfoMB.procedimientoCompraEnEdicion.pciFecha}" maxlength="300"   />
+                        
+
+                        
+
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="popupMsg"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{procedimientoCompraInfoMB.cancelar()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

@@ -1,138 +1,45 @@
 package com.sofis.data.daos;
 
-import com.sofis.entities.constantes.ConstanteApp;
-import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
+import com.sofis.entities.data.CausalCompra;
+import com.sofis.entities.data.CentroCosto;
+import com.sofis.entities.data.ComponenteProducto;
+import com.sofis.entities.data.FuenteFinanciamiento;
+import com.sofis.entities.data.IdentificadorGrpErp;
+import com.sofis.entities.data.Moneda;
+import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.entities.data.Pagos;
-import com.sofis.entities.tipos.AdqPagosTO;
+import com.sofis.entities.data.ProcedimientoCompra;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.data.TipoAdquisicion;
+import com.sofis.entities.tipos.AdquisicionTO;
+import com.sofis.entities.tipos.FiltroMisAdquisicionesTO;
 import com.sofis.exceptions.TechnicalException;
-import com.sofis.generico.utils.generalutils.StringsUtils;
 import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-/**
- *
- * @author Usuario
- */
 public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(AdquisicionDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AdquisicionDAO.class.getName());
 
     public AdquisicionDAO(EntityManager em) {
         super(em);
-    }
-
-    public List<AdqPagosTO> obtenerAdquisicionPagosList(Integer presupuestoId) throws DAOGeneralException {
-
-        List<AdqPagosTO> resultado = new ArrayList<>();
-        List<Adquisicion> adquisiciones = this.findByOneProperty(Adquisicion.class, "adqPreFk.prePk", presupuestoId, "adqPk");
-        for (Adquisicion a : adquisiciones) {
-            AdqPagosTO adqTO = new AdqPagosTO();
-            adqTO.setTipo(1);
-            adqTO.setAdqPk(a.getAdqPk());
-            adqTO.setMonedaSigno(a.getAdqMoneda().getMonSigno());
-            adqTO.setFuenteNombre(a.getAdqFuente().getFueNombre());
-            adqTO.setAdqNombre(a.getAdqNombre());
-            adqTO.setOrgaNombre(a.getAdqProvOrga() != null ? a.getAdqProvOrga().getOrgaNombre() : null);
-            adqTO.setImportePlan(0d);
-            adqTO.setImporteReal(0d);
-            adqTO.setImporteSaldo(0d);
-            
-            
-            /*
-            *   24-05-2018 Nico: Se comenta la parte de manejo de String de los Procedimientos de Compra ya que ahora
-            *           se maneja como una entidad nueva.
-            */             
-            
-//            adqTO.setProcCompra(a.getAdqProcCompra());            
-            
-            if(a.getAdqProcedimientoCompra() != null){
-                 adqTO.setProcCompra(a.getAdqProcedimientoCompra().getProcCompNombre());
-            }else{
-                 adqTO.setProcCompra(null);
-            }
-            
-            
-            adqTO.setProcCompraGrp(a.getAdqIdGrpErpFk() != null ? a.getAdqIdGrpErpFk().getIdGrpErpNombre() : null);
-
-            resultado.add(adqTO);
-
-            //procesa los pagos y suma
-            SimpleDateFormat sf = new SimpleDateFormat(ConstantesEstandares.CALENDAR_PATTERN);
-
-            List<Pagos> listaPagos = new ArrayList<>(a.getPagosSet());
-            Collections.sort(listaPagos, new Comparator<Pagos>() {
-                @Override
-                public int compare(Pagos o1, Pagos o2) {
-                    if (o1 != null && o1.getPagFechaPlanificada() != null && o2 != null && o2.getPagFechaPlanificada() != null) {
-                        return o1.getPagFechaPlanificada().compareTo(o2.getPagFechaPlanificada());
-                    }
-                    return 0;
-                }
-            });
-
-            for (Pagos p : listaPagos) {
-                AdqPagosTO pago = new AdqPagosTO();
-                pago.setTipo(2);
-                pago.setPagPk(p.getPagPk());
-                if (p.getEntregables() != null) {
-                    String dateS = "";
-                    if (p.getEntregables().getEntFin() != null) {
-                        Date d = new Date();
-                        d.setTime(p.getEntregables().getEntFin());
-                        dateS = StringsUtils.concat(" (", sf.format(d), ")");
-                    }
-
-                    pago.setAdqNombre(StringsUtils.concat(p.getEntregables().getEntNombre(), dateS));
-                    pago.setAdqPk(p.getPagAdqFk().getAdqPk());
-                }
-                pago.setImportePlan(p.getPagImportePlanificado());
-                pago.setImporteReal(p.getPagImporteReal());
-                if (p.getPagImporteReal() != null) {
-                    pago.setImporteSaldo(p.getPagImportePlanificado() - p.getPagImporteReal());
-                }
-                pago.setFechaPlan(p.getPagFechaPlanificada());
-                if(pago.getImporteReal() != null){
-                    pago.setFechaReal(p.getPagFechaReal());
-                }
-                if (pago.getImporteReal() != null && pago.getImportePlan() != null) {
-                    boolean tienePlan = pago.getImportePlan() != null && pago.getImportePlan() > 0;
-                    boolean tieneReal = pago.getImporteReal() != null && pago.getImporteReal() > 0;
-                    pago.setEjecucion(tieneReal && tienePlan ? pago.getImporteReal() * 100 / pago.getImportePlan() : 0d);
-                }
-                if (p.getPagImportePlanificado() != null) {
-                    adqTO.setImportePlan(adqTO.getImportePlan() + p.getPagImportePlanificado());
-                }
-
-                if (p.getPagImporteReal() != null) {
-                    adqTO.setImporteReal(adqTO.getImporteReal() + p.getPagImporteReal());
-                }
-                if (pago.getImporteSaldo() != null) {
-                    adqTO.setImporteSaldo(adqTO.getImporteSaldo() + pago.getImporteSaldo());
-                }
-
-                pago.setReferencia(p.getPagTxtReferencia());
-                pago.setConfirmado(p.isPagConfirmado());
-                //pago.setPagoDoc(p.getDocumento());
-                pago.setOrgaNombre(p.getPagProveedorFk() != null ? p.getPagProveedorFk().getOrgaNombre() : null);
-                resultado.add(pago);
-            }
-        }
-
-        return resultado;
     }
 
     public List<Adquisicion> obtenerAdquisicionPorPre(Integer prePk, Integer monPk) throws DAOGeneralException {
@@ -140,7 +47,7 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                 + " FROM Adquisicion a"
                 + " WHERE a.adqPreFk.prePk = :prePk"
                 + " AND a.adqMoneda.monPk = :monPk"
-                + " ORDER BY a.adqPk";
+                + " ORDER BY a.orden";
 
         Query q = super.getEm().createQuery(query);
         q.setParameter("prePk", prePk);
@@ -149,10 +56,105 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
         List<Adquisicion> adqList = q.getResultList();
         return adqList;
     }
-    
+
     public List<Adquisicion> obtenerAdquisicionPorPre(Integer prePk) throws DAOGeneralException {
-        List<Adquisicion> adquisiciones = this.findByOneProperty(Adquisicion.class, "adqPreFk.prePk", prePk, "adqPk");
+        List<Adquisicion> adquisiciones = this.findByOneProperty(Adquisicion.class, "adqPreFk.prePk", prePk, "orden");
         return adquisiciones;
+    }
+
+    public List<AdquisicionTO> obtenerAdquisicionesPorPresupuesto(Integer prePk, FiltroMisAdquisicionesTO filtro) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<AdquisicionTO> cq = cb.createQuery(AdquisicionTO.class);
+
+        Root<Adquisicion> root = cq.from(Adquisicion.class);
+        Join<Adquisicion, OrganiIntProve> proveedor = root.join("adqProvOrga", JoinType.LEFT);
+        Join<Adquisicion, ProcedimientoCompra> procedimientoCompra = root.join("adqProcedimientoCompra", JoinType.LEFT);
+        Join<Adquisicion, FuenteFinanciamiento> fuenteFinanciamiento = root.join("adqFuente", JoinType.LEFT);
+        Join<Adquisicion, CausalCompra> causalCompra = root.join("adqCausalCompra", JoinType.LEFT);
+        Join<Adquisicion, Moneda> moneda = root.join("adqMoneda", JoinType.LEFT);
+        Join<Adquisicion, Pagos> pagos = root.join("pagosSet", JoinType.LEFT);
+
+        cq.select(cb.construct(AdquisicionTO.class,
+                root.get("adqPk"),
+                root.get("adqNombre"),
+                root.get("adqIdAdquisicion"),
+                proveedor.get("orgaPk"),
+                proveedor.get("orgaNombre"),
+                procedimientoCompra.get("procCompPk"),
+                procedimientoCompra.get("procCompNombre"),
+                fuenteFinanciamiento.get("fuePk"),
+                fuenteFinanciamiento.get("fueNombre"),
+                causalCompra.get("cauComPk"),
+                causalCompra.get("cauComNombre"),
+                moneda.get("monPk"),
+                moneda.get("monNombre"),
+                moneda.get("monSigno"),
+                cb.count(pagos)));
+
+        Predicate predicate;
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(root.get("adqPreFk").get("prePk"), prePk));
+
+        if (filtro.getFuenteFinanciamiento() != null) {
+
+            predicate = cb.equal(root.get("adqFuente").get("fuePk"), filtro.getFuenteFinanciamiento().getFuePk());
+
+            predicates.add(predicate);
+        }
+
+        if (filtro.getProcedimientoCompra() != null) {
+
+            predicate = cb.equal(root.get("adqProcedimientoCompra").get("procCompPk"), filtro.getProcedimientoCompra().getProcCompPk());
+
+            predicates.add(predicate);
+        }
+
+        if (filtro.getProveedor() != null) {
+
+            predicate = cb.or(cb.equal(root.get("adqProvOrga").get("orgaPk"), filtro.getProveedor().getOrgaPk()),
+                    cb.equal(pagos.get("pagProveedorFk").get("orgaPk"), filtro.getProveedor().getOrgaPk()));
+
+            predicates.add(predicate);
+        }
+
+        if (filtro.getMoneda() != null) {
+
+            predicate = cb.equal(root.get("adqMoneda").get("monPk"), filtro.getMoneda().getMonPk());
+
+            predicates.add(predicate);
+        }
+
+        if (filtro.getIdAdquisicion() != null && filtro.getIdAdquisicion() > 0) {
+
+            predicate = cb.equal(root.get("adqIdAdquisicion"), filtro.getIdAdquisicion());
+
+            predicates.add(predicate);
+        }
+
+        cq.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        cq.groupBy(root.get("adqPk"),
+                root.get("adqNombre"),
+                root.get("adqIdAdquisicion"),
+                proveedor.get("orgaPk"),
+                proveedor.get("orgaNombre"),
+                procedimientoCompra.get("procCompPk"),
+                procedimientoCompra.get("procCompNombre"),
+                fuenteFinanciamiento.get("fuePk"),
+                fuenteFinanciamiento.get("fueNombre"),
+                causalCompra.get("cauComPk"),
+                causalCompra.get("cauComNombre"),
+                moneda.get("monPk"),
+                moneda.get("monNombre"),
+                moneda.get("monSigno"));
+
+        cq.orderBy(cb.asc(root.get("orden")));
+
+        return em.createQuery(cq).getResultList();
     }
 
     public List<Adquisicion> obtenerAdquisicionPorPreProg(Integer progPk) throws DAOGeneralException {
@@ -160,7 +162,8 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                 + " FROM Programas p,"
                 + " IN(p.proyectosSet) proy,"
                 + " IN(proy.proyPreFk.adquisicionSet) b"
-                + " WHERE proy.proyProgFk.progPk = :progPk";
+                + " WHERE proy.proyProgFk.progPk = :progPk"
+                + " ORDER BY b.orden";
 
         Query q = super.getEm().createQuery(query);
         q.setParameter("progPk", progPk);
@@ -171,17 +174,18 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
 
     public List<Adquisicion> obtenerAdquisicionPorProy(Integer proyPk) {
         try {
-            return this.findByOneProperty(Adquisicion.class, "adqPreFk.proyecto.proyPk", proyPk, "adqPk");
+            return this.findByOneProperty(Adquisicion.class, "adqPreFk.proyecto.proyPk", proyPk, "orden");
         } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             TechnicalException te = new TechnicalException(ex);
             te.addError(MensajesNegocio.ERROR_ADQISICION_OBTENER);
             throw te;
         }
     }
-    
+
     /**
      * Retorna la suma del costo actual(real) confirmado y según la moneda.
+     *
      * @param adqPk
      * @return Double
      */
@@ -218,26 +222,116 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
         }
         return reutValue;
     }
-    
-    public Pagos obtenerUltimoPago(Integer adqPk){
+
+    public Pagos obtenerUltimoPago(Integer adqPk) {
         String query = "SELECT p"
                 + " FROM Adquisicion a JOIN a.pagosSet p"
                 + " WHERE a.adqPk = :adqPk"
                 + " ORDER BY p.pagPk DESC";
-               
+
         Query q = super.getEm().createQuery(query);
         q.setParameter("adqPk", adqPk);
-        
+
         List<Pagos> retorno = q.getResultList();
-        
+
         Pagos pagoRetorno;
-        
-        if(!retorno.isEmpty()){
+
+        if (!retorno.isEmpty()) {
             pagoRetorno = retorno.get(0);
-        }else{
+        } else {
             pagoRetorno = new Pagos();
         }
-        
+
         return pagoRetorno;
     }
+
+    public AdquisicionTO obtenerAdquisicionTOPorId(Integer id) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<AdquisicionTO> cq = cb.createQuery(AdquisicionTO.class);
+
+        Root<Adquisicion> root = cq.from(Adquisicion.class);
+        Join<Adquisicion, OrganiIntProve> proveedor = root.join("adqProvOrga", JoinType.LEFT);
+        Join<Adquisicion, ProcedimientoCompra> procedimientoCompra = root.join("adqProcedimientoCompra", JoinType.LEFT);
+        Join<Adquisicion, FuenteFinanciamiento> fuenteFinanciamiento = root.join("adqFuente", JoinType.LEFT);
+        Join<Adquisicion, CausalCompra> causalCompra = root.join("adqCausalCompra", JoinType.LEFT);
+        Join<Adquisicion, Moneda> moneda = root.join("adqMoneda", JoinType.LEFT);
+        Join<Adquisicion, IdentificadorGrpErp> identificadorGrpErp = root.join("adqIdGrpErpFk", JoinType.LEFT);
+        Join<Adquisicion, ComponenteProducto> componenteProducto = root.join("adqComponenteProducto", JoinType.LEFT);
+        Join<Adquisicion, SsUsuario> usuarioCompartida = root.join("ssUsuarioCompartida", JoinType.LEFT);
+        Join<Adquisicion, TipoAdquisicion> tipo = root.join("adqTipoAdquisicion", JoinType.LEFT);
+        Join<Adquisicion, CentroCosto> centroCosto = root.join("adqCentroCosto", JoinType.LEFT);
+
+        cq.select(cb.construct(AdquisicionTO.class,
+                root.get("adqPk"),
+                root.get("adqNombre"),
+                root.get("adqIdAdquisicion"),
+                root.get("adqCompartida"),
+                root.get("adqTipoRegistro"),
+                root.get("adqArrastre"),
+                root.get("adqFechaEstimadaInicioCompra"),
+                root.get("adqFechaEsperadaInicioEjecucion"),
+                proveedor.get("orgaPk"),
+                proveedor.get("orgaNombre"),
+                procedimientoCompra.get("procCompPk"),
+                procedimientoCompra.get("procCompNombre"),
+                fuenteFinanciamiento.get("fuePk"),
+                fuenteFinanciamiento.get("fueNombre"),
+                causalCompra.get("cauComPk"),
+                causalCompra.get("cauComNombre"),
+                moneda.get("monPk"),
+                moneda.get("monNombre"),
+                moneda.get("monSigno"),
+                identificadorGrpErp.get("idGrpErpPk"),
+                identificadorGrpErp.get("idGrpErpNombre"),
+                componenteProducto.get("comPk"),
+                componenteProducto.get("comNombre"),
+                usuarioCompartida.get("usuId"),
+                usuarioCompartida.get("usuPrimerNombre"),
+                usuarioCompartida.get("usuPrimerApellido"),
+                tipo.get("tipAdqPk"),
+                tipo.get("tipAdqNombre"),
+                centroCosto.get("cenCosPk"),
+                centroCosto.get("cenCosNombre")
+        ));
+
+        cq.where(cb.equal(root.get("adqPk"), id));
+
+        return em.createQuery(cq).getSingleResult();
+    }
+
+    public Integer obtenerIdProyectoPorIdAquisicion(Integer idAdquisicion) {
+
+        return em.createNamedQuery("Adquisicion.findIdProyectoByIdAdquisicion", Integer.class)
+                .setParameter("idAdquisicion", idAdquisicion)
+                .getSingleResult();
+    }
+
+    public List<Adquisicion> obtenerAdquisicionPorIdAdquisicionAndOrganisacion(Integer orgaPk, Integer idAdquisicion) throws DAOGeneralException {
+        String query = "SELECT a \n"
+                + "FROM Adquisicion a \n"
+                + "where a.adqPreFk.proyecto.proyOrgFk.orgPk = :orgaPk and a.adqIdAdquisicion = :idAdquisicion";
+
+        Query q = super.getEm().createQuery(query);
+
+        q.setParameter("orgaPk", orgaPk);
+        q.setParameter("idAdquisicion", idAdquisicion);
+
+        List<Adquisicion> adqList = q.getResultList();
+        return adqList;
+    }
+
+    public void actualizarAdquisiciones(Integer procAdquisicionId, Integer procCompPk, Integer orgPk) {
+        String queryStr = "UPDATE adquisicion \n"
+                + "JOIN proyectos ON adq_pre_fk = proy_pre_fk \n"
+                + "SET adq_procedimiento_compra_fk =  " + procCompPk + " \n"
+                + "where proy_activo = 1 and proy_org_fk in (" + orgPk + ") \n"
+                + "and adq_id_adquisicion = " + procAdquisicionId;
+              
+        System.out.println(queryStr);
+
+        Query query = super.getEm().createNativeQuery(queryStr);
+        query.executeUpdate();
+    }
+
 }

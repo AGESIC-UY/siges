@@ -1,6 +1,5 @@
 package com.sofis.business.validations;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Notificacion;
 import com.sofis.exceptions.BusinessException;
@@ -8,10 +7,6 @@ import com.sofis.generico.utils.generalutils.StringsUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Usuario
- */
 public class NotificacionValidacion {
 
     private static final Logger logger = Logger.getLogger(NotificacionValidacion.class.getName());   
@@ -26,6 +21,10 @@ public class NotificacionValidacion {
                 be.addError(MensajesNegocio.ERROR_NOTIFICACION_CODIGO);
             }
 
+            if (StringsUtils.isEmpty(notif.getNotAsunto())) {
+                be.addError(MensajesNegocio.ERROR_NOTIFICACION_ASUNTO);
+            }
+			
             if (StringsUtils.isEmpty(notif.getNotDesc())) {
                 be.addError(MensajesNegocio.ERROR_NOTIFICACION_DESC);
             }

@@ -39,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
     "imagePk",
     "imagen",
     "orden",
-    "tipo"
+    "tipo",
+    "organismo",
 })
 public class Image {
 
@@ -50,6 +51,15 @@ public class Image {
     protected byte[] imagen;
     protected Integer orden;
     protected Integer tipo;
+    protected Organismos organismo;
+
+    public Organismos getOrganismo() {
+        return organismo;
+    }
+
+    public void setOrganismo(Organismos organismo) {
+        this.organismo = organismo;
+    }
 
     /**
      * Gets the value of the imageDesc property.

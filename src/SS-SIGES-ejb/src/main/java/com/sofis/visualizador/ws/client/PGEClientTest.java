@@ -34,7 +34,7 @@ public class PGEClientTest {
             String usuario = "mgarcia";
             PGEClientTest p = new PGEClientTest();
             PublicarProyecto port = p.publicarProyectoConexion(usuario);
-            response = port.obtenerCategoriasXml();
+            response = port.obtenerCategoriasXml("test");
             System.out.println("response.error:"+response.getError());
 
         } catch (Exception e) {

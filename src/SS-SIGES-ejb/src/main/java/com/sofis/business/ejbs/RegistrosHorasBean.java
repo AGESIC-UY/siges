@@ -105,7 +105,8 @@ public class RegistrosHorasBean {
         return registroHoras;
     }
 
-    public List<RegistrosHoras> obtenerRegistrosHoras(Integer usuId, Integer proyPk, Integer entPk, Date fDesde, Date fHasta, Long desde, Long cant, Integer aprobado) {
+    public List<RegistrosHoras> obtenerRegistrosHoras(Integer usuId, Integer proyPk, Integer entPk, Date fDesde, Date fHasta, Long desde,
+                                                    Long cant, Integer aprobado, Integer orgPk) {
         List<RegistrosHoras> registrosHoras = new LinkedList<>();
         try {
             RegistrosHorasDao registrosHorasDao = new RegistrosHorasDao(em);
@@ -127,6 +128,9 @@ public class RegistrosHorasBean {
             if (fHasta != null) {
                 crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.LESSEQUAL, "rhFecha", fHasta));
             }
+            if (orgPk != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "rhProyectoFk.proyOrgFk.orgPk", orgPk));
+            }           
             if (aprobado != null) {
                 if (aprobado.equals(0)) {
                     CriteriaTO aproFalse = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "rhAprobado", Boolean.FALSE);
@@ -136,11 +140,16 @@ public class RegistrosHorasBean {
                     crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "rhAprobado", Boolean.TRUE));
                 }
             }
-
+     
             if (crits.isEmpty()) {
                 registrosHoras = registrosHorasDao.findAll(RegistrosHoras.class);
             } else {
-                CriteriaTO crit = CriteriaTOUtils.createANDTO(crits.toArray(new CriteriaTO[0]));
+                CriteriaTO crit = null;
+                if (crits.size() == 1)
+                    crit = crits.get(0);
+                else
+                    crit = CriteriaTOUtils.createANDTO(crits.toArray(new CriteriaTO[0]));
+                                
                 //Postgre no permite un select distinct y que en el select no esten los campos del order by.
                 //String[] orderBy1 = new String[]{"rhFecha", "rhUsuarioFk.usuPrimerNombre", "rhUsuarioFk.usuPrimerApellido", "rhProyectoFk.proyNombre"};
                 //boolean[] orderBy2 = new boolean[]{false, true, true, true};
@@ -225,26 +234,34 @@ public class RegistrosHorasBean {
         return null;
     }
 
-    public Double obtenerImporteTotalHs(Integer proyPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
+    public Double obtenerImporteTotalHs(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
         if (proyPk != null && monPk != null) {
             RegistrosHorasDao dao = new RegistrosHorasDao(em);
-            return dao.obtenerImporteTotalHs(proyPk, monPk, mes, year, usuPk, aprobado);
+            return dao.obtenerImporteTotalHs(proyPk, orgPk, monPk, mes, year, usuPk, aprobado);
         }
         return null;
     }
     
-    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
+    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
         if (proyPk != null && monPk != null) {
             RegistrosHorasDao dao = new RegistrosHorasDao(em);
-            return dao.obtenerImporteTotalHsAprob(proyPk, monPk, mes, anio, usuPk);
+            return dao.obtenerImporteTotalHsAprob(proyPk, orgPk, monPk, mes, anio, usuPk);
         }
         return null;
     }
+            
+    public Boolean tieneHoraYValorEnMonedaAnio(Integer proyPk, Integer monPk, Integer anio, Integer usuPk, Boolean aprobado) {
+        if (proyPk != null) {
+            RegistrosHorasDao dao = new RegistrosHorasDao(em);
+            return dao.tieneHoraYValorEnMonedaAnio(proyPk, monPk, anio, usuPk, aprobado);
+        }
+        return null;
+    }        
 
-    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
+    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
         if (proyPk != null && monPk != null) {
             RegistrosHorasDao dao = new RegistrosHorasDao(em);
-            return dao.obtenerImporteTotalHsPend(proyPk, monPk, mes, anio, usuPk);
+            return dao.obtenerImporteTotalHsPend(proyPk, orgPk, monPk, mes, anio, usuPk);
         }
         return null;
     }

@@ -80,6 +80,12 @@ public class CausalCompra implements Serializable {
         this.cauComPk = cauComPk;
     }
 
+	public CausalCompra(Integer cauComPk, String cauComNombre) {
+        this(cauComPk);
+		
+		this.cauComNombre = cauComNombre;
+    }
+
     public Integer getCauComPk() {
         return cauComPk;
     }

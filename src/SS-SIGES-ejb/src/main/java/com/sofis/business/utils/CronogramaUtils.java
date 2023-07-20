@@ -1,11 +1,15 @@
 package com.sofis.business.utils;
 
-/**
- *
- * @author Usuario
- */
+import com.sofis.entities.data.Cronogramas;
+import com.sofis.entities.data.Entregables;
+import com.sofis.entities.tipos.CronogramaTO;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class CronogramaUtils {
-    
+
     public static String FICHA_PK = "fichaPk";
     public static String FICHA_TIPO = "fichaTipo";
     public static String CRONO_PK = "cronoPk";
@@ -38,4 +42,34 @@ public class CronogramaUtils {
     public static String TASK_END_LINEA_BASE = "endLineaBase";
     public static String TASK_PROGRESS = "progress";
     
+    private static final Logger LOGGER = Logger.getLogger(CronogramaUtils.class.getName());
+
+    public static CronogramaTO convert(Cronogramas cronograma) {
+
+        CronogramaTO result = new CronogramaTO();
+        result.setId(cronograma.getCroPk());
+
+        result.setEntregableSeleccionado(cronograma.getCroEntSeleccionado());
+        result.setEditable(cronograma.getCroPermisoEscritura());
+
+        result.setEntregablesEliminados(cronograma.getCroEntBorrados());
+        result.setEntregables(new ArrayList());
+        return result;
+    }
+
+    public static Cronogramas convert(CronogramaTO cronograma) {
+        LOGGER.log(Level.INFO, "Entrando a convert");
+       
+        Cronogramas result = new Cronogramas();
+        result.setEntregablesSet(new HashSet<Entregables>());
+        result.setCroPk(cronograma.getId());
+        result.setCroEntSeleccionado(cronograma.getEntregableSeleccionado());
+        result.setCroPermisoEscritura(cronograma.getEditable());
+
+        result.setCroEntBorrados(cronograma.getEntregablesEliminados());
+        result.setEntregablesSet(new HashSet());
+
+        return result;
+    }
+
 }

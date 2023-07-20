@@ -89,11 +89,11 @@ public class PGEProxyBean {
         return respuesta;
     }
 
-    public CategoriaProyectosResponse proxyObtenerCategorias(String usuario, Integer orgPk) throws PGEProxyException {
+    public CategoriaProyectosResponse proxyObtenerCategorias(String usuario, Integer orgPk, String token) throws PGEProxyException {
         CategoriaProyectosResponse response = null;
         try {
             PublicarProyecto port = publicarProyectoConexion(usuario, orgPk);
-            response = port.obtenerCategoriasXml();
+            response = port.obtenerCategoriasXml(token);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error invocando el servicio web.", e);

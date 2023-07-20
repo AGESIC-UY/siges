@@ -1,9 +1,9 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.EstadosPublicacion;
+import com.sofis.entities.data.MediaProyectos;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.FichaTO;
@@ -11,6 +11,7 @@ import com.sofis.entities.tipos.FiltroExpVisuaTO;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.web.delegates.AreasDelegate;
 import com.sofis.web.delegates.EstadosPublicacionDelegate;
+import com.sofis.web.delegates.MediaProyectosDelegate;
 import com.sofis.web.delegates.ProyectosDelegate;
 import com.sofis.web.enums.FieldAttributeEnum;
 import com.sofis.web.properties.Labels;
@@ -25,28 +26,31 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
+import org.omnifaces.util.Ajax;
 
-/**
- *
- * @author Sofis Solutions (www.sofis-solutions.com)
- */
 @ManagedBean(name = "exportarVisualizadorMB")
 @ViewScoped
 public class ExportarVisualizadorMB implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ExportarVisualizadorMB.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ExportarVisualizadorMB.class.getName());
 
 	@ManagedProperty("#{inicioMB}")
 	private InicioMB inicioMB;
 
 	@Inject
 	private EstadosPublicacionDelegate estadosPublicacionDelegate;
+
 	@Inject
 	private ProyectosDelegate proyectosDelegate;
+
 	@Inject
 	private AreasDelegate areasDelegate;
+        
+        @Inject
+	private MediaProyectosDelegate mediaProyDelegate;
 
 	private FiltroExpVisuaTO filtro = new FiltroExpVisuaTO();
 	private SofisComboG<EstadosPublicacion> listaEstPublicacionCombo;
@@ -58,18 +62,14 @@ public class ExportarVisualizadorMB implements Serializable {
 	private Integer totalProySucces;
 	private Integer totalProyError;
 	private Integer progressProy;
-//    private static String GROUP_NAME = "everyone";
-//    private PortableRenderer portableRenderer;
+
 	private Thread exportarProyectosThread;
 
 	private Boolean fullContent = false;
+	private Boolean todoSeleccionado = false;
+	private Boolean proySinImagenPrin = false;
 
-	public ExportarVisualizadorMB() {
-//        PushRenderer.addCurrentView(GROUP_NAME);
-//        portableRenderer = PushRenderer.getPortableRenderer();
-	}
-
-	@PostConstruct
+    	@PostConstruct
 	public void init() {
 		cargarFiltroBusqueda();
 	}
@@ -87,6 +87,7 @@ public class ExportarVisualizadorMB implements Serializable {
 		boolean disabled = false;
 		boolean rendered = true;
 		boolean isEditor = inicioMB.isUsuarioOrgaEditor();
+
 		if (fieldName.equalsIgnoreCase("btnExportarVisualizador")) {
 			if (!isEditor) {
 				rendered = false;
@@ -107,11 +108,12 @@ public class ExportarVisualizadorMB implements Serializable {
 		totalProy = null;
 		progressProy = null;
 
-		List<Estados> listEstados = new ArrayList<Estados>();
+		List<Estados> listEstados = new ArrayList<>();
 		listEstados.add(new Estados(Estados.ESTADOS.INICIO.estado_id));
 		listEstados.add(new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
 		listEstados.add(new Estados(Estados.ESTADOS.EJECUCION.estado_id));
 		listEstados.add(new Estados(Estados.ESTADOS.FINALIZADO.estado_id));
+
 		filtro.setEstados(listEstados);
 		filtro.setOrgPk(inicioMB.getOrganismo().getOrgPk());
 
@@ -122,6 +124,9 @@ public class ExportarVisualizadorMB implements Serializable {
 		filtro.setArea(areas);
 
 		listFichaTO = proyectosDelegate.buscarPorFiltro(filtro);
+		
+		todoSeleccionado = false;
+
 		return null;
 	}
 
@@ -142,34 +147,37 @@ public class ExportarVisualizadorMB implements Serializable {
 
 		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
 		SsUsuario usuario = inicioMB.getUsuario();
-		logger.log(Level.INFO, "Exportando Proyectos... (Org. {0})", orgPk);
+		LOGGER.log(Level.INFO, "Exportando Proyectos... (Org. {0})", orgPk);
 		if (listFichaTO != null) {
 			totalProy = 0;
 			countProy = 0;
 			totalProySucces = 0;
 			totalProyError = 0;
 			progressProy = 0;
+                        proySinImagenPrin = false;
 
 			for (FichaTO ficha : listFichaTO) {
 				if (ficha.getSeleccionado() != null && ficha.getSeleccionado().equals(Boolean.TRUE)) {
 					totalProy++;
 				}
 			}
+			if (totalProy != 0) {
+				for (FichaTO ficha : listFichaTO) {
+					if (ficha.getSeleccionado() != null && ficha.getSeleccionado().equals(Boolean.TRUE)) {
+						try {
+                                                    // Valido existencia de imagen principal    
+                                                    tieneImagenPrincipalYPublicable(ficha);
 
-                        if(totalProy != 0){
-                            for (FichaTO ficha : listFichaTO) {
-                                    if (ficha.getSeleccionado() != null && ficha.getSeleccionado().equals(Boolean.TRUE)) {
-                                            try {
-
-                                                    logger.log(Level.INFO, "Exportando Proyecto ({0})", ficha.getProyProgId());
+                                                    LOGGER.log(Level.INFO, "Exportando Proyecto ({0})", ficha.getProyProgId());
                                                     Proyectos proy = proyectosDelegate.exportarVisualizador(ficha.getFichaFk(), usuario, fullContent);
                                                     totalProySucces++;
+
                                                     //Actualizar la fecha en la ficha.
                                                     ficha.setExportado(Boolean.TRUE);
                                                     ficha.setFechaPublicacion(proy.getUltimaPublicacion() != null ? proy.getUltimaPublicacion().getProyPublicaFecha() : null);
 
-                                            } catch (GeneralException ge) {
-                                                    logger.log(Level.WARNING, null, ge);
+						} catch (GeneralException ge) {
+                                                    LOGGER.log(Level.WARNING, null, ge);
                                                     totalProyError++;
                                                     ficha.setExportado(Boolean.FALSE);
                                                     String desc = "";
@@ -178,22 +186,17 @@ public class ExportarVisualizadorMB implements Serializable {
                                                                     desc += (Labels.containsKey(s) ? Labels.getValue(s) : s) + " ";
                                                             }
                                                     }
-                                                    logger.log(Level.INFO, "ERROR Exportando Proyecto: {0}", desc);
+                                                    LOGGER.log(Level.INFO, "ERROR Exportando Proyecto: {0}", desc);
                                                     ficha.setErrorDesc(desc);
-                                            }
-                                            countProy++;
-                                    }
-                                    progressProy = countProy * 100 / totalProy;
-                            }
-                        }else{
-                            
-                            /*
-                            * 18-06-2018 Inspección de código
-                            */
-                            
-                            //JSFUtils.agregarMsg(null, "error_exportar_no_select_proyect", null);
-                            JSFUtils.agregarMsg(null, Labels.getValue("error_exportar_no_select_proyect"), null);
-                        }
+						}
+						countProy++;
+					}
+					progressProy = countProy * 100 / totalProy;
+				}
+			} else {
+
+				JSFUtils.agregarMsg(null, Labels.getValue("error_exportar_no_select_proyect"), null);
+			}
 		}
 
 		return null;
@@ -210,7 +213,6 @@ public class ExportarVisualizadorMB implements Serializable {
 		List<EstadosPublicacion> listEP = estadosPublicacionDelegate.obtenerTodos();
 		if (listEP != null) {
 			listaEstPublicacionCombo = new SofisComboG<>(listEP, "estPubNombre");
-			//listaEstPublicacionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 		}
 
 		List<Areas> listArea = areasDelegate.obtenerAreasPorOrganismo(inicioMB.getOrganismo().getOrgPk(), false);
@@ -220,6 +222,55 @@ public class ExportarVisualizadorMB implements Serializable {
 		}
 	}
 
+	public void seleccionarTodo(ValueChangeEvent event) {
+
+		Boolean seleccionado = (Boolean) event.getNewValue();
+		for (FichaTO fichaTO : listFichaTO) {
+
+			if (fichaTO.getPublicable()) {
+
+				fichaTO.setSeleccionado(seleccionado);
+			}
+		}
+	}
+
+	public void seleccionarProyecto(ValueChangeEvent event) {
+
+		boolean seleccionado = (Boolean) event.getNewValue();
+		int noSeleccionados = 0;
+
+		for (FichaTO fichaTO : listFichaTO) {
+
+			if (!fichaTO.getSeleccionado()) {
+				noSeleccionados++;
+
+				if (noSeleccionados > 1) {
+					break;
+				}
+			}
+		}
+
+		// la variable del proyecto seleccionado aun no fue actualizada
+		todoSeleccionado = (noSeleccionados <= 1) && seleccionado;
+
+		Ajax.updateAll();
+	}
+        
+        public void tieneImagenPrincipalYPublicable(FichaTO ficha) {
+            Boolean tieneImgPrin = false;
+            List<MediaProyectos> mp = mediaProyDelegate.obtenerPorProyId(ficha.getFichaFk());       
+
+            if (mp != null)
+                for (MediaProyectos mediaProy :mp)
+                    tieneImgPrin = tieneImgPrin || (mediaProy.getMediaPrincipal() && mediaProy.esMediaPublicable());    
+            if (!tieneImgPrin){
+                proySinImagenPrin = true;
+                GeneralException ge = new GeneralException("El proyecto '"+ficha.getNombre()+"' no tiene una imagen principal publicable.");
+                ge.addError("El proyecto '"+ficha.getNombre()+"' no tiene una imagen principal publicable.");
+                throw ge;
+            }
+	}
+        
 	public Boolean getFullContent() {
 		return fullContent;
 	}
@@ -304,13 +355,6 @@ public class ExportarVisualizadorMB implements Serializable {
 		this.progressProy = progressProy;
 	}
 
-//    public PortableRenderer getPortableRenderer() {
-//        return portableRenderer;
-//    }
-//
-//    public void setPortableRenderer(PortableRenderer portableRenderer) {
-//        this.portableRenderer = portableRenderer;
-//    }
 	public Thread getExportarProyectosThread() {
 		return exportarProyectosThread;
 	}
@@ -319,4 +363,18 @@ public class ExportarVisualizadorMB implements Serializable {
 		this.exportarProyectosThread = exportarProyectosThread;
 	}
 
+	public Boolean getTodoSeleccionado() {
+		return todoSeleccionado;
+	}
+
+	public void setTodoSeleccionado(Boolean todoSeleccionado) {
+		this.todoSeleccionado = todoSeleccionado;
+	}
+        public Boolean getProySinImagenPrin() {
+                return proySinImagenPrin;
+            }
+
+            public void setProySinImagenPrin(Boolean proySinImagenPrin) {
+                this.proySinImagenPrin = proySinImagenPrin;
+            }
 }

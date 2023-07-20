@@ -1,6 +1,6 @@
 package com.sofis.business.utils;
 
-import com.sofis.entities.tipos.FiltroInicioResultadoTO;
+import com.sofis.entities.tipos.ResultadoInicioTO;
 
 /**
  *
@@ -8,7 +8,7 @@ import com.sofis.entities.tipos.FiltroInicioResultadoTO;
  */
 public class FiltroInicioUtils {
 
-    public static FiltroInicioResultadoTO sortByNombreItem(FiltroInicioResultadoTO filtroResultado) {
+    public static ResultadoInicioTO sortByNombreItem(ResultadoInicioTO filtroResultado) {
 
         return filtroResultado;
     }

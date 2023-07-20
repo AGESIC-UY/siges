@@ -78,6 +78,9 @@ public class RiesgosDelegate {
         return riesgosBean.superarRiesgo(riskPk, usuId, orgPk);
     }
 
+    public Riesgos revertirSuperacionRiesgo(Integer riskPk, Integer usuId, Integer orgPk) {
+        return riesgosBean.revertirSuperacionRiesgo(riskPk, usuId, orgPk);
+    }
     public Integer obtenerCantRiesgosAltos(List<Riesgos> listRiesgos, Integer orgPk) {
         return riesgosBean.obtenerCantRiesgosAltos(listRiesgos, orgPk);
     }

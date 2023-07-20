@@ -42,12 +42,7 @@
         <!-- Titulo -->
         <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
             <ice:outputLabel value="#{labels.tituloFicha}"/>
-            <!--            <ice:commandLink id="linkEditarFichaActual"
-                                         action="#{fichaMB.recargarFicha()}" 
-                                         value="(#{fichaMB.fichaTO.fichaFk})"
-                                         rendered="#{fichaMB.fichaTO.fichaFk != null}"
-                                         title="#{labels.actualizar}"/>-->
-
+            
             <h:link id="linkEditarFichaActual"
                     outcome="IR_A_EDITAR_FICHA" 
                     rendered="#{fichaMB.fichaTO.fichaFk != null}"
@@ -86,7 +81,7 @@
 
                 <ice:panelGroup styleClass="col-sm-12 no-padding">
                     <ice:panelGroup styleClass="col-sm-2">
-                        <ice:outputLabel value="#{labels.nombreProgProy}:" />
+                        <ice:outputLabel value="#{labels.nombreProgProy}:" styleClass="obligatorio"/>
                     </ice:panelGroup>
                     <ice:panelGroup styleClass="col-sm-10">
                         <ace:textEntry disabled="#{fichaMB.fieldDisabled('Nombre')}"
@@ -182,26 +177,44 @@
 
                 <ice:panelGroup id="panelSituacionActual" styleClass="col-sm-12"
                                 rendered="#{fichaMB.fichaTO.proyecto}">
-                    <ice:outputLabel value="#{labels.ficha_situacionActualFicha} #{fichaMB.fechaUltimaSitAct}:"/>
+                    <ice:panelGroup>
+                        <ice:outputLabel value="#{labels.ficha_situacionActualFicha}&nbsp;"/>
+                        <ice:outputLabel rendered="#{not fichaMB.actualizandoSituacionActual}" value="#{fichaMB.fechaUltimaSitAct}"/>
+                        <ice:outputLabel rendered="#{fichaMB.actualizandoSituacionActual}" value="#{fichaMB.obtenerFechaAct()}"  converter="fechaConverter" />
+                        <ice:outputLabel value=":&nbsp;"/>
 
-                    <ice:commandLink action="#{fichaMB.verHistoricoSitActAction()}" 
-                                     value="#{labels.ficha_historico_sitact}" 
-                                     title="#{labels.ficha_historico_sitact}"
-                                     styleClass="linkFichaRight"/>
+                        <ice:commandLink action="#{fichaMB.actualizarSituacionActual()}" 
+                                         value="#{labels.ficha_actualizar_situacion_actual}" 
+                                         title="#{labels.ficha_actualizar_situacion_actual_descripcion}"
+                                         rendered="#{fichaMB.fieldRendered('ActualizarSitActual')}"/>
 
-                    <ace:richTextEntry id="situacionActual"
-                                       value="#{fichaMB.fichaTO.situacionActual}" 
-                                       disabled="#{fichaMB.fieldDisabled('SitActual')}"
-                                       rendered="#{fichaMB.fieldRendered('SitActual')}"
-                                       toolbar="Basic" immediate="true" language="es" 
-                                       skin="kama" saveOnSubmit="true" 
-                                       styleClass="ancho100" height="100px" 
-                                       converter="SanitizerAceRichTextConverter"/>
-                    <ice:panelGroup styleClass="recuadro"
-                                    rendered="#{!fichaMB.fieldRendered('SitActual')}">
-                        <ice:outputText rendered="#{!fichaMB.fieldRendered('SitActual')}"
-                                        value="#{fichaMB.fichaTO.situacionActual}"
-                                        escape="false"/>
+                        <ice:commandLink action="#{fichaMB.cancelarActualizacionSituacionActual()}" 
+                                         value="#{labels.ficha_cancelar_actualizacion_situacion_actual}" 
+                                         title="#{labels.ficha_cancelar_actualizacion_actual_descripcion}"
+                                         rendered="#{fichaMB.fieldRendered('CancelarActualizacionSitActual')}"/>
+
+                        <ice:commandLink action="#{fichaMB.verHistoricoSitActAction()}" 
+                                         value="#{labels.ficha_historico_sitact}" 
+                                         title="#{labels.ficha_historico_sitact}"
+                                         styleClass="linkFichaRight"/>
+                    </ice:panelGroup>
+                    
+                    <ice:panelGroup>
+                        <ace:richTextEntry id="situacionActual"
+                                           value="#{fichaMB.situacionActual}" 
+                                           disabled="#{fichaMB.fieldDisabled('SitActual')}"
+                                           rendered="#{fichaMB.fieldRendered('SitActual')}"
+                                           toolbar="Basic" immediate="true" language="es" 
+                                           skin="kama" saveOnSubmit="true" 
+                                           styleClass="ancho100" height="100px" 
+                                           converter="SanitizerAceRichTextConverter"/>
+
+                        <ice:panelGroup styleClass="recuadro"
+                                        rendered="#{!fichaMB.fieldRendered('SitActual')}">
+                            <ice:outputText rendered="#{!fichaMB.fieldRendered('SitActual')}"
+                                            value="#{fichaMB.fichaTO.situacionActual}"
+                                            escape="false"/>
+                        </ice:panelGroup>
                     </ice:panelGroup>
                 </ice:panelGroup>
 
@@ -273,16 +286,16 @@
                 <ice:panelGroup id="fichaProgProyPMO1_Parte1" styleClass="formulario recuadro">
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Area')}">
                         <ice:outputLabel value="#{labels.areaOrganizacionFicha}:"
-                                         styleClass="col-sm-3"/>
+                                         styleClass="col-sm-3 obligatorio"/>
                         <ice:selectOneMenu id="comboAreas" value="#{fichaMB.listaAreasOrganismoCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('Area')}"
                                            styleClass="col-sm-9">
                             <f:selectItems value="#{fichaMB.listaAreasOrganismoCombo.items}"/>
                         </ice:selectOneMenu>
                     </ice:panelGroup>
-                    <!-- Acá va lo del label de Objetivos Estratégicos -->
+                   
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('ObjetivoEstrategico')}">
-                        <ice:outputLabel value="#{fichaMB.labelObjEstValue}:"  title="#{configuracionMB.tooltipObjetivoEstrategico.cnfValor}" 
+                        <ice:outputLabel value="#{fichaMB.labelObjEstValue}:" 
                                          styleClass="col-sm-3"/>
                         <ice:selectOneMenu id="comboObjetivosEstrategicos" value="#{fichaMB.listaObjetivosEstrategicosCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('ObjetivoEstrategico')}"
@@ -290,7 +303,7 @@
                             <f:selectItems value="#{fichaMB.listaObjetivosEstrategicosCombo.items}"/>
                         </ice:selectOneMenu>
                     </ice:panelGroup>
-                    <!-- Acá termina lo del label de Objetivos Estratégicos -->
+                    
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Programas')}">
                         <ice:panelGroup styleClass="col-sm-9">
                             <ice:outputLabel value="#{labels.programaFicha}:"
@@ -319,7 +332,7 @@
 
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Gerente')}">
                         <ice:outputLabel value="#{labels.gerenteFicha}:"
-                                         styleClass="col-sm-3"/>
+                                         styleClass="col-sm-3 obligatorio"/>
                         <ice:selectOneMenu id="comboGerente" value="#{fichaMB.listaGerenteCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('Gerente')}" 
                                            styleClass="col-sm-9">
@@ -329,7 +342,7 @@
 
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Adjunto')}">
                         <ice:outputLabel value="#{labels.adjuntoFicha}:"
-                                         styleClass="col-sm-3"/>
+                                         styleClass="col-sm-3 obligatorio" />
                         <ice:selectOneMenu id="comboAdjunto" value="#{fichaMB.listaAdjuntoCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('Adjunto')}"
                                            styleClass="col-sm-9">
@@ -339,7 +352,7 @@
 
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('Sponsor')}">
                         <ice:outputLabel value="#{labels.sponsorFicha}:"
-                                         styleClass="col-sm-3"/>
+                                         styleClass="col-sm-3 obligatorio" />
                         <ice:selectOneMenu id="comboSponsor" value="#{fichaMB.listaSponsorCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('Sponsor')}"
                                            styleClass="col-sm-9">
@@ -349,7 +362,7 @@
 
                     <ice:panelGroup rendered="#{fichaMB.fieldRendered('PMOFederada')}">
                         <ice:outputLabel value="#{labels.pmoFederadaFicha}:"
-                                         styleClass="col-sm-3"/>
+                                         styleClass="col-sm-3 obligatorio"/>
                         <ice:selectOneMenu id="comboPMOFed" value="#{fichaMB.listaPmoFederadaCombo.selected}"
                                            disabled="#{fichaMB.fieldDisabled('PMOFederada')}"
                                            styleClass="col-sm-9">
@@ -387,6 +400,9 @@
                             <ice:commandLink value="#{labels.ficha_copiar_proy}" 
                                              action="#{fichaMB.verCopiaProyAction()}"
                                              rendered="#{fichaMB.fieldRendered('copiarProyecto')}" style="font-size: 0.9em; display: block; margin-top: 14px;"/>
+                            <ice:commandLink value="#{labels.ficha_copiar_prog}" 
+                                             action="#{fichaMB.verCopiaProgAction()}"
+                                             rendered="#{fichaMB.fieldRendered('copiarPrograma')}" style="font-size: 0.9em; display: block; margin-top: 14px;"/>
                             <ice:commandLink value="#{labels.ficha_mover_proy}"
                                              action="#{moverProyectoMB.verMoverProyAction()}"
                                              rendered="#{fichaMB.fieldRendered('moverProyecto')}" style="font-size: 0.9em; display: block;"/>
@@ -411,14 +427,14 @@
                         <ice:panelGroup styleClass="col-sm-3 colCenter"
                                         rendered="#{fichaMB.fieldRendered('Metodologia')}">
                             <ice:outputLabel value="#{labels.metodologia}"/>
-                            <ace:pushButton  styleClass="botonEditar iconoTabla"
+                            <ace:pushButton   styleClass="botonEditar iconoTabla #{fichaMB.metodologíasHasValues() ? 'valores' : ''}" 
                                              action="#{fichaMB.metodologiaPopup}"/>
                         </ice:panelGroup>
 
                         <ice:panelGroup styleClass="col-sm-3 colCenter"
                                         rendered="#{fichaMB.fieldRendered('notificaciones')}">
                             <ice:outputLabel value="#{labels.ficha_notificaciones}"/>
-                            <ace:pushButton  styleClass="botonEditar iconoTabla"
+                            <ace:pushButton  styleClass="botonEditar iconoTabla #{fichaMB.notificacionesHasValues() ? 'valores' : ''}" 
                                              action="#{fichaMB.notificacionPopupAction()}"/>
                         </ice:panelGroup>
                     </ice:panelGroup>
@@ -526,17 +542,17 @@
                         <ice:outputLabel value="#{labels.ficha_otros_datos_avance_prod}:"
                                          styleClass="col-sm-5"/>
                         <ice:panelGroup id="indiceAvanceProd" styleClass="indice3color">
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceProd[0]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceProd[0]}#{porc}"
                                             styleClass="indice3colorBlue">
-                                <ice:outputText value="#{fichaMB.indiceAvanceProd[0]}%" rendered="#{fichaMB.indiceAvanceProd[0] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceProd[0]}%" rendered="#{moduloCronogramaMB.indiceAvanceProd[0] gt 10}" />
                             </ice:panelGroup>
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceProd[1]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceProd[1]}#{porc}"
                                             styleClass="indice3colorGreen">
-                                <ice:outputText value="#{fichaMB.indiceAvanceProd[1]}%" rendered="#{fichaMB.indiceAvanceProd[1] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceProd[1]}%" rendered="#{moduloCronogramaMB.indiceAvanceProd[1] gt 10}" />
                             </ice:panelGroup>
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceProd[2]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceProd[2]}#{porc}"
                                             styleClass="indice3colorRed">
-                                <ice:outputText value="#{fichaMB.indiceAvanceProd[2]}%" rendered="#{fichaMB.indiceAvanceProd[2] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceProd[2]}%" rendered="#{moduloCronogramaMB.indiceAvanceProd[2] gt 10}" />
                             </ice:panelGroup>
                         </ice:panelGroup>
                     </ice:panelGroup>
@@ -545,17 +561,17 @@
                         <ice:outputLabel value="#{labels.ficha_otros_datos_avance_tiempo}:"
                                          styleClass="col-sm-5"/>
                         <ice:panelGroup id="indiceAvanceTiempo" styleClass="indice3color">
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceTiempo[0]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceTiempo[0]}#{porc}"
                                             styleClass="indice3colorBlue">
-                                <ice:outputText value="#{fichaMB.indiceAvanceTiempo[0]}%" rendered="#{fichaMB.indiceAvanceTiempo[0] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceTiempo[0]}%" rendered="#{moduloCronogramaMB.indiceAvanceTiempo[0] gt 10}" />
                             </ice:panelGroup>
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceTiempo[1]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceTiempo[1]}#{porc}"
                                             styleClass="indice3colorGreen">
-                                <ice:outputText value="#{fichaMB.indiceAvanceTiempo[1]}%" rendered="#{fichaMB.indiceAvanceTiempo[1] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceTiempo[1]}%" rendered="#{moduloCronogramaMB.indiceAvanceTiempo[1] gt 10}" />
                             </ice:panelGroup>
-                            <ice:panelGroup style="width:#{fichaMB.indiceAvanceTiempo[2]}#{porc}"
+                            <ice:panelGroup style="width:#{moduloCronogramaMB.indiceAvanceTiempo[2]}#{porc}"
                                             styleClass="indice3colorRed">
-                                <ice:outputText value="#{fichaMB.indiceAvanceTiempo[2]}%" rendered="#{fichaMB.indiceAvanceTiempo[2] gt 10}" />
+                                <ice:outputText value="#{moduloCronogramaMB.indiceAvanceTiempo[2]}%" rendered="#{moduloCronogramaMB.indiceAvanceTiempo[2] gt 10}" />
                             </ice:panelGroup>
                         </ice:panelGroup>
                     </ice:panelGroup>
@@ -606,6 +622,31 @@
                             <ice:outputLabel value="#{labels.cro_hist_lineabase_link}" />
                             <ice:graphicImage value="../img/reporte-v.png" />
                         </ice:commandLink>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                
+                <ice:panelGroup id="fichaDerReplanificacion" styleClass="margen-sup linksReportes fondo-gris" 
+                                rendered="#{fichaMB.fieldRendered('panelReplanificacion')}">
+                    <ice:outputLabel value="#{labels.replan_titulo_popup}"
+                                     styleClass="centrarDato subtitulo"/>
+                    <ice:panelGrid columns="2">
+                        <ice:outputLabel value="#{labels.replan_generar_nueva_linea_base}:"/>
+                        <ice:outputText value="#{fichaMB.ultimaReplan.proyreplanGenerarLineaBase}"
+                                         converter="sinoConverter"/>
+                    
+                        <ice:outputLabel value="#{labels.replan_no_permit_editar}:"/>
+                        <ice:outputText value="#{fichaMB.ultimaReplan.proyreplanPermitEditar}"
+                                         converter="sinoConverter"/>
+                        
+                        <ice:outputLabel value="#{labels.replan_generar_nuevo_presupuesto}:"/>
+                        <ice:outputText value="#{fichaMB.ultimaReplan.proyreplanGenerarPresupuesto}"
+                                         converter="sinoConverter"/>
+                    
+                        <ice:outputLabel value="#{labels.replan_desc_popup}:"/>
+                        
+                    </ice:panelGrid>
+                    <ice:panelGroup styleClass="recuadro">
+                            <ice:outputText value="#{fichaMB.ultimaReplan.proyreplanDesc}"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
             </ice:panelGroup>
@@ -737,6 +778,12 @@
                     <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Localizaciones')}" styleClass="col-sm-3"
                                     style="#{fichaMB.selectedMostrar == 9 ? 'width: 100%; padding-right:25px' : ''}" >
                         <ui:include src="./../fragmentos/fichaFragmentosLocalizacion.xhtml"/>
+                    </ice:panelGroup>
+
+                    <!-- PANEL Wekan ID = 10 -->
+                    <ice:panelGroup rendered="#{fichaMB.mostrarModulo('Wekan')}" styleClass="col-sm-3"
+                                    style="#{fichaMB.selectedMostrar == 10 ? 'width: 100%; padding-right:25px' : ''}" >
+                        <ui:include src="./../fragmentos/fichaFragmentosWekan.xhtml"/>
                     </ice:panelGroup>
 
                 </ice:panelGroup>

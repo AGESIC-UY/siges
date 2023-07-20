@@ -5,7 +5,7 @@ import com.sofis.entities.data.Programas;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.FichaTO;
-import com.sofis.entities.tipos.FiltroInicioItem;
+import com.sofis.entities.tipos.ItemInicioTO;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.EmailValidator;
 import java.text.Collator;
@@ -79,7 +79,7 @@ public class SsUsuariosUtils {
 
     /**
      *
-     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param ficha Puede ser FichaTO, ItemInicioTO, Programas o Proyectos.
      * @param usuario
      * @param orgPk
      * @return
@@ -89,8 +89,8 @@ public class SsUsuariosUtils {
 
         if (ficha instanceof FichaTO) {
             usuarioPMOF = ((FichaTO) ficha).getUsrPmofedFk();
-        } else if (ficha instanceof FiltroInicioItem) {
-            usuarioPMOF = new SsUsuario(((FiltroInicioItem) ficha).getPmofId());
+        } else if (ficha instanceof ItemInicioTO) {
+            usuarioPMOF = new SsUsuario(((ItemInicioTO) ficha).getPmofId());
         } else if (ficha instanceof Proyectos) {
             usuarioPMOF = ((Proyectos) ficha).getProyUsrPmofedFk();
         } else if (ficha instanceof Programas) {
@@ -111,7 +111,7 @@ public class SsUsuariosUtils {
 
     /**
      *
-     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param ficha Puede ser FichaTO, ItemInicioTO, Programas o Proyectos.
      * @param usuario
      * @return
      */
@@ -121,8 +121,8 @@ public class SsUsuariosUtils {
         if (ficha != null) {
             if (ficha instanceof FichaTO) {
                 usuGerente = ((FichaTO) ficha).getUsrSponsorFk();
-            } else if (ficha instanceof FiltroInicioItem) {
-                usuGerente = new SsUsuario(((FiltroInicioItem) ficha).getSponsorId());
+            } else if (ficha instanceof ItemInicioTO) {
+                usuGerente = new SsUsuario(((ItemInicioTO) ficha).getSponsorId());
             } else if (ficha instanceof Proyectos) {
                 usuGerente = ((Proyectos) ficha).getProyUsrSponsorFk();
             } else if (ficha instanceof Programas) {
@@ -136,7 +136,7 @@ public class SsUsuariosUtils {
 
     /**
      *
-     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param ficha Puede ser FichaTO, ItemInicioTO, Programas o Proyectos.
      * @param usuario
      * @return
      */
@@ -146,8 +146,8 @@ public class SsUsuariosUtils {
         if (ficha != null) {
             if (ficha instanceof FichaTO) {
                 usuGerente = ((FichaTO) ficha).getUsrGerenteFk();
-            } else if (ficha instanceof FiltroInicioItem) {
-                usuGerente = new SsUsuario(((FiltroInicioItem) ficha).getResponsableId());
+            } else if (ficha instanceof ItemInicioTO) {
+                usuGerente = new SsUsuario(((ItemInicioTO) ficha).getResponsableId());
             } else if (ficha instanceof Proyectos) {
                 usuGerente = ((Proyectos) ficha).getProyUsrGerenteFk();
             } else if (ficha instanceof Programas) {
@@ -161,7 +161,7 @@ public class SsUsuariosUtils {
 
     /**
      *
-     * @param ficha Puede ser FichaTO, FiltroInicioItem, Programas o Proyectos.
+     * @param ficha Puede ser FichaTO, ItemInicioTO, Programas o Proyectos.
      * @param usuario
      * @return
      */
@@ -171,8 +171,8 @@ public class SsUsuariosUtils {
         if (ficha != null) {
             if (ficha instanceof FichaTO) {
                 usuAdjunto = ((FichaTO) ficha).getUsrAdjuntoFk();
-            } else if (ficha instanceof FiltroInicioItem) {
-                usuAdjunto = new SsUsuario(((FiltroInicioItem) ficha).getAdjuntoId());
+            } else if (ficha instanceof ItemInicioTO) {
+                usuAdjunto = new SsUsuario(((ItemInicioTO) ficha).getAdjuntoId());
             } else if (ficha instanceof Proyectos) {
                 usuAdjunto = ((Proyectos) ficha).getProyUsrAdjuntoFk();
             } else if (ficha instanceof Programas) {

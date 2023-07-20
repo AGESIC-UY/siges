@@ -89,6 +89,32 @@ public class TipoDocumentoInstanciaBean {
 
         return guardarTiposDocsIntancia(tdiListResult);
     }
+    
+    /**
+     * Guarda una copia de los TipoDocumentoInstancia del programa aportado para
+     * el nuevo programa.
+     *
+     * @param progPk
+     * @param orgPk
+     * @return
+     */
+    public List<TipoDocumentoInstancia> guardarCopiaTDIPrograma(Integer progPk, Integer nvoProgPk, Integer orgPk) {
+        List<TipoDocumentoInstancia> tdiList = obtenerTipoDocsInstanciaPorProgProyId(progPk, TipoFichaEnum.PROGRAMA.id, orgPk);
+        List<TipoDocumentoInstancia> tdiListResult = new ArrayList<>();
+        for (TipoDocumentoInstancia tdi : tdiList) {
+            TipoDocumentoInstancia nvaTDI = new TipoDocumentoInstancia();
+            nvaTDI.setDocsEstado(tdi.getDocsEstado());
+            nvaTDI.setTipodocExigidoDesde(tdi.getTipodocExigidoDesde());
+            nvaTDI.setTipodocInstPeso(tdi.getTipodocInstPeso());
+            nvaTDI.setTipodocInstProgFk(nvoProgPk);
+            nvaTDI.setTipodocInstProyFk(null);
+            nvaTDI.setTipodocInstResumenEjecutivo(tdi.getTipodocInstResumenEjecutivo());
+            nvaTDI.setTipodocInstTipoDocFk(tdi.getTipodocInstTipoDocFk());
+            tdiListResult.add(nvaTDI);
+        }
+
+        return guardarTiposDocsIntancia(tdiListResult);
+    }
 
     public List<TipoDocumentoInstancia> obtenerTipoDocInstResumen(Integer fichaFk, Integer tipoFicha, Estados est, int size) {
 
@@ -264,5 +290,5 @@ public class TipoDocumentoInstanciaBean {
             }
         }
     }
-
+    
 }

@@ -16,14 +16,14 @@
         <ice:panelPopup draggable="false" 
                         autoCentre="true" 
                         modal="true" 
-                        rendered="#{fichaMB.renderPopupPlantillaCro}">
+                        rendered="#{moduloCronogramaMB.renderPopupPlantillaCro}">
 
             <f:facet name="header">
                 <ice:panelGroup styleClass="cabezalPopup">
                     <ice:outputText value="#{labels.plaCrono_titulo}"/>
                     <ice:commandButton styleClass="botonCerrar" 
                                        title ="#{labels.cerrar}"
-                                       action="#{fichaMB.cerrarPlantillaCroPopup()}"/>
+                                       action="#{moduloCronogramaMB.cerrarPlantillaCroPopup(fichaMB.fichaTO)}"/>
                 </ice:panelGroup>
             </f:facet>
 
@@ -32,12 +32,12 @@
                     <ice:panelGrid styleClass="formulario" columns="2">
                         <ice:outputLabel value="#{labels.plaCrono_popup_nombre}:" />
                         <ice:selectOneMenu id="comboPlantilla"
-                                           value="#{fichaMB.plantillaCroListCombo.selected}">
-                            <f:selectItems value="#{fichaMB.plantillaCroListCombo.items}"/>
+                                           value="#{moduloCronogramaMB.plantillaCroListCombo.selected}">
+                            <f:selectItems value="#{moduloCronogramaMB.plantillaCroListCombo.items}"/>
                         </ice:selectOneMenu>
 
                         <ice:outputLabel value="#{labels.plaCrono_popup_fecha}:"/>
-                        <ace:dateTimeEntry value="#{fichaMB.plantillaFechaInicio}"
+                        <ace:dateTimeEntry value="#{moduloCronogramaMB.plantillaFechaInicio}"
                                            pattern="#{inicioMB.calendarPattern}" 
                                            renderAsPopup="true" navigator="true"
                                            timeZone="#{inicioMB.calendarTimeZone}"/>
@@ -54,7 +54,7 @@
                                            action="#{fichaMB.generarCroDesdePlantilla()}" 
                                            styleClass="boton principal guardar"/>
                         <ace:linkButton value="#{labels.cerrar}" 
-                                        action="#{fichaMB.cerrarPlantillaCroPopup()}"/>
+                                        action="#{moduloCronogramaMB.cerrarPlantillaCroPopup(fichaMB.fichaTO)}"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
             </f:facet>

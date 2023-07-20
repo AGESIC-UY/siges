@@ -80,7 +80,13 @@
                     </ice:panelGroup>
                 </ice:panelGroup>
 
-                <ice:panelGroup >
+                <ice:panelGroup>
+                    <ice:outputLabel value="#{labels.descFicha}"/>
+                    <ice:panelGroup styleClass="recuadro margen-inf">
+                        <ice:outputText value="#{reporteProyectoMB.fichaTO.descripcion}"
+                                        escape="false"/>
+                    </ice:panelGroup>
+                    
                     <ice:outputLabel value="#{labels.objFicha}"/>
                     <ice:panelGroup styleClass="recuadro margen-inf">
                         <ice:outputText value="#{reporteProyectoMB.fichaTO.objetivo}"
@@ -226,10 +232,10 @@
                         <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
 
                         <ace:dataTable id="resumenEntregablesTable"
-                                       value="#{reporteProyectoMB.fichaMB.listaEntregablesResumen}"
+                                       value="#{moduloCronogramaMB.listaEntregablesResumen}"
                                        styleClass="tablaFicha"
                                        var="ent"
-                                       rendered="#{not empty reporteProyectoMB.fichaMB.listaEntregablesResumen}"
+                                       rendered="#{not empty moduloCronogramaMB.listaEntregablesResumen}"
                                        paginator="true"
                                        paginatorPosition="bottom"
                                        rows="5">

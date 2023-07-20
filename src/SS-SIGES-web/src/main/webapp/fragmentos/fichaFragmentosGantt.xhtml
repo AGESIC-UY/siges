@@ -11,6 +11,8 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:of="http://omnifaces.org/functions">
 
+    <o:importConstants type="com.sofis.web.utils.CronogramaUtils" var="const"/>
+    
     <ice:panelGroup id="panelGannt"
                     styleClass="cuadro" 
                     rendered="#{(fichaMB.selectedMostrar == null || fichaMB.selectedMostrar == 3) and fichaMB.fieldRendered('panelGannt')}">
@@ -31,8 +33,9 @@
         <script type="text/javascript" src="../robicch-jQueryGantt/ganttDrawer.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
         <script type="text/javascript" src="../robicch-jQueryGantt/ganttGridEditor.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
         <script type="text/javascript" src="../robicch-jQueryGantt/ganttMaster.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
-
+        
         <ice:panelGroup id="cabezalGannt" styleClass="cabezal">
+            <h:inputHidden id="mostrarBotonEntregableReferencia" value="#{moduloCronogramaMB.mostrarBotonEntregableReferencia}" />
             <ice:outputText value="#{labels.cronograma}"/>
             <ice:commandButton value="" action="#{fichaMB.miMostrar(3)}" rendered="#{!fichaMB.misTareas}"
                                onclick="if (!checkGanttChange(#{fichaMB.selectedMostrar})){return false};" 
@@ -49,7 +52,7 @@
                            styleClass="guardarCronBtn" 
                            action="#{fichaMB.guardarCronograma()}"
                            style="display: none;" />
-        <h:inputText id="dataCrono" value="#{fichaMB.dataCron}" style="display: none;"/>
+        <h:inputText id="dataCrono" value="#{moduloCronogramaMB.dataCron}" style="display: none;"/>
 
         <!--El panel con el resumen de gannt -->
         <ice:panelGroup rendered="#{not fichaMB.mostrar[3]}" styleClass="cuerpo">
@@ -57,10 +60,10 @@
             <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
 
             <ace:dataTable id="resumenEntregablesTable"
-                           value="#{fichaMB.listaEntregablesResumen}"
+                           value="#{moduloCronogramaMB.listaEntregablesResumen}"
                            styleClass="tablaFicha"
                            var="ent"
-                           rendered="#{not empty fichaMB.listaEntregablesResumen}"
+                           rendered="#{not empty moduloCronogramaMB.listaEntregablesResumen}"
                            paginator="true"
                            paginatorPosition="bottom"
                            rows="5">
@@ -75,7 +78,7 @@
         <ice:panelGroup rendered="#{fichaMB.mostrar[3]}" styleClass="cuerpo">
 
             <!-- Carga masiva desde archivo -->
-            <ice:panelGroup id="ganntFormCargaDesdeArchivo" rendered="#{fichaMB.cargaDesdeArchivo}">
+            <ice:panelGroup id="ganntFormCargaDesdeArchivo" rendered="#{moduloCronogramaMB.cargaDesdeArchivo}">
 
                 <ice:panelGroup>
                     <ace:fileEntry id="fileEntryPlanilla"
@@ -84,7 +87,7 @@
                                    relativePath="/files/"
                                    maxFileCount="1" 
                                    maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
-                                   fileEntryListener="#{fichaMB.subirPlanillaCargaEntregablesAction}" 
+                                   fileEntryListener="#{moduloCronogramaMB.subirPlanillaCargaEntregablesAction}" 
                                    maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
                                    maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
                                    useOriginalFilename="true" 
@@ -95,8 +98,8 @@
                     <ice:panelGroup styleClass="panelBotones margen-sup">
                         <h:commandButton value="#{labels.cargar_planilla}" 
                                          styleClass="boton principal botonGuardar" 
-                                         id="btnImportarEntregablesDesdeArchivo" action="#{fichaMB.importarEntregablesDesdeArchivo()}" />
-                        <ace:linkButton value="#{labels.cancelar}" action="#{fichaMB.cancelarCargaDesdeArchivo()}" styleClass="boton secundario"/>
+                                         id="btnImportarEntregablesDesdeArchivo" action="#{moduloCronogramaMB.importarEntregablesDesdeArchivo(fichaMB.fichaTO)}" />
+                        <ace:linkButton value="#{labels.cancelar}" action="#{moduloCronogramaMB.cancelarCargaDesdeArchivo(fichaMB.fichaTO)}" styleClass="boton secundario"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
 
@@ -104,16 +107,16 @@
             </ice:panelGroup>
 
             <!-- Carga masiva mediante formulario -->
-            <ice:panelGroup id="ganntFormCargaPorFormulario" rendered="#{fichaMB.cargaPorFormulario}">
+            <ice:panelGroup id="ganntFormCargaPorFormulario" rendered="#{moduloCronogramaMB.cargaPorFormulario}">
                 
                 <ice:panelGroup>
                     <ace:messages for="tblCargaPorFormulario"/>
                     <ace:pushButton value="#{labels.crono_agregar_entregable}" styleClass="boton principal agregar" 
-                                action="#{fichaMB.agregarEntregableCargaPorFormulario()}" />
+                                action="#{moduloCronogramaMB.agregarEntregableCargaPorFormulario()}" />
                 </ice:panelGroup>
                 
                 <ace:dataTable id="tblCargaPorFormulario"
-                               value="#{fichaMB.entregablesCargaPorFormulario}"
+                               value="#{moduloCronogramaMB.entregablesCargaPorFormulario}"
                                styleClass="tablaFicha tablaGantt"
                                var="ent"
                                paginator="false"
@@ -150,35 +153,35 @@
                     </ace:column>
                     <ace:column id="cargaPorFormularioAgregar" >
                         <h:commandButton id="btnAgregarEntregable" styleClass="botonAgregar iconoTabla" title="Añadir"
-                                         action="#{fichaMB.agregarEntregableCargaPorFormulario(ent)}" />
+                                         action="#{moduloCronogramaMB.agregarEntregableCargaPorFormulario(ent)}" />
                     </ace:column>
                     <ace:column id="cargaPorFormularioQuitar" >
                         <h:commandButton id="btnQuitarEntregable" styleClass="botonEliminar iconoTabla" title="Eliminar"
-                                         action="#{fichaMB.quitarEntregableCargaPorFormulario(ent)}" />
+                                         action="#{moduloCronogramaMB.quitarEntregableCargaPorFormulario(ent)}" />
                     </ace:column>
                 </ace:dataTable>
                 <ice:panelGroup styleClass="panelBotones margen-sup">
                     <ace:pushButton  id="btnImportarEntregablesPorFormulario" value="#{labels.cargar_formulario}"
                                      action="#{fichaMB.importarEntregablesPorFormulario()}" styleClass="boton principal guardar"/>
-                    <ace:linkButton value="#{labels.cancelar}" action="#{fichaMB.cancelarCargaPorFormulario()}" styleClass="boton secundario"/>
+                    <ace:linkButton value="#{labels.cancelar}" action="#{moduloCronogramaMB.cancelarCargaPorFormulario(fichaMB.fichaTO)}" styleClass="boton secundario"/>
                 </ice:panelGroup>
 
             </ice:panelGroup>
 
             <!-- Formulario de alta -->
-            <ice:panelGroup id="ganttForm" rendered="#{not fichaMB.cargaDesdeArchivo and not fichaMB.cargaPorFormulario}">
+            <ice:panelGroup id="ganttForm" rendered="#{not moduloCronogramaMB.cargaDesdeArchivo and not moduloCronogramaMB.cargaPorFormulario}">
                 <c:set var="ganttIndice" value="2" />
                 <ui:include src="./fichaFragmentosGanttIndices.xhtml" />
 
                 <ice:panelGroup styleClass="accesosCronograma">
-                    <ace:linkButton value="#{labels.prod_titulo}" action="#{fichaMB.miMostrar(5)}"/>
-                    <ace:linkButton value="#{labels.plaCrono_link}" action="#{fichaMB.plantillaCroPopup}" 
-                                    rendered="#{fichaMB.gerenteOAdjuntoFicha and fichaMB.habilitarCargaDesdePlantilla()}" />
+                    <ace:linkButton value="#{labels.prod_titulo}" action="#{fichaMB.miMostrar(5)}" rendered="#{fichaMB.mostrarModulo('Productos')}"/>
+                    <ace:linkButton value="#{labels.plaCrono_link}" action="#{moduloCronogramaMB.plantillaCroPopup}" 
+                                    rendered="#{fichaMB.gerenteOAdjuntoFicha and fichaMB.habilitarCargaDesdePlantilla}" />
                     <ace:linkButton value="#{labels.cro_hist_lineabase_link}" action="#{inicioMB.irReporteCronograma(fichaMB.fichaTO.fichaFk, true)}" 
                                     rendered="#{fichaMB.fieldRendered('reporteCroHist')}" />
-                    <ace:linkButton value="#{labels.carga_desde_archivo}" action="#{fichaMB.mostrarCargaDesdeArchivo()}"
-                                    rendered="#{fichaMB.habilitarCargaDesdeArchivo()}"/>
-                    <ace:linkButton value="#{labels.carga_por_formulario}" action="#{fichaMB.mostrarCargaPorFormulario()}"
+                    <ace:linkButton value="#{labels.carga_desde_archivo}" action="#{moduloCronogramaMB.mostrarCargaDesdeArchivo(fichaMB.fichaTO)}"
+                                    rendered="#{moduloCronogramaMB.habilitarCargaDesdeArchivo()}"/>
+                    <ace:linkButton value="#{labels.carga_por_formulario}" action="#{moduloCronogramaMB.mostrarCargaPorFormulario(fichaMB.fichaTO)}"
                                     rendered="#{fichaMB.habilitarCargaPorFormulario()}"/>
                 </ice:panelGroup>
 
@@ -218,21 +221,38 @@
 
                 <script src="../robicch-jQueryGantt/gantt_decorator.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}"></script>
 
-                <ice:outputText value="#{labels.crono_referencia_gantt}" 
-                                escape="false"
-                                styleClass="comentario"/>
-
+                <ice:panelGroup id="infoReferenciaColoresGantt">
+                    <ice:outputText value="#{const.REFERENCIA_CRONOGRAMA_SMALL}" escape="false" styleClass="comentario"/>
+                    <br/>
+                    <ice:outputText value="#{labels.crono_referencia_gantt_producto}" escape="false" styleClass="comentario"/>
+                    <br/>
+                    <ice:outputText value="#{labels.crono_referencia_gantt_referencia}" escape="false" styleClass="comentario"/>
+                    <br/>
+                    <ice:outputText value="#{labels.crono_referencia_gantt_peso}" escape="false" styleClass="comentario"/>
+                </ice:panelGroup>
+                
             </ice:panelGroup>
 
         </ice:panelGroup>
 
+    <o:commandScript name="navegarAProyecto" action="#{moduloCronogramaMB.irAProyecto}" />
 
         <ace:dialog widgetVar="ganttDialogUtils" width="200" closable="true" modal="true">
             <div id="ganttDialogUtilsMsgDiv" class="row" style="padding: 10px;">
 
             </div>
         </ace:dialog>
-
-
+    
+        <ace:dialog widgetVar="ganttDialogConfirmDelete" width="200" closable="true" modal="true">
+            <div id="ganttDialogConfirmDeleteMsgDiv" class="row ui-icon-info-ref" style="padding-left: 25px;padding-bottom: 15px; max-width:350px !important">
+            </div>
+                <button onclick="jQuery('#workSpace').trigger('confirmDeleteCurrentTask.gantt');" class="boton principal botonContinuarRef" 
+                        title="Confirmar eliminar tarea" id="confirmDeleteBtn" style="min-width: 60px; margin-left: 20px;">
+                Si</button>
+                <button onclick="jQuery('#workSpace').trigger('cancelDeleteCurrentTask.gantt');" class="boton principal botonEliminarRef" 
+                        title="Cancelar eliminar tarea" id="notConfirmDeleteBtn" style="min-width: 60px">
+                No</button>
+        </ace:dialog>
+        
     </ice:panelGroup>
 </ui:composition>

@@ -72,6 +72,7 @@ public class MatchCriteriaTO extends ValueCriteriaTO implements Serializable {
 		//ejemplo pais.nombre
 		String collectionPropProp = new String();
 		int d = property.indexOf("Collection.");
+		int dLast = property.lastIndexOf("Collection.");
 		if (d >= 0) {
 			collectionProp = property.substring(0, d) + "Collection";
 			collectionPropProp = property.substring(d + 11, property.length());
@@ -89,14 +90,15 @@ public class MatchCriteriaTO extends ValueCriteriaTO implements Serializable {
 		}
 
 		d = property.indexOf("Set.");
+		dLast = property.lastIndexOf("Set.");
 		if (d >= 0) {
 			collectionProp = property.substring(0, d) + "Set";
-			collectionPropProp = property.substring(d + 4, property.length());
+			collectionPropProp = property.substring(dLast + 4, property.length());
 			HashMap r = new HashMap();
 			r.put(collectionProp, collectionPropProp);
 			return r;
 		}
-
+                
 		return null;
 	}
 

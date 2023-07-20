@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmPopup">
+        <ice:panelPopup rendered="#{notificacionDefectoMB.renderPopupEdicion.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.titulo_notif}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{notificacionDefectoMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="formNotif">
+                    <ice:panelGrid styleClass="formulario" columns="4">
+                        <ice:outputLabel value="#{labels.notif_head_codigo}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{notificacionDefectoMB.notifEnEdicion.codigo}" disabled="true"/>
+
+                        <ice:outputLabel value="#{labels.notif_head_desc}:" styleClass="obligatorio"/>
+                        <ace:textAreaEntry value="#{notificacionDefectoMB.notifEnEdicion.descripcion}" />
+                    </ice:panelGrid>
+
+                    <ice:panelGrid styleClass="formulario form-checks" columns="8">
+                        <ice:panelGroup>
+                            <ice:outputLabel value="#{labels.ficha_notif_head_pm}:" />
+                            <ace:checkboxButton value="#{notificacionDefectoMB.notifEnEdicion.gerenteAdjunto}" />
+                        </ice:panelGroup>
+                        <ice:panelGroup>
+                            <ice:outputLabel value="#{labels.ficha_notif_head_pmof}:" />
+                            <ace:checkboxButton value="#{notificacionDefectoMB.notifEnEdicion.pmof}" />
+                        </ice:panelGroup>
+                        <ice:panelGroup>
+                            <ice:outputLabel value="#{labels.ficha_notif_head_pmot}:" />
+                            <ace:checkboxButton value="#{notificacionDefectoMB.notifEnEdicion.pmot}" />
+                        </ice:panelGroup>
+                        <ice:panelGroup>
+                            <ice:outputLabel value="#{labels.ficha_notif_head_sponsor}:" />
+                            <ace:checkboxButton value="#{notificacionDefectoMB.notifEnEdicion.sponsor}" />
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup>
+                        <ice:outputLabel value="#{labels.ficha_notif_head_asunto}:" />
+                        <ace:textEntry value="#{notificacionDefectoMB.notifEnEdicion.asunto}" />
+                    </ice:panelGroup>
+                    
+                    <ice:panelGrid styleClass="formulario" >
+                        <ice:outputLabel value="#{labels.notif_head_mensaje}:" />
+                        <ace:richTextEntry id="notifMensaje"
+                                           value="#{notificacionDefectoMB.notifEnEdicion.mensaje}" 
+                                           toolbar="Basic" immediate="true" language="es"
+                                           skin="kama" saveOnSubmit="true"
+                                           styleClass="ancho100" height="80px" 
+                                           converter="SanitizerAceRichTextConverter"
+                                           />
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="popupMsg"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{notificacionDefectoMB.guardar}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{notificacionDefectoMB.cancelar()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

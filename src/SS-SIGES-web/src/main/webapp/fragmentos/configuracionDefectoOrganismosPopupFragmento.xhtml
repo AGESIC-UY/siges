@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmConfiguracionPopup">
+
+        <ice:panelPopup rendered="#{configuracionDefectoOrganismosMB.renderPopupEdicion}" autoCentre="true" modal="true" draggable="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.hConfiguracion}"/>
+                    <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}"  action="#{configuracionDefectoOrganismosMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGrid id="frmConfiguracionPopupGrid">
+                    <ice:panelGrid columns="2" rowClasses="fila0,fila1">
+                        <ice:outputLabel value="#{labels.codigo}" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{configuracionDefectoOrganismosMB.confEnEdicion.codigo}" 
+                                       styleClass="textoLargo"
+                                       disabled="#{configuracionDefectoOrganismosMB.confEnEdicion.id != null}"/>
+                        <ice:outputLabel value="#{labels.esHTML}" />
+                        <ace:checkboxButton value="#{configuracionDefectoOrganismosMB.confEnEdicion.esHTML}" 
+                                            valueChangeListener="#{configuracionDefectoOrganismosMB.cnfHtmlChange}">
+                            <ace:ajax execute="@this" render="@form"/>
+                        </ace:checkboxButton>
+
+                        <ice:outputLabel value="#{labels.valor}" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{configuracionDefectoOrganismosMB.confEnEdicion.valor}" styleClass="obligatorio" rendered="#{not configuracionDefectoOrganismosMB.confEnEdicion.esHTML}"/>
+                        <ace:richTextEntry saveOnSubmit="true" toolbar="Basic" value="#{configuracionDefectoOrganismosMB.confEnEdicion.valor}" rendered="#{configuracionDefectoOrganismosMB.confEnEdicion.esHTML}" converter="SanitizerAceRichTextConverter"/>
+
+                        <ice:outputLabel value="#{labels.descripcion}" />
+                        <ace:textEntry value="#{configuracionDefectoOrganismosMB.confEnEdicion.descripcion}" styleClass="textoLargo"/>
+
+                        <ice:panelGrid/>
+                        <ace:messages id="confGeneralMsgs" />
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:pushButton value="#{labels.guardar}" action="#{configuracionDefectoOrganismosMB.guardar}"  styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cancelar}" action="#{configuracionDefectoOrganismosMB.cancelar()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+
+</ui:composition>

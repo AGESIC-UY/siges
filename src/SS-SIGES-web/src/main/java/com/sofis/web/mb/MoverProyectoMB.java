@@ -279,7 +279,7 @@ public class MoverProyectoMB implements Serializable {
         }
 
         //Cargo la lista de los Procedimientos de Compra.
-        listaProcedimientoCompra = procedimientoCompraDelegate.obtenerProcedimientosComprasPorOrgId(orgPk);
+        listaProcedimientoCompra = procedimientoCompraDelegate.obtenerProcedimientosComprasHabilitadosPorOrgId(orgPk);
         if (listaProcedimientoCompra != null && !listaProcedimientoCompra.isEmpty()) {
                 listaProcedimientoCompraCombo = new SofisCombo((List) listaProcedimientoCompra, "procCompNombre");
                 listaProcedimientoCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));

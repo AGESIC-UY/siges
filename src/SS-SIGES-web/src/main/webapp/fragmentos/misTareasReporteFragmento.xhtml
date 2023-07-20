@@ -79,7 +79,7 @@
                                 <div class="avance">
 
                                     <ace:textEntry style="width: 45px; margin-right:0px;"
-                                                   value="#{ent.entProgreso}" 
+                                                   value="#{ent.entProgresoTmp}" 
                                                    rendered="#{misTareasMB.renderField(proy.proyPk, '')}"
                                                    disabled="#{ent.tieneProd == true}"/>
 
@@ -123,7 +123,13 @@
 
                 <ice:panelGroup id="infoReferenciaColoresGantt" styleClass="margen-sup">
                     <ice:outputText value="#{reportesMB.coloresGantt()}" escape="false" />
-                    <ice:outputText value="#{labels.crono_referencia_gantt}" escape="false" />
+                    <ice:outputText value="#{labels.crono_referencia_gantt_producto}" escape="false" styleClass="comentario"/>
+                    <br/>
+                    <!--
+                    <ice:outputText value="#{labels.crono_referencia_gantt_referencia}" escape="false" styleClass="comentario"/>
+                    <br/>
+                    -->
+                    <ice:outputText value="#{labels.crono_referencia_gantt_peso}" escape="false" styleClass="comentario"/>
                 </ice:panelGroup>
             </div>
         </ice:panelGroup>
@@ -267,11 +273,11 @@
 
                                         <ice:outputText value="#{prodMes.prodmesReal}"
                                                         styleClass="alinearDerecha"
-                                                        rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk)) and prodMes.prodmesPk > 0}"
+                                                        rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4)) and prodMes.prodmesPk > 0}"
                                                         converter="ImporteFormatConverter"/>
                                         <ace:textEntry value="#{prodMes.prodmesReal}" 
                                                        converter="ImporteFormatConverter"
-                                                       rendered="#{(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and misTareasMB.editarRealProd(prodMes, prod.prodEntregableFk) and prodMes.prodmesPk > 0)}"
+                                                       rendered="#{(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and prodMes.prodmesPk > 0)}"
                                                        styleClass="textoCorto alinearDerecha"
                                                        style="width: 60px !important;"/>
 

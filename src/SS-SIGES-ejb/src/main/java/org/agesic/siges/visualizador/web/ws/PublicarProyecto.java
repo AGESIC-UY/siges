@@ -21,6 +21,7 @@ public interface PublicarProyecto {
 
     /**
      * 
+     * @param token
      * @return
      *     returns org.agesic.siges.visualizador.web.ws.CategoriaProyectosResponse
      */
@@ -28,7 +29,9 @@ public interface PublicarProyecto {
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "obtenerCategoriasXml", targetNamespace = "http://ws.web.visualizador.siges.agesic.org/", className = "org.agesic.siges.visualizador.web.ws.ObtenerCategoriasXml")
     @ResponseWrapper(localName = "obtenerCategoriasXmlResponse", targetNamespace = "http://ws.web.visualizador.siges.agesic.org/", className = "org.agesic.siges.visualizador.web.ws.ObtenerCategoriasXmlResponse")
-    public CategoriaProyectosResponse obtenerCategoriasXml();
+    public CategoriaProyectosResponse obtenerCategoriasXml(
+        @WebParam(name = "token", targetNamespace = "")
+        String token);
 
     /**
      * 

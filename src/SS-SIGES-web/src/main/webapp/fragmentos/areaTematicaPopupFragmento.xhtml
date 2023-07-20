@@ -13,7 +13,7 @@
                 xmlns:of="http://omnifaces.org/functions">
 
     <o:form id="frmAreaTematicaPopup">
-        <ice:panelPopup rendered="#{areaTematicaMB.renderPopupEdicion.isRenderPopup()}" 
+        <ice:panelPopup rendered="#{areaTematicaMB.popupEdicion.isRenderPopup()}" 
                         draggable="true" 
                         autoCentre="true" 
                         modal="true"
@@ -37,8 +37,33 @@
                                            styleClass="textoMedio">
                             <f:selectItems value="#{areaTematicaMB.listaAreasTagsCombo.items}"/>
                         </ice:selectOneMenu>
-                    </ice:panelGrid>
 
+                        <ice:outputLabel value="#{labels.area_tem_head_habilitada}:" />
+                        <ace:checkboxButton value="#{areaTematicaMB.areaTemEnEdicion.habilitada}"/>
+                    </ice:panelGrid>
+                    
+                    <ace:confirmationDialog id="popupConfirmar"
+                                            widgetVar="popupConfirmar"
+                                            message="#{areaTematicaMB.areaTemEnEdicion.habilitada ? labels.mensajeHabilitarAreaTematica : labels.mensajeDeshabilitarAreaTematica }"
+                                            header="#{labels.hConfirmacion}"
+                                            closable="true"
+                                            closeOnEscape="true"
+                                            severity="info"
+                                            modal="true"
+                                            position="center">
+                        <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                            <h:commandButton id="confirmar"
+                                             value="#{labels.confirmar}"
+                                             styleClass="boton principal botonContinuar"
+                                             onclick="popupConfirmar.hide()" 
+                                             actionListener="#{areaTematicaMB.confirmarGuardar()}"/>
+                            <h:commandButton id="cancelar"
+                                             value="#{labels.cancelar}"
+                                             styleClass="boton principal botonEliminar"
+                                             onclick="popupConfirmar.hide()"/>
+                        </h:panelGrid>
+                    </ace:confirmationDialog> 
+                    
                     <ice:panelGroup styleClass="panelBotones">
                         <ace:messages id="popupMsg"/>
                         <ace:pushButton value="#{labels.guardar}" 

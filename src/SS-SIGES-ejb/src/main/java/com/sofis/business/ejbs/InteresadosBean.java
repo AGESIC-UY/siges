@@ -3,6 +3,7 @@ package com.sofis.business.ejbs;
 import com.sofis.business.validations.InteresadosValidacion;
 import com.sofis.data.daos.InteresadosDao;
 import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.Interesados;
 import com.sofis.entities.data.Programas;
 import com.sofis.entities.data.Proyectos;
@@ -15,9 +16,9 @@ import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,10 +26,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "InteresadosBean")
 @LocalBean
@@ -36,42 +33,57 @@ public class InteresadosBean {
 
 	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
 	private EntityManager em;
-        private static final Logger logger = Logger.getLogger(InteresadosBean.class.getName());
+
+	private static final Logger LOGGER = Logger.getLogger(InteresadosBean.class.getName());
 
 	@Inject
 	private DatosUsuario du;
+
 	@Inject
 	private ProgramasBean programasBean;
+
 	@Inject
 	private ProyectosBean proyectosBean;
 
-	//private String usuario;
-	//private String origen;
-	@PostConstruct
-	public void init() {
-		//usuario = du.getCodigoUsuario();
-		//origen = du.getOrigen();
-	}
+	@Inject
+	private SsUsuarioBean usuarioBean;
 
-	public Interesados guardar(Interesados interesados) throws GeneralException {
+	public Interesados guardar(Interesados interesado) throws GeneralException {
 
-		InteresadosValidacion.validar(interesados);
+		InteresadosValidacion.validar(interesado);
 		InteresadosDao interesadosDao = new InteresadosDao(em);
 
 		try {
-			interesados = interesadosDao.update(interesados, du.getCodigoUsuario(), du.getOrigen());
+
+			switch (interesado.getTipo()) {
+				case EXTERNO:
+					interesado.setUsuario(null);
+					break;
+
+				case INTERNO:
+					SsUsuario usuario = usuarioBean.obtenerSsUsuarioPorId(interesado.getUsuario().getUsuId());
+
+					interesado.getIntPersonaFk().setPersNombre(usuario.getNombreApellido());
+					interesado.getIntPersonaFk().setPersMail(usuario.getUsuCorreoElectronico());
+
+					interesado.setUsuario(usuario);
+					break;
+			}
+
+			interesado = interesadosDao.update(interesado, du.getCodigoUsuario(), du.getOrigen());
 
 		} catch (BusinessException be) {
 			//Si es de tipo negocio envía la misma excepción
 			throw be;
+
 		} catch (Exception ex) {
-			logger.logp(Level.SEVERE, InteresadosBean.class.getName(), "guardar", ex.getMessage(), ex);
+			LOGGER.logp(Level.SEVERE, InteresadosBean.class.getName(), "guardar", ex.getMessage(), ex);
 			TechnicalException ge = new TechnicalException(ex);
 			ge.addError(ex.getMessage());
 			throw ge;
 		}
 
-		return interesados;
+		return interesado;
 	}
 
 	/**
@@ -90,21 +102,29 @@ public class InteresadosBean {
 
 		if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
 			Programas prog = programasBean.obtenerProgPorId(fichaFk);
+
 			if (prog.getInteresadosList().contains(interesado)) {
 				prog.getInteresadosList().remove(interesado);
 			}
+
 			prog.getInteresadosList().add(interesado);
-			prog = programasBean.guardarPrograma(prog, usuario, orgPk);
+			prog = programasBean.guardarPrograma(prog, usuario, orgPk, false);
+
 			return prog;
 
 		} else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
-			Proyectos proy = proyectosBean.obtenerProyPorId(fichaFk);
-			if (proy.getInteresadosList().contains(interesado)) {
-				proy.getInteresadosList().remove(interesado);
+
+			Proyectos proyecto = proyectosBean.obtenerProyPorId(fichaFk);
+
+			if (proyecto.getInteresadosList().contains(interesado)) {
+				proyecto.getInteresadosList().remove(interesado);
 			}
-			proy.getInteresadosList().add(interesado);
-			proy = proyectosBean.guardarProyecto(proy, usuario, orgPk);
-			return proy;
+
+			proyecto.getInteresadosList().add(interesado);
+
+			proyectosBean.actualizarFechaUltimaModificacion(proyecto);
+
+			return proyecto;
 		}
 
 		return null;
@@ -115,7 +135,7 @@ public class InteresadosBean {
 		try {
 			return interesadosDao.findById(Interesados.class, id);
 		} catch (DAOGeneralException ex) {
-			logger.logp(Level.SEVERE, InteresadosBean.class.getName(), "obtenerInteresadosPorId", ex.getMessage(), ex);
+			LOGGER.logp(Level.SEVERE, InteresadosBean.class.getName(), "obtenerInteresadosPorId", ex.getMessage(), ex);
 			TechnicalException te = new TechnicalException(ex);
 			te.addError(ex.getMessage());
 			throw te;
@@ -135,37 +155,46 @@ public class InteresadosBean {
 		return dao.obtenerResumenInteresados(proyPk, tipoFicha, size);
 	}
 
-	public void delete(Integer intPk, Integer fichaPk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
-		logger.fine("Borrar un interesado(" + intPk + ").");
+	public Object eliminar(Integer intPk, Integer fichaPk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
+
 		InteresadosDao dao = new InteresadosDao(em);
 		try {
 
 			Interesados interesado = this.obtenerInteresadosPorId(intPk);
 			interesado.setIntPersonaFk(null);
-			/**
-			 * 03-11-17 se agrega para desasociar el interesado al entregable porque sino los interesados no aparecen en el módulo 
-			 * pero siguen asociados por base de datos al cronograma, lo cuál no permite 
-			 * cargar de forma masiva el cronograma o borrar el entregable asociado al interesado
-			 */
+
 			interesado.setIntEntregable(null);
 			interesado = dao.update(interesado, this.du.getCodigoUsuario(), du.getOrigen());
 
 			if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
-				Programas p = programasBean.obtenerProgPorId(fichaPk);
-				p.getInteresadosList().remove(interesado);
-				programasBean.guardarPrograma(p, usuario, orgPk);
+
+				Programas programa = programasBean.obtenerProgPorId(fichaPk);
+				programa.getInteresadosList().remove(interesado);
+
+				programasBean.guardarPrograma(programa, usuario, orgPk, false);
+				
+				return programa;
+
 			} else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
-				Proyectos p = proyectosBean.obtenerProyPorId(fichaPk);
-				p.getInteresadosList().remove(interesado);
-				proyectosBean.guardarProyecto(p, usuario, orgPk);
+
+				Proyectos proyecto = proyectosBean.obtenerProyPorId(fichaPk);
+				proyecto.getInteresadosList().remove(interesado);
+
+				proyectosBean.actualizarFechaUltimaModificacion(proyecto);
+				
+				return proyecto;
 			}
 
 		} catch (BusinessException | DAOGeneralException ex) {
-			logger.log(Level.SEVERE, ex.getMessage(), ex);
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			
 			BusinessException be = new BusinessException();
 			be.addError(ex.getMessage());
+			
 			throw be;
 		}
+		
+		return null;
 	}
 
 	public List<Interesados> obtenerIntersadosPorFichaPk(Integer fichaPk, Integer tipoFicha) {
@@ -173,7 +202,7 @@ public class InteresadosBean {
 		return dao.obtenerIntersadosPorFichaPk(fichaPk, tipoFicha);
 	}
 
-	public List<Interesados> copiarProyInteresados(List<Interesados> interesadosList) {
+	public List<Interesados> copiarProyInteresados(List<Interesados> interesadosList, Map<Integer, Entregables> entregablesMap) {
 		if (interesadosList != null) {
 			List<Interesados> result = new ArrayList<>();
 
@@ -185,10 +214,20 @@ public class InteresadosBean {
 				nvoInt.setIntOrgaFk(interesado.getIntOrgaFk());
 				nvoInt.setIntPersonaFk(interesado.getIntPersonaFk());
 				nvoInt.setIntRolintFk(interesado.getIntRolintFk());
+
+				nvoInt.setTipo(interesado.getTipo());
+				nvoInt.setUsuario(interesado.getUsuario());
+
+				if (interesado.getIntEntregable() != null) {
+					nvoInt.setIntEntregable(entregablesMap.get(interesado.getIntEntregable().getEntPk()));
+				}
+
 				result.add(nvoInt);
 			}
+
 			return result;
 		}
+
 		return null;
 	}
 }

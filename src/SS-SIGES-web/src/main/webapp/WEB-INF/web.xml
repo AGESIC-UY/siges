@@ -31,6 +31,10 @@
         <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
         <param-value>true</param-value>
     </context-param>
+     <context-param>
+       <param-name>org.icefaces.mandatoryResourceConfiguration</param-name>
+       <param-value>fileEntry</param-value>
+    </context-param>
     
 <!--    <context-param>
         <param-name>org.icefaces.compressDOM</param-name>

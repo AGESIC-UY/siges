@@ -39,6 +39,17 @@
                 <ice:panelGroup styleClass="cuerpo" >
                     <!-- Filtro -->
                     <ui:include src="./../fragmentos/registroHorasFragmentoFiltro.xhtml" />
+
+
+                    <h:panelGroup id="pnlExportar" layout="block"
+                                  styleClass="panelAcciones panelBotonesExportarInicio" rendered="#{not empty registroHorasMB.registroHorasListado}">
+
+                        
+                       <ace:dataExporter target="tblListadoRegistroHoras" label="#{labels.exportar}" 
+                                      type="xls" fileName="#{labels.registroHoras_head_titulo}"
+                                      includeHeaders="true"  />
+                    </h:panelGroup>
+
                     <ice:panelGroup styleClass="table-responsive" >
                         <ace:dataTable id="tblListadoRegistroHoras" 
                                        value="#{registroHorasMB.registroHorasListado}" 
@@ -49,11 +60,16 @@
                                        pageCount="5" 
                                        paginatorAlwaysVisible="true"
                                        rows="#{registroHorasMB.cantElementosPorPagina}">
+
+
                             <ace:column headerText="#{labels.registroHoras_head_Proyecto}">
                                 <ice:outputText value="#{rh.rhProyectoFk.proyPkNombre}" />
                             </ace:column>
                             <ace:column headerText="#{labels.registroHoras_head_Entregable}">
                                 <ice:outputText value="#{rh.rhEntregableFk.entNombre}" />
+                            </ace:column>
+                            <ace:column headerText="#{labels.revisionHoras_part_usuario}" styleClass="colCenter">
+                                <ice:outputText value="#{rh.rhUsuarioFk.nombreApellido}" />
                             </ace:column>
                             <ace:column headerText="#{labels.registroHoras_head_Fecha}" >
                                 <ice:outputText value="#{rh.rhFecha}" converter="fechaConverter" />

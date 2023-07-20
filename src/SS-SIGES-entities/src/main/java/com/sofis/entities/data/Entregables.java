@@ -54,7 +54,9 @@ import org.hibernate.annotations.FetchMode;
     @NamedQuery(name = "Entregables.findByEntDuracionLineaBase", query = "SELECT e FROM Entregables e WHERE e.entDuracionLineaBase = :entDuracionLineaBase"),
     @NamedQuery(name = "Entregables.findByEntFinLineaBase", query = "SELECT e FROM Entregables e WHERE e.entFinLineaBase = :entFinLineaBase"),
     @NamedQuery(name = "Entregables.findByEntDescripcion", query = "SELECT e FROM Entregables e WHERE e.entDescripcion = :entDescripcion"),
-    @NamedQuery(name = "Entregables.findByEntProgreso", query = "SELECT e FROM Entregables e WHERE e.entProgreso = :entProgreso")})
+    @NamedQuery(name = "Entregables.findByEntProgreso", query = "SELECT e FROM Entregables e WHERE e.entProgreso = :entProgreso"),
+    @NamedQuery(name = "Entregables.findEntregablesReferenciandoPorId", query = "SELECT e FROM Entregables e WHERE e.referido.entPk = :idEntregable")
+})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -131,6 +133,14 @@ public class Entregables implements Serializable {
 
 	@Column(name = "ent_relevante")
 	private Boolean entRelevante;
+        
+        @Column(name = "ent_es_referencia")
+	private Boolean esReferencia;
+
+	@ManyToOne
+	@JoinColumn(name = "ent_referido", referencedColumnName = "ent_pk")
+	private Entregables referido;
+
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "prodEntregableFk")
 	@Fetch(FetchMode.SELECT)
@@ -510,7 +520,7 @@ public class Entregables implements Serializable {
 
 	@Override
 	public String toString() {
-		return "com.sofis.entities.data.Entregables[ entPk=" + entPk + " ]";
+		return entId + " - " + entNombre;
 	}
 
 	public void toSystemOut() {
@@ -523,20 +533,6 @@ public class Entregables implements Serializable {
 		logger.log(Level.INFO, "status:{0}", this.entStatus);
 		logger.log(Level.INFO, "duración:{0}", this.entDuracion);
 	}
-//
-//    /**
-//     * @return the entRiskSet
-//     */
-//    public Set<Riesgos> getEntRiskSet() {
-//        return entRiskSet;
-//    }
-//
-//    /**
-//     * @param entRiskSet the entRiskSet to set
-//     */
-//    public void setEntRiskSet(Set<Riesgos> entRiskSet) {
-//        this.entRiskSet = entRiskSet;
-//    }
 
 	/**
 	 * @return the entInicioProyecto
@@ -566,4 +562,22 @@ public class Entregables implements Serializable {
 		this.entFinProyecto = entFinProyecto;
 	}
 
+        public Boolean getEsReferencia() {
+            return esReferencia;
+        }
+
+        public void setEsReferencia(Boolean esReferencia) {
+            this.esReferencia = esReferencia;
+        }
+
+        public Entregables getReferido() {
+            return referido;
+        }
+
+        public void setReferido(Entregables referido) {
+            this.referido = referido;
+        }
+        
+        
+        
 }

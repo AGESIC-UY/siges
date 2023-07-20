@@ -4,13 +4,16 @@ import com.sofis.business.properties.LabelsEJB;
 import com.sofis.business.utils.EntregablesUtils;
 import com.sofis.business.utils.MailsTemplateUtils;
 import com.sofis.business.utils.ProgProyUtils;
+import com.sofis.business.utils.ProyectosUtils;
+import com.sofis.business.utils.SIGESIndicadoresUtils;
 import com.sofis.business.utils.Utils;
 import com.sofis.business.validations.ProyectosValidacion;
 import com.sofis.data.daos.DocFileDao;
 import com.sofis.data.daos.DocumentosDao;
 import com.sofis.data.daos.EntHistLineaBaseDAO;
-import com.sofis.data.daos.LatlngProyectosDAO;
+import com.sofis.data.daos.EntregablesDAO;
 import com.sofis.data.daos.NotificacionEnvioDAO;
+import com.sofis.data.daos.PresupuestoDAO;
 import com.sofis.data.daos.ProySitactHistoricoDAO;
 import com.sofis.data.daos.ProyectoExpVisualizadorDAO;
 import com.sofis.data.daos.ProyectosConCronogramaDAO;
@@ -37,7 +40,6 @@ import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.EstadosPublicacion;
 import com.sofis.entities.data.Interesados;
-import com.sofis.entities.data.LatlngProyectos;
 import com.sofis.entities.data.MediaProyectos;
 import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.NotificacionEnvio;
@@ -45,6 +47,7 @@ import com.sofis.entities.data.NotificacionInstancia;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.Pagos;
 import com.sofis.entities.data.Participantes;
+import com.sofis.entities.data.Presupuesto;
 import com.sofis.entities.data.ProdMes;
 import com.sofis.entities.data.Productos;
 import com.sofis.entities.data.ProyIndices;
@@ -61,6 +64,7 @@ import com.sofis.entities.data.TipoDocumentoInstancia;
 import com.sofis.entities.enums.TipoFichaEnum;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.entities.tipos.FiltroExpVisuaTO;
+import com.sofis.entities.tipos.FiltroProyectoTO;
 import com.sofis.entities.tipos.IdNombreTO;
 import com.sofis.entities.tipos.ProyectoTO;
 import com.sofis.entities.utils.JAXBUtils;
@@ -80,10 +84,8 @@ import com.sofis.utils.CriteriaTOUtils;
 import com.sofis.web.ws.gestion.data.ProyReplanificacionTO;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -96,7 +98,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -111,10 +112,6 @@ import org.agesic.siges.visualizador.web.ws.ProyectoImportado;
 import org.apache.commons.io.FileUtils;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "ProyectosBean")
 @LocalBean
@@ -123,7 +120,7 @@ public class ProyectosBean {
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
 
-    private static final Logger logger = Logger.getLogger(ProyectosBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProyectosBean.class.getName());
 
     private static final Semaphore MUTEX_MOVER_ARCHIVOS = new Semaphore(1, true);
 
@@ -193,28 +190,22 @@ public class ProyectosBean {
     private ExportarVisualizadorBean exportarVisualizadorBean;
     @Inject
     private ProyPublicaHistBean proyPublicaHistBean;
-//	@Inject
-//	private NotificacionEnvioBean notificacionEnvioBean;
     @Inject
     private OrganismoBean organismoBean;
-    
-    //private String usuario;
-    //private String origen;
+    @Inject
+    private LatlngBean latlngBean;
+
+    @Inject
+    private CalculoIndicadoresAgendadoBean calculoIndicadoresAgendadoBean;
+
     public void flush() {
         this.em.flush();
     }
 
-    @PostConstruct
-    public void init() {
-        //usuario = du.getCodigoUsuario();
-        //origen = du.getOrigen();
-    }
-
     private Proyectos guardar(Proyectos proy, SsUsuario usuario, Integer orgPk, boolean indicadores) throws GeneralException {
-        //logger.info("Guardar Proyecto. ");
+
         ProyectosValidacion.validar(proy, usuario, orgPk);
         ProyectosDAO dao = new ProyectosDAO(em);
-
         try {
             //TODO para evitar el unsaved transient object, verificar porque no ocurre con estado y si con usuario
             SsUsuario usu;
@@ -249,6 +240,9 @@ public class ProyectosBean {
 
             proy = dao.update(proy, this.du.getCodigoUsuario(), du.getOrigen());
 
+            proy.getProyPreFk().setPreOcultarPagosConfirmados(false);
+            presupuestoBean.guardar(proy.getProyPreFk());
+
             if (proy != null) {
                 if (proy.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
                     proyReplanificacionBean.inactivarSolicitud(proy.getProyPk());
@@ -261,45 +255,42 @@ public class ProyectosBean {
             return proy;
 
         } catch (BusinessException be) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "guardar", be.getMessage(), be);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "guardar", be.getMessage(), be);
             throw be;
         } catch (Exception ex) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "guardar", ex.getMessage(), ex);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "guardar", ex.getMessage(), ex);
             TechnicalException ge = new TechnicalException(ex);
             ge.addError(ex.getMessage());
             throw ge;
         }
     }
 
-    public void actualizarFecha(Integer proyPk, SsUsuario usuario) {
-        if (proyPk != null && usuario != null) {
-            Proyectos proy = obtenerProyPorId(proyPk);
-            if (proy != null && isUsuarioGerenteOAdjuntoProy(proy, usuario)) {
-                proy.setProyFechaAct(new Date());
-                ProyectosDAO dao = new ProyectosDAO(em);
-                dao.actualizarFecha(proyPk);
-            }
-        }
-    }
-
     public void actualizarIndProyProg(Integer proyPk, SsUsuario usuario, Integer orgPk, Boolean actualizarPrograma) {
+        //"usuario" en guardar entregables con referencia desde Wekan viene vacio
         Proyectos proy = obtenerProyPorId(proyPk);
         actualizarIndProyProg(proy, usuario, orgPk, actualizarPrograma);
     }
 
-    /**
-     * Actializa los indicadores del proyecto aportado y del programa si es que
+    /*
+     * Actualiza los indicadores del proyecto aportado y del programa si es que
      * tiene.
-     *
-     * @param proy
-     * @param usuario
-     * @param orgPk
      */
-    public void actualizarIndProyProg(Proyectos proy, SsUsuario usuario, Integer orgPk, Boolean actualizarPrograma) {
-        guardarIndicadores(proy, false, true, orgPk, null, false, false);
+    public void actualizarIndProyProg(final Proyectos proy, final SsUsuario usuario, final Integer orgPk, Boolean actualizarPrograma) {
+        //"usuario" en guardar entregables con referencia desde Wekan viene vacio
+        guardarIndicadores(proy, false, true, orgPk, null, false, false, true);
+
         if (actualizarPrograma) {
+
             programasBean.actualizarProgramaPorProyectos(proy, usuario, orgPk);
         }
+    }
+
+    public void actualizarIndicadoresProyectoEntregable(Entregables entregable) {
+
+        Proyectos proyecto = entregable.getEntCroFk().getProyecto();
+        Organismos organismo = proyecto.getProyOrgFk();
+
+        actualizarIndProyProg(proyecto, null, organismo.getOrgPk(), true);
     }
 
     public Proyectos obtenerProyPorId(Integer id, Boolean loadAreasTem, Boolean loadAreasRestr, Boolean loadDocs, Boolean loadInteresados, Boolean loadRiesgos, Boolean loadCalidad) throws GeneralException {
@@ -343,11 +334,11 @@ public class ProyectosBean {
 
                 return proy;
             } catch (NoResultException e) {
-                logger.log(Level.SEVERE, null, e);
+                LOGGER.log(Level.SEVERE, null, e);
                 return null;
             } catch (Exception ex) {
-                //Las demÃƒÆ’Ã‚Â¡s excepciones se consideran tÃƒÆ’Ã‚Â©cnicas
-                logger.log(Level.SEVERE, null, ex);
+
+                LOGGER.log(Level.SEVERE, null, ex);
                 TechnicalException ge = new TechnicalException(ex);
                 ge.addError(ex.getMessage());
                 throw ge;
@@ -362,119 +353,105 @@ public class ProyectosBean {
     }
 
     public Proyectos guardarProyecto(Proyectos proy, SsUsuario usuario, Integer orgPk) throws GeneralException {
-        if (proy != null) {
-            guardarHistoricoSitAct(proy, usuario);
-            guardarLineaBaseYHistorico(proy);
-            boolean cambioEstado = false;
-            
-            if (proy.getProyPk() == null) {
-                /*
-                *       22-03-18 Nico: Agrego este chequeo de si el usuario es distinto de null, porque cuando es null
-                *                   este método es incovocado del servicio web y ya esta setteado el estado.
-                */
-                if(usuario != null){
-                    proy.setProyFechaCrea(new Date());
-                    proy.setProyFechaAct(new Date());
 
-                    if (proy.getProyUsrPmofedFk() != null
-                            && proy.getProyUsrPmofedFk().equals(usuario)) {
-                        proy.setProyEstFk(new Estados(Estados.ESTADOS.INICIO.estado_id));
-                        proy.setProyEstPendienteFk(null);
+        if (proy == null) {
 
-                    } else if (usuario != null && usuario.isUsuarioPMOT(orgPk)) {
-                        proy.setProyEstFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
-                        proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
-                    } else {
-                        proy.setProyEstFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOT.estado_id));
-                        proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOT.estado_id));
-                    }
-                }
-                
-            /*
-            *    Este else es del if que se fija si (proy.getProyPk == null), es decir, se fija si el proyecto es nuevo.
-            */
-                
-            }else {
-                Proyectos proyPersistido = obtenerProyPorId(proy.getProyPk());
-                
+            return proy;
+        }
+
+        guardarHistoricoSitAct(proy, usuario);
+        guardarLineaBaseYHistorico(proy);
+
+        boolean cambioEstado = false;
+
+        Configuracion cnfAprobPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PMOT_OMITIR_APROBACION_INICIAL, orgPk);
+
+        boolean omiteAprobacion = cnfAprobPMOF.getCnfValor().equals("true");
+
+        if (proy.getProyPk() == null) {
+
+            // cuando es null este método es incovocado del servicio web y ya esta setteado el estado.
+            if (usuario != null) {
+                proy.setProyFechaCrea(new Date());
                 proy.setProyFechaAct(new Date());
-                
-                if (!proyPersistido.getProyEstFk().equals(proy.getProyEstFk())) {
-                    proy.setProyFechaEstadoAct(new Date());
-                    cambioEstado = true;
-                    //proy.setProyFechaAct(new Date());
-                }
 
-                /*
-                *       El if de abajo solo deja actualizar la fecha cuando el usuario es Gerente o Adjunto del proyecto,
-                *   y si hay cambios del PMOT, sino no hace nada. Por ejemplo, si un PMOF hace un cambio, no se actualiza
-                *   la fecha.
-                
-                */
-                
-//                if (isUsuarioGerenteOAdjuntoProy(proy, usuario)) {
-//                    if (!tieneCambiosConfPMOT(proy, proyPersistido)) {
-//                        proy.setProyFechaAct(new Date());
-//                    }
-//                }
+                if (proy.getProyUsrPmofedFk() != null
+                        && proy.getProyUsrPmofedFk().equals(usuario)) {
+                    proy.setProyEstFk(new Estados(Estados.ESTADOS.INICIO.estado_id));
+                    proy.setProyEstPendienteFk(null);
 
-                /**
-                 * Agregado para verificar que hay cambios sobre los datos
-                 * publicables.
-                 */
-                try {
-                    if(usuario != null){
-                        if (tieneCambiosPublicable(proy, proyPersistido)) {
-                            proy.setProyFechaActPub(new Date());
-                        }
-                    }
-                } catch (Exception ex) {
-                    logger.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables: " + ex.getMessage());
-                    logger.log(Level.FINEST, "No es posible verficiar los cambios sobre los campos publicables: " + ex.getMessage(), ex);
+                } else if (usuario.isUsuarioPMOT(orgPk)) {
+                    proy.setProyEstFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
+                    proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
+
+                } else if (omiteAprobacion && proy.getProyUsrPmofedFk() != null) {
+                    proy.setProyEstFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
+                    proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOF.estado_id));
+                } else {
+                    proy.setProyEstFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOT.estado_id));
+                    proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PENDIENTE_PMOT.estado_id));
                 }
             }
 
-            if (proy.getActivo() == null) {
-                proy.setActivo(true);
-            }
-            if (proy.getProyPublicable() == null) {
-                proy.setProyPublicable(false);
+        } else {
+            Proyectos proyPersistido = obtenerProyPorId(proy.getProyPk());
+
+            proy.setProyFechaAct(new Date());
+
+            if (!proyPersistido.getProyEstFk().equals(proy.getProyEstFk())) {
+                proy.setProyFechaEstadoAct(new Date());
+                cambioEstado = true;
             }
 
-            boolean hasDoc = false;
+            // Verificar si hay cambios sobre los datos
             try {
-                hasDoc = CollectionsUtils.isNotEmpty(proy.getDocumentosSet());
-            } catch (Exception e) {
-                logger.log(Level.FINEST, e.getMessage(), e);
-            }
-            if (hasDoc) {
-                List<Documentos> docsRemove = new ArrayList<>();
-                for (Documentos doc : proy.getDocumentosSet()) {
-                    if (doc.getDocsNombre().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente", orgPk))) {
-                        docsRemove.add(doc);
-                    } else if (doc.getDocsFecha() == null) {
-                        doc.setDocsFecha(new Date());
+                if (usuario != null) {
+                    if (tieneCambiosPublicable(proy, proyPersistido)) {
+                        proy.setProyFechaActPub(new Date());
                     }
                 }
-                proy.getDocumentosSet().removeAll(docsRemove);
-            }
-
-            if (proy.getActivo() == null) {
-                proy.setActivo(true);
-            }
-
-            controlarEstadoPublicacion(proy);
-
-            proy = guardar(proy, usuario, orgPk, true);
-
-            /*
-            *       22-03-18 Nico: Agrego este chequeo de si el usuario es distinto de null, porque cuando es null
-            *                   este método es incovocado del servicio web y ya esta setteado el estado.
-            */            
-            if ((proy != null) && (usuario != null)) {
-                mailPostGuardar(proy, cambioEstado, orgPk);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables: " + ex.getMessage(), ex);
             }
         }
+
+        if (proy.getActivo() == null) {
+            proy.setActivo(true);
+        }
+        if (proy.getProyPublicable() == null) {
+            proy.setProyPublicable(false);
+        }
+
+        boolean hasDoc = false;
+        try {
+            hasDoc = CollectionsUtils.isNotEmpty(proy.getDocumentosSet());
+        } catch (Exception e) {
+            LOGGER.log(Level.FINEST, e.getMessage(), e);
+        }
+        if (hasDoc) {
+            List<Documentos> docsRemove = new ArrayList<>();
+            for (Documentos doc : proy.getDocumentosSet()) {
+                if (doc.getDocsNombre().equalsIgnoreCase(LabelsEJB.getValue("ficha_doc_pendiente", orgPk))) {
+                    docsRemove.add(doc);
+                } else if (doc.getDocsFecha() == null) {
+                    doc.setDocsFecha(new Date());
+                }
+            }
+            proy.getDocumentosSet().removeAll(docsRemove);
+        }
+
+        if (proy.getActivo() == null) {
+            proy.setActivo(true);
+        }
+
+        controlarEstadoPublicacion(proy);
+
+        proy = guardar(proy, usuario, orgPk, true);
+
+        if ((proy != null) && (usuario != null)) {
+            mailPostGuardar(proy, cambioEstado, orgPk);
+        }
+
         return proy;
     }
 
@@ -489,13 +466,14 @@ public class ProyectosBean {
                 try {
                     mailBean.comunicarCambioEstado(orgPk, proy, destinatarios);
                 } catch (MailException me) {
-                    logger.log(Level.SEVERE, me.getMessage(), me);
+                    LOGGER.log(Level.SEVERE, me.getMessage(), me);
                 }
             }
 
             if (proy.getProyEstFk().isPendientes()) {
                 List<SsUsuario> usuariosDest = new ArrayList<>();
                 if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PENDIENTE_PMOT.estado_id)) {
+                    LOGGER.log(Level.INFO, "Mandando mail PMOT aprobacion");
                     String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"};
                     boolean[] ascUsuarios = new boolean[]{true, true, true, true};
                     List<SsUsuario> listUsu = ssUsuarioBean.obtenerUsuariosPorRol(SsRolCodigos.PMO_TRANSVERSAL, orgPk, ordenUsuarios, ascUsuarios);
@@ -504,13 +482,14 @@ public class ProyectosBean {
                     }
                 } else if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PENDIENTE_PMOF.estado_id)
                         && proy.getProyUsrPmofedFk() != null) {
+                    LOGGER.log(Level.INFO, "Mandando mail PMOF aprobacion");
                     usuariosDest.add(proy.getProyUsrPmofedFk());
                 }
                 String[] destinatarios = SsUsuariosUtils.arrayMailsUsuarios(usuariosDest);
                 try {
                     mailBean.comunicarProgProyPendiente(orgPk, proy, destinatarios);
                 } catch (MailException me) {
-                    logger.log(Level.SEVERE, me.getMessage(), me);
+                    LOGGER.log(Level.SEVERE, me.getMessage(), me);
                 }
             }
         }
@@ -555,7 +534,6 @@ public class ProyectosBean {
                 && (!proy.getProyectoOriginal().getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id)
                 && proy.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id))) {
 
-//            ProyReplanificacion replan = proyReplanificacionBean.obtenerSolicitudActiva(proy.getProyPk());
             ProyReplanificacion replan = proyReplanificacionBean.obtenerUltimaSolicitud(proy.getProyPk());
 
             if (replan != null && replan.getProyreplanHistorial()) {
@@ -564,24 +542,18 @@ public class ProyectosBean {
                 Date date = new Date();
                 EntHistLineaBase entHistLineaBase;
                 for (Entregables ent : proy.getProyCroFk().getEntregablesSet()) {
-                    /**
-                     * Solo guarda un histórico
-                     */
-                    
-                    /*
-                    *       06-11-2018 Nico: Cuando se replanifica y se agregan entregables, estos tienen la línea base en null,
-                    *   por lo que al guardar el histórico devolvía una excepción. El siguiente if evita ese caso.     
-                    */
-                    if (replan != null && replan.getProyreplanHistorial() && replan.getProyreplanActivo()) {
-                        
-                        if(ent.getEntInicioLineaBase() != null && ent.getEntFinLineaBase() != null){
+
+                    //Solo guarda un histórico
+                    if (replan.getProyreplanHistorial() && replan.getProyreplanActivo()) {
+
+                        if (ent.getEntInicioLineaBase() != null && ent.getEntFinLineaBase() != null) {
                             entHistLineaBase = new EntHistLineaBase();
                             entHistLineaBase.setEnthistFecha(date);
                             entHistLineaBase.setEnthistEntregableFk(ent);
                             entHistLineaBase.setEnthistInicioLineaBase(ent.getEntInicioLineaBase());
                             entHistLineaBase.setEnthistFinLineaBase(ent.getEntFinLineaBase());
                             entHistLineaBase.setEnthistDuracion(ent.getEntDuracionLineaBase());
-                        
+
                             if (replan.getProyreplanActivo()) {
                                 entHistLineaBase.setEnthistReplanFk(replan);
                             }
@@ -592,26 +564,16 @@ public class ProyectosBean {
                             }
                         }
                     }
-
                 }
-
             }
 
-            /**
-             * 13-12-2016 Se debe setear la línea base del cronograma luego de
-             * guardar el histórico. El histórico debe ser una foto de la línea
-             * base actual antes de generarse una nueva.
-             */
+            // Se debe setear la línea base del cronograma luego de guardar el histórico. 
+            // El histórico debe ser una foto de la línea base actual antes de generarse una nueva.
             setearLineaBaseCronograma(proy, replan);
             setearLineaBasePagos(proy, replan);
             setearLineaBaseProductos(proy, replan);
         }
     }
-    
-    /*
-    *   21-03-18 Nico: Creo este método para poder generar la aprobación del proyecto
-    *           desde el web service.
-    */
 
     public Proyectos guardarProyectoAprobacionServicio(FichaTO fichaTO, Integer orgPk) throws GeneralException {
         Proyectos proy = (Proyectos) ProgProyUtils.fichaTOToProgProy(fichaTO);
@@ -619,6 +581,7 @@ public class ProyectosBean {
         programasProyectosBean.solAprobacionCambioEstadoServicio(proy, orgPk);
 
         proy = guardarProyecto(proy, null, orgPk);
+
         return proy;
     }
 
@@ -637,35 +600,34 @@ public class ProyectosBean {
             if (proy.getProyEstPendienteFk() != null && !proy.getProyEstFk().isPendientes()) {
                 String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"};
                 boolean[] ascUsuarios = new boolean[]{true, true, true, true};
-                
-                /*
-                *   Se chequea la configuración para conocer si el PMOF es el encargado de aprobar las solicitudes de cambio de fase.
-                */
-                
+
+                // Se chequea la configuración para conocer si el PMOF es el encargado de aprobar las solicitudes de cambio de fase.
                 Configuracion cnfAprobPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_PMOF, orgPk);
 
-                String[] destinatarios = null;
+                String[] destinatarios;
 
                 List<SsUsuario> usuarios = ssUsuarioBean.obtenerUsuariosPorRol(SsRolCodigos.PMO_TRANSVERSAL, orgPk, ordenUsuarios, ascUsuarios);
-                
-                if(cnfAprobPMOF != null && cnfAprobPMOF.getCnfValor().equals("true")){
-                    usuarios.add(proy.getProyUsrPmofedFk());   
+
+                if (cnfAprobPMOF != null && cnfAprobPMOF.getCnfValor().equals("true")) {
+                    usuarios.add(proy.getProyUsrPmofedFk());
                 }
                 destinatarios = SsUsuariosUtils.arrayMailsUsuarios(usuarios);
-                
-                /**
-                 * 26-09-2017 Requerimiento RQF-25: Ficha de proyecto -
-                 * notificar solicitud de cambio de fase
-                 */
+
                 this.enviarNotificacion(ConstantesNotificaciones.NOT_COD_CAMBIO_FASE_PROY_1, proy, orgPk);
 
                 try {
                     mailBean.comunicarSolicitudAprobacion(orgPk, proy, destinatarios);
                 } catch (MailException me) {
-                    logger.log(Level.SEVERE, me.getMessage(), me);
+                    LOGGER.log(Level.SEVERE, me.getMessage(), me);
                 }
             }
         }
+
+        // Se disparan acciones sobre los entregables relacionados desde otros proyectos
+        if (proy.getProyCroFk() != null) {
+            postProcesarEntregablesRelacionados(proy.getProyCroFk(), null);
+        }
+
         return proy;
     }
 
@@ -680,6 +642,7 @@ public class ProyectosBean {
                 }
             } else {
                 for (Entregables ent : cro.getEntregablesSet()) {
+
                     // si es nueva la tarea
                     if (ent.getEntInicioLineaBase() == null || ent.getEntInicioLineaBase() == 0) {
                         ent.setEntInicioLineaBase(ent.getEntInicio());
@@ -688,16 +651,14 @@ public class ProyectosBean {
                     }
                 }
             }
-        
 
-            /*
-            *   07-06-2018 Nico: Se debe analizar que la línea base de los entregables padres se corresponda
-            *        a la de los hijos, es decir, el fin sea el último fin de los hijos, y el inicio el primer
-            *        inicio de los hijos.
-            */
 
+            /* Se debe analizar que la línea base de los entregables padres se corresponda
+            *  a la de los hijos, es decir, el fin sea el último fin de los hijos, y el inicio el primer
+            *  inicio de los hijos.
+             */
             List<Entregables> entSetAux = EntregablesUtils.ajustarFechas(cro.getEntregablesSet());
-            
+
             cro.getEntregablesSet().clear();
             cro.getEntregablesSet().addAll(entSetAux);
         }
@@ -717,41 +678,39 @@ public class ProyectosBean {
                     if (!iterPago.isPagConfirmado()) {
                         iterPago.setPagFechaReal(iterPago.getPagFechaPlanificada());
                         iterPago.setPagImporteReal(iterPago.getPagImportePlanificado());
-                    } 
+                    }
                 }
                 if (CollectionsUtils.isNotEmpty(iterAdq.getDevengadoList())) {
-                        for (Devengado dev : iterAdq.getDevengadoList()) {
-                                dev.setDevReal(dev.getDevPlan());
-                        }
-                }  
+                    for (Devengado dev : iterAdq.getDevengadoList()) {
+                        dev.setDevReal(dev.getDevPlan());
+                    }
+                }
             }
-        }else {
+        } else {
             for (Adquisicion iterAdq : adqList) {
                 for (Pagos iterPago : iterAdq.getPagosSet()) {
                     // si es nueva la tarea
 
                     if (iterPago.getPagFechaReal() == null && iterPago.getPagImporteReal() == null) {
                         iterPago.setPagFechaReal(iterPago.getPagFechaPlanificada());
-                        iterPago.setPagImporteReal(iterPago.getPagImportePlanificado());                        
+                        iterPago.setPagImporteReal(iterPago.getPagImportePlanificado());
                     }
                 }
                 if (CollectionsUtils.isNotEmpty(iterAdq.getDevengadoList())) {
                     for (Devengado dev : iterAdq.getDevengadoList()) {
-                        if(dev.getDevReal() == null){
+                        if (dev.getDevReal() == null) {
                             dev.setDevReal(dev.getDevPlan());
                         }
                     }
                 }
             }
         }
-        
+
 
         /*
         *   03-08-2018 Nico: Debido a un bug reportado que al momento de crear adquisiciones en Inicio no se actualizado el valor
         *       de "Fecha Real" e "Importe Real", por lo que se guarda toda la colección de adquisiciones nuevamente.
-        */
-                
-        
+         */
         if (proy.getProyPreFk() != null) {
             proy.getProyPreFk().setAdquisicionSet(new HashSet<>(adqList));
         }
@@ -770,13 +729,13 @@ public class ProyectosBean {
                     iterProdMes.setProdmesReal(0d);
                 }
             }
-        }else {
+        } else {
             for (Productos iterProd : prodList) {
                 for (ProdMes iterProdMes : iterProd.getProdMesList()) {
                     // si es nueva la tarea
                     if (iterProdMes.getProdmesAcuReal() == null && iterProdMes.getProdmesReal() == null) {
                         iterProdMes.setProdmesAcuReal(0d);
-                        iterProdMes.setProdmesReal(0d);                   
+                        iterProdMes.setProdmesReal(0d);
                     }
                 }
             }
@@ -815,7 +774,7 @@ public class ProyectosBean {
             resultado = proyDao.findEntityByCriteria(Proyectos.class, condicion, orderBy, ascending, null, null);
             return new HashSet<>(resultado);
         } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             BusinessException be = new BusinessException();
             be.addError(ex.getMessage());
             throw be;
@@ -835,10 +794,10 @@ public class ProyectosBean {
         try {
             resultado = proyDao.obtenerProySimplePorProgId(progPk);
         } catch (BusinessException be) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorProgId", be.getMessage(), be);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorProgId", be.getMessage(), be);
             throw be;
         } catch (Exception ex) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorProgId", ex.getMessage(), ex);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorProgId", ex.getMessage(), ex);
             TechnicalException ge = new TechnicalException(ex);
             ge.addError(ex.getMessage());
             throw ge;
@@ -871,7 +830,7 @@ public class ProyectosBean {
                 boolean[] ascending = new boolean[]{true};
                 return proyDao.findEntityByCriteria(Proyectos.class, condicion, orderBy, ascending, null, null);
             } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         return null;
@@ -886,10 +845,10 @@ public class ProyectosBean {
             resultado = proyDao.findByOneProperty(ProyectosConCronograma.class, "proyProgFk", proyPk);
 
         } catch (BusinessException be) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyectosConCronogramaPorProgId", be.getMessage(), be);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyectosConCronogramaPorProgId", be.getMessage(), be);
             throw be;
         } catch (Exception ex) {
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyectosConCronogramaPorProgId", ex.getMessage(), ex);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyectosConCronogramaPorProgId", ex.getMessage(), ex);
             TechnicalException ge = new TechnicalException(ex);
             ge.addError(ex.getMessage());
             throw ge;
@@ -912,30 +871,92 @@ public class ProyectosBean {
         return i;
     }
 
-    public Proyectos darBajaProyecto(Integer proyId, SsUsuario usuario, Integer orgPk) throws GeneralException {
+    public Proyectos darBajaProyecto(Integer proyId) throws GeneralException {
+
         Proyectos proy = em.find(Proyectos.class, proyId);
-        if (ProgProyUtils.isUsuarioPMOF(proy, usuario, orgPk) && !ProgProyUtils.isUsuarioPMOT(usuario, orgPk)) {
-            proy.setProyEstPendienteFk(new Estados(Estados.ESTADOS.SOLICITUD_CANCELAR_PMOT.estado_id));
+        if (proy.getProyCroFk() != null) {
+            desReferenciarEntregablesRelacionados(proy.getProyCroFk(), null);
+        }
+        return darBajaProyecto(proy);
+    }
+
+    public Proyectos darBajaProyecto(Proyectos proyecto) throws GeneralException {
+
+        SsUsuario usuario = ssUsuarioBean.obtenerSsUsuarioPorMail(du.getCodigoUsuario());
+
+        Integer orgPk = proyecto.getProyOrgFk().getOrgPk();
+
+        if (ProgProyUtils.isUsuarioPMOF(proyecto, usuario, orgPk) && !ProgProyUtils.isUsuarioPMOT(usuario, orgPk)) {
+            proyecto.setProyEstPendienteFk(new Estados(Estados.ESTADOS.SOLICITUD_CANCELAR_PMOT.estado_id));
+
         } else if (usuario.isUsuarioPMOT(orgPk)) {
-            proy.setProyEstPendienteFk(null);
-            proy.setActivo(false);
+            proyecto.setProyEstPendienteFk(null);
+            proyecto.setActivo(false);
+            proyecto.setFechaCambioActivacion(new Date());
+            proyecto.setUsuarioCambioActivacion(du.getCodigoUsuario());
+
         } else {
             throw new BusinessException(MensajesNegocio.ERROR_USUARIO_NO_PERMISO_ACCION);
         }
 
         try {
-            proy = guardar(proy, usuario, orgPk, true);
-            //TODO: Notificar al PM, Adjunto y PMOF
-            /**
-             * 26-09-2017 Requerimiento RQF-18: Ficha de proyecto - notificar
-             * eliminación de proyecto
-             */
-            this.enviarNotificacion(ConstantesNotificaciones.NOT_COD_ELIMINACION_PROY_1, proy, orgPk);
+            proyecto = guardar(proyecto, usuario, orgPk, true);
 
-            return proy;
+            this.enviarNotificacion(ConstantesNotificaciones.NOT_COD_ELIMINACION_PROY_1, proyecto, orgPk);
+            if (proyecto.getProyCroFk() != null) {
+                desReferenciarEntregablesRelacionados(proyecto.getProyCroFk(), null);
+            }
+            return proyecto;
         } catch (GeneralException ge) {
+
+            LOGGER.log(Level.SEVERE, null, ge);
             throw new BusinessException(MensajesNegocio.ERROR_ELIMINAR_PROYECTO);
         }
+    }
+
+    public Proyectos restaurarProyecto(Proyectos proyecto) throws GeneralException {
+
+        SsUsuario usuario = ssUsuarioBean.obtenerSsUsuarioPorMail(du.getCodigoUsuario());
+
+        Integer orgPk = proyecto.getProyOrgFk().getOrgPk();
+
+        if (usuario.isUsuarioPMOT(orgPk)) {
+            proyecto.setActivo(true);
+            proyecto.setFechaCambioActivacion(new Date());
+            proyecto.setUsuarioCambioActivacion(du.getCodigoUsuario());
+
+        } else {
+            throw new BusinessException(MensajesNegocio.ERROR_USUARIO_NO_PERMISO_ACCION);
+        }
+
+        try {
+            return guardar(proyecto, usuario, orgPk, true);
+
+        } catch (GeneralException ge) {
+
+            LOGGER.log(Level.SEVERE, null, ge);
+            throw new BusinessException(MensajesNegocio.ERROR_ELIMINAR_PROYECTO);
+        }
+    }
+
+    public Boolean cambiarEstadoActivacion(Integer idProyecto) {
+
+        Proyectos proyecto = obtenerProyPorId(idProyecto);
+
+        if (proyecto == null) {
+            BusinessException be = new BusinessException();
+            be.addError(LabelsEJB.getValue(MensajesNegocio.ERROR_PROYECTO_NO_ENCONTRADO));
+
+            throw be;
+        }
+
+        if (proyecto.getActivo()) {
+            darBajaProyecto(proyecto);
+        } else {
+            restaurarProyecto(proyecto);
+        }
+
+        return proyecto.getActivo();
     }
 
     public ProyIndices obtenerIndicadores(Integer proyPk, Integer orgPk) {
@@ -947,7 +968,7 @@ public class ProyectosBean {
     }
 
     public ProyIndices guardarIndicadores(Integer proyPk, Integer orgPk) {
-        return guardarIndicadores(proyPk, true, true, orgPk, null, false, true);
+        return guardarIndicadores(proyPk, true, true, orgPk, null, false, true, true);
     }
 
     /**
@@ -974,46 +995,39 @@ public class ProyectosBean {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @TransactionTimeout(unit = TimeUnit.SECONDS, value = 120) //BRUNO 11-04-17
-    public void guardarIndicadoresSimple(Integer proyPk, boolean programas, boolean soloFaltantes, Integer orgPk, Map<String, Configuracion> confs, boolean procesarPrograma) {
-        guardarIndicadores(proyPk, programas, soloFaltantes, orgPk, confs, true, procesarPrograma);
+    public void guardarIndicadoresSimple(Integer proyPk, boolean programas, boolean soloFaltantes, Integer orgPk, Map<String, Configuracion> confs, boolean procesarPrograma, boolean procesarProgramaParalelo) {
+        guardarIndicadores(proyPk, programas, soloFaltantes, orgPk, confs, true, procesarPrograma, procesarProgramaParalelo);
     }
 
-    /**
+    /*
      * Calcula los indicadores y los guarda.
      *
-     * @param proyPk
-     * @param programas
-     * @param recalcular
-     * @param orgPk
-     * @param confs
-     * @return ProyIndices
      */
     public ProyIndices guardarIndicadores(Integer proyPk, boolean programas, boolean recalcular, Integer orgPk, Map<String, Configuracion> confs,
-            boolean indicadoresProgramasNuevaTransaccion, boolean procesarPrograma) {
-        logger.fine("guardar Indicadores Proyectos.");
+            boolean indicadoresProgramasNuevaTransaccion, boolean procesarPrograma, boolean procesarProgramaParalelo) {
+        LOGGER.fine("guardar Indicadores Proyectos.");
         if (proyPk != null) {
             Proyectos p = obtenerProyPorId(proyPk);
-            return guardarIndicadores(p, programas, recalcular, orgPk, confs, indicadoresProgramasNuevaTransaccion, procesarPrograma);
+            return guardarIndicadores(p, programas, recalcular, orgPk, confs, indicadoresProgramasNuevaTransaccion, procesarPrograma, procesarProgramaParalelo);
         }
         return null;
     }
 
-    public ProyIndices guardarIndicadores(Proyectos p, boolean programas, boolean recalcular, Integer orgPk, Map<String, Configuracion> confs,
-            boolean indicadoresProgramasNuevaTransaccion, boolean procesarPrograma) {
-        logger.fine("guardar Indicadores Proyectos.");
+    public ProyIndices guardarIndicadores(final Proyectos p, boolean programas, boolean recalcular, final Integer orgPk, Map<String, Configuracion> confs,
+            boolean indicadoresProgramasNuevaTransaccion, boolean procesarPrograma, boolean procesarProgramaParalelo) {
+
+        LOGGER.log(Level.FINE, "Guardar indicadores: proyecto={0}, programas={1}, recalcular={2}, orgPk={3}, confs={4}, indicadoresProgramasNuevaTransaccion={5}, procesarPrograma={6}, procesarProgramaParalelo={7}",
+                new Object[]{p, programas, recalcular, orgPk, confs, indicadoresProgramasNuevaTransaccion, procesarPrograma, procesarProgramaParalelo});
 
         if (p != null) {
             Integer proyPk = p.getProyPk();
 
-            /**
-             * Bruno 10-04-17: obtener marcas de inicio y fin de proyecto a
-             * partir de los entregables.
-             */
+            // obtener marcas de inicio y fin de proyecto a partir de los entregables.
             Entregables entInicioProyecto = null;
             Entregables entFinProyecto = null;
 
             Configuracion confGanttPeriodo = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PROYECTO_GANTT_PERIODO, orgPk);
-            Boolean confGanttPeriodoValor = confGanttPeriodo != null && "true".equals(confGanttPeriodo.getCnfValor()) ? true : false;
+            Boolean confGanttPeriodoValor = confGanttPeriodo != null && "true".equals(confGanttPeriodo.getCnfValor());
 
             if (p.getProyCroFk() != null && confGanttPeriodoValor) {
                 for (Entregables e : p.getProyCroFk().getEntregablesSet()) {
@@ -1129,11 +1143,19 @@ public class ProyectosBean {
             try {
                 ind = proyIndicesBean.guardar(ind, proyPk);
                 if (p.getProyProgFk() != null && programas && procesarPrograma) {
-                    progIndicesBean.guardarIndicadores(p.getProyProgFk().getProgPk(), orgPk);
+
+                    if (procesarProgramaParalelo) {
+
+                        calculoIndicadoresAgendadoBean.agendarCalculoIndicadores(p.getProyProgFk());
+
+                    } else {
+                        progIndicesBean.guardarIndicadores(p.getProyProgFk().getProgPk(), orgPk);
+                    }
+
                 }
                 return ind;
             } catch (BusinessException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
                 if (!indicadoresProgramasNuevaTransaccion) {
                     throw ex;
                 }
@@ -1142,19 +1164,17 @@ public class ProyectosBean {
         }
         return null;
     }
-   
-    
+
     /*
     *   20-03-18 Nico: Agrego este método para poder mantener los productos reales cuando se pase de
     *           Planificación a Ejecución y se quiera mantener la línea base.
-    */
-    
+     */
     public Proyectos guardarProyectoRetrocederEstadoServicio(FichaTO fichaTO, Integer orgPk, ProyReplanificacionTO replanificacionTO) throws GeneralException {
         Proyectos p = obtenerProyPorId(fichaTO.getFichaFk());
         Estados est = p.getProyEstFk();
-        
+
         ProyReplanificacion replanificacion = ProgProyUtils.replanifTOaReplanif(p, replanificacionTO);
-        
+
         ProgProyUtils.retrocederEstado(p, orgPk, replanificacion);
         if (!est.equals(p.getProyEstFk())) {
             p.setProyFechaEstadoAct(new Date());
@@ -1164,30 +1184,21 @@ public class ProyectosBean {
         return guardar(p, null, orgPk, true);
     }
 
-    
-    
-    
     public Proyectos guardarProyectoRetrocederEstado(Integer proyPk, SsUsuario usuario, Integer orgPk, ProyReplanificacion replanificacion) throws GeneralException {
         Proyectos p = obtenerProyPorId(proyPk);
         Estados est = p.getProyEstFk();
-        
+
         // Se analiza si esta activada la configuración para que el PMOF acepte
-        
         Configuracion cnfAprobPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_PMOF, orgPk);
-        boolean aprobPMOF = cnfAprobPMOF.getCnfValor().equals("true") ? true : false;
-        
+        boolean aprobPMOF = cnfAprobPMOF.getCnfValor().equals("true");
+
         Configuracion cnfAprobReplanPMOF = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.APROBACION_REPLANIFICACION_PMOF, orgPk);
-        boolean aprobReplanPMOF = cnfAprobReplanPMOF.getCnfValor().equals("true") ? true : false;
-        
+        boolean aprobReplanPMOF = cnfAprobReplanPMOF.getCnfValor().equals("true");
+
         ProgProyUtils.retrocederEstado(p, usuario, orgPk, replanificacion, aprobPMOF, aprobReplanPMOF);
         if (!est.equals(p.getProyEstFk())) {
             p.setProyFechaEstadoAct(new Date());
-            
-            /*
-            *   11-06-2018  Nico: Se settea la fecha de actualización del proyecto cuando se retrocede un proyecto, dado que para el frontend se fija en el valor a partir
-            *           de la entidad de Proyecto y no de IndicesProyecto, que ahí si se actualiza.
-            */
-            
+
             p.setProyFechaAct(new Date());
 
             List<SsUsuario> usuariosDest = new ArrayList<>();
@@ -1197,11 +1208,40 @@ public class ProyectosBean {
             try {
                 mailBean.comunicarCambioEstado(orgPk, p, destinatarios);
             } catch (MailException me) {
-                logger.log(Level.SEVERE, me.getMessage(), me);
+                LOGGER.log(Level.SEVERE, me.getMessage(), me);
+            }
+            //Si no cambio de estado es porque es solicitud y no es cambio directo
+        } else if (p.isEstadoPendiente(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+            String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"};
+            boolean[] ascUsuarios = new boolean[]{true, true, true, true};
+
+            String[] destinatarios;
+
+            List<SsUsuario> usuarios = new ArrayList();
+            if (cnfAprobPMOF != null && aprobReplanPMOF) {
+                usuarios.add(p.getProyUsrPmofedFk());
+            } else {
+                usuarios = ssUsuarioBean.obtenerUsuariosPorRol(SsRolCodigos.PMO_TRANSVERSAL, orgPk, ordenUsuarios, ascUsuarios);
+            }
+            destinatarios = SsUsuariosUtils.arrayMailsUsuarios(usuarios);
+
+            //VER QUE ES ESTO
+//                        this.enviarNotificacion(ConstantesNotificaciones.NOT_COD_CAMBIO_FASE_PROY_1, p, orgPk);
+            try {
+                mailBean.comunicarSolicitudReplanificacion(orgPk, p, destinatarios);
+            } catch (MailException me) {
+                LOGGER.log(Level.SEVERE, me.getMessage(), me);
             }
         }
 
-        return guardar(p, usuario, orgPk, true);
+        Proyectos proyecto = guardar(p, usuario, orgPk, true);
+
+        // Se disparan acciones sobre los entregables relacionados desde otros proyectos
+        if (p.getProyCroFk() != null) {
+            postProcesarEntregablesRelacionados(p.getProyCroFk(), null);
+        }
+
+        return proyecto;
     }
 
     public Proyectos guardarProyectoRechazarCambioEstado(Integer proyPk, SsUsuario usuario, Integer orgPk, ProyReplanificacion replanificacion) throws GeneralException {
@@ -1218,7 +1258,7 @@ public class ProyectosBean {
             try {
                 mailBean.comunicarCambioEstado(orgPk, p, destinatarios);
             } catch (MailException me) {
-                logger.log(Level.SEVERE, me.getMessage(), me);
+                LOGGER.log(Level.SEVERE, me.getMessage(), me);
             }
         }
         return guardar(p, usuario, orgPk, true);
@@ -1292,7 +1332,7 @@ public class ProyectosBean {
     /*
     *       VER SI NO HAY QUE SACAR EL MÉTODO DE ABAJO,  PORQUE YA HAY UNO EN ProgramasBean QUE HACE LO
         MISMO DESDE LA DAO
-    */
+     */
     public Date obtenerUltimaActualizacionPrograma(Set<Proyectos> proyectosSet) {
         if (proyectosSet != null && !proyectosSet.isEmpty()) {
             Date result = null;
@@ -1421,71 +1461,21 @@ public class ProyectosBean {
         return result;
     }
 
-    public List<Proyectos> obtenerTodos() {
-        ProyectosDAO proyDao = new ProyectosDAO(em);
-        try {
-            return proyDao.findAll(Proyectos.class);
-        } catch (DAOGeneralException ex) {
-            Logger.getLogger(ProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    /*
-    *   17-05-2018 Nico: Se saca este método para poner uno que consulte sobre
-    *           la base de datos
-    */
-    
-//    public Double porcentajePesoTotalProyecto(Integer proyPk) {
-//        if (proyPk != null) {
-//            Proyectos proyecto = this.obtenerProyPorId(proyPk);
-//
-//            if (proyecto != null && proyecto.isActivo()
-//                    && (proyecto.getProyEstFk().isEstado(Estados.ESTADOS.INICIO.estado_id)
-//                    || proyecto.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)
-//                    || proyecto.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id))) {
-//                List<Proyectos> setProyectos = obtenerProyHermanos(proyPk);
-//                if (setProyectos != null && !setProyectos.isEmpty()) {
-//                    double pesoTotal = 0;
-//                    for (Proyectos proy : setProyectos) {
-//                        if (proy != null && proy.isActivo()
-//                                && proy.getProyPeso() != null
-//                                && (proy.getProyEstFk().isEstado(Estados.ESTADOS.INICIO.estado_id)
-//                                || proy.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)
-//                                || proy.getProyEstFk().isEstado(Estados.ESTADOS.EJECUCION.estado_id))) {
-//                            pesoTotal += proy.getProyPeso();
-//                        }
-//                    }
-//
-//                    return pesoTotal > 0 ? (proyecto.getProyPeso().floatValue() * 100 / pesoTotal) : 0d;
-//                }
-//            } else {
-//                return 0d;
-//            }
-//        }
-//        return null;
-//    }
-    
-    /*
-    *   17-05-2018 Nico: Se crea el método para consultar a la base de datos sobre los pesos
-    *           de los proyectos.
-    */
-    public Double porcentajePesoTotalProyecto(Integer proyPk){
-        if(proyPk != null){
+    public Double porcentajePesoTotalProyecto(Integer proyPk) {
+        if (proyPk != null) {
             ProyectosDAO proyDAO = new ProyectosDAO(em);
-            
+
             Double retorno = 0d;
             try {
                 retorno = proyDAO.obtenerPorcPesoTotalProy(proyPk);
             } catch (DAOGeneralException ex) {
                 Logger.getLogger(ProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             return retorno;
         }
         return null;
     }
-    
 
     public List<Integer> obtenerIdsProyPorOrg(Integer orgPk) throws GeneralException {
         return obtenerIdsProyPorOrg(orgPk, null);
@@ -1514,7 +1504,7 @@ public class ProyectosBean {
             }
         } catch (Exception ex) {
 
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorId", ex.getMessage(), ex);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorId", ex.getMessage(), ex);
             TechnicalException ge = new TechnicalException(ex);
             ge.addError(ex.getMessage());
             throw ge;
@@ -1539,7 +1529,7 @@ public class ProyectosBean {
             }
         } catch (Exception ex) {
 
-            logger.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorId", ex.getMessage(), ex);
+            LOGGER.logp(Level.SEVERE, ProyectosBean.class.getName(), "obtenerProyPorId", ex.getMessage(), ex);
             TechnicalException ge = new TechnicalException(ex);
             ge.addError(ex.getMessage());
             throw ge;
@@ -1548,8 +1538,12 @@ public class ProyectosBean {
         return proyIds;
     }
 
-    public List<Proyectos> obtenerActivosPorOrg(Integer orgPk) {
+    public List<Proyectos> obtenerActivosPorOrgMenosProyActual(Integer orgPk, Integer proy, Integer proyPK2, String nombre) {
         ProyectosDAO proyDao = new ProyectosDAO(em);
+
+        String[] propiedadesNombre = {"proyPk", "proyNombre"};
+        MatchCriteriaTO criterioNoProyActual = CriteriaTOUtils.createMatchCriteriaTO(
+                MatchCriteriaTO.types.NOT_EQUALS, "proyPk", proy);
 
         MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
                 MatchCriteriaTO.types.EQUALS, "proyOrgFk.orgPk", orgPk);
@@ -1560,16 +1554,61 @@ public class ProyectosBean {
         MatchCriteriaTO criterioAct2 = CriteriaTOUtils.createMatchCriteriaTO(
                 MatchCriteriaTO.types.NULL, "activo", 1);
 
+        MatchCriteriaTO criterioAct3 = CriteriaTOUtils.createMatchCriteriaTO(
+                MatchCriteriaTO.types.NOT_EQUALS, "proyEstFk.estCodigo", "FINALIZADO");
+
+        MatchCriteriaTO criterioAct4 = null;
+
+        MatchCriteriaTO criterioAct5 = null;
+
+        if (proyPK2 > 0) {
+            criterioAct4 = CriteriaTOUtils.createMatchCriteriaTO(
+                    MatchCriteriaTO.types.EQUALS, "proyPk", proyPK2);
+        }
+
+        if (!StringsUtils.isEmpty(nombre)) {
+
+            if (proyPK2 > 0) {
+                criterioAct5 = CriteriaTOUtils.createMatchCriteriaTO(
+                        MatchCriteriaTO.types.CONTAINS, "proyNombre", nombre);
+            } else {
+                criterioAct4 = CriteriaTOUtils.createMatchCriteriaTO(
+                        MatchCriteriaTO.types.CONTAINS, "proyNombre", nombre);
+            }
+
+        }
+
         CriteriaTO criterioAct = CriteriaTOUtils.createORTO(criterioAct1, criterioAct2);
 
         CriteriaTO condicion = CriteriaTOUtils.createANDTO(criterioOrg, criterioAct);
 
+        CriteriaTO condicion2 = CriteriaTOUtils.createANDTO(condicion, criterioNoProyActual);
+
+        CriteriaTO condicion3 = CriteriaTOUtils.createANDTO(condicion2, criterioAct3);
+        CriteriaTO condicion4 = null;
+        CriteriaTO condicion5 = null;
+
+        if (criterioAct4 != null) {
+            condicion4 = CriteriaTOUtils.createANDTO(condicion3, criterioAct4);
+        }
+
+        if (criterioAct5 != null) {
+            condicion5 = CriteriaTOUtils.createANDTO(condicion4, criterioAct5);
+        }
+
         try {
             String[] orderBy = new String[]{"proyNombre"};
             boolean[] ascending = new boolean[]{true};
-            return proyDao.findEntityByCriteria(Proyectos.class, condicion, orderBy, ascending, null, null);
+
+            if (condicion4 != null || condicion5 != null) {
+                return proyDao.findEntityByCriteria(Proyectos.class, condicion5 != null ? condicion5 : condicion4, orderBy, ascending, null, null, propiedadesNombre);
+
+            } else {
+                return proyDao.findEntityByCriteria(Proyectos.class, condicion3, orderBy, ascending, null, null, propiedadesNombre);
+
+            }
         } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return null;
     }
@@ -1597,16 +1636,27 @@ public class ProyectosBean {
                     }
                     if (ent.getEntFinLineaBase().equals(ent.getEntInicioLineaBase())) {
                         ent.setEntDuracionLineaBase(1);
-                    } else if (ent.getEntFinLineaBase() > ent.getEntInicioLineaBase()) {
-                        //La duracion no la toca, es lo que viene del gannt
-                        //int duraLineaBase = Math.round((ent.getEntFinLineaBase() - ent.getEntInicioLineaBase()) / 86400000);
-                        //ent.setEntDuracionLineaBase(duraLineaBase);
                     }
 
                     if (resetLineaBase) {
                         ent.setEntInicioLineaBase(ent.getEntInicio());
                         ent.setEntFinLineaBase(ent.getEntFin());
                         ent.setEntDuracionLineaBase(ent.getEntDuracion());
+                    }
+                } else if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+                    ProyReplanificacion replanificacion = proyReplanificacionBean.obtenerUltimaSolicitud(proy.getProyPk());
+                    if (replanificacion != null) {
+                        //solo cuando generar linea de base sea igual a true
+                        if (replanificacion.isProyreplanGenerarLineaBase() == true) {
+                            ent.setEntInicioLineaBase(0l);
+                            ent.setEntFinLineaBase(0l);
+                            ent.setEntDuracionLineaBase(0);
+                        }
+                    } else {
+                        //si no existe ninguna replanificacion la linea base se limpia
+                        ent.setEntInicioLineaBase(0l);
+                        ent.setEntFinLineaBase(0l);
+                        ent.setEntDuracionLineaBase(0);
                     }
                 } else {
                     //si esta en otros estado entonces la linea base se limpia
@@ -1624,91 +1674,12 @@ public class ProyectosBean {
                     }
                 }
 
-                if (ent.esEntParent()) {
-                    //Los padres no llevan esfuerzo ni progreso.
-                    ent.setEntEsfuerzo(0);
-                    ent.setEntProgreso(0);
-                }
-
                 entregablesBean.guardar(ent);
             }
         }
     }
 
-    @Deprecated
-    public List<Entregables> recalcularEntregablesPadres(Set<Entregables> entSet) {
-        List<Entregables> entResult = new ArrayList<>();
-
-        if (CollectionsUtils.isNotEmpty(entSet)) {
-            List<Entregables> entList = new ArrayList<>(entSet);
-            Entregables[] entArr = entSet.toArray(new Entregables[entSet.size()]);
-
-            int nivelMax = 0;
-            for (Entregables ent : entList) {
-                if (ent.getEntNivel() > nivelMax) {
-                    nivelMax = ent.getEntNivel();
-                }
-            }
-
-            //Se ordena por id.
-            for (int i = 0; i < entArr.length; i++) {
-                for (int j = i + 1; j < entArr.length; j++) {
-                    if (entArr[i].getEntId() > entArr[j].getEntId()) {
-                        Entregables ent = entArr[j];
-                        entArr[j] = entArr[i];
-                        entArr[i] = ent;
-                    }
-                }
-            }
-
-            for (int a = nivelMax; a >= 0; a--) {
-                for (int b = 0; b < entArr.length; b++) {
-                    if (entArr[b].getEntNivel().equals(a - 1)) {
-                        boolean seguir = true;
-                        boolean padre = false;
-                        long fechaMenor = 0;
-                        long fechaMayor = 0;
-                        for (int c = b + 1; seguir && c < entArr.length; c++) {
-                            if (entArr[c].getEntNivel().equals(entArr[b].getEntNivel() + 1)
-                                    || entArr[c].getEntNivel() > entArr[b].getEntNivel()) {
-                                if (fechaMenor == 0 || entArr[c].getEntInicio() < fechaMenor) {
-                                    fechaMenor = entArr[c].getEntInicio();
-                                }
-                                if (entArr[c].getEntFin() > fechaMayor) {
-                                    fechaMayor = entArr[c].getEntFin();
-                                }
-                                padre = true;
-                            } else {
-                                seguir = false;
-                            }
-                        }
-
-                        if (padre) {
-                            if (fechaMenor > 0) {
-                                entArr[b].setEntInicio(fechaMenor);
-                            }
-                            if (fechaMayor > 0) {
-                                entArr[b].setEntFin(fechaMayor);
-                            }
-                            entArr[b].setEntEsfuerzo(0);
-                            entArr[b].setEntProgreso(0);
-                        }
-                    }
-                }
-            }
-
-            for (Entregables ent : entArr) {
-                Integer difDias = DatesUtils.diasEntreFechas(ent.getEntInicioDate(), ent.getEntFinDate());
-                if (difDias != null) {
-                    ent.setEntDuracion(difDias);
-                }
-            }
-            Collections.addAll(entResult, entArr);
-        }
-        return entResult;
-    }
-
-    public Proyectos guardarCopiaProyecto(Integer proyPk, String nombre, Date fechaComienzoProyCopia, SsUsuario usu, Integer orgPk) {
+    public Proyectos guardarCopiaProyecto(Integer proyPk, String nombre, Date fechaComienzoProyCopia, SsUsuario usu, Integer orgPk,Boolean incluirAdquisicionesId) {
         if (StringsUtils.isEmpty(nombre)) {
             BusinessException be = new BusinessException();
             be.addError(MensajesNegocio.ERROR_COPIA_PROY_NOMBRE);
@@ -1732,41 +1703,16 @@ public class ProyectosBean {
             throw be;
         }
 
-        Proyectos copiaProy = copiarProyecto(p, nombre, fechaComienzoProyCopia);
-        Set<LatlngProyectos> localizaciones = p.getLatLngProyList();
+        Proyectos copiaProy = copiarProyecto(p, nombre, fechaComienzoProyCopia,incluirAdquisicionesId);
         try {
             copiaProy = guardar(copiaProy, usu, orgPk, true);
-            if (copiaProy.getLatLngProyList() == null) {
-                copiaProy.setLatLngProyList(new HashSet<LatlngProyectos>());
-            }
-            if (localizaciones != null) {
-                LatlngProyectosDAO locDAO = new LatlngProyectosDAO(em);
-                LatlngProyectos laux;
-                for (LatlngProyectos l : localizaciones) {
-                    laux = new LatlngProyectos();
-                    laux.setLatlangBarrio(l.getLatlangBarrio());
-                    laux.setLatlangCodigopostal(l.getLatlangCodigopostal());
-                    laux.setLatlangDepFk(l.getLatlangDepFk());
-                    laux.setLatlangLoc(l.getLatlangLoc());
-                    laux.setLatlangLocFk(l.getLatlangLocFk());
-                    laux.setLatlngLat(l.getLatlngLat());
-                    laux.setLatlngLng(l.getLatlngLng());
-                    laux.setProyecto(copiaProy);
-                    laux = (LatlngProyectos) locDAO.persist(laux, du.getCodigoUsuario(), du.getOrigen());
-                    copiaProy.getLatLngProyList().add(laux);
-                }
-                copiaProy = guardar(copiaProy, usu, orgPk, true);
-            }
+
+            ajustarDatosPostCopia(copiaProy);
 
         } catch (GeneralException ge) {
             BusinessException be = new BusinessException(ge);
             be.addError(MensajesNegocio.ERROR_COPIA_PROY_GUARDAR);
             throw be;
-        } catch (DAOGeneralException ex) {
-            Logger.getLogger(ProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(MensajesNegocio.ERROR_COPIA_PROY_GUARDAR);
-            throw te;
         }
 
         tipoDocumentoInstanciaBean.guardarCopiaTDIProyecto(proyPk, copiaProy.getProyPk(), orgPk);
@@ -1774,7 +1720,6 @@ public class ProyectosBean {
         //Notificaciones
         notificacionInstanciaBean.guardarCopiaNIProyecto(proyPk, copiaProy.getProyPk(), orgPk);
 
-        //Participantes
         return copiaProy;
     }
 
@@ -1853,37 +1798,36 @@ public class ProyectosBean {
             if (p.getProyPreFk().getPreMoneda() != null && p.getProyPreFk().getPreMoneda().getMonPk() == -1) {
                 p.getProyPreFk().setPreMoneda(null);
             }
-            
+
             if (p.getProyPreFk().getAdquisicionSet() != null) {
                 for (Adquisicion adq : p.getProyPreFk().getAdquisicionSet()) {
                     if (adq.getAdqProvOrga().getOrgaPk() == -1) {
                         adq.setAdqProvOrga(null);
                     }
-                    
+
                     if (adq.getAdqProcedimientoCompra().getProcCompPk() == -1) {
                         adq.setAdqProcedimientoCompra(null);
                     }
-                   
+
                     if (adq.getAdqComponenteProducto().getComPk() == -1) {
                         adq.setAdqComponenteProducto(null);
                     }
 
-                    if((adq.getAdqCompartida() != null) && (adq.getAdqCompartida())){
+                    if ((adq.getAdqCompartida() != null) && (adq.getAdqCompartida())) {
                         if (adq.getSsUsuarioCompartida().getUsuId() == -1) {
                             adq.setSsUsuarioCompartida(null);
-                        }                        
+                        }
                     }
-                    
-                    for(Pagos iterPago : adq.getPagosSet()){
-                        if(iterPago.getPagContrOrganizacionFk().getOrgaPk() == -1){
+
+                    for (Pagos iterPago : adq.getPagosSet()) {
+                        if (iterPago.getPagContrOrganizacionFk().getOrgaPk() == -1) {
                             iterPago.setPagContrOrganizacionFk(null);
                         }
                     }
-                    
+
 //                    if (!mismoOrganismo) {
 //                        adq.setAdqComponenteProducto(null);
 //                    }
-                    
                 }
             }
         }
@@ -1914,20 +1858,19 @@ public class ProyectosBean {
                          * del organismo orgPkOld hacia el nuevo organismo.
                          */
                         d = documentosDao.findById(Documentos.class, doc.getDocsPk());
-                        
+
                         srcFile = dir + "/" + orgPkOld + "/" + d.getDocFile().getDocfilePath();
-                        
+
                         /*
                         *   26-04-2018 Nico: Se actualiza el atributo "dockfile_path" de cada documento, para evitar
                         *           repetidos.
-                        */
-                        
+                         */
                         String nuevoPath = UUID.randomUUID().toString();
-                        
+
                         desFile = dir + "/" + p.getProyOrgFk().getOrgPk() + "/" + nuevoPath;
-                        
-                        documentosDao.actualizarNombrePath(d.getDocsPk(), d.getDocFile().getDocfilePk(), nuevoPath, false, null);                        
-                        
+
+                        documentosDao.actualizarNombrePath(d.getDocsPk(), d.getDocFile().getDocfilePk(), nuevoPath, false, null);
+
                         cpAux = new String[2];
                         cpAux[0] = srcFile;
                         cpAux[1] = desFile;
@@ -1939,15 +1882,14 @@ public class ProyectosBean {
                          */
                         for (DocFile dfHist : docFileDAO.obtenerHistoricoDocFile(doc)) {
                             srcFile = dir + "/" + orgPkOld + "/" + dfHist.getDocfilePath();
-                            
+
                             /*
                             *   26-04-2018 Nico: También se debe actualizar los documentos en el histórico
-                            */
-                            
+                             */
                             nuevoPath = UUID.randomUUID().toString();
-                            
+
                             desFile = dir + "/" + p.getProyOrgFk().getOrgPk() + "/" + nuevoPath;
-                            
+
                             documentosDao.actualizarNombrePath(d.getDocsPk(), dfHist.getDocfilePk(), nuevoPath, true, dfHist.getRev());
 
                             cpAux = new String[2];
@@ -1961,36 +1903,32 @@ public class ProyectosBean {
                     }
                 }
             }
-            
+
             /*
             *   09-05-2018 Nico: Se agrega código para poder copiar los archivos de media de los proyetos.
-            */
-            
+             */
             List<MediaProyectos> listMedia = mediaProyectosBean.obtenerPorProyId(p.getProyPk());
-            
-            if((listMedia != null) && !(listMedia.isEmpty())){
+
+            if ((listMedia != null) && !(listMedia.isEmpty())) {
                 Integer orgPkOld = this.obtenerProyPorId(p.getProyPk()).getProyOrgFk().getOrgPk();
                 String dirOrigen = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, orgPkOld);
                 String dirDestino = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, p.getProyOrgFk().getOrgPk());
                 String srcFileMedia;
                 String desFileMedia;
                 String[] cpAuxMedia = null;
-                
-                
-                
-                for(MediaProyectos iterMedia : listMedia){
+
+                for (MediaProyectos iterMedia : listMedia) {
                     /*
                     *       Se debe saber si el tipo de media que estoy moviendo tiene como link una URL o un archivo, para
                     *   eso se utilizado la operación "esURL(iterMedia.getMediaLink())"   
-                    */
+                     */
 
-                    if(!(esURL(iterMedia.getMediaLink()))){                
+                    if (!StringsUtils.esURL(iterMedia.getMediaLink())) {
                         srcFileMedia = dirOrigen + "/" + iterMedia.getMediaLink();
                         String nuevoPath = UUID.randomUUID().toString();
                         desFileMedia = dirDestino + "/" + nuevoPath;
 
                         //Acá le asigno el nuvo nombre al archivo media
-
                         iterMedia.setMediaLink(nuevoPath);
 
                         cpAuxMedia = new String[2];
@@ -2000,7 +1938,7 @@ public class ProyectosBean {
                     }
                 }
             }
-            
+
             p = guardar(p, usuario, p.getProyOrgFk().getOrgPk(), true);
 
             if (p.getDocumentosSet() != null) {
@@ -2010,7 +1948,7 @@ public class ProyectosBean {
                         System.out.println("MOVE FILE '" + copy[0] + "' to '" + copy[1] + "'");
 //                        File archOrigen = new File(copy[0]);
 //                        File archDestino = new File(copy[1]);
-                        
+
 //                        if(archDestino.isFile() && !(archDestino.exists())){
 //                            FileUtils.copyFile(
 //                                archOrigen,
@@ -2032,7 +1970,7 @@ public class ProyectosBean {
         } catch (TechnicalException ex) {
             throw ex;
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             throw new TechnicalException(ex);
         } finally {
             MUTEX_MOVER_ARCHIVOS.release();
@@ -2053,53 +1991,106 @@ public class ProyectosBean {
 
     }
 
-    public Proyectos copiarProyecto(Proyectos proyOrigen, String nombre, Date fechaComienzoProyCopia) {
-        if (proyOrigen != null) {
-            Date iniPeriodo = proyOrigen.getProyIndices().getProyindPeriodoInicio();
-            Integer difFechas = DatesUtils.diasEntreFechas(iniPeriodo, fechaComienzoProyCopia);
-            int desfasajeDias = difFechas != null ? difFechas : 0;
+    public Proyectos copiarProyecto(Proyectos proyOrigen, String nombre, Date fechaComienzoProyCopia,Boolean incluirAdquisicionesId) {
 
-            Proyectos nvoProy = (Proyectos) proyOrigen.clone();
+        int diferenciaDias = obtenerDiferenciaDiasCopia(proyOrigen, fechaComienzoProyCopia);
 
-            nvoProy.setProyPk(null);
-            nvoProy.setProyNombre(nombre);
-            nvoProy.setProyEstFk(new Estados(Estados.ESTADOS.INICIO.estado_id));
-            nvoProy.setProyEstPendienteFk(null);
-            Date date = new Date();
-            nvoProy.setProyFechaCrea(date);
-            nvoProy.setProyFechaAct(date);
-            nvoProy.setProyFechaEstadoAct(null);
-            nvoProy.setActivo(Boolean.TRUE);
-            nvoProy.setProySituacionActual(null);
-            nvoProy.setProyGrp(null);
-            nvoProy.setProyIndices(null);
+        Proyectos nvoProy = (Proyectos) proyOrigen.clone();
 
-            nvoProy.setProyOtrosDatos(proyOtrosDatosBean.copiarProyOtrosDatos(proyOrigen.getProyOtrosDatos()));
+        nvoProy.setProyPk(null);
+        nvoProy.setProyNombre(nombre);
+        nvoProy.setProyEstFk(new Estados(Estados.ESTADOS.INICIO.estado_id));
+        nvoProy.setProyEstPendienteFk(null);
+        Date date = new Date();
+        nvoProy.setProyFechaCrea(date);
+        nvoProy.setProyFechaAct(date);
+        nvoProy.setProyFechaEstadoAct(null);
+        nvoProy.setActivo(Boolean.TRUE);
+        nvoProy.setUsuarioCambioActivacion(null);
+        nvoProy.setFechaCambioActivacion(null);
+        nvoProy.setProySituacionActual(null);
+        nvoProy.setProyGrp(null);
+        nvoProy.setProyIndices(null);
+        nvoProy.setObjetivoEstrategico(proyOrigen.getObjetivoEstrategico());
 
-            //Audit
-            nvoProy.setProyUltUsuario(null);
-            nvoProy.setProyUltMod(null);
-            nvoProy.setProyUltOrigen(null);
-            nvoProy.setProyVersion(0);
+        nvoProy.setProyOtrosDatos(proyOtrosDatosBean.copiarProyOtrosDatos(proyOrigen.getProyOtrosDatos()));
 
-            //Colecciones
-            nvoProy.setAreasTematicasSet(proyOrigen.getAreasTematicasSet());
-            nvoProy.setAreasRestringidasSet(proyOrigen.getAreasRestringidasSet());
+        //Audit
+        nvoProy.setProyUltUsuario(null);
+        nvoProy.setProyUltMod(null);
+        nvoProy.setProyUltOrigen(null);
+        nvoProy.setProyVersion(0);
 
-            nvoProy.setDocumentosSet(null);
+        //Colecciones
+        nvoProy.setAreasTematicasSet(proyOrigen.getAreasTematicasSet());
+        nvoProy.setAreasRestringidasSet(proyOrigen.getAreasRestringidasSet());
 
-            nvoProy.setInteresadosList(interesadosBean.copiarProyInteresados(proyOrigen.getInteresadosList()));
-            nvoProy.setRiesgosList(riesgosBean.copiarProyRiesgos(proyOrigen.getRiesgosList(), nvoProy, desfasajeDias));
+        nvoProy.setDocumentosSet(null);
 
-            Cronogramas cro = proyOrigen.getProyCroFk();
-            nvoProy.setProyCroFk(cronogramasBean.copiarProyCronograma(cro, desfasajeDias));
+        Cronogramas cronogramaOriginal = proyOrigen.getProyCroFk();
 
-            Cronogramas croNvo = nvoProy.getProyCroFk();
-            nvoProy.setProyPreFk(presupuestoBean.copiarProyPresupuesto(proyOrigen.getProyPreFk(), (croNvo != null ? croNvo.getEntregablesSet() : null), desfasajeDias));
+        Map<Integer, Entregables> entregablesCopia = copiarCronograma(proyOrigen, nvoProy, cronogramaOriginal, diferenciaDias);
 
-            return nvoProy;
+        nvoProy.setProyPreFk(presupuestoBean.copiarProyPresupuesto(proyOrigen.getProyPreFk(), entregablesCopia, diferenciaDias,incluirAdquisicionesId));
+
+        nvoProy.setInteresadosList(interesadosBean.copiarProyInteresados(proyOrigen.getInteresadosList(), entregablesCopia));
+        nvoProy.setRiesgosList(riesgosBean.copiarProyRiesgos(proyOrigen.getRiesgosList(), entregablesCopia, nvoProy, diferenciaDias));
+
+        nvoProy.setLatLngProyList(latlngBean.copiarLocalizacionesProyecto(proyOrigen, nvoProy));
+
+        return nvoProy;
+    }
+
+    private Map<Integer, Entregables> copiarCronograma(Proyectos proyOrigen, Proyectos nvoProy, Cronogramas cronogramaOriginal, int diferenciaDias) {
+
+        if (cronogramaOriginal == null) {
+            return null;
         }
-        return null;
+
+        Cronogramas cronogramaCopia = cronogramasBean.copiarProyCronograma(proyOrigen.getProyCroFk(), diferenciaDias);
+        nvoProy.setProyCroFk(cronogramaCopia);
+
+        Map<Integer, Entregables> entregablesCopia = entregablesBean
+                .copiarProyEntregables(cronogramaOriginal.getEntregablesSet(), cronogramaCopia, diferenciaDias);
+
+        Set<Entregables> entregables = new HashSet<>();
+
+        for (Map.Entry<Integer, Entregables> entregable : entregablesCopia.entrySet()) {
+            entregables.add(entregable.getValue());
+        }
+
+        cronogramaCopia.setEntregablesSet(entregables);
+
+        return entregablesCopia;
+    }
+
+    private int obtenerDiferenciaDiasCopia(Proyectos proyOrigen, Date fechaComienzoProyectoCopia) {
+
+        if (fechaComienzoProyectoCopia == null) {
+            return 0;
+        }
+
+        Date fechaBase = null;
+
+        if (proyOrigen.getProyCroFk() != null) {
+
+            for (Entregables e : proyOrigen.getProyCroFk().getEntregablesSet()) {
+
+                if (e.getEntId() == 1) {
+
+                    fechaBase = e.getEntInicioDate();
+                    break;
+                }
+            }
+        }
+
+        if (fechaBase == null) {
+            fechaBase = proyOrigen.getProyIndices().getProyindPeriodoInicio();
+        }
+
+        Integer difFechas = DatesUtils.diasEntreFechas(fechaBase, fechaComienzoProyectoCopia);
+
+        return (difFechas != null) ? difFechas : 0;
     }
 
     /**
@@ -2146,7 +2137,7 @@ public class ProyectosBean {
                     || !listAreaProyPrestist.containsAll(listAreaProy))) {
                 return true;
             }
-            //MetodologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a y Notificaciones no es necesario porque se guardan independientemente del proyecto.
+            //Metodologia y Notificaciones no es necesario porque se guardan independientemente del proyecto.
         }
         return tieneCambios;
     }
@@ -2157,12 +2148,12 @@ public class ProyectosBean {
             try {
                 ProyectoImportado proyImp = exportarVisualizadorBean.proyToProyImp(proy, Boolean.FALSE, false);
                 if (proyImp == null) {
-                    logger.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables");
+                    LOGGER.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables");
                     return false;
                 }
                 ProyectoImportado proyPersistidoImp = exportarVisualizadorBean.proyToProyImp(proyPersistido, Boolean.FALSE, false);
                 if (proyPersistidoImp == null) {
-                    logger.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables");
+                    LOGGER.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables");
                     return false;
                 }
 
@@ -2185,7 +2176,7 @@ public class ProyectosBean {
                 String proyPersistidoImpString = JAXBUtils.marshal(proyPersistidoImp, ProyectoImportado.class);
                 return !proyImpString.equals(proyPersistidoImpString);
             } catch (Exception ex) {
-                logger.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "No es posible verficiar los cambios sobre los campos publicables: " + ex.getMessage());
             }
         }
         return false;
@@ -2263,7 +2254,7 @@ public class ProyectosBean {
         } catch (BusinessException be) {
             throw be;
         } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             BusinessException be = new BusinessException();
             be.addError(ex.getMessage());
             throw be;
@@ -2324,7 +2315,7 @@ public class ProyectosBean {
                 limiteAmarillo = Integer.valueOf(confs.get(ConfiguracionCodigos.COSTO_ACTUAL_LIMITE_AMARILLO).getCnfValor());
                 limiteRojo = Integer.valueOf(confs.get(ConfiguracionCodigos.COSTO_ACTUAL_LIMITE_ROJO).getCnfValor());
             } catch (Exception ex) {
-                logger.log(Level.WARNING, "Hay valores de la configuracion que no se pueden convertir a Integer.");
+                LOGGER.log(Level.WARNING, "Hay valores de la configuracion que no se pueden convertir a Integer.");
                 limiteAmarillo = null;
                 limiteRojo = null;
             }
@@ -2425,51 +2416,11 @@ public class ProyectosBean {
         return false;
     }
 
-    private boolean validarCamposPublicacion2(Proyectos proy) {
-        BusinessException be = new BusinessException();
+    public List<ProyectoTO> buscar(FiltroProyectoTO filtro) {
 
-        if (proy == null) {
-            be.addError(MensajesNegocio.ERROR_PROYECTO);
-        } else {
-            ProyOtrosDatos proyOtros = proy.getProyOtrosDatos();
+        ProyectosDAO dao = new ProyectosDAO(em);
 
-            if (proyOtros == null) {
-                be.addError("No se ha ingresado Otros Datos.");
-
-            } else {
-                if (proyOtros.getProyOtrEtaFk() == null) {
-                    be.addError("No se Ingresó la Etapa.");
-                }
-                if (proyOtros.getProyOtrCatFk() == null) {
-                    be.addError("No se Ingresó la Categoría.");
-                }
-            }
-
-            if (StringsUtils.isEmpty(proy.getProyNombre())) {
-                be.addError("Debe ingresar el nombre del Proyecto");
-            }
-            if (StringsUtils.isEmpty(proy.getProyDescripcion())) {
-                be.addError("Debe ingresar la Descripción");
-            }
-            if (StringsUtils.isEmpty(proy.getProyObjetivo())) {
-                be.addError("Debe ingresar el Objetivo");
-            }
-            if (StringsUtils.isEmpty(proy.getProyObjPublico())) {
-                be.addError("Debe ingresar el Objetivo Publico");
-            }
-//			if (proy.getProyLatlngFk() != null && proy.getProyLatlngFk().getLatlangDepFk() == null) {
-            if (proy.getLatLngProyList() != null && proy.getLatLngProyList().size() > 0) {
-                be.addError("Debe ingresar la ubicación en el Departamento.");
-            }
-
-        }
-
-        if (be.getErrores().size() > 0) {
-            logger.log(Level.WARNING, null, be);
-            throw be;
-        }
-
-        return true;
+        return dao.obtenerPorFiltro(filtro);
     }
 
     public List<FichaTO> buscarPorFiltro(FiltroExpVisuaTO filtro) {
@@ -2500,7 +2451,7 @@ public class ProyectosBean {
 
                 isExportableVisualizador(proy);
                 String result = exportarVisualizadorBean.exportar(proy, todosLosMedia);
-                logger.log(Level.INFO, "Resultado exportar proy '" + proy.getProyPk() + "':{0}", result);
+                LOGGER.log(Level.INFO, "Resultado exportar proy '" + proy.getProyPk() + "':{0}", result);
                 boolean exportado = false;
                 if (result != null && result.equalsIgnoreCase("0")) {
                     exportado = true;
@@ -2586,7 +2537,7 @@ public class ProyectosBean {
                         mediaProyectosBean.validarImageSize(mp.getMediaBytes(), orgPk);
                     }
                 }
-                //El tamaÃƒÆ’Ã‚Â±o de los archivos en documentos no puede ser mayor a 5MB(parametrizable). Esto queda pendiente.
+                //El tamanio de los archivos en documentos no puede ser mayor a 5MB(parametrizable). Esto queda pendiente.
             }
         }
     }
@@ -2613,11 +2564,6 @@ public class ProyectosBean {
         return dao.obtenerOrgPkPorProyPk(proyPk);
     }
 
-    public ProyectoTO obtenerProyTO(Integer proyPk) {
-        ProyectosDAO dao = new ProyectosDAO(em);
-        return dao.obtenerProyTO(proyPk);
-    }
-
     /**
      * Envía la notificación según el código si es que aún no ha sido enviada.
      *
@@ -2632,7 +2578,6 @@ public class ProyectosBean {
                 NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk);
 
                 if (ni != null) {
-                    String subject = LabelsEJB.getValue("notif_envio_subjet", orgPk);
 
                     List<SsUsuario> usuariosDest = new ArrayList<>();
                     if (ni.getNotinstGerenteAdjunto()) {
@@ -2654,18 +2599,19 @@ public class ProyectosBean {
 
                     Map<String, String> valores = new HashMap<>();
                     valores.put(MailVariables.NOMBRE_PROYECTO, proy.getProyPk() + " - '" + proy.getProyNombre() + "'");
-                    
+
                     Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
                     if (org != null) {
                         valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
                     }
-                    
+
                     String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
                     valores.put(MailVariables.URL_SISTEMA, urlSistema);
 
                     String urlProyecto = ProgProyUtils.obtenerURL(urlSistema, proy);
                     valores.put(MailVariables.URL_PROYECTO, urlProyecto);
-                    
+
+                    String subject = MailsTemplateUtils.instanciarConHashMap(ni.getNotinstNotFk().getNotAsunto(), valores);
                     String mensaje = MailsTemplateUtils.instanciarConHashMap(ni.getNotinstNotFk().getNotMsg(), valores);
 
                     final String subjectThread = subject;
@@ -2683,14 +2629,14 @@ public class ProyectosBean {
                                 agregarNotificacionEnvio(codNotThread, proyThread.getProyPk());
                             } catch (MailException me) {
                                 for (String error : me.getErrores()) {
-                                    logger.log(Level.WARNING, error);
+                                    LOGGER.log(Level.WARNING, error);
                                 }
                             }
                         }
                     });
                     t.start();
                 } else {
-                    logger.log(Level.WARNING, "No se envía notificación porque no existe la instancia '" + codNot + "' para el proyecto " + proy.getProyPk());
+                    LOGGER.log(Level.WARNING, "No se envía notificación porque no existe la instancia '" + codNot + "' para el proyecto " + proy.getProyPk());
                 }
             }
         }
@@ -2710,8 +2656,8 @@ public class ProyectosBean {
         CriteriaTO criteria = CriteriaTOUtils.createANDTO(criteriaCod, criteriaProy);
         /*
         *   26-03-18 Nico: Se cambia en la siguiente línea el true por un false.
-        */
-        
+         */
+
         List<NotificacionEnvio> neList = dao.obtenerEntityByCriteria(NotificacionEnvio.class, criteria, new String[]{}, new boolean[]{}, null, null, false);
 
         return CollectionsUtils.isNotEmpty(neList);
@@ -2724,26 +2670,153 @@ public class ProyectosBean {
             ne = dao.guardar(ne, true);
             return ne;
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }
-    
-    boolean esURL (String dir){
-        /*
-        *     Este código se usa para ver si lo que se le pasa por parámetro es una URL.
-        *   En caso de ser una dirección se cumplirá la sentencia del "try", sino se entra
-        *   al catch.
-        */
-        try {
-            new URL(dir).toURI();
-            return true;
-        }
 
-        catch (Exception e) {
-            return false;
+    private void ajustarDatosPostCopia(Proyectos proyecto) {
+
+        SIGESIndicadoresUtils.ajustarNomenclaturaEntidades(proyecto);
+    }
+
+    public void actualizarFechaUltimaModificacion(Integer proyPk) {
+
+        ProyectosDAO proyectoDAO = new ProyectosDAO(em);
+
+        proyectoDAO.modificarFechaActualizacionProyecto(proyPk, new Date());
+    }
+
+    public void actualizarFechaUltimaModificacion(Proyectos proyecto) {
+
+        proyecto.setProyFechaAct(new Date());
+    }
+
+    public void postProcesarEntregablesRelacionados(Cronogramas cro, SsUsuario usuario) {
+
+        System.out.println("postProcesarEntregablesRelacionados");
+//"usuario" en guardar entregables con referencia desde Wekan viene vacio
+        EntregablesDAO entregablesDAO = new EntregablesDAO(em);
+        List<Entregables> listaEntregables = new ArrayList();
+        listaEntregables.addAll(cro.getEntregablesSet());
+        EntregablesUtils.sortByNivel(listaEntregables, true);
+        for (Entregables entregable : listaEntregables) {
+            List<Entregables> referencias = entregablesDAO.obtenerEntregablesReferenciando(entregable.getEntPk());
+
+            if (referencias.isEmpty()) {
+                continue;
+            }
+
+//                        try{
+//                            Entregables ent = entregablesDAO.findById(Entregables.class, entregable.getEntPk());
+//                        }
+//                        catch(Exception e){
+//                            
+//                        }
+            // se actualizan los entregables que hacen referencia
+            for (Entregables referencia : referencias) {
+
+                /* 
+                if (entregable.getEntCroFk().getProyecto().getProyEstFk().getEstadoCronograma() > 1) {
+                    if (referencia.getEntCroFk().getProyecto().getProyEstFk().getEstadoCronograma() > 1) {
+                        //AMBOS EN EJECUCION
+                        referencia.setEntDuracion(entregable.getEntDuracion());
+                        referencia.setEntInicio(entregable.getEntInicio());
+                        referencia.setEntFin(entregable.getEntFin());
+                    } else {
+                      
+                        try {
+                            referencia.setEntDuracion(entregable.getEntDuracion());
+                            referencia.setEntInicio(entregable.getEntInicio());
+                            referencia.setEntFin(entregable.getEntFin());
+                        } catch (Exception e) {
+                            LOGGER.log(Level.SEVERE, null, e);
+                        }
+
+                    }
+
+                } else {
+                    if (referencia.getEntCroFk().getProyecto().getProyEstFk().getEstadoCronograma() > 1) {
+                        //ORIGINAL EN PLANIFICACION, COPIA EN EJECUCION
+                        referencia.setEntDuracionLineaBase(entregable.getEntDuracion());
+                        referencia.setEntDuracionLineaBase(entregable.getEntDuracion());
+                        referencia.setEntInicioLineaBase(entregable.getEntInicio());
+
+                    } else {
+                        //AMBOS EN PLANIFICACION
+                        referencia.setEntDuracionLineaBase(entregable.getEntDuracion());
+                        referencia.setEntInicioLineaBase(entregable.getEntInicio());
+                        referencia.setEntFinLineaBase(entregable.getEntFin());
+                        referencia.setEntFinLineaBase(entregable.getEntFin());
+                        referencia.setEntDuracion(entregable.getEntDuracion());
+                        referencia.setEntInicio(entregable.getEntInicio());
+                        referencia.setEntFin(entregable.getEntFin());
+                    }
+                }
+                Version 6.7.1
+                 */
+                
+                referencia.setEntInicio(entregable.getEntInicio());
+                referencia.setEntFin(entregable.getEntFin());
+                referencia.setEntInicioEsHito(entregable.getEntInicioEsHito());
+                referencia.setEntFinEsHito(entregable.getEntFinEsHito());
+                referencia.setEntProgreso(entregable.getEntProgreso());
+                referencia.setCoordinadorUsuFk(entregable.getCoordinadorUsuFk());
+                referencia.setEntDuracion(entregable.getEntDuracion());
+
+                if (entregable.getEntInicioLineaBase() == null) {
+                    referencia.setEntInicioLineaBase(entregable.getEntInicio());
+                    referencia.setEntFinLineaBase(entregable.getEntFin());
+                    referencia.setEntDuracionLineaBase(entregable.getEntDuracion());
+                } else {
+
+                    referencia.setEntInicioLineaBase(entregable.getEntInicioLineaBase());
+                    referencia.setEntFinLineaBase(entregable.getEntFinLineaBase());
+                    referencia.setEntDuracionLineaBase(entregable.getEntDuracionLineaBase());
+
+                }
+
+                EntregablesUtils.asignarProgresoEsfuerzoPadres(entregable.getEntCroFk().getEntregablesSet());
+
+                actualizarIndProyProg(referencia.getEntCroFk().getProyecto().getProyPk(),
+                        usuario, referencia.getEntCroFk().getProyecto().getProyOrgFk().getOrgPk(), true);
+
+            }
         }
     }
-    
+
+    public void desReferenciarEntregablesRelacionados(Cronogramas cro, SsUsuario usuario) {
+        //"usuario" en guardar entregables con referencia desde Wekan viene vacio
+        EntregablesDAO entregablesDAO = new EntregablesDAO(em);
+        List<Entregables> listaEntregables = new ArrayList();
+        listaEntregables.addAll(cro.getEntregablesSet());
+        EntregablesUtils.sortByNivel(listaEntregables, true);
+        for (Entregables entregable : listaEntregables) {
+            List<Entregables> referencias = entregablesDAO.obtenerEntregablesReferenciando(entregable.getEntPk());
+
+            if (referencias.isEmpty()) {
+                continue;
+            }
+
+            try {
+                Entregables ent = entregablesDAO.findById(Entregables.class, entregable.getEntPk());
+            } catch (Exception e) {
+
+            }
+            // se actualizan los entregables que hacen referencia
+            for (Entregables referencia : referencias) {
+                referencia.setEsReferencia(Boolean.FALSE);
+                referencia.setReferido(null);
+
+            }
+        }
+    }
+
+    public void updateUsuariosEnProyecto(String proyPk, Integer gerentePk, Integer adjuntoPk, Integer pmofPk, Integer sponsorPk) {
+
+        ProyectosDAO dao = new ProyectosDAO(em);
+
+        dao.updateUsuariosEnProyecto(proyPk, gerentePk, adjuntoPk, pmofPk, sponsorPk);
+    }
 
 }

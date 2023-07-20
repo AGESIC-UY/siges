@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="copiaProgPopup">
+        <ice:panelPopup draggable="false" 
+                        autoCentre="true" 
+                        modal="true" 
+                        rendered="#{fichaMB.renderPopupCopiaProg}">
+
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.ficha_copia_prog_titulo}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       title ="#{labels.cerrar}"
+                                       action="#{fichaMB.cerrarRenderPopupCopiaProg()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup style="max-width: 530px">
+                    <p>
+                        Esta copia creará un nuevo programa con el nombre especificado. 
+                    </p>
+                    <p>
+                        Se copiarán todos los datos de la ficha.
+                    </p>
+                    <ice:panelGroup id="formUsuario">
+
+                        <ice:panelGrid styleClass="formulario" columns="2">
+                            <ice:outputLabel value="#{labels.ficha_copia_prog_nombre}:" />
+                            <ice:inputText value="#{fichaMB.nombreProgCopia}" 
+                                           styleClass="textoMedioLargo" />
+                        </ice:panelGrid>
+
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:messages id="usuarioPopupMsg"/>
+                            <ace:pushButton value="#{labels.guardar}" 
+                                            action="#{fichaMB.copiarPrograma()}" 
+                                            styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cerrar}" 
+                                            action="#{fichaMB.cerrarRenderPopupCopiaProg()}"/>
+                        </ice:panelGroup>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

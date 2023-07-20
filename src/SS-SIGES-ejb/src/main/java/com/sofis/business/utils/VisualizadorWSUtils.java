@@ -146,6 +146,7 @@ public class VisualizadorWSUtils {
                 entVisua.setEntImpNivel(ent.getEntNivel());
                 entVisua.setEntImpNombre(ent.getEntNombre());
                 entVisua.setEntImpProgreso(ent.getEntProgreso());
+                entVisua.setEntImpEsfuerzo(ent.getEntEsfuerzo());
 
                 entImpList.add(entVisua);
             }

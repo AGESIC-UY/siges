@@ -4,12 +4,12 @@
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>5.10.1</version>
+        <version>6.7.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-entities</artifactId>
-    <version>5.10.1</version>
+    <version>6.7.1</version>
     <packaging>ejb</packaging>
 
     <name>SS-SIGES-entities</name>
@@ -23,14 +23,14 @@
         <dependency>
             <groupId>com.sofis.siges</groupId>
             <artifactId>SS-SIGES-exceptions</artifactId>
-            <version>5.10.1</version>
+            <version>6.7.1</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>com.sofis.generico.utils</groupId>
             <artifactId>GeneralUtils</artifactId>
-            <version>5.10.1</version>
+            <version>6.4.1</version>
         </dependency>
         
         <dependency>

@@ -50,7 +50,6 @@ import org.agesic.siges.visualizador.web.ws.DocFileImp;
 import org.agesic.siges.visualizador.web.ws.DocumentosImp;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.hibernate.LazyInitializationException;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
@@ -88,7 +87,7 @@ public class DocumentosBean {
 		//origen = du.getOrigen();
 	}
 
-        private static final Logger logger = Logger.getLogger(DocumentosBean.class.getName());
+	private static final Logger logger = Logger.getLogger(DocumentosBean.class.getName());
 
 	public Documentos guardar(Documentos documento, Integer orgPk) throws GeneralException {
 
@@ -131,6 +130,7 @@ public class DocumentosBean {
 	 * @throws GeneralException
 	 */
 	public Object guardarDocumentos(Documentos documento, Integer fichaFk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
+
 		documento.setDocsFecha(new Date());
 
 		if (documento.getDocsEstado() == null) {
@@ -138,70 +138,21 @@ public class DocumentosBean {
 		}
 		DocumentosValidacion.validar(documento, orgPk);
 		if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
-                    
-                    InputStream is = null;
-                    
-		    try{
-                        Programas prog = programasBean.obtenerProgPorId(fichaFk);
-			if (prog.getDocumentosSet().contains(documento)) {
-				/**
-				 * BRUNO 06-03-2016: No se borra el archivo del directorio para
-				 * que pueda recuperarse en el histórico.
-				 */
-				prog.getDocumentosSet().remove(documento);
-			}
-                         
-                        // Agrego el docFile asociado al documento
-                            DocumentosDao docDAO = new DocumentosDao(em);
-                            DocFile df = null;
-//
-                            try {
-                                    df = documento.getDocFile();
-                                    is = df.getDocfileFileStream();
-                                    documento = docDAO.update(documento);
-                                    documento.getDocFile().setDocfileFileStream(is);
-                            } catch (LazyInitializationException ex) {
-                                    df = null;
-                            }                        
-                        
-                             
-			prog.getDocumentosSet().add(documento);
-
-			prog = programasBean.guardarPrograma(prog, usuario, orgPk);
-                        
-                        //Guardo el archivo
-                        if (df != null && df.getDocfileFileStream() != null) {
-                            this.guardarArchivoDocumento(documento, orgPk);
-                        }
-                        
-                        
-			return prog;
-                        
-                    } catch (DAOGeneralException ex) {
-                        throw new TechnicalException(ex);
-                    }finally {
-                        if (is != null) {
-                            try {
-                                    is.close();
-                            } catch (IOException ex) {
-                                    logger.log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-
-		} else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
 
 			InputStream is = null;
 
 			try {
-				Proyectos proy = proyectosBean.obtenerProyPorId(fichaFk);
-				if (proy.getDocumentosSet().contains(documento)) {
-					proy.getDocumentosSet().remove(documento);
+				Programas prog = programasBean.obtenerProgPorId(fichaFk);
+				if (prog.getDocumentosSet().contains(documento)) {
+
+					// No se borra el archivo del directorio para que pueda recuperarse en el histórico.
+					prog.getDocumentosSet().remove(documento);
 				}
 
+				// Agrego el docFile asociado al documento
 				DocumentosDao docDAO = new DocumentosDao(em);
 				DocFile df = null;
-//
+
 				try {
 					df = documento.getDocFile();
 					is = df.getDocfileFileStream();
@@ -210,11 +161,60 @@ public class DocumentosBean {
 				} catch (LazyInitializationException ex) {
 					df = null;
 				}
-				proy.getDocumentosSet().add(documento);
-				proy = proyectosBean.guardarProyecto(proy, usuario, orgPk);
+
+				prog.getDocumentosSet().add(documento);
+
+				prog = programasBean.guardarPrograma(prog, usuario, orgPk, false);
+
+				//Guardo el archivo
 				if (df != null && df.getDocfileFileStream() != null) {
 					this.guardarArchivoDocumento(documento, orgPk);
 				}
+
+				return prog;
+
+			} catch (DAOGeneralException ex) {
+				throw new TechnicalException(ex);
+			} finally {
+				if (is != null) {
+					try {
+						is.close();
+					} catch (IOException ex) {
+						logger.log(Level.SEVERE, null, ex);
+					}
+				}
+			}
+
+		} else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
+
+			InputStream is = null;
+
+			try {
+				Proyectos proy = proyectosBean.obtenerProyPorId(fichaFk);
+
+				if (proy.getDocumentosSet().contains(documento)) {
+					proy.getDocumentosSet().remove(documento);
+				}
+
+				DocumentosDao docDAO = new DocumentosDao(em);
+				DocFile df;
+
+				try {
+					df = documento.getDocFile();
+					is = df.getDocfileFileStream();
+					documento = docDAO.update(documento);
+					documento.getDocFile().setDocfileFileStream(is);
+				} catch (LazyInitializationException ex) {
+					df = null;
+				}
+
+				proy.getDocumentosSet().add(documento);
+				proy = proyectosBean.guardarProyecto(proy, usuario, orgPk);
+
+				if (df != null && df.getDocfileFileStream() != null) {
+					this.guardarArchivoDocumento(documento, orgPk);
+				}
+
 				return proy;
 
 			} catch (DAOGeneralException ex) {
@@ -229,6 +229,7 @@ public class DocumentosBean {
 				}
 			}
 		}
+
 		return null;
 	}
 
@@ -344,8 +345,8 @@ public class DocumentosBean {
 				boolean docAlerta = doc.getDocsEstado() == null || doc.getDocsEstado().equals(0d) || doc.getDocsEstado().equals(0.5d);
 				boolean docEstado = doc.getDocsTipo().getTipodocExigidoDesde() < est.getEstOrdenProceso();
 				if (docAlerta && docEstado
-					&& (!mapDocs.containsKey(doc.getDocsTipo())
-					|| DatesUtils.esMayor(doc.getDocsFecha(), mapDocs.get(doc.getDocsTipo()).getDocsFecha()))) {
+						&& (!mapDocs.containsKey(doc.getDocsTipo())
+						|| DatesUtils.esMayor(doc.getDocsFecha(), mapDocs.get(doc.getDocsTipo()).getDocsFecha()))) {
 					mapDocs.put(doc.getDocsTipo(), doc);
 				}
 			}
@@ -377,7 +378,7 @@ public class DocumentosBean {
 				if (tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
 					Programas p = programasBean.obtenerProgPorId(fichaPk);
 					p.getDocumentosSet().remove(documento);
-					programasBean.guardarPrograma(p, usuario, orgPk);
+					programasBean.guardarPrograma(p, usuario, orgPk, false);
 				} else if (tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
 					Proyectos p = proyectosBean.obtenerProyPorId(fichaPk);
 					p.getDocumentosSet().remove(documento);
@@ -401,12 +402,13 @@ public class DocumentosBean {
 		return dao.obtenerDocumentosOrderByFecha(fichaFk, tipoFicha);
 	}
 
-	public Double calcularIndiceEstadoMetodologiaPrograma(Set<Proyectos> proyectos) {
+	public Double calcularIndiceEstadoMetodologiaPrograma(Set<Proyectos> proyectos, Boolean incluirFinalizados) {
 		if (proyectos != null && !proyectos.isEmpty()) {
 			double indice = 0d;
 			int cant = 0;
 			for (Proyectos proy : proyectos) {
-				if (proy.isActivo()) {
+				if (proy.isActivo() && (incluirFinalizados || !proy.getProyEstFk().getEstPk().equals(Estados.ESTADOS.FINALIZADO.estado_id))) {
+
 					List<Documentos> listDocumentos = obtenerDocumentosOrderByFecha(proy.getProyPk(), TipoFichaEnum.PROYECTO.id);
 					Double calc = calcularIndiceEstadoMetodologiaProyecto(listDocumentos, proy.getProyPk(), proy.getProyOrgFk().getOrgPk(), proy.getProyEstFk());
 					int peso = proy.getProyPeso();
@@ -444,12 +446,12 @@ public class DocumentosBean {
 		if (CollectionsUtils.isNotEmpty(listDocumentos) && estado != null) {
 			for (Documentos doc : listDocumentos) {
 				if (doc.getDocsPk() != null && doc.getDocsPk() > 0
-					&& doc.getDocsTipo().getTipodocExigidoDesde() != null
-					&& doc.getDocsTipo().getTipodocExigidoDesde() != 0) {
+						&& doc.getDocsTipo().getTipodocExigidoDesde() != null
+						&& doc.getDocsTipo().getTipodocExigidoDesde() != 0) {
 					Estados docEstado = estadosBean.obtenerEstadosPorId(doc.getDocsTipo().getTipodocExigidoDesde());
 					if (docEstado != null && docEstado.getEstOrdenProceso() != null
-						&& estado.getEstOrdenProceso() != null
-						&& docEstado.getEstOrdenProceso() < estado.getEstOrdenProceso()) {
+							&& estado.getEstOrdenProceso() != null
+							&& docEstado.getEstOrdenProceso() < estado.getEstOrdenProceso()) {
 						if (!docsActualizados.containsKey(doc.getDocsTipo().getTipodocInstPk())) {
 							docsActualizados.put(doc.getDocsTipo().getTipodocInstPk(), doc);
 						} else if (docsActualizados.get(doc.getDocsTipo().getTipodocInstPk()).getDocsPk() < doc.getDocsPk()) {
@@ -464,9 +466,9 @@ public class DocumentosBean {
 
 		for (TipoDocumentoInstancia tdi : tiposNoContenidos) {
 			if (tdi.getTipodocExigidoDesde() != null
-				&& estado != null
-				&& estado.getEstOrdenProceso() != null
-				&& tdi.getTipodocExigidoDesde() < estado.getEstOrdenProceso()) {
+					&& estado != null
+					&& estado.getEstOrdenProceso() != null
+					&& tdi.getTipodocExigidoDesde() < estado.getEstOrdenProceso()) {
 				Documentos doc = new Documentos();
 				doc.setDocsEstado(0d);
 				doc.setDocsTipo(tdi);
@@ -551,9 +553,9 @@ public class DocumentosBean {
 		return ConstantesEstandares.COLOR_TRANSPARENT;
 	}
 
-	public Boolean calcularIndiceMetodologiaSinAprobarProgramas(Integer progPk) {
+	public Boolean calcularIndiceMetodologiaSinAprobarProgramas(Integer progPk, Boolean incluirProyectosFinalizados) {
 		DocumentosDao docDao = new DocumentosDao(em);
-		return docDao.metodologiaSinAprobarProgramas(progPk);
+		return docDao.metodologiaSinAprobarProgramas(progPk, incluirProyectosFinalizados);
 	}
 
 	public Boolean calcularIndiceMetodologiaSinAprobar(Integer proyPk) {
@@ -572,8 +574,8 @@ public class DocumentosBean {
 		if (d != null) {
 			Estados exigidoDesde = estadosBean.obtenerEstadosPorId(d.getDocsTipo().getTipodocExigidoDesde());
 			if (est != null && exigidoDesde != null
-				&& exigidoDesde.getEstOrdenProceso() < est.getEstOrdenProceso()
-				&& d.getDocsEstado() == null) {
+					&& exigidoDesde.getEstOrdenProceso() < est.getEstOrdenProceso()
+					&& d.getDocsEstado() == null) {
 				d.setDocsEstadoColor(ConstantesEstandares.SEMAFORO_ROJO);
 			} else {
 				d.setDocsEstadoColor(docEstadoColor(d.getDocsEstado()));
@@ -600,8 +602,8 @@ public class DocumentosBean {
 		} else {
 			Estados exigidoDesde = estadosBean.obtenerEstadosPorId(tDoc.getTipodocExigidoDesde());
 			if (exigidoDesde != null && est != null
-				&& exigidoDesde.getEstOrdenProceso() < est.getEstOrdenProceso()
-				&& tDoc.getDocsEstado() == null) {
+					&& exigidoDesde.getEstOrdenProceso() < est.getEstOrdenProceso()
+					&& tDoc.getDocsEstado() == null) {
 				tDoc.setDocsEstadoColor(ConstantesEstandares.SEMAFORO_ROJO);
 			} else {
 				tDoc.setDocsEstadoColor(docEstadoColor(tDoc.getDocsEstado()));
@@ -662,7 +664,7 @@ public class DocumentosBean {
 			}
 
 			if (listDocFile != null && !listDocFile.isEmpty()
-				&& listDocFile.get(0) != null) {
+					&& listDocFile.get(0) != null) {
 				return listDocFile.get(0);
 			}
 		}
@@ -675,6 +677,8 @@ public class DocumentosBean {
 	 * @param entPk
 	 */
 	public void quitarEntregable(Integer entPk) {
+            logger.info("Quitar Entregable");
+            
 		DocumentosDao dao = new DocumentosDao(em);
 		try {
 			dao.quitarEntregable(entPk);

@@ -60,10 +60,10 @@
             <ice:panelGroup styleClass="formulario formularioPopup">
 
                 <h:panelGrid columns="1">
-                    <h:commandButton value="#{labels.multi_agregar}" 
+                    <ace:pushButton value="#{labels.multi_agregar}" 
                                      action="#{fichaMB.abrirMediaAction()}"
                                      rendered="#{!fichaMB.multiFormDataExpanded and fichaMB.fieldRendered('agregarMultimedia')}"
-                                     styleClass="boton principal botonAgregar" />
+                                     styleClass="boton principal agregar" />
                 </h:panelGrid>
 
                 <ice:panelPopup id="popupMediaForm"
@@ -93,7 +93,7 @@
                                 <ice:outputLabel value="#{labels.multi_form_principal}:"/>
                                 <ace:checkboxButton value="#{fichaMB.mediaProy.mediaPrincipal}" />
 
-                                <ice:outputLabel value="#{labels.multi_form_media}:"/>
+                                <ice:outputLabel value="#{labels.multi_form_media}" styleClass="obligatorio"/>
                                 <ice:selectOneMenu id="comboTipoMedia" 
                                                    value="#{fichaMB.listaTipoMediaCombo.selected}"
                                                    valueChangeListener="#{fichaMB.tipoMediaValueChangeListener}"
@@ -102,7 +102,7 @@
                                 </ice:selectOneMenu>
 
                                 <c:set var="isImagen" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.IMG}" />
-                                <ice:outputLabel value="#{labels.multi_form_archivo}:" rendered="#{isImagen}"/>
+                                <ice:outputLabel value="#{labels.multi_form_archivo}" styleClass="obligatorio" rendered="#{isImagen}"/>
                                 <ice:panelGroup styleClass="panelFileEntry" rendered="#{isImagen}">
                                     <ace:fileEntry id="fileEntryMedia"
                                                    label="#{labels.fileDocumento}"
@@ -120,13 +120,15 @@
                                                    />
 
                                     <ace:messages for="fileEntryMedia"/>
+                                    <h:commandButton id="btnSubmitLogo2" type="submit"
+                                                             styleClass="iconoTabla subir" rendered = "#{fichaMB.isFirefox}"/>
                                     <img alt="" class="iceGphImg imagenMiniatura" id="imagenFileEntry" src="" />
                                     <h:outputScript library="js" name="siges.js?version=#{aplicacionMB.appVersion}-#{aplicacionMB.appBuild}" />
 
                                 </ice:panelGroup>
 
                                 <c:set var="isVideoCam" value="#{fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or fichaMB.tipoMediaSelected.tipCod eq aplicacionMB.tiposMediaCod.CAM}" />
-                                <ice:outputLabel value="#{labels.multi_form_url}:" rendered="#{isVideoCam}"/>
+                                <ice:outputLabel value="#{labels.multi_form_url}" styleClass="obligatorio" rendered="#{isVideoCam}"/>
                                 <ace:textEntry value="#{fichaMB.mediaProy.mediaLink}" rendered="#{isVideoCam}" />
 
                             </ice:panelGrid>
@@ -136,7 +138,11 @@
                                 <h:commandButton value="#{labels.guardar}" 
                                                  styleClass="boton principal botonGuardar" 
                                                  action="#{fichaMB.agregarMediaAction()}"
-                                                 type="submit"/>
+                                                 type="submit" rendered = "#{not fichaMB.isFirefox}"/>
+                                <ice:commandButton value="#{labels.guardar}" 
+                                                 styleClass="boton principal botonGuardar" 
+                                                 action="#{fichaMB.agregarMediaAction()}"
+                                                 type="submit" rendered = "#{fichaMB.isFirefox}"/>
                                 <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
                                                  action="#{fichaMB.cerrarFormCollapsable()}"/>
                             </ice:panelGroup>
@@ -163,12 +169,15 @@
                                    paginator="true" pageCount="5" 
                                    rows="#{configuracionMB.cantElementosPorPagina}">
 
-                        <ace:column headerText="#{labels.multi_head_media}" >
-                            <ice:graphicImage value="#{mp.mediaBytes}" 
+                        <ace:column headerText="#{labels.multi_head_media}" >                      
+                            <ice:commandLink action="#{fichaMB.verImagenAction(mp)}">
+                                <ice:graphicImage value="#{mp.mediaBytes}" 
                                               styleClass="imagenMiniatura"
                                               rendered="#{mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.IMG and not empty mp.mediaBytes}"/>
-                            <h:outputText value="#{mp.mediaLink}" 
-                                          rendered="#{mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.CAM}"/>
+                            </ice:commandLink>
+                            
+                            <ice:commandLink target="_blank" action="#{fichaMB.irVideoCamara(mp.mediaLink)}" 
+                                             value="#{mp.mediaLink}" rendered="#{mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.VIDEO or mp.mediaTipoFk.tipCod eq aplicacionMB.tiposMediaCod.CAM}"/>
                         </ace:column>
 
                         <ace:column headerText="#{labels.multi_head_desc}" >
@@ -223,7 +232,7 @@
                                                     modal="true"
                                                     position="center">
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesDelMedia" 
+                                    <ice:commandButton id="yesDelMedia" 
                                                      value="#{labels.si}" 
                                                      styleClass="boton principal botonContinuar"
                                                      onclick="confirmationEliminarMedia#{mp.mediaPk}.hide();" 

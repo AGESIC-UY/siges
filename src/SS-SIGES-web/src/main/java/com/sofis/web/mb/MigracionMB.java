@@ -33,213 +33,200 @@ import javax.inject.Inject;
 @ViewScoped
 public class MigracionMB implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(MigracionMB.class.getName());
+	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(MigracionMB.class.getName());
 
-    @ManagedProperty("#{inicioMB}")
-    private InicioMB inicioMB;
-    @Inject
-    private ProgramasDelegate programaDelegate;
-    @Inject
-    private ProyectosDelegate proyectoDelegate;
-    @Inject
-    private ConfiguracionDelegate configuracionDelegate;
-    @Inject
-    private OrganismoDelegate organismoDelegate;
-    @Inject
-    private IndicadoresDelegate indicadoresDelegate;
-    @Inject
-    private NotificacionEnvioBean notificacionEnvBean;
+	@ManagedProperty("#{inicioMB}")
+	private InicioMB inicioMB;
 
-    private Boolean segundoPlano;
-    private Boolean resetLineaBase;
-    private Integer countProy;
-    private Integer totalProy;
-    private Integer countProg;
-    private Integer totalProg;
-    private Integer progressProy;
-    private Integer progressProg;
-//    private static String GROUP_NAME = "everyone";
-//    private PortableRenderer portableRenderer;
-    private Thread calcularProyectosThread;
+	@Inject
+	private ProgramasDelegate programaDelegate;
 
-    public MigracionMB() {
-//        PushRenderer.addCurrentView(GROUP_NAME);
-//        portableRenderer = PushRenderer.getPortableRenderer();
-    }
+	@Inject
+	private ProyectosDelegate proyectoDelegate;
 
-    public String salir() {
-        if (calcularProyectosThread != null && calcularProyectosThread.isAlive()) {
-            calcularProyectosThread.interrupt();
-        }
-        return ConstantesNavegacion.IR_A_INICIO;
-    }
+	@Inject
+	private ConfiguracionDelegate configuracionDelegate;
 
-    public String calcularTodosOrg() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                indicadoresDelegate.recalcularIndicadores(null, true);
-            }
-        });
-        thread.start();
+	@Inject
+	private IndicadoresDelegate indicadoresDelegate;
 
-        JSFUtils.agregarMsgInfo(Labels.getValue("migracion_calc_ind_org"));
-        return ConstantesNavegacion.IR_A_INICIO;
-    }
+	@Inject
+	private NotificacionEnvioBean notificacionEnvBean;
 
-    public String calcular() {
-        controlarDatosFaltantes();
-        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-//        SsUsuario usuario = inicioMB.getUsuario();
-//        calcularProyectosThread = new MigracionThread(orgPk, usuario);
-//        calcularProyectosThread.start();
+	private Boolean segundoPlano;
+	private Boolean resetLineaBase;
+	private Integer countProy;
+	private Integer totalProy;
+	private Integer countProg;
+	private Integer totalProg;
+	private Integer progressProy;
+	private Integer progressProg;
+	private Thread calcularProyectosThread;
+
+	public String salir() {
+		if (calcularProyectosThread != null && calcularProyectosThread.isAlive()) {
+			calcularProyectosThread.interrupt();
+		}
+		return ConstantesNavegacion.IR_A_INICIO;
+	}
+
+	public String calcularTodosOrg() {
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				indicadoresDelegate.recalcularIndicadores(null, true);
+			}
+		});
+		thread.start();
+
+		JSFUtils.agregarMsgInfo(Labels.getValue("migracion_calc_ind_org"));
+		return ConstantesNavegacion.IR_A_INICIO;
+	}
+
+	public String calcular() {
+
+		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+
 		indicadoresDelegate.recalcularIndicadores(orgPk, true);
-        if (segundoPlano != null && segundoPlano) {
-            return ConstantesNavegacion.IR_A_INICIO;
-        }
-        return null;
-    }
-    
-    public String probarMails(){
-        
-        notificacionEnvBean.enviarNotificaciones();;
-        
-        return null;
-    }
-    
 
-    public Integer getCountProy() {
-        return countProy;
-    }
+		if (segundoPlano != null && segundoPlano) {
+			return ConstantesNavegacion.IR_A_INICIO;
+		}
 
-    public void setCountProy(Integer countProy) {
-        this.countProy = countProy;
-    }
+		return null;
+	}
 
-    public Integer getTotalProy() {
-        return totalProy;
-    }
+	public String probarMails() {
 
-    public void setTotalProy(Integer totalProy) {
-        this.totalProy = totalProy;
-    }
+		notificacionEnvBean.enviarNotificaciones();;
 
-    public Integer getCountProg() {
-        return countProg;
-    }
+		return null;
+	}
 
-    public void setCountProg(Integer countProg) {
-        this.countProg = countProg;
-    }
+	public Integer cantidadSessions() {
+		return SessionCounterListener.getTotalActiveSession();
+	}
 
-    public Integer getTotalProg() {
-        return totalProg;
-    }
+	public Integer getCountProy() {
+		return countProy;
+	}
 
-    public void setTotalProg(Integer totalProg) {
-        this.totalProg = totalProg;
-    }
+	public void setCountProy(Integer countProy) {
+		this.countProy = countProy;
+	}
 
-    public Integer getProgressProy() {
-        return progressProy;
-    }
+	public Integer getTotalProy() {
+		return totalProy;
+	}
 
-    public void setProgressProy(Integer progressProy) {
-        this.progressProy = progressProy;
-    }
+	public void setTotalProy(Integer totalProy) {
+		this.totalProy = totalProy;
+	}
 
-    public Integer getProgressProg() {
-        return progressProg;
-    }
+	public Integer getCountProg() {
+		return countProg;
+	}
 
-    public void setProgressProg(Integer progressProg) {
-        this.progressProg = progressProg;
-    }
+	public void setCountProg(Integer countProg) {
+		this.countProg = countProg;
+	}
 
-    public Boolean getSegundoPlano() {
-        return segundoPlano;
-    }
+	public Integer getTotalProg() {
+		return totalProg;
+	}
 
-    public void setSegundoPlano(Boolean segundoPlano) {
-        this.segundoPlano = segundoPlano;
-    }
+	public void setTotalProg(Integer totalProg) {
+		this.totalProg = totalProg;
+	}
 
-    public Boolean getResetLineaBase() {
-        return resetLineaBase;
-    }
+	public Integer getProgressProy() {
+		return progressProy;
+	}
 
-    public void setResetLineaBase(Boolean resetLineaBase) {
-        this.resetLineaBase = resetLineaBase;
-    }
+	public void setProgressProy(Integer progressProy) {
+		this.progressProy = progressProy;
+	}
 
-    public void setInicioMB(InicioMB inicioMB) {
-        this.inicioMB = inicioMB;
-    }
+	public Integer getProgressProg() {
+		return progressProg;
+	}
 
-    private class MigracionThread extends Thread {
+	public void setProgressProg(Integer progressProg) {
+		this.progressProg = progressProg;
+	}
 
-        private Integer orgPk;
-        SsUsuario usuario;
+	public Boolean getSegundoPlano() {
+		return segundoPlano;
+	}
 
-        public MigracionThread(Integer orgPk, SsUsuario usuario) {
-            this.orgPk = orgPk;
-            this.usuario = usuario;
-        }
+	public void setSegundoPlano(Boolean segundoPlano) {
+		this.segundoPlano = segundoPlano;
+	}
 
-        @Override
-        public void run() {
-            logger.log(Level.INFO, "Buscando Proyectos activos... Org:{0}", orgPk);
-            final List<Integer> idsProy = proyectoDelegate.obtenerIdsProyPorOrg(orgPk, Boolean.TRUE);
-            totalProy = idsProy.size();
-            logger.log(Level.INFO, "Total proyectos:{0}", totalProy);
-            countProy = 0;
+	public Boolean getResetLineaBase() {
+		return resetLineaBase;
+	}
 
-            String[] codigos = new String[]{
-                ConfiguracionCodigos.ESTADO_INICIO_LIMITE_AMARILLO,
-                ConfiguracionCodigos.ESTADO_INICIO_LIMITE_ROJO,
-                ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_AMARILLO,
-                ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_ROJO};
-            Map<String, Configuracion> confs = configuracionDelegate.obtenerCnfPorCodigoYOrg(orgPk, codigos);
+	public void setResetLineaBase(Boolean resetLineaBase) {
+		this.resetLineaBase = resetLineaBase;
+	}
 
-            for (Integer proyPk : idsProy) {
+	public void setInicioMB(InicioMB inicioMB) {
+		this.inicioMB = inicioMB;
+	}
 
-                proyectoDelegate.controlarEntregables(proyPk, resetLineaBase);
-                proyectoDelegate.controlarProdAcumulados(proyPk, false);
-                proyectoDelegate.guardarIndicadoresSimple(proyPk, false, true, orgPk, confs, false);
-                countProy++;
-                progressProy = countProy * 100 / totalProy;
-                logger.log(Level.INFO, "Proyecto calculcar({0}) Ind: {1}/{2} ({3}%)", new Object[]{proyPk, countProy, totalProy, progressProy});
-//                portableRenderer.render(GROUP_NAME);
+	private class MigracionThread extends Thread {
 
-            }
+		private Integer orgPk;
+		SsUsuario usuario;
 
-            logger.log(Level.INFO, "Buscando Programas...{0}", orgPk);
-            List<Programas> programas = programaDelegate.obtenerTodosPorOrg(orgPk);
-            totalProg = programas.size();
-            logger.log(Level.INFO, "Total programas:{0}", totalProg);
-            countProg = 0;
+		public MigracionThread(Integer orgPk, SsUsuario usuario) {
+			this.orgPk = orgPk;
+			this.usuario = usuario;
+		}
 
-            for (Programas prog : programas) {
-                Integer progPk = prog.getProgPk();
-                programaDelegate.guardarIndicadoresSimple(progPk, orgPk);
-                programaDelegate.actualizarProgramaPorProyectos(progPk, usuario, "web");
-                countProg++;
-                progressProg = countProg * 100 / totalProg;
-                logger.log(Level.INFO, "Programa calculcar Ind({0}): {1}/{2} ({3}%)", new Object[]{progPk, countProg, totalProg, progressProg});
-//                portableRenderer.render(GROUP_NAME);
-            }
+		@Override
+		public void run() {
+			LOGGER.log(Level.INFO, "Buscando Proyectos activos... Org:{0}", orgPk);
+			final List<Integer> idsProy = proyectoDelegate.obtenerIdsProyPorOrg(orgPk, Boolean.TRUE);
+			totalProy = idsProy.size();
+			LOGGER.log(Level.INFO, "Total proyectos:{0}", totalProy);
+			countProy = 0;
 
-            
-//            Utils.executeGarbageCollector();
-        }
-    }
+			String[] codigos = new String[]{
+				ConfiguracionCodigos.ESTADO_INICIO_LIMITE_AMARILLO,
+				ConfiguracionCodigos.ESTADO_INICIO_LIMITE_ROJO,
+				ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_AMARILLO,
+				ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_ROJO};
+			Map<String, Configuracion> confs = configuracionDelegate.obtenerCnfPorCodigoYOrg(orgPk, codigos);
 
-    public Integer cantidadSessions() {
-        return SessionCounterListener.getTotalActiveSession();
-    }
+			for (Integer proyPk : idsProy) {
 
-    private void controlarDatosFaltantes() {
-        organismoDelegate.controlarDatosFaltantes();
-    }
+				proyectoDelegate.controlarEntregables(proyPk, resetLineaBase);
+				//proyectoDelegate.controlarProdAcumulados(proyPk, false);
+				proyectoDelegate.guardarIndicadoresSimple(proyPk, false, true, orgPk, confs, false, false);
+				countProy++;
+				progressProy = countProy * 100 / totalProy;
+				LOGGER.log(Level.INFO, "Proyecto calculcar({0}) Ind: {1}/{2} ({3}%)", new Object[]{proyPk, countProy, totalProy, progressProy});
+
+			}
+
+			LOGGER.log(Level.INFO, "Buscando Programas...{0}", orgPk);
+			List<Programas> programas = programaDelegate.obtenerTodosPorOrg(orgPk);
+			totalProg = programas.size();
+			LOGGER.log(Level.INFO, "Total programas:{0}", totalProg);
+			countProg = 0;
+
+			for (Programas prog : programas) {
+				Integer progPk = prog.getProgPk();
+				programaDelegate.guardarIndicadoresSimple(progPk, orgPk);
+				programaDelegate.actualizarProgramaPorProyectos(progPk, usuario, "web");
+				countProg++;
+				progressProg = countProg * 100 / totalProg;
+				LOGGER.log(Level.INFO, "Programa calculcar Ind({0}): {1}/{2} ({3}%)", new Object[]{progPk, countProg, totalProg, progressProg});
+			}
+		}
+	}
+
 }

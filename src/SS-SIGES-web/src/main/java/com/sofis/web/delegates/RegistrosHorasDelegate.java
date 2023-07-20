@@ -32,8 +32,8 @@ public class RegistrosHorasDelegate {
         return registrosHorasBean.registrarHoras(registroHoras, orgPk);
     }
 
-    public List<RegistrosHoras> obtenerRegistrosHoras(Integer usuId, Integer proyPk, Integer entPk, Date fDesde, Date fHasta, Long desde, Long cant, Integer aprobado) {
-        return registrosHorasBean.obtenerRegistrosHoras(usuId, proyPk, entPk, fDesde, fHasta, desde, cant, aprobado);
+    public List<RegistrosHoras> obtenerRegistrosHoras(Integer usuId, Integer proyPk, Integer entPk, Date fDesde, Date fHasta, Long desde, Long cant, Integer aprobado, Integer orgPk) {
+        return registrosHorasBean.obtenerRegistrosHoras(usuId, proyPk, entPk, fDesde, fHasta, desde, cant, aprobado, orgPk);
     }
 
     public Double obtenerHorasAbrobPorProy(Integer proyPk, Integer usuId) {
@@ -56,15 +56,15 @@ public class RegistrosHorasDelegate {
         return registrosHorasBean.obtenerMonedasPorProy(proyPk);
     }
 
-    public Double obtenerImporteTotalHs(Integer proyPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
-        return registrosHorasBean.obtenerImporteTotalHs(proyPk, monPk, mes, year, usuPk, aprobado);
+    public Double obtenerImporteTotalHs(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer year, Integer usuPk, Boolean aprobado) {
+        return registrosHorasBean.obtenerImporteTotalHs(proyPk, orgPk, monPk, mes, year, usuPk, aprobado);
     }
     
-    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
-        return registrosHorasBean.obtenerImporteTotalHsAprob(proyPk, monPk, mes, anio, usuPk);
+    public Double obtenerImporteTotalHsAprob(Integer proyPk, Integer orgPk,Integer monPk, Integer mes, Integer anio, Integer usuPk) {
+        return registrosHorasBean.obtenerImporteTotalHsAprob(proyPk, orgPk, monPk, mes, anio, usuPk);
     }
 
-    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
-        return registrosHorasBean.obtenerImporteTotalHsPend(proyPk, monPk, mes, anio, usuPk);
+    public Double obtenerImporteTotalHsPend(Integer proyPk, Integer orgPk, Integer monPk, Integer mes, Integer anio, Integer usuPk) {
+        return registrosHorasBean.obtenerImporteTotalHsPend(proyPk, orgPk, monPk, mes, anio, usuPk);
     }
 }

@@ -37,6 +37,7 @@ import com.sofis.web.delegates.ParticipantesDelegate;
 import com.sofis.web.delegates.ProductosDelegate;
 import com.sofis.web.delegates.ProyectosDelegate;
 import com.sofis.web.delegates.RegistrosHorasDelegate;
+import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.delegates.TipoGastoDelegate;
 import com.sofis.web.delegates.ValorCalidadCodigosDelegate;
 import com.sofis.web.properties.Labels;
@@ -100,6 +101,8 @@ public class RegistroHorasMB implements Serializable {
     private ValorCalidadCodigosDelegate valorCalidadCodigosDelegate;
     @Inject
     private ConfiguracionDelegate configuracionDelegate;
+     @Inject
+    private SsUsuarioDelegate ssUsuarioDelegate;
 
     //Atributos
     private int cantElementosPorPagina = 25;
@@ -113,6 +116,7 @@ public class RegistroHorasMB implements Serializable {
     private SofisComboG<ComboItemTO> listaTipoCalidadCombo;
     private SofisComboG<ComboItemTO> listaValorTablaCalidadCombo;
     private List<Calidad> listCalidad;
+    private Integer orgPk;
     //Formulario
     private List<Proyectos> listaProyectos;
     private List<Proyectos> listaProyectosCalidad;
@@ -146,6 +150,7 @@ public class RegistroHorasMB implements Serializable {
 
     private Boolean renderedRegistrarHoras = true;
     private Boolean verHistorico = false;
+    private SofisComboG<SsUsuario> usuarioCombo;
 
     public RegistroHorasMB() {
     }
@@ -450,7 +455,7 @@ public class RegistroHorasMB implements Serializable {
         
         inicioMB.cargarOrganismoSeleccionado();
 
-        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+        orgPk = inicioMB.getOrganismo().getOrgPk();
         limiteAmarillo = Integer.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PRODUCTO_INDICE_LIMITE_AMARILLO, orgPk).getCnfValor());
         limiteRojo = Integer.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PRODUCTO_INDICE_LIMITE_ROJO, orgPk).getCnfValor());
 
@@ -459,18 +464,19 @@ public class RegistroHorasMB implements Serializable {
         inicializarRegistroGastos();
         inicializarRegistroCalidad();
         inicializarFiltro();
-        buscarSinFiltro();
+//        buscarSinFiltro();
+        buscarConFiltro();
     }
 
     private void inicializarRegistroGastos() {
         SsUsuario usuario = inicioMB.getUsuario();
-        listaProyectos = proyectoDelegate.obtenerPorUsuarioParticipanteActivo(usuario.getUsuId(), inicioMB.getOrganismo().getOrgPk());
+        listaProyectos = proyectoDelegate.obtenerPorUsuarioParticipanteActivo(usuario.getUsuId(), orgPk);
 
         gasto = new Gastos();
         gasto.setGasProyFk(new Proyectos(proyPkSelected));
         gasto.setGasFecha(new Date());
 
-        listaTipoGasto = tipoGastoDelegate.obtenerTipoGastoPorOrg(inicioMB.getOrganismo().getOrgPk());
+        listaTipoGasto = tipoGastoDelegate.obtenerTipoGastoPorOrg(orgPk);
         if (listaTipoGasto != null) {
             listaTipoGastoCombo = new SofisCombo((List) listaTipoGasto, "tipogasNombre");
             listaTipoGastoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
@@ -489,7 +495,7 @@ public class RegistroHorasMB implements Serializable {
         //Obtener el usuario logueado
         SsUsuario usuario = inicioMB.getUsuario();
         //Determinar los proyectos en los que participa y está activo
-        listaProyectos = proyectoDelegate.obtenerPorUsuarioParticipanteActivo(usuario.getUsuId(), inicioMB.getOrganismo().getOrgPk());
+        listaProyectos = proyectoDelegate.obtenerPorUsuarioParticipanteActivo(usuario.getUsuId(), orgPk);
         //Cargar los entregables del primer proyecto
         Integer proyId = null;
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
@@ -513,11 +519,17 @@ public class RegistroHorasMB implements Serializable {
         if(proyId != null){
             cargarEntregablesProyecto(proyId);
         }
+        
+        List<SsUsuario> pmofs = ssUsuarioDelegate.obtenerTodosPorOrganismo( orgPk,null);
+        pmofs = SsUsuariosUtils.sortByNombreApellido(pmofs);
+
+        usuarioCombo = new SofisComboG<>(pmofs, "usuNombreApellido");
+        usuarioCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
     }
 
     private void inicializarRegistroCalidad() {
         SsUsuario usuario = inicioMB.getUsuario();
-        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+        orgPk = inicioMB.getOrganismo().getOrgPk();
         proyCalidad = new Proyectos(proyPkSelected);
 
         listaProyectosCalidad = proyectoDelegate.obtenerPorUsuarioParticipanteActivo(usuario.getUsuId(), orgPk);
@@ -727,7 +739,7 @@ public class RegistroHorasMB implements Serializable {
         filtroFechaHasta = null;
         inicializarFiltroProyectos();
 
-        listaTipoGasto = tipoGastoDelegate.obtenerTipoGastoPorOrg(inicioMB.getOrganismo().getOrgPk());
+        listaTipoGasto = tipoGastoDelegate.obtenerTipoGastoPorOrg(orgPk);
         if (listaTipoGasto != null) {
             listaFiltroTipoGastoCombo = new SofisCombo((List) listaTipoGasto, "tipogasNombre");
             listaFiltroTipoGastoCombo.addEmptyItem(Labels.getValue("comboTodos"));
@@ -773,23 +785,29 @@ public class RegistroHorasMB implements Serializable {
             SsUsuario usuario = inicioMB.getUsuario();
             SelectItem aprob = (SelectItem) listaAprobCombo.getSelectedObject();
             Entregables entregable = (Entregables) listaEntregablesCombo.getSelectedObject();
+            Integer usuarioPk = null;
+            if(usuarioCombo.getSelectedT()!= null){
+                usuarioPk=usuarioCombo.getSelectedT().getUsuId();
+            }
 
-            registroHorasListado = registrosHorasDelegate.obtenerRegistrosHoras(usuario.getUsuId(),
+            
+            registroHorasListado = registrosHorasDelegate.obtenerRegistrosHoras(usuarioPk,
                     (filtroProyPk != null && filtroProyPk.intValue() > 0 ? filtroProyPk : null),
                     (entregable != null ? entregable.getEntPk() : null),
                     filtroFechaDesde, filtroFechaHasta, null, null,
-                    (aprob != null ? (Integer) aprob.getValue() : null));
+                    (aprob != null ? (Integer) aprob.getValue() : null),
+                    orgPk);
             RegistroHorasUtils.sortByFecha(registroHorasListado, false);
 
         } else if (tipoRegistro == 2) {
             SsUsuario usuario = inicioMB.getUsuario();
             TipoGasto tipoGasto = (TipoGasto) listaFiltroTipoGastoCombo.getSelectedObject();
-            registroGastosListado = gastosDelegate.obtenerRegistrosGastos(usuario.getUsuId(),
+            registroGastosListado = gastosDelegate.obtenerRegistrosGastos(null,
                     (filtroProyPk != null && filtroProyPk.intValue() > 0 ? filtroProyPk : null),
-                    filtroFechaDesde, filtroFechaHasta, tipoGasto, null, null, null);
+                    filtroFechaDesde, filtroFechaHasta, tipoGasto, null, null, null, orgPk);        
             GastosUtils.sortByFecha(registroGastosListado, true);
         }
-
+        
         return null;
     }
 
@@ -825,6 +843,7 @@ public class RegistroHorasMB implements Serializable {
         listaEntregablesCombo.setSelected(-1);
         listaAprobCombo.setSelected(-1);
         listaFiltroTipoGastoCombo.setSelected(-1);
+        usuarioCombo.setSelected(-1);
     }
 
     public String changeTipoRegistro() {
@@ -1084,4 +1103,14 @@ public class RegistroHorasMB implements Serializable {
                 && (prodMes.getProdmesMes() >= cal.get(Calendar.MONTH) + 1
                 || prodMes.getProdmesMes() == cal.get(Calendar.MONTH)));
     }
+
+    public SofisComboG<SsUsuario> getUsuarioCombo() {
+        return usuarioCombo;
+    }
+
+    public void setUsuarioCombo(SofisComboG<SsUsuario> usuarioCombo) {
+        this.usuarioCombo = usuarioCombo;
+    }
+    
+    
 }

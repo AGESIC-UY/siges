@@ -38,6 +38,9 @@
                              styleClass="boton principal botonEliminar" 
                              action="#{cargaManualMB.eliminarDocumentoAction()}" />
 
+            <h:commandButton id="btnAvance" value="Avance Padres" rendered="#{cargaManualMB.mostrarAvancePadres}"
+                             styleClass="boton principal botonEliminar" 
+                             action="#{cargaManualMB.calcularAvancePadresProyectos()}" />
         </ice:panelGroup>
 
     </o:form>

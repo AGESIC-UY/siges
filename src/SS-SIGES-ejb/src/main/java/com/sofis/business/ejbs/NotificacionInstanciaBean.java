@@ -170,4 +170,17 @@ public class NotificacionInstanciaBean {
             throw te;
         }
     }
+    
+    
+    public void guardarListaNotificacionInstancia(List<NotificacionInstancia> notifInstList) throws GeneralException {
+
+        NotificacionInstanciaDAO nDao = new NotificacionInstanciaDAO(em);
+       
+        for (NotificacionInstancia ni : notifInstList) {
+            
+            em.merge(ni);
+        }
+    }
+    
+    
 }

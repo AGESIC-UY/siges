@@ -7,16 +7,23 @@
             <name>cientoveintidos-releases</name>
             <url>http://192.168.1.122:8080/artifactory/libs-sofis-release-local</url>
         </repository>
+        
+        <repository>
+            <id>sofisnexus</id>
+            <name>sofisnexus</name>
+            <url>http://nexus-repository-cicd-integraciones.okd.paas.infra.sofis.lat/repository/sofislat-release</url>
+        </repository>
+        
     </repositories>
     <parent>
         <artifactId>SS-SIGES-base</artifactId>
         <groupId>com.sofis.siges</groupId>
-        <version>5.10.1</version>
+        <version>6.7.1</version>
     </parent>
 
     <groupId>com.sofis.siges</groupId>
     <artifactId>SS-SIGES-ejb</artifactId>
-    <version>5.10.1</version>
+    <version>6.7.1</version>
     <packaging>ejb</packaging>
 
     <name>SS-SIGES-ejb</name>
@@ -30,18 +37,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-remotes</artifactId>
-            <version>5.10.1</version>
+            <version>6.7.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-entities</artifactId>
-            <version>5.10.1</version>
+            <version>6.7.1</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SS-SIGES-data</artifactId>
-            <version>5.10.1</version>
+            <version>6.7.1</version>
         </dependency>
         
         <dependency>
@@ -53,7 +60,7 @@
         <dependency>
             <groupId>com.sofis.generico.utils</groupId>
             <artifactId>GeneralUtils</artifactId>
-            <version>5.10.1</version>
+            <version>6.4.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -99,6 +106,12 @@
             <artifactId>jboss-ejb3-ext-api</artifactId>
             <version>2.0.0</version>
             <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.sofis</groupId>
+            <artifactId>wekan-api-client</artifactId>
+            <version>3.80</version>
         </dependency>
         
         <dependency>
@@ -175,6 +188,7 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
+        
     </dependencies>
 
     <dependencyManagement>

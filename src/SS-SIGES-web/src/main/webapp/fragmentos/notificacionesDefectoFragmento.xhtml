@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="frmNotificacion">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.notificacionesDefecto}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup styleClass="btnAgregarABM">
+            <ace:pushButton value="#{labels.agregar_notif}" 
+                            styleClass="boton principal agregar"
+                            action="#{notificacionDefectoMB.agregar()}"
+                            rendered="false"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="espacioTrabajo" styleClass="buscador recuadro margen-inf">
+            <ice:outputText value="#{labels.busqueda}" styleClass="subtitulo"/> 
+
+            <ice:panelGrid styleClass="formulario" columns="6">
+                <ice:outputLabel value="#{labels.notif_head_codigo}"/>
+                <ace:textEntry value="#{notificacionDefectoMB.filtroCodigo}" />
+                
+                <ice:outputLabel value="#{labels.notif_head_desc}"/>
+                <ace:textEntry value="#{notificacionDefectoMB.filtroDescripcion}" />
+                
+                <ice:outputLabel value="#{labels.notif_head_asunto}"/>
+                <ace:textEntry value="#{notificacionDefectoMB.filtroAsunto}" />
+                
+                <ice:outputLabel value="#{labels.notif_head_mensaje}"/>
+                <ace:textEntry value="#{notificacionDefectoMB.filtroMensaje}" />
+            </ice:panelGrid>
+            
+            <ice:panelGroup styleClass="panelAcciones" >
+                <ice:panelGroup styleClass="panelBotones" >
+                    <ace:messages id="busquedaMsg" />
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton principal buscar" 
+                                    action="#{notificacionDefectoMB.buscar()}"/>
+
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{notificacionDefectoMB.limpiar()}"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="resultado" styleClass="resultado recuadro margen-sup" >
+            <ice:outputText value="#{labels.resultadoBusqueda}: #{notificacionDefectoMB.listaResultado.size()} #{labels.elementosResultado}." 
+                            styleClass="resultadoBusqueda"/>
+            <ice:panelGroup rendered="#{not empty notificacionDefectoMB.listaResultado}"
+                            styleClass="resultadoCompleto">
+                <ice:panelGroup  styleClass="funcionalidadesResultado"  >
+                    <ice:outputLabel value="#{labels.elementosPorPagina}"/>
+                    <ace:simpleSelectOneMenu value="#{notificacionDefectoMB.cantElementosPorPagina}" 
+                                             styleClass="textoCorto"
+                                             valueChangeListener="#{notificacionDefectoMB.cambiarCantPaginas}">
+                        <f:selectItem itemLabel="25" itemValue="25"/>
+                        <f:selectItem itemLabel="50" itemValue="50"/>
+                        <f:selectItem itemLabel="100" itemValue="100"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+
+                    <ice:outputLabel value="#{labels.ordenar_por}:"/>
+                    <ace:simpleSelectOneMenu value="#{notificacionDefectoMB.elementoOrdenacion}" styleClass="textoMedio"
+                                             valueChangeListener="#{notificacionDefectoMB.cambiarCriterioOrdenacion}">
+                        <f:selectItem itemLabel="#{labels.notif_busqueda_codigo}" itemValue="codigo"/>
+                        <f:selectItem itemLabel="#{labels.notif_busqueda_desc}" itemValue="descripcion"/>
+                        <f:selectItem itemLabel="#{labels.notif_busqueda_asunto}" itemValue="asunto"/>
+                        <f:selectItem itemLabel="#{labels.notif_busqueda_msg}" itemValue="mensaje"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+                    <ace:simpleSelectOneMenu value="#{notificacionDefectoMB.ascendente}" styleClass="textoMedio"
+                                             valueChangeListener="#{notificacionDefectoMB.cambiarAscendenteOrdenacion}">
+                        <f:selectItem itemLabel="#{labels.ascendente}" itemValue="1"/>
+                        <f:selectItem itemLabel="#{labels.descendente}" itemValue="0"/>
+                        <ace:ajax />
+                    </ace:simpleSelectOneMenu>
+
+                    <ace:dataExporter target="tblResultados" label="#{labels.exportarPlanilla}" 
+                                      type="xls" fileName="#{labels.exportarPlantillaNotificacion}"
+                                      includeHeaders="true" excludeColumns="4,5" />
+                </ice:panelGroup>
+
+                <ice:panelGroup rendered="#{notificacionDefectoMB.listaResultado != null and not empty notificacionDefectoMB.listaResultado}" 
+                                styleClass="cuerpo">
+                    <ace:dataTable id="tblResultados" 
+                                   value="#{notificacionDefectoMB.listaResultado}" 
+                                   var="notif" 
+                                   styleClass="tablaResultados table-responsive"
+                                   paginator="true" pageCount="5" 
+                                   rows="#{notificacionDefectoMB.cantElementosPorPagina}">
+                        <ace:column headerText="#{labels.notif_head_codigo}" >
+                            <h:outputText value="#{notif.codigo}"/>
+                        </ace:column>
+
+                        <ace:column headerText="#{labels.notif_head_desc}">
+                            <h:outputText value="#{notif.descripcion}"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.ficha_notif_head_pm}">
+                            <ace:checkboxButton value="#{notif.gerenteAdjunto}" disabled="true"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.ficha_notif_head_pmof}">
+                            <ace:checkboxButton value="#{notif.pmof}" disabled="true"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.ficha_notif_head_pmot}">
+                            <ace:checkboxButton value="#{notif.pmot}" disabled="true"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.ficha_notif_head_sponsor}">
+                            <ace:checkboxButton value="#{notif.sponsor}" disabled="true"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="#{labels.notif_head_asunto}">
+                            <h:outputText value="#{notif.asunto}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.notif_head_mensaje}">
+                            <h:outputText value="#{notif.mensaje}" escape="false"/>
+                        </ace:column>
+                        
+                        <ace:column headerText="" styleClass="columnaBoton">
+                            <ice:panelGroup title="#{labels.editar}">
+                                <ace:pushButton styleClass="botonEditar iconoTabla" 
+                                                action="#{notificacionDefectoMB.editar(notif.id)}" />
+                            </ice:panelGroup>
+                        </ace:column>
+                        <ace:column headerText="" styleClass="columnaBoton" rendered="false">
+                            <ice:panelGroup title="#{labels.notif_eliminar}">
+                                <h:commandButton onclick="confirmationEliminar#{notif.id}.show()"
+                                                 styleClass="botonEliminar iconoTabla" 
+                                                 type="button"/>
+
+                                <ace:confirmationDialog id="confirmDialogEliminar"
+                                                        widgetVar="confirmationEliminar#{notif.id}"
+                                                        message="#{labels.confirmacionEliminacion}"
+                                                        header="#{labels.hConfirmacion}"
+                                                        closable="true"
+                                                        closeOnEscape="true"
+                                                        severity="info"
+                                                        modal="true"
+                                                        position="center">
+                                    <h:panelGrid columns="2" styleClass="centeredPanelGrid">
+                                        <h:commandButton id="yesEliminar"
+                                                         value="#{labels.si}"
+                                                         styleClass="boton principal botonContinuar"
+                                                         onclick="confirmationEliminar#{notif.id}.hide()" 
+                                                         actionListener="#{notificacionDefectoMB.eliminar(notif.id)}"/>
+                                        <h:commandButton id="noEliminar"
+                                                         value="#{labels.no}"
+                                                         styleClass="boton principal botonEliminar"
+                                                         onclick="confirmationEliminar#{notif.id}.hide()"  />
+                                    </h:panelGrid>
+                                </ace:confirmationDialog> 
+                            </ice:panelGroup>
+                        </ace:column>
+
+                    </ace:dataTable>
+                </ice:panelGroup>
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="noResultados" rendered="#{empty notificacionDefectoMB.listaResultado}">
+                <ice:outputText value="#{labels.noHayResultados}"/>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -44,18 +43,7 @@ public class CategoriaProyectosBean {
     private DatosUsuario du;
     @Inject
     private ExportarVisualizadorBean exportarVisualizadorBean;
-    
-    
-    //private String usuario;
-    //private String origen;
-    
-    @PostConstruct
-    public void init(){
-        //usuario = du.getCodigoUsuario();
-        //origen = du.getOrigen();
-    }
-    
-
+	
     public CategoriaProyectos guardar(CategoriaProyectos cp) throws BusinessException {
         if (cp != null) {
             CategoriaProyectosValidacion.validar(cp);
@@ -203,6 +191,7 @@ public class CategoriaProyectosBean {
     }
 
     public void actualizarCategorias(Integer orgPk) throws BusinessException {
+		
         List<CategoriaProyectos> listCatProy = exportarVisualizadorBean.obtenerCategorias(orgPk);
         if (listCatProy != null && !listCatProy.isEmpty()) {
             List<CategoriaProyectos> listCatPersit = this.obtenerTodasPorOrg(orgPk);
@@ -212,7 +201,7 @@ public class CategoriaProyectosBean {
                     this.guardar(cp);
                 }
             }
-
+                
             for (CategoriaProyectos cp : listCatProy) {
                 CategoriaProyectos cpPersit = this.obtenerPorCodigoYOrg(cp.getCatProyCodigo(), orgPk);
                 if (cpPersit == null) {

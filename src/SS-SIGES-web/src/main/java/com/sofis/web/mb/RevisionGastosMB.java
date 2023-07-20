@@ -205,7 +205,7 @@ public class RevisionGastosMB implements Serializable {
         revisionGastosListado = gastosDelegate.obtenerRegistrosGastos(revisionHorasMB.getParticipante().getPartUsuarioFk().getUsuId(),
                 revisionHorasMB.getParticipante().getPartProyectoFk().getProyPk(),
                 filtroFechaDesde, filtroFechaHasta, tipoGasto, null, null,
-                (aprob != null ? (Integer) aprob.getItemObject() : null));
+                (aprob != null ? (Integer) aprob.getItemObject() : null), null);
         revisionGastosListado = GastosUtils.sortByFecha(revisionGastosListado, true);
         return null;
     }
@@ -254,7 +254,7 @@ public class RevisionGastosMB implements Serializable {
             revisionGastosListado = gastosDelegate.obtenerRegistrosGastos(revisionHorasMB.getParticipante().getPartUsuarioFk().getUsuId(),
                     revisionHorasMB.getParticipante().getPartProyectoFk().getProyPk(),
                     filtroFechaDesde, filtroFechaHasta, null, null, null,
-                    (aprob != null ? aprob : null));
+                    (aprob != null ? aprob : null), null);
             revisionGastosListado = GastosUtils.sortByFecha(revisionGastosListado, true);
 
         } else {

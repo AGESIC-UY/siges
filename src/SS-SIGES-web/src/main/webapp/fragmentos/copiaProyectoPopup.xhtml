@@ -28,26 +28,43 @@
             </f:facet>
 
             <f:facet name="body">
-                <ice:panelGroup id="formUsuario">
-                    <ice:panelGrid styleClass="formulario" columns="2">
-                        <ice:outputLabel value="#{labels.ficha_copia_proy_nombre}:" />
-                        <ice:inputText value="#{fichaMB.nombreProyCopia}" 
-                                       styleClass="textoMedioLargo" />
+                <ice:panelGroup style="max-width: 530px">
+                    <p>
+                        Esta copia creará un nuevo proyecto con el nombre especificado. 
+                    </p>
+                    <p>
+                        Se copiarán todos los datos de la ficha, #{labels.cronograma}, #{labels.presupuesto_titulo}, #{labels.prod_titulo}, #{labels.interesados}, #{labels.riesgos} y #{labels.localizaciones}. 
+                        No se copiarán #{labels.documentos}, #{labels.participantes}, #{labels.cal_titulo} ni #{labels.multimedia}.
+                    </p>
+                    <p>
+                        La fecha de comienzo especificada se tomará como la fecha de la primera tarea del #{labels.cronograma}, aplicando los desplazamientos correspondientes a las fechas de los #{labels.entregables}, #{labels.pagos_titulo} y #{labels.riesgos}. 
+                        Si el #{labels.cronograma} no fue creado, se tomará como base del desplazamiento la fecha de inicio del #{labels.hPeriodo} del proyecto.
+                    </p>
+                    <ice:panelGroup id="formUsuario">
 
-                        <ice:outputLabel value="#{labels.ficha_copia_proy_fecha}:"/>
-                        <ace:dateTimeEntry value="#{fichaMB.fechaComienzoProyCopia}"
-                                           pattern="#{inicioMB.calendarPattern}" 
-                                           renderAsPopup="true" navigator="true"
-                                           timeZone="#{inicioMB.calendarTimeZone}"/>
-                    </ice:panelGrid>
+                        <ice:panelGrid styleClass="formulario" columns="2">
+                            <ice:outputLabel value="#{labels.ficha_copia_proy_nombre}:" />
+                            <ice:inputText value="#{fichaMB.nombreProyCopia}" 
+                                          />
 
-                    <ice:panelGroup styleClass="panelBotones">
-                        <ace:messages id="usuarioPopupMsg"/>
-                        <ace:pushButton value="#{labels.guardar}" 
-                                        action="#{fichaMB.copiarProyecto()}" 
-                                        styleClass="boton principal guardar"/>
-                        <ace:linkButton value="#{labels.cerrar}" 
-                                        action="#{fichaMB.cerrarRenderPopupCopiaProy()}"/>
+                            <ice:outputLabel value="#{labels.ficha_copia_proy_fecha}:"/>
+                            <ace:dateTimeEntry value="#{fichaMB.fechaComienzoProyCopia}"
+                                               pattern="#{inicioMB.calendarPattern}" 
+                                               renderAsPopup="true" navigator="true"
+                                               timeZone="#{inicioMB.calendarTimeZone}"/>
+
+                            <ice:outputLabel value="#{labels.ficha_copia_proy_incluir_Id_adquisiciones}:" rendered="#{fichaMB.renderIncluirIdAdquisicionEnCopiaProyecto}"/>
+                            <ace:checkboxButton value="#{fichaMB.incluirIdAdquisicionEnCopiaProyecto}" rendered="#{fichaMB.renderIncluirIdAdquisicionEnCopiaProyecto}"/>
+                        </ice:panelGrid>
+
+                        <ice:panelGroup styleClass="panelBotones">
+                            <ace:messages id="usuarioPopupMsg"/>
+                            <ace:pushButton value="#{labels.guardar}" 
+                                            action="#{fichaMB.copiarProyecto()}" 
+                                            styleClass="boton principal guardar"/>
+                            <ace:linkButton value="#{labels.cerrar}" 
+                                            action="#{fichaMB.cerrarRenderPopupCopiaProy()}"/>
+                        </ice:panelGroup>
                     </ice:panelGroup>
                 </ice:panelGroup>
             </f:facet>

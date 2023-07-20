@@ -5,11 +5,15 @@ import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FiltroInicioTO;
+import com.sofis.entities.tipos.ResultadoInicioTO;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
+import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.AreasDelegate;
+import com.sofis.web.delegates.ProgramasProyectosDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
@@ -53,6 +57,8 @@ public class AreasMB implements Serializable {
     private AreasDelegate areasDelegate;
     @Inject
     private SsUsuarioDelegate ssUsuarioDelegate;
+    @Inject
+    private ProgramasProyectosDelegate programasProyectosDelegate;
 
     // Variables
     private String cantElementosPorPagina = "25";
@@ -82,12 +88,10 @@ public class AreasMB implements Serializable {
 
     @PostConstruct
     public void init() {
-      
+
         /*
         *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
-        */
-        
-        
+         */
         filtroNombre = "";
         listaResultado = new ArrayList<Areas>();
         areaEnEdicion = new Areas();
@@ -95,8 +99,8 @@ public class AreasMB implements Serializable {
         listDirector = new ArrayList<SsUsuario>();
         listaAreasCombo = new SofisCombo();
         listaDirectorCombo = new SofisCombo();
-        listaDirectorPopupCombo = new SofisCombo();        
-        
+        listaDirectorPopupCombo = new SofisCombo();
+
         inicioMB.cargarOrganismoSeleccionado();
         //listDirector = ssUsuarioDelegate.obtenerTodosPorOrganismo(inicioMB.getOrganismo().getOrgPk());
         listDirector = aplicacionMB.obtenerTodosPorOrganismoActivos(inicioMB.getOrganismo().getOrgPk());
@@ -120,13 +124,11 @@ public class AreasMB implements Serializable {
 
             /*
             *  18-06-2018 Inspección de código.
-            */
-
+             */
             //JSFUtils.agregarMsgs(BUSQUEDA_MSG, ex.getErrores());
-
-            for(String iterStr : ex.getErrores()){
-                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-            }            
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
     }
@@ -280,17 +282,15 @@ public class AreasMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                
+
                 /*
                 *  18-06-2018 Inspección de código.
-                */
-
+                 */
                 //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                for (String iterStr : e.getErrores()) {
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+                }
 
-                for(String iterStr : e.getErrores()){
-                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-                }                 
-                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -320,17 +320,15 @@ public class AreasMB implements Serializable {
             areaEnEdicion = areasDelegate.obtenerAreaPorPk(aPk);
         } catch (BusinessException ex) {
             logger.log(Level.SEVERE, null, ex);
-            
-                /*
+
+            /*
                 *  18-06-2018 Inspección de código.
-                */
+             */
+            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);
+            }
 
-                //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
-
-                for(String iterStr : ex.getErrores()){
-                    JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
-                }                 
-                
         }
 
         //listDirector = ssUsuarioDelegate.obtenerTodosPorOrganismo(org.getOrgPk());
@@ -360,15 +358,13 @@ public class AreasMB implements Serializable {
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            
+
             /*
             *  18-06-2018 Inspección de código.
-            */
-
+             */
             //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
-
-            for(String iterStr : be.getErrores()){
-                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);
             }
         }
         aplicacionMB.cargarAreasPorOrganismo(inicioMB.getOrganismo().getOrgPk());
@@ -418,4 +414,31 @@ public class AreasMB implements Serializable {
             }
         }
     }
+
+    public boolean desabilitarBotonEliminar(Integer areapk) {
+
+        try {
+
+            Long cantidad = programasProyectosDelegate.obtenerCantidadProyectosPorAreaYOrganismo(inicioMB.getOrganismo().getOrgPk(), areapk);
+
+            if (cantidad > 0) {
+                return true;
+            }
+
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(AreasMB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public String tituloBotonEliminar(Integer areapk) {
+
+        if (desabilitarBotonEliminar(areapk)) {
+            return Labels
+                    .getValue("area_relacionada");
+        }
+        return Labels
+                .getValue("eliminar_area");
+    }
+
 }

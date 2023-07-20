@@ -571,4 +571,45 @@ public class Programas implements Serializable {
     public void setProgHabilitado(Boolean progHabilitado) {
         this.progHabilitado = progHabilitado;
     }
+    
+    @Override
+	public Object clone() {
+		Programas prog = new Programas();
+                prog.setActivo(activo);
+                prog.setAreasRestringidasSet(areasRestringidasSet);
+                prog.setAreasTematicasSet(areasTematicasSet);
+                prog.setDocumentosSet(documentosSet);
+                prog.setInteresadosList(interesadosList);
+                prog.setObjetivoEstrategico(objetivoEstrategico);
+                prog.setProgAreaFk(progAreaFk);
+                prog.setProgCroFk(progCroFk);
+                prog.setProgDescripcion(progDescripcion);
+                prog.setProgEstFk(progEstFk);
+                prog.setProgEstPendienteFk(progEstPendienteFk);
+                prog.setProgFactorImpacto(progFactorImpacto);
+                prog.setProgFechaAct(progFechaAct);
+                prog.setProgFechaCrea(progFechaCrea);
+                prog.setProgGrp(progGrp);
+                prog.setProgHabilitado(progHabilitado);
+                prog.setProgIndices(progIndices);
+                prog.setProgNombre(progNombre);
+                prog.setProgObjPublico(progObjPublico);
+                prog.setProgObjetivo(progObjetivo);
+                prog.setProgOrgFk(progOrgFk);
+                prog.setProgPk(progPk);
+                prog.setProgPreFk(progPreFk);
+                prog.setProgSemaforoAmarillo(progSemaforoAmarillo);
+                prog.setProgSemaforoRojo(progSemaforoRojo);
+                prog.setProgUltMod(progUltMod);
+                prog.setProgUltOrigen(progUltOrigen);
+                prog.setProgUltUsuario(progUltUsuario);
+                prog.setProgUsrAdjuntoFk(progUsrAdjuntoFk);
+                prog.setProgUsrGerenteFk(progUsrGerenteFk);
+                prog.setProgUsrPmofedFk(progUsrPmofedFk);
+                prog.setProgUsrSponsorFk(progUsrSponsorFk);
+                prog.setProgVersion(progVersion);
+                prog.setProyectosSet(proyectosSet);
+
+                return prog;
+	}
 }

@@ -1,5 +1,6 @@
 package com.sofis.business.utils;
 
+import com.sofis.business.ejbs.ProgramasProyectosBean;
 import com.sofis.business.validations.ReplanificacionValidacion;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Documentos;
@@ -192,11 +193,6 @@ public class ProgProyUtils {
         return replanifReturn;
     }
         
-
-    /*
-    *   21-03-18 Nico: Creo este método para poder generar la aprobación del proyecto
-    *           desde el web service.
-    */
         
         
     public static void retrocederEstado(Proyectos p, Integer orgPk, ProyReplanificacion replanificacion) throws BusinessException {
@@ -228,7 +224,7 @@ public class ProgProyUtils {
 		if (p != null && usuario != null) {
                         boolean isEstadoSolCierreHaciaPMOT = p.getProyEstPendienteFk() == null ? false : p.isEstadoPendiente(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
                     
-			if ((usuario.isUsuarioPMOT(orgPk)) || (isUsuarioPMOF(p, usuario, orgPk) && aprobPMOF)) {
+			if ((usuario.isUsuarioPMOT(orgPk)) || (isUsuarioPMOF(p, usuario, orgPk) && aprobReplanPMOF)) {
 				if (p.isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
 					p.setProyEstFk(new Estados(Estados.ESTADOS.INICIO.estado_id));
 					p.setProyEstPendienteFk(null);
@@ -240,17 +236,15 @@ public class ProgProyUtils {
 					replanificacion.setProyectoFk(p);
                                         p.getReplanificaciones().add(replanificacion);
                                         
-                                    /*   
-                                    *   27-08-2018 Nico: En caso de ser PMOF y no estar activada la configuración para darle permisos para cambiar de fase,
-                                    *       si se tiene la replanificación con la opción "proyreplanPermitEditar", es decir, desde front la opción
-                                    *       "Generar nueva línea base del presupuesto".
-                                    */
                                         if((usuario.isUsuarioPMOT(orgPk)) 
                                                     || (isUsuarioPMOF(p, usuario, orgPk) && (aprobReplanPMOF || !replanificacion.isProyreplanPermitEditar()))){
                                                 p.setProyEstFk(new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
                                                 p.setProyEstPendienteFk(null);
                                         }else if(isUsuarioPMOF(p, usuario, orgPk) && 
                                                 (replanificacion.isProyreplanPermitEditar() && !aprobReplanPMOF)){
+                                            p.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
+                                        //CREO QUE NO PODRÍA ENTRAR AL SIGUIENTE ELSE IF    
+                                        }else if(isUsuarioGerenteOAdjunto(p, usuario) ){
                                             p.setProyEstPendienteFk(new Estados(Estados.ESTADOS.PLANIFICACION.estado_id));
                                         }
 				} else if (p.isEstado(Estados.ESTADOS.FINALIZADO.estado_id)) {
@@ -259,7 +253,7 @@ public class ProgProyUtils {
 				} else {
 					throw new BusinessException(MensajesNegocio.ERROR_RETROCEDER_ESTADO);
 				}
-			} else if (isUsuarioPMOF(p, usuario, orgPk) && !aprobPMOF) {
+			} else if (isUsuarioPMOF(p, usuario, orgPk) && !aprobReplanPMOF || isUsuarioGerenteOAdjunto(p, usuario)) {
 				if (p.isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
 					ReplanificacionValidacion.validar(replanificacion);
 					if (p.getReplanificaciones() == null) {

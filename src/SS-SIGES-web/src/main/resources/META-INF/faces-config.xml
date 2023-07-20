@@ -73,12 +73,17 @@
         <converter-id>usuarioConverter</converter-id>
         <converter-class>com.sofis.web.converter.UsuarioConverter</converter-class>
     </converter>
-
+    
     <converter>
         <converter-id>sinoConverter</converter-id>
         <converter-class>com.sofis.web.converter.SiNoConverter</converter-class>
     </converter>
 
+    <converter>
+        <converter-id>toLowerCaseConverter</converter-id>
+        <converter-class>com.sofis.web.converter.ToLowerCaseConverter</converter-class>
+    </converter>
+    
     <converter>
         <converter-id>SanitizerAceRichTextConverter</converter-id>
         <converter-class>com.sofis.web.converter.SanitizerAceRichTextConverter</converter-class>
@@ -113,6 +118,30 @@
         <navigation-case>
             <from-outcome>configuracionGeneral</from-outcome>
             <to-view-id>/paginasPrivadas/configuracionGeneralCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionDefectoOrganismos</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionDefectoOrganismos.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>mailTemplatesDefecto</from-outcome>
+            <to-view-id>/paginasPrivadas/mailTemplatesDefecto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>notificacionesDefecto</from-outcome>
+            <to-view-id>/paginasPrivadas/notificacionesDefecto.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -345,7 +374,16 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
-  
+    
+      <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_MIS_ADQUISICIONES</from-outcome>
+            <to-view-id>/paginasPrivadas/misAdquisiciones.xtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
@@ -369,6 +407,43 @@
         <navigation-case>
             <from-outcome>IR_A_SsUsuario</from-outcome>
             <to-view-id>/paginasPrivadas/ssUsuarioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+      <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsUsuario_Proyecto</from-outcome>
+            <to-view-id>/paginasPrivadas/ssUsuarioProyecto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+     <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsAdquisicion_Rango</from-outcome>
+            <to-view-id>/paginasPrivadas/ssAdquisicionRango.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+<navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_ProcedimientoCompraInfo</from-outcome>
+            <to-view-id>/paginasPrivadas/procedimientoCompraInfo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+
+ <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsTipo_Riesgo</from-outcome>
+            <to-view-id>/paginasPrivadas/ssTipoRiesgo.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -569,6 +644,15 @@
         <navigation-case>
             <from-outcome>IR_GESTION_PROGRAMAS</from-outcome>
             <to-view-id>/paginasPrivadas/gestionProgramasCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_GESTION_PROYECTOS</from-outcome>
+            <to-view-id>/paginasPrivadas/gestionProyectos.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>

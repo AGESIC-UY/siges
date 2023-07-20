@@ -30,6 +30,7 @@ public class MisTareasTO implements Serializable {
     private Integer entDuracion;
     private Boolean entParent;
     private Integer entProgreso;
+    private Integer entProgresoTmp;
     private Integer entEsfuerzo;
     private Double entEsfuerzoPorcentaje;
     private Date entInicioLineaBaseDate;
@@ -68,6 +69,7 @@ public class MisTareasTO implements Serializable {
         this.entDuracionLineaBase = entDuracionLineaBase;
         this.entFinLineaBaseDate = entFinLineaBase != null && entFinLineaBase > 0 ? new Date(entFinLineaBase) : null;
         this.entProgreso = entProgreso;
+        this.entProgresoTmp = entProgreso;
         this.entEsfuerzo = entEsfuerzo;
         this.tieneProd = prodIds != null;
         this.ent = ent;
@@ -94,6 +96,7 @@ public class MisTareasTO implements Serializable {
         this.entDuracionLineaBase = entDuracionLineaBase;
         this.entFinLineaBaseDate = entFinLineaBase != null && entFinLineaBase > 0 ? new Date(entFinLineaBase) : null;
         this.entProgreso = entProgreso;
+        this.entProgresoTmp = entProgreso;
         this.entEsfuerzo = entEsfuerzo;
         this.tieneProd = prodIds != null;
     }
@@ -116,6 +119,7 @@ public class MisTareasTO implements Serializable {
         this.entDuracionLineaBase = entDuracionLineaBase;
         this.entFinLineaBaseDate = entFinLineaBase != null && entFinLineaBase > 0 ? new Date(entFinLineaBase) : null;
         this.entProgreso = entProgreso;
+        this.entProgresoTmp = entProgreso;
         this.entEsfuerzo = entEsfuerzo;
         this.tieneProd = prodIds != null;
         this.entId = entId;
@@ -157,6 +161,7 @@ public class MisTareasTO implements Serializable {
         this.entDuracion = entDuracion;
         this.entParent = entParent;
         this.entProgreso = entProgreso;
+        this.entProgresoTmp = entProgreso;
         this.entEsfuerzo = entEsfuerzo;
         this.entInicioLineaBaseDate = entInicioLineaBase != null && entInicioLineaBase > 0 ? new Date(entInicioLineaBase) : null;
         this.entDuracionLineaBase = entDuracionLineaBase;
@@ -260,6 +265,14 @@ public class MisTareasTO implements Serializable {
 
     public void setEntProgreso(Integer entProgreso) {
         this.entProgreso = entProgreso;
+    }
+
+    public Integer getEntProgresoTmp() {
+        return entProgresoTmp;
+    }
+
+    public void setEntProgresoTmp(Integer entProgresoTmp) {
+        this.entProgresoTmp = entProgresoTmp;
     }
 
     public Date getEntInicioLineaBaseDate() {

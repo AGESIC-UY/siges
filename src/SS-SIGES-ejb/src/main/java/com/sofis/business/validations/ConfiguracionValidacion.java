@@ -1,6 +1,8 @@
 package com.sofis.business.validations;
 
+import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstantesErrores;
+import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.BooleanUtils;
@@ -21,7 +23,11 @@ public class ConfiguracionValidacion {
             if (StringsUtils.isEmpty(cnf.getCnfCodigo())) {
                 ge.addError(ConstantesErrores.ERROR_CODIGO_VACIO);
             }
-            if (StringsUtils.isEmpty(cnf.getCnfValor())) {
+            
+            
+            if (StringsUtils.isEmpty(cnf.getCnfValor()) && !StringsUtils.isEmpty(cnf.getCnfCodigo()) &&
+                    !ConfiguracionCodigos.PAGO_FILTRO_PROCEDIMIENTO_COMPRA.equalsIgnoreCase(cnf.getCnfCodigo().trim())
+                    ) {
                 ge.addError(ConstantesErrores.ERROR_DATO_VACIO);
             }
 

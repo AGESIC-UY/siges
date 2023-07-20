@@ -58,6 +58,9 @@ public class Presupuesto implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private FuenteFinanciamiento fuenteFinanciamiento;
     
+    @Column(name = "pre_ocultar_pagos_confirmados")
+    private Boolean preOcultarPagosConfirmados;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "adqPreFk", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SELECT)
     private Set<Adquisicion> adquisicionSet;
@@ -116,6 +119,14 @@ public class Presupuesto implements Serializable {
 
     public void setProyecto(Proyectos proyecto) {
         this.proyecto = proyecto;
+    }
+
+    public Boolean getPreOcultarPagosConfirmados() {
+        return preOcultarPagosConfirmados;
+    }
+
+    public void setPreOcultarPagosConfirmados(Boolean preOcultarPagosConfirmados) {
+        this.preOcultarPagosConfirmados = preOcultarPagosConfirmados;
     }
 
     @Override

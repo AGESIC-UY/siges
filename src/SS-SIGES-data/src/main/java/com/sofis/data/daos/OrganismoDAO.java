@@ -101,5 +101,26 @@ public class OrganismoDAO extends HibernateJpaDAOImp<Organismos, Integer> implem
         }
 
     }
+    
+    public Organismos obtenerOrganismoPorIdProyecto(Integer idProyecto) {
 
+		List<Organismos> result = super.getEm()
+				.createNamedQuery("Organismos.findByProyectoPk", Organismos.class)
+				.setParameter("proyectoPk", idProyecto)
+				.getResultList();
+
+		return result.isEmpty() ? null : result.get(0);
+	}
+
+    
+
+	public Organismos obtenerOrganismoPorIdCronograma(Integer idCronograma) {
+
+		List<Organismos> result = super.getEm()
+				.createNamedQuery("Organismos.findByCronogramaPk", Organismos.class)
+				.setParameter("cronogramaPk", idCronograma)
+				.getResultList();
+
+		return result.isEmpty() ? null : result.get(0);
+	}
 }

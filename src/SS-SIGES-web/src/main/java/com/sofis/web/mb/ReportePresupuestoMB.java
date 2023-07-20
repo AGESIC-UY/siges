@@ -20,11 +20,13 @@ import com.sofis.web.delegates.FuenteFinanciamientoDelegate;
 import com.sofis.web.delegates.MonedaDelegate;
 import com.sofis.web.delegates.OrganiIntProveDelegate;
 import com.sofis.web.delegates.PresupuestoDelegate;
-import com.sofis.web.delegates.ProyectosDelegate;
 import com.sofis.web.delegates.ReportePresupuestoDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
+import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.AreaTematicaUtils;
 import com.sofis.web.utils.JSFUtils;
+import com.sofis.web.utils.Matomo;
 import com.sofis.web.utils.SofisComboG;
 import com.sofis.web.utils.WebUtils;
 import java.io.Serializable;
@@ -51,10 +53,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import org.icefaces.ace.model.tree.NodeStateMap;
 
-/**
- *
- * @author Usuario
- */
 @ManagedBean(name = "reportePresupuestoMB")
 @ViewScoped
 public class ReportePresupuestoMB implements Serializable {
@@ -304,9 +302,9 @@ public class ReportePresupuestoMB implements Serializable {
 
 		// la lista de usuarios con rol Director son los que se pueden seleccionar como
 		// sponsor.
-		String[] ordenUsuarios = new String[] { "usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido",
-				"usuSegundoApellido" };
-		boolean[] ascUsuarios = new boolean[] { true, true, true, true };
+		String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido",
+			"usuSegundoApellido"};
+		boolean[] ascUsuarios = new boolean[]{true, true, true, true};
 		List<SsUsuario> listaSponsor = ssUsuarioDelegate.obtenerUsuariosPorRol(SsRolCodigos.DIRECTOR, orgPk,
 				ordenUsuarios, ascUsuarios);
 		if (listaSponsor != null) {
@@ -315,7 +313,7 @@ public class ReportePresupuestoMB implements Serializable {
 		}
 
 		// la lista de usuarios con rol PMO Federeda
-		String[] rolCodArr = new String[] { SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL };
+		String[] rolCodArr = new String[]{SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL};
 		List<SsUsuario> listaPmoFederada = ssUsuarioDelegate.obtenerUsuariosPorRol(rolCodArr, orgPk, ordenUsuarios,
 				ascUsuarios);
 		listaPmoFederada = SsUsuariosUtils.sortByNombreApellido(listaPmoFederada);
@@ -383,18 +381,18 @@ public class ReportePresupuestoMB implements Serializable {
 		logger.fine("areaTematicaPopup.");
 		try {
 			renderPopupAreaTematica = renderPopup != null ? renderPopup : true;
-			List<AreasTags> listaAreasTags = areaTematicaDelegate
-					.obtenerAreasTematicasPorOrganizacion(inicioMB.getOrganismo().getOrgPk());
+
+			List<AreasTags> listaAreasTags = areaTematicaDelegate.obtenerPorOrganismo(inicioMB.getOrganismo().getOrgPk());
+
 			if (listaAreasTags != null && !listaAreasTags.isEmpty()) {
 				listaAreasTagsTreeNode = new ArrayList<>();
 
 				if (mapAreaTag == null) {
-					mapAreaTag = WebUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode,
-							areasTematicas, areasTematicasStateMap);
+					mapAreaTag = AreaTematicaUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode, areasTematicas, false);
 				}
 
-				listaAreasTagsTreeNode = (List<MutableTreeNode>) mapAreaTag.get(WebUtils.LISTA_AREAS_TAG_TREE_NODE);
-				areasTematicasStateMap = (NodeStateMap) mapAreaTag.get(WebUtils.AREAS_TEMATICAS_STATE_MAP);
+				listaAreasTagsTreeNode = (List<MutableTreeNode>) mapAreaTag.get(AreaTematicaUtils.LISTA_AREAS_TAG_TREE_NODE);
+				areasTematicasStateMap = (NodeStateMap) mapAreaTag.get(AreaTematicaUtils.AREAS_TEMATICAS_STATE_MAP);
 			}
 		} catch (GeneralException ex) {
 			logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -429,8 +427,9 @@ public class ReportePresupuestoMB implements Serializable {
 		cargarCombosSeleccionados();
 
 		try {
-			planilla = reportePresupuestoDelegate.generarReportePlanillaPorFiltro(inicioMB.getOrganismo().getOrgPk(),
-					filtro, inicioMB.getUsuario());
+                    planilla = reportePresupuestoDelegate.generarReportePlanillaPorFiltro(inicioMB.getOrganismo().getOrgPk(),
+                                    filtro, inicioMB.getUsuario());
+                        
 		} catch (BusinessException be) {
 			logger.log(Level.WARNING, null, be);
 			JSFUtils.agregarMsgs(REPORTE_PRE_MSG, be.getErrores());
@@ -458,6 +457,8 @@ public class ReportePresupuestoMB implements Serializable {
 		} else {
 			JSFUtils.agregarMsgWarn("", Labels.getValue("rep_pre_datos_vacio"), null);
 		}
+
+		Matomo.callTrackDownload(ConstantesPresentacion.REPORTE_PRESUPUESTO);
 
 		return null;
 	}

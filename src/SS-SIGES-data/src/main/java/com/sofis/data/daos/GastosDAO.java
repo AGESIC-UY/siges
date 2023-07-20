@@ -168,6 +168,60 @@ public class GastosDAO extends HibernateJpaDAOImp<Gastos, Integer> implements Se
         return null;
     }
 
+    public Boolean tieneGastoEnMonedaAnio(Integer proyPk, Integer monPk, Integer year, Boolean aprobado) {
+        if (proyPk != null) {
+            String queryStr = "SELECT COUNT(*)"
+                    + " FROM Gastos"
+                    + " WHERE gasProyFk.proyPk = :proyPk";
+            
+            if (monPk != null) {
+                queryStr = queryStr + " AND gasMonFk.monPk = :monPk";
+            }
+                    
+                    
+
+            if (year != null) {
+                queryStr = queryStr + " AND YEAR(gasFecha) = :anio";
+            }
+
+            if (aprobado != null) {
+                if (aprobado) {
+                    queryStr = queryStr + " AND gasAprobado = :aprobado";
+                } else {
+                    queryStr = queryStr + " AND (gasAprobado IS NULL OR gasAprobado = :aprobado)";
+                }
+            }
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+            
+            if (monPk != null) {
+                q.setParameter("monPk", monPk);
+            }
+
+            if (year != null) {
+                q.setParameter("anio", year);
+            }
+
+            if (aprobado != null) {
+                if (aprobado) {
+                    q.setParameter("aprobado", Boolean.TRUE);
+                } else {
+                    q.setParameter("aprobado", Boolean.FALSE);
+                }
+            }
+
+            try {
+                Long result = (Long)q.getSingleResult();
+                return (result != 0);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+            
+            
     /**
      * Si asc es true retorna la primera fecha, si no la última.
      *
@@ -192,6 +246,23 @@ public class GastosDAO extends HibernateJpaDAOImp<Gastos, Integer> implements Se
 
             try {
                 return (Date) q.getSingleResult();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+    
+    public Boolean tieneGastosProy(Integer proyPk) {
+        if (proyPk != null) {
+            String queryStr = "SELECT count(*) FROM Gastos g"
+                    + " WHERE gasProyFk.proyPk = :proyPk";
+
+            Query q = super.getEm().createQuery(queryStr);
+            q.setParameter("proyPk", proyPk);
+
+            try {
+                return (q.getSingleResult() != null);
             } catch (Exception e) {
                 return null;
             }

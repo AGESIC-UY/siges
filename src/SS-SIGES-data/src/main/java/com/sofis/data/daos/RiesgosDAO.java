@@ -1,7 +1,6 @@
 package com.sofis.data.daos;
 
 import com.sofis.data.utils.DAOUtils;
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Riesgos;
 import com.sofis.exceptions.TechnicalException;
@@ -9,18 +8,12 @@ import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-/**
- *
- * @author Usuario
- */
 public class RiesgosDAO extends HibernateJpaDAOImp<Riesgos, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(RiesgosDAO.class.getName());
     
     public RiesgosDAO(EntityManager em) {
         super(em);
@@ -136,4 +129,12 @@ public class RiesgosDAO extends HibernateJpaDAOImp<Riesgos, Integer> implements 
             throw te;
         }
     }
+	
+	public Integer obtenerIdProyectoPorIdRiesgo(Integer idRiesgo) {
+		
+		return em.createNamedQuery("Riesgos.findIdProyectoByIdRiesgo", Integer.class)
+				.setParameter("idRiesgo", idRiesgo)
+				.getSingleResult();
+	}
+
 }

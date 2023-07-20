@@ -21,4 +21,8 @@ public class NotificacionInstanciaDelegate {
     public List<NotificacionInstancia> obtenerNotificacionInstPorProyId(Integer proyPk, Integer orgId) {
         return notificacionInstanciaBean.obtenerNotificacionInstPorProyId(proyPk, orgId);
     }
+
+    public void guardarListaNotificacionInstancia(List<NotificacionInstancia> notifInstList) {
+        notificacionInstanciaBean.guardarListaNotificacionInstancia(notifInstList);
+    }
 }

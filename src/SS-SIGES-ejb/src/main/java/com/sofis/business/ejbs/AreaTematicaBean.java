@@ -3,23 +3,22 @@ package com.sofis.business.ejbs;
 import com.sofis.business.interceptors.LoggedInterceptor;
 import com.sofis.business.validations.AreaTematicaValidacion;
 import com.sofis.data.daos.AreasTagsDAO;
-import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.AreasTags;
+import com.sofis.entities.tipos.FiltroAreaTematicaTO;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.TechnicalException;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
-import com.sofis.generico.utils.generalutils.StringsUtils;
 import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.sofisform.to.CriteriaTO;
 import com.sofis.sofisform.to.MatchCriteriaTO;
 import com.sofis.utils.CriteriaTOUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -30,196 +29,246 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "AreaTematicaBean")
 @LocalBean
 @Interceptors({LoggedInterceptor.class})
 public class AreaTematicaBean {
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
-    private static final Logger logger = Logger.getLogger(AreaTematicaBean.class.getName());
-    @Inject
-    private DatosUsuario du;
+	private static final Logger LOGGER = Logger.getLogger(AreaTematicaBean.class.getName());
 
-    //private String usuario;
-    //private String origen;
-    @PostConstruct
-    public void init() {
-        //usuario = du.getCodigoUsuario();
-        //origen = du.getOrigen();
-    }
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+	private EntityManager em;
 
-    public AreasTags guardar(AreasTags at) {
-        if (at != null) {
-            at.setAreatagExcluyente(Boolean.TRUE);
-            at.setAreatagTematica(at.getAreatagNombre());
+	@Inject
+	private DatosUsuario du;
 
-            AreaTematicaValidacion.validar(at);
-            validarDuplicado(at);
+	public AreasTags guardar(AreasTags areaTematica) {
+		if (areaTematica == null) {
+			return null;
+		}
 
-            AreasTagsDAO dao = new AreasTagsDAO(em);
-            try {
-                return dao.update(at, du.getCodigoUsuario(), du.getOrigen());
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
-                BusinessException be = new BusinessException();
-                be.addError(ex.getMessage());
-                throw be;
-            }
-        }
-        return null;
-    }
+		areaTematica.setAreatagExcluyente(true);
+		areaTematica.setAreatagTematica(areaTematica.getAreatagNombre());
 
-    public AreasTags obtenerAreaTemPorPk(Integer atPk) {
-        if (atPk != null) {
-            AreasTagsDAO dao = new AreasTagsDAO(em);
-            try {
-                return dao.findById(AreasTags.class, atPk);
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
-                throw be;
-            }
-        }
-        return null;
-    }
+		if (areaTematica.getHabilitada() == null) {
+			areaTematica.setHabilitada(false);
+		}
 
-    public List<AreasTags> busquedaAreaTemFiltro(Integer orgPk, String filtroNombre, String elementoOrdenacion, int ascendente) {
-        if (orgPk != null) {
-            List<CriteriaTO> criterios = new ArrayList<>();
+		AreaTematicaValidacion.validar(areaTematica);
+		validarDuplicado(areaTematica);
 
-            MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
-                    MatchCriteriaTO.types.EQUALS, "areatagOrgFk.orgPk", orgPk);
-            criterios.add(criterioOrg);
+		AreasTagsDAO dao = new AreasTagsDAO(em);
+		try {
+			Boolean habilitacionAnterior = null;
+			if (areaTematica.getArastagPk() != null) {
+				AreasTags at = dao.findById(AreasTags.class, areaTematica.getArastagPk());
 
-            if (!StringsUtils.isEmpty(filtroNombre)) {
-//		MatchCriteriaTO criterio = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, "areatagNombre", filtroNombre);
-                CriteriaTO criterio = DAOUtils.createMatchCriteriaTOString("areatagNombre", filtroNombre);
-                criterios.add(criterio);
-            }
+				if (at != null) {
+					habilitacionAnterior = at.getHabilitada();
+				}
+			}
 
-            CriteriaTO condicion;
-            if (criterios.size() == 1) {
-                condicion = criterios.get(0);
-            } else {
-                condicion = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
-            }
+			areaTematica = dao.update(areaTematica, du.getCodigoUsuario(), du.getOrigen());
+			
+			if (habilitacionAnterior != null && !habilitacionAnterior.equals(areaTematica.getHabilitada())) {
 
-            String[] orderBy = {};
-            boolean[] asc = {};
-            if (!StringsUtils.isEmpty(elementoOrdenacion)) {
-                orderBy = new String[]{elementoOrdenacion};
-                asc = new boolean[]{(ascendente == 1)};
-            }
+				if (areaTematica.getHabilitada()) {
+					habilitarPadres(areaTematica);
+				} else {
+					deshabilitarHijas(areaTematica);
+				}
+			}
 
-            AreasTagsDAO dao = new AreasTagsDAO(em);
-            try {
-                return dao.findEntityByCriteria(AreasTags.class, condicion, orderBy, asc, null, null);
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
-                throw be;
-            }
-        }
-        return null;
-    }
+			return areaTematica;
 
-    public void eliminarAreaTematica(Integer atPk) {
-        if (atPk != null) {
-            AreasTagsDAO dao = new AreasTagsDAO(em);
-            try {
-                AreasTags a = obtenerAreaTemPorPk(atPk);
-                dao.delete(a);
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
+		} catch (DAOGeneralException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
 
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_ELIMINAR);
-                if (ex.getCause() instanceof javax.persistence.PersistenceException
-                        && ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-                    be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_CONST_VIOLATION);
-                }
-                throw be;
-            }
-        }
-    }
+			BusinessException be = new BusinessException();
+			be.addError(ex.getMessage());
+			throw be;
+		}
+	}
 
-    public List<AreasTags> obtenerAreasTematicasPorOrg(int orgPk) {
-        AreasTagsDAO areasDao = new AreasTagsDAO(em);
-        try {
-//            List<AreasTags> resultado = areasDao.findByOneProperty(AreasTags.class, "areatagOrgFk.orgPk", orgPk);
-            List<AreasTags> resultado = areasDao.findByOneProperty(AreasTags.class, "areatagOrgFk.orgPk", orgPk, "areatagNombre");
-            return resultado;
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(ex.getMessage());
-            throw te;
-        }
-    }
+	public AreasTags obtenerAreaTemPorPk(Integer atPk) {
+		if (atPk != null) {
+			AreasTagsDAO dao = new AreasTagsDAO(em);
+			try {
+				return dao.findById(AreasTags.class, atPk);
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
+				throw be;
+			}
+		}
+		return null;
+	}
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<AreasTags> obtenerAreasTematicasPorFichaPk(Integer fichaPf, Integer tipoFicha) {
-        AreasTagsDAO dao = new AreasTagsDAO(em);
-        try {
-            List<AreasTags> resultado = dao.obtenerAreasTematicasPorFichaPk(fichaPf, tipoFicha);
-            return resultado;
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            TechnicalException te = new TechnicalException(ex);
-            te.addError(ex.getMessage());
-            throw te;
-        }
-    }
+	public List<AreasTags> buscar(FiltroAreaTematicaTO filtro, String elementoOrdenacion, boolean ascendente) {
 
-    private void validarDuplicado(AreasTags at) {
-        List<AreasTags> list = obtenerAreasPorNombre(at.getAreatagNombre(), at.getAreatagOrgFk().getOrgPk());
-        if (CollectionsUtils.isNotEmpty(list)) {
-            for (AreasTags areasTags : list) {
-                if (!areasTags.getArastagPk().equals(at.getArastagPk())
-                        && (areasTags.getAreatagPadreFk() != null && at.getAreatagPadreFk() != null && areasTags.getAreatagPadreFk().getArastagPk() == at.getAreatagPadreFk().getArastagPk())
-                        && areasTags.getAreatagNombre().equals(at.getAreatagNombre())) {
-                    BusinessException be = new BusinessException();
-                    be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NOMBRE_DUPLICADO);
-                    throw be;
-                }
-            }
-        }
-    }
+		AreasTagsDAO areaTematicaDAO = new AreasTagsDAO(em);
+		try {
+			return areaTematicaDAO.buscar(filtro, elementoOrdenacion, ascendente);
 
-    public List<AreasTags> obtenerAreasPorNombre(String areaNombre, Integer orgPk) {
-        if (orgPk != null) {
-            List<CriteriaTO> criterios = new ArrayList<>();
+		} catch (DAOGeneralException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
 
-            MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
-                    MatchCriteriaTO.types.EQUALS, "areatagOrgFk.orgPk", orgPk);
-            criterios.add(criterioOrg);
+			BusinessException be = new BusinessException();
+			be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
+			throw be;
+		}
+	}
 
-            MatchCriteriaTO criterioNombre = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "areatagNombre", areaNombre);
-//	    CriteriaTO criterioNombre = DAOUtils.createMatchCriteriaTOString("areatagNombre", areaNombre);
-            criterios.add(criterioNombre);
+	public List<AreasTags> buscar(FiltroAreaTematicaTO filtro) {
 
-            CriteriaTO criteria = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
+		return buscar(filtro, null, true);
+	}
 
-            AreasTagsDAO areasDao = new AreasTagsDAO(em);
+	public List<AreasTags> buscar(FiltroAreaTematicaTO filtro, String elementoOrdenacion) {
 
-            try {
-                return areasDao.findEntityByCriteria(AreasTags.class, criteria, new String[]{"areatagNombre"}, new boolean[]{true}, null, null);
+		return buscar(filtro, elementoOrdenacion, true);
+	}
 
-            } catch (DAOGeneralException ex) {
-                logger.log(Level.SEVERE, null, ex);
-                BusinessException te = new BusinessException();
-                te.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
-                throw te;
-            }
-        }
-        return null;
-    }
+	public void eliminarAreaTematica(Integer atPk) {
+		if (atPk != null) {
+			AreasTagsDAO dao = new AreasTagsDAO(em);
+			try {
+				AreasTags a = obtenerAreaTemPorPk(atPk);
+				dao.delete(a);
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
+
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_ELIMINAR);
+				if (ex.getCause() instanceof javax.persistence.PersistenceException
+						&& ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+					be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_CONST_VIOLATION);
+				}
+				throw be;
+			}
+		}
+	}
+
+	public List<AreasTags> obtenerPorOrganismo(int orgPk) {
+
+		FiltroAreaTematicaTO filtro = new FiltroAreaTematicaTO();
+		filtro.setIdOrganismo(orgPk);
+
+		return buscar(filtro);
+	}
+
+	public List<AreasTags> obtenerHabilitadasPorOrganismo(int orgPk) {
+
+		FiltroAreaTematicaTO filtro = new FiltroAreaTematicaTO();
+		filtro.setIdOrganismo(orgPk);
+		filtro.setHabilitada(true);
+
+		return buscar(filtro);
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public List<AreasTags> obtenerAreasTematicasPorFichaPk(Integer fichaPf, Integer tipoFicha) {
+		AreasTagsDAO dao = new AreasTagsDAO(em);
+		try {
+			List<AreasTags> resultado = dao.obtenerAreasTematicasPorFichaPk(fichaPf, tipoFicha);
+			return resultado;
+		} catch (DAOGeneralException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage());
+			TechnicalException te = new TechnicalException(ex);
+			te.addError(ex.getMessage());
+			throw te;
+		}
+	}
+
+	private void validarDuplicado(AreasTags at) {
+		List<AreasTags> list = obtenerAreasPorNombre(at.getAreatagNombre(), at.getAreatagOrgFk().getOrgPk());
+		if (CollectionsUtils.isNotEmpty(list)) {
+			for (AreasTags areasTags : list) {
+				if (!areasTags.getArastagPk().equals(at.getArastagPk())
+						&& (areasTags.getAreatagPadreFk() != null && at.getAreatagPadreFk() != null
+						&& areasTags.getAreatagPadreFk().getArastagPk().equals(at.getAreatagPadreFk().getArastagPk()))
+						&& areasTags.getAreatagNombre().equals(at.getAreatagNombre())) {
+
+					BusinessException be = new BusinessException();
+					be.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_NOMBRE_DUPLICADO);
+					throw be;
+				}
+			}
+		}
+	}
+
+	public List<AreasTags> obtenerAreasPorNombre(String areaNombre, Integer orgPk) {
+		if (orgPk != null) {
+			List<CriteriaTO> criterios = new ArrayList<>();
+
+			MatchCriteriaTO criterioOrg = CriteriaTOUtils.createMatchCriteriaTO(
+					MatchCriteriaTO.types.EQUALS, "areatagOrgFk.orgPk", orgPk);
+			criterios.add(criterioOrg);
+
+			MatchCriteriaTO criterioNombre = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "areatagNombre", areaNombre);
+			criterios.add(criterioNombre);
+
+			CriteriaTO criteria = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
+
+			AreasTagsDAO areasDao = new AreasTagsDAO(em);
+
+			try {
+				return areasDao.findEntityByCriteria(AreasTags.class, criteria, new String[]{"areatagNombre"}, new boolean[]{true}, null, null);
+
+			} catch (DAOGeneralException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
+
+				BusinessException te = new BusinessException();
+				te.addError(MensajesNegocio.ERROR_AREAS_TEMATICAS_OBTENER);
+				throw te;
+			}
+		}
+		return null;
+	}
+
+	public List<AreasTags> obtenerPadres(List<AreasTags> hijas) {
+
+		List<AreasTags> resultado = new ArrayList<>();
+		for (AreasTags hija : hijas) {
+
+			AreasTags padre = hija;
+			while (padre != null) {
+				if (!resultado.contains(padre)) {
+					resultado.add(padre);
+				}
+				padre = padre.getAreatagPadreFk();
+			}
+		}
+
+		return resultado;
+	}
+
+	private void habilitarPadres(AreasTags areaTematica) {
+
+		AreasTags at = areaTematica.getAreatagPadreFk();
+		while (at != null) {
+			at.setHabilitada(true);
+
+			at = at.getAreatagPadreFk();
+		}
+	}
+
+	private void deshabilitarHijas(AreasTags areaTematica) {
+
+		AreasTagsDAO areaTematicaDao = new AreasTagsDAO(em);
+
+		List<AreasTags> areasTematicas = areaTematicaDao.obtenerHijas(areaTematica.getArastagPk());
+
+		ListIterator<AreasTags> iter = areasTematicas.listIterator();
+		while (iter.hasNext()) {
+			AreasTags at = iter.next();
+			
+			at.setHabilitada(false);
+
+			deshabilitarHijas(at);
+		}
+	}
+
 }

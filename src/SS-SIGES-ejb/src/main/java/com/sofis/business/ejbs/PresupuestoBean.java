@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -557,13 +558,14 @@ public class PresupuestoBean {
         return 0D;
     }
 
-    public Presupuesto copiarProyPresupuesto(Presupuesto proyPreFk, Set<Entregables> entSet, int desfasajeDias) {
+    public Presupuesto copiarProyPresupuesto(Presupuesto proyPreFk, Map<Integer, Entregables> entMap, int desfasajeDias,Boolean incluirAdquisicionesId) {
         if (proyPreFk != null) {
             Presupuesto pre = new Presupuesto();
-            pre.setAdquisicionSet(adquisicionBean.copiarProyAdquisicion(proyPreFk.getAdquisicionSet(), pre, entSet, desfasajeDias));
+            pre.setAdquisicionSet(adquisicionBean.copiarProyAdquisicion(proyPreFk.getAdquisicionSet(), pre, entMap, desfasajeDias,incluirAdquisicionesId));
             pre.setFuenteFinanciamiento(proyPreFk.getFuenteFinanciamiento());
             pre.setPreBase(proyPreFk.getPreBase());
             pre.setPreMoneda(proyPreFk.getPreMoneda());
+            pre.setPreOcultarPagosConfirmados(proyPreFk.getPreOcultarPagosConfirmados());
             return pre;
         }
         return null;

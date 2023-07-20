@@ -1,12 +1,13 @@
 package com.sofis.entities.data;
 
+import com.sofis.entities.enums.TipoInteresado;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,131 +19,147 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "interesados")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Interesados.findAll", query = "SELECT i FROM Interesados i"),
-    @NamedQuery(name = "Interesados.findByIntPk", query = "SELECT i FROM Interesados i WHERE i.intPk = :intPk"),
+	@NamedQuery(name = "Interesados.findAll", query = "SELECT i FROM Interesados i")
+	,
+    @NamedQuery(name = "Interesados.findByIntPk", query = "SELECT i FROM Interesados i WHERE i.intPk = :intPk")
+	,
     @NamedQuery(name = "Interesados.findByIntObservaciones", query = "SELECT i FROM Interesados i WHERE i.intObservaciones = :intObservaciones")})
 public class Interesados implements Serializable {
-    
-    public static final int OBSERVACIONES_LENGHT = 4000;
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(Interesados.class.getName());
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "int_pk")
-    private Integer intPk;
-    @Column(name = "int_observaciones")
-    private String intObservaciones;
-    @JoinColumn(name = "int_orga_fk", referencedColumnName = "orga_pk")
-    @ManyToOne(optional = true)
-    private OrganiIntProve intOrgaFk;
-    @JoinColumn(name = "int_rolint_fk", referencedColumnName = "rolint_pk")
-    @ManyToOne(optional = true)
-    private RolesInteresados intRolintFk;
-    @JoinColumn(name = "int_pers_fk", referencedColumnName = "pers_pk")
-    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private Personas intPersonaFk;
+	public static final int OBSERVACIONES_LENGHT = 4000;
 
-    @JoinColumn(name = "int_ent_fk", referencedColumnName = "ent_pk", nullable = true)
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private Entregables intEntregable;
+	private static final long serialVersionUID = 1L;
 
-    public Interesados() {
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "int_pk")
+	private Integer intPk;
 
-    public Interesados(Integer intPk) {
-        this.intPk = intPk;
-    }
+	@Column(name = "int_observaciones")
+	private String intObservaciones;
 
-    public Integer getIntPk() {
-        return intPk;
-    }
+	@JoinColumn(name = "int_orga_fk", referencedColumnName = "orga_pk")
+	@ManyToOne(optional = true)
+	private OrganiIntProve intOrgaFk;
 
-    public void setIntPk(Integer intPk) {
-        this.intPk = intPk;
-    }
+	@JoinColumn(name = "int_rolint_fk", referencedColumnName = "rolint_pk")
+	@ManyToOne(optional = true)
+	private RolesInteresados intRolintFk;
 
-    public String getIntObservaciones() {
-        return intObservaciones;
-    }
+	@JoinColumn(name = "int_pers_fk", referencedColumnName = "pers_pk")
+	@ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+	private Personas intPersonaFk;
 
-    public void setIntObservaciones(String intObservaciones) {
-        this.intObservaciones = intObservaciones;
-    }
+	@JoinColumn(name = "int_ent_fk", referencedColumnName = "ent_pk", nullable = true)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	private Entregables intEntregable;
 
-    public OrganiIntProve getIntOrgaFk() {
-        return intOrgaFk;
-    }
+	@Column(name = "int_tipo")
+	@Enumerated(EnumType.STRING)
+	private TipoInteresado tipo;
 
-    public void setIntOrgaFk(OrganiIntProve intOrgaFk) {
-        this.intOrgaFk = intOrgaFk;
-    }
+	@ManyToOne
+	@JoinColumn(name = "int_usuario_fk", referencedColumnName = "usu_id")
+	private SsUsuario usuario;
 
-    public RolesInteresados getIntRolintFk() {
-        return intRolintFk;
-    }
+	public Interesados() {
+	}
 
-    public void setIntRolintFk(RolesInteresados intRolintFk) {
-        this.intRolintFk = intRolintFk;
-    }
+	public Interesados(Integer intPk) {
+		this.intPk = intPk;
+	}
 
-    public Personas getIntPersonaFk() {
-        return intPersonaFk;
-    }
+	public Integer getIntPk() {
+		return intPk;
+	}
 
-    public void setIntPersonaFk(Personas intPersonaFk) {
-        this.intPersonaFk = intPersonaFk;
-    }
+	public void setIntPk(Integer intPk) {
+		this.intPk = intPk;
+	}
 
-    public Entregables getIntEntregable() {
-        return intEntregable;
-    }
+	public String getIntObservaciones() {
+		return intObservaciones;
+	}
 
-    public void setIntEntregable(Entregables intEntregable) {
-        this.intEntregable = intEntregable;
-    }
+	public void setIntObservaciones(String intObservaciones) {
+		this.intObservaciones = intObservaciones;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (intPk != null ? intPk.hashCode() : 0);
-        return hash;
-    }
+	public OrganiIntProve getIntOrgaFk() {
+		return intOrgaFk;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Interesados)) {
-            return false;
-        }
-        Interesados other = (Interesados) object;
-        if ((this.intPk == null && other.intPk != null) || (this.intPk != null && !this.intPk.equals(other.intPk))) {
-            return false;
-        }
-        return true;
-    }
+	public void setIntOrgaFk(OrganiIntProve intOrgaFk) {
+		this.intOrgaFk = intOrgaFk;
+	}
 
-    @Override
-    public String toString() {
-        return "com.sofis.entities.data.Interesados[ intPk=" + intPk + " ]";
-    }
+	public RolesInteresados getIntRolintFk() {
+		return intRolintFk;
+	}
 
-    public void toSystemOut() {
-        logger.info("-- Interesados --");
-        logger.info("Rol:" + this.intRolintFk != null ? this.intRolintFk.getRolintNombre() : "null");
-        logger.info("Orga:" + this.intOrgaFk != null ? this.intOrgaFk.getOrgaNombre() : "null");
-        logger.log(Level.INFO, "Persona null:{0}", (this.intPersonaFk == null));
-        logger.log(Level.INFO, "Persona.n:{0}", this.intPersonaFk.getPersNombre());
-        logger.log(Level.INFO, "Persona.c:{0}", this.intPersonaFk.getPersCargo());
-        logger.log(Level.INFO, "Persona.t:{0}", this.intPersonaFk.getPersTelefono());
+	public void setIntRolintFk(RolesInteresados intRolintFk) {
+		this.intRolintFk = intRolintFk;
+	}
 
-    }
+	public Personas getIntPersonaFk() {
+		return intPersonaFk;
+	}
+
+	public void setIntPersonaFk(Personas intPersonaFk) {
+		this.intPersonaFk = intPersonaFk;
+	}
+
+	public Entregables getIntEntregable() {
+		return intEntregable;
+	}
+
+	public void setIntEntregable(Entregables intEntregable) {
+		this.intEntregable = intEntregable;
+	}
+
+	public TipoInteresado getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(TipoInteresado tipo) {
+		this.tipo = tipo;
+	}
+
+	public SsUsuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(SsUsuario usuario) {
+		this.usuario = usuario;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (intPk != null ? intPk.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Interesados)) {
+			return false;
+		}
+		Interesados other = (Interesados) object;
+		if ((this.intPk == null && other.intPk != null) || (this.intPk != null && !this.intPk.equals(other.intPk))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.sofis.entities.data.Interesados[ intPk=" + intPk + " ]";
+	}
+
 }

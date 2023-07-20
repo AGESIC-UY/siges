@@ -31,77 +31,79 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class EtapaBean {
 
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
-    private static final Logger logger = Logger.getLogger(EtapaBean.class.getName());
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+	private EntityManager em;
+	private static final Logger logger = Logger.getLogger(EtapaBean.class.getName());
 
-    @Inject
-    private DatosUsuario du;
-    @Inject
-    private OrganismoBean organismoBean;
-    
-    
-    //private String usuario;
-    //private String origen;
-    
-    @PostConstruct
-    public void init(){
-        //usuario = du.getCodigoUsuario();
-        //origen = du.getOrigen();
-    }
-    
+	@Inject
+	private DatosUsuario du;
+	@Inject
+	private OrganismoBean organismoBean;
 
-    public List<Etapa> obtenerEtapaPorOrgId(Integer orgPk) {
-        EtapaDAO dao = new EtapaDAO(em);
-        try {
-            return dao.findByOneProperty(Etapa.class, "etaOrgFk.orgPk", orgPk);
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+	//private String usuario;
+	//private String origen;
+	@PostConstruct
+	public void init() {
+		//usuario = du.getCodigoUsuario();
+		//origen = du.getOrigen();
+	}
 
-    public Etapa guardar(Etapa etapa) {
-        EtapaDAO dao = new EtapaDAO(em);
+	public List<Etapa> obtenerEtapaPorOrgId(Integer orgPk) {
+		EtapaDAO dao = new EtapaDAO(em);
+		try {
+			return dao.findByOneProperty(Etapa.class, "etaOrgFk.orgPk", orgPk);
+		} catch (DAOGeneralException ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 
-        try {
-            etapa = dao.update(etapa, du.getCodigoUsuario(),du.getOrigen());
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            BusinessException be = new BusinessException();
-            be.addError(MensajesNegocio.ERROR_ETAPA_GUARDAR);
-            throw be;
-        }
+	public Etapa guardar(Etapa etapa) {
+		EtapaDAO dao = new EtapaDAO(em);
 
-        return etapa;
-    }
+		try {
+			etapa = dao.update(etapa, du.getCodigoUsuario(), du.getOrigen());
+		} catch (DAOGeneralException ex) {
+			logger.log(Level.SEVERE, null, ex);
+			BusinessException be = new BusinessException();
+			be.addError(MensajesNegocio.ERROR_ETAPA_GUARDAR);
+			throw be;
+		}
 
-    public void controlarEtapasFaltantes() {
-        List<Organismos> organismos = organismoBean.obtenerTodos();
-        if (organismos!=null) {
-            for (Organismos org : organismos) {
-                List<Etapa> listEtapa = obtenerEtapaPorOrgId(org.getOrgPk());
-                Map<String, Etapa> etapaMap = new HashMap<>();
-                if (listEtapa != null) {
-                    for (Etapa etapa : listEtapa) {
-                        etapaMap.put(etapa.getEtaCodigo(), etapa);
-                    }
-                }
+		return etapa;
+	}
 
-                Etapa[] etapaArr = new Etapa[]{
-                    new Etapa(null, EtapaCodigos.PROYECTADO, "Proyectado", null, org),
-                    new Etapa(null, EtapaCodigos.EN_ADJUDICACION, "En adjudicación", null, org),
-                    new Etapa(null, EtapaCodigos.EN_EJECUCION, "En Ejecución", null, org),
-                    new Etapa(null, EtapaCodigos.FINALIZADO, "Finalizado", null, org)
-                };
+	public void controlarFaltantes() {
+		List<Organismos> organismos = organismoBean.obtenerTodos();
 
-                for (Etapa etapa : etapaArr) {
-                    if (!etapaMap.containsKey(etapa.getEtaCodigo())) {
-                        guardar(etapa);
-                        logger.log(Level.INFO, StringsUtils.concat("Se agregó el estado de publicación '", etapa.getEtaCodigo()), "'");
-                    }
-                }
-            }
-        }
-    }
+		for (Organismos org : organismos) {
+			controlarFaltantesOrganismo(org);
+		}
+	}
+
+	public void controlarFaltantesOrganismo(Organismos org) {
+		
+		List<Etapa> listEtapa = obtenerEtapaPorOrgId(org.getOrgPk());
+		Map<String, Etapa> etapaMap = new HashMap<>();
+		if (listEtapa != null) {
+			for (Etapa etapa : listEtapa) {
+				etapaMap.put(etapa.getEtaCodigo(), etapa);
+			}
+		}
+		
+		Etapa[] etapaArr = new Etapa[]{
+			new Etapa(null, EtapaCodigos.PROYECTADO, "Proyectado", null, org),
+			new Etapa(null, EtapaCodigos.EN_ADJUDICACION, "En adjudicación", null, org),
+			new Etapa(null, EtapaCodigos.EN_EJECUCION, "En Ejecución", null, org),
+			new Etapa(null, EtapaCodigos.FINALIZADO, "Finalizado", null, org)
+		};
+		
+		for (Etapa etapa : etapaArr) {
+			if (!etapaMap.containsKey(etapa.getEtaCodigo())) {
+				guardar(etapa);
+				logger.log(Level.INFO, StringsUtils.concat("Se agregó el estado de publicación '", etapa.getEtaCodigo()), "'");
+			}
+		}
+	}
+	
 }

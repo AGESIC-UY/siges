@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.Type;
@@ -51,6 +52,10 @@ public class ProcedimientoCompra implements Serializable {
     private Organismos procCompOrgFk;
     @Column(name = "proc_comp_habilitado")
     private Boolean procCompHabilitado;
+    
+    @Transient
+    private Integer procAdquisicionId;
+    
 
     public ProcedimientoCompra() {
     }
@@ -128,5 +133,15 @@ public class ProcedimientoCompra implements Serializable {
     public void setProcCompHabilitado(Boolean procCompHabilitado) {
         this.procCompHabilitado = procCompHabilitado;
     }
+
+    public Integer getProcAdquisicionId() {
+        return procAdquisicionId;
+    }
+
+    public void setProcAdquisicionId(Integer procAdquisicionId) {
+        this.procAdquisicionId = procAdquisicionId;
+    }
+    
+    
 
 }

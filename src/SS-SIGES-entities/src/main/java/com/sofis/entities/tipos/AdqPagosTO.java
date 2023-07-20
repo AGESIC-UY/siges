@@ -4,250 +4,289 @@ import com.sofis.entities.data.Documentos;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- *
- * @author Usuario
- */
 public class AdqPagosTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    //Adquisiciones
-    private Integer adqPk;
-    private Integer prePk;
-    private String adqNombre;
-    private Integer orgaPk;
-    private String orgaNombre;
-    private Integer fuentePk;
-    private String fuenteNombre;
-    private Integer monPk;
-    private String monedaSigno;
-    private String procCompra;
-    private String procCompraGrp;
-    //Pagos
-    private Integer pagPk;
-    private Integer entPk;
-    private String entNombre;
-    private String observacion;
-    private Date fechaPlan;
-    private Double importePlan;
-    private Date fechaReal;
-    private Double importeReal;
-    private Double importeSaldo;
-    private Double ejecucion;
-    private String referencia;
-    private Boolean confirmado;
-    private Documentos pagoDoc;
-    //1-Adquisicion, 2-Pagos
-    private Integer tipo;
+	private static final long serialVersionUID = 1L;
 
-    public void setEjecucion(Double ejecucion) {
-        this.ejecucion = ejecucion;
-    }
+	//Adquisiciones
+	private Integer adqPk;
+	private Integer prePk;
+	private String adqNombre;
+	private Integer orgaPk;
+	private String orgaNombre;
+	private Integer fuentePk;
+	private String fuenteNombre;
+	private Integer monPk;
+	private Integer idAdquisicion;
+	private String monedaSigno;
+	private String procCompra;
+	private String procCompraGrp;
+	private Boolean tienePagos;
 
-    public Double getEjecucion() {
-        return this.ejecucion;
-    }
+	private Integer orden;
+	private boolean puedeSubir;
+	private boolean puedeBajar;
 
-    public Integer getAdqPk() {
-        return adqPk;
-    }
+	//Pagos
+	private Integer pagPk;
+	private Integer entPk;
+	private String entNombre;
+	private String observacion;
+	private Date fechaPlan;
+	private Double importePlan;
+	private Date fechaReal;
+	private Double importeReal;
+	private Double importeSaldo;
+	private Double ejecucion;
+	private String referencia;
+	private Boolean confirmado;
+	private Documentos pagoDoc;
 
-    public void setAdqPk(Integer adqPk) {
-        this.adqPk = adqPk;
-    }
+	//1-Adquisicion, 2-Pagos
+	private Integer tipo;
 
-    public Integer getPrePk() {
-        return prePk;
-    }
+	public void setEjecucion(Double ejecucion) {
+		this.ejecucion = ejecucion;
+	}
 
-    public void setPrePk(Integer prePk) {
-        this.prePk = prePk;
-    }
+	public Double getEjecucion() {
+		return this.ejecucion;
+	}
 
-    public String getAdqNombre() {
-        return adqNombre;
-    }
+	public Integer getAdqPk() {
+		return adqPk;
+	}
 
-    public void setAdqNombre(String adqNombre) {
-        this.adqNombre = adqNombre;
-    }
+	public void setAdqPk(Integer adqPk) {
+		this.adqPk = adqPk;
+	}
 
-    public Integer getOrgaPk() {
-        return orgaPk;
-    }
+	public Integer getPrePk() {
+		return prePk;
+	}
 
-    public void setOrgaPk(Integer orgaPk) {
-        this.orgaPk = orgaPk;
-    }
+	public void setPrePk(Integer prePk) {
+		this.prePk = prePk;
+	}
 
-    public String getOrgaNombre() {
-        return orgaNombre;
-    }
+	public String getAdqNombre() {
+		return adqNombre;
+	}
 
-    public void setOrgaNombre(String orgaNombre) {
-        this.orgaNombre = orgaNombre;
-    }
+	public void setAdqNombre(String adqNombre) {
+		this.adqNombre = adqNombre;
+	}
 
-    public void setImporteSaldo(Double importeSaldo) {
-        this.importeSaldo = importeSaldo;
-    }
+	public Integer getOrgaPk() {
+		return orgaPk;
+	}
 
-    public Double getImporteSaldo() {
-        return this.importeSaldo;
-    }
+	public void setOrgaPk(Integer orgaPk) {
+		this.orgaPk = orgaPk;
+	}
 
-    public Integer getTipo() {
-        return tipo;
-    }
+	public String getOrgaNombre() {
+		return orgaNombre;
+	}
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
+	public void setOrgaNombre(String orgaNombre) {
+		this.orgaNombre = orgaNombre;
+	}
 
-    public void setTipo(Integer tipo) {
-        this.tipo = tipo;
-    }
+	public void setImporteSaldo(Double importeSaldo) {
+		this.importeSaldo = importeSaldo;
+	}
 
-    public Integer getFuentePk() {
-        return fuentePk;
-    }
+	public Double getImporteSaldo() {
+		return this.importeSaldo;
+	}
 
-    public void setFuentePk(Integer fuentePk) {
-        this.fuentePk = fuentePk;
-    }
+	public Integer getTipo() {
+		return tipo;
+	}
 
-    public String getFuenteNombre() {
-        return fuenteNombre;
-    }
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
 
-    public void setFuenteNombre(String fuenteNombre) {
-        this.fuenteNombre = fuenteNombre;
-    }
+	public void setTipo(Integer tipo) {
+		this.tipo = tipo;
+	}
 
-    public Integer getMonPk() {
-        return monPk;
-    }
+	public Integer getFuentePk() {
+		return fuentePk;
+	}
 
-    public void setMonPk(Integer monPk) {
-        this.monPk = monPk;
-    }
+	public void setFuentePk(Integer fuentePk) {
+		this.fuentePk = fuentePk;
+	}
 
-    public String getMonedaSigno() {
-        return monedaSigno;
-    }
+	public String getFuenteNombre() {
+		return fuenteNombre;
+	}
 
-    public void setMonedaSigno(String monedaSigno) {
-        this.monedaSigno = monedaSigno;
-    }
+	public void setFuenteNombre(String fuenteNombre) {
+		this.fuenteNombre = fuenteNombre;
+	}
 
-    public Integer getPagPk() {
-        return pagPk;
-    }
+	public Integer getMonPk() {
+		return monPk;
+	}
 
-    public void setPagPk(Integer pagPk) {
-        this.pagPk = pagPk;
-    }
+	public void setMonPk(Integer monPk) {
+		this.monPk = monPk;
+	}
 
-    public Integer getEntPk() {
-        return entPk;
-    }
+	public String getMonedaSigno() {
+		return monedaSigno;
+	}
 
-    public void setEntPk(Integer entPk) {
-        this.entPk = entPk;
-    }
+	public void setMonedaSigno(String monedaSigno) {
+		this.monedaSigno = monedaSigno;
+	}
 
-    public String getEntNombre() {
-        return entNombre;
-    }
+	public Integer getPagPk() {
+		return pagPk;
+	}
 
-    public void setEntNombre(String entNombre) {
-        this.entNombre = entNombre;
-    }
+	public void setPagPk(Integer pagPk) {
+		this.pagPk = pagPk;
+	}
 
-    public String getObservacion() {
-        return observacion;
-    }
+	public Integer getEntPk() {
+		return entPk;
+	}
 
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
-    }
+	public void setEntPk(Integer entPk) {
+		this.entPk = entPk;
+	}
 
-    public Date getFechaPlan() {
-        return fechaPlan;
-    }
+	public String getEntNombre() {
+		return entNombre;
+	}
 
-    public void setFechaPlan(Date fechaPlan) {
-        this.fechaPlan = fechaPlan;
-    }
+	public void setEntNombre(String entNombre) {
+		this.entNombre = entNombre;
+	}
 
-    public Double getImportePlan() {
-        return importePlan;
-    }
+	public String getObservacion() {
+		return observacion;
+	}
 
-    public void setImportePlan(Double importePlan) {
-        this.importePlan = importePlan;
-    }
+	public void setObservacion(String observacion) {
+		this.observacion = observacion;
+	}
 
-    public Date getFechaReal() {
-        return fechaReal;
-    }
+	public Date getFechaPlan() {
+		return fechaPlan;
+	}
 
-    public void setFechaReal(Date fechaReal) {
-        this.fechaReal = fechaReal;
-    }
+	public void setFechaPlan(Date fechaPlan) {
+		this.fechaPlan = fechaPlan;
+	}
 
-    public Double getImporteReal() {
-        return importeReal;
-    }
+	public Double getImportePlan() {
+		return importePlan;
+	}
 
-    public void setImporteReal(Double importeReal) {
-        this.importeReal = importeReal;
-    }
+	public void setImportePlan(Double importePlan) {
+		this.importePlan = importePlan;
+	}
 
-    public String getProcCompra() {
-        return procCompra;
-    }
+	public Date getFechaReal() {
+		return fechaReal;
+	}
 
-    public void setProcCompra(String procCompra) {
-        this.procCompra = procCompra;
-    }
+	public void setFechaReal(Date fechaReal) {
+		this.fechaReal = fechaReal;
+	}
 
-    public String getProcCompraGrp() {
-        return procCompraGrp;
-    }
+	public Double getImporteReal() {
+		return importeReal;
+	}
 
-    public void setProcCompraGrp(String procCompraGrp) {
-        this.procCompraGrp = procCompraGrp;
-    }
+	public void setImporteReal(Double importeReal) {
+		this.importeReal = importeReal;
+	}
 
-    public String getReferencia() {
-        return referencia;
-    }
+	public String getProcCompra() {
+		return procCompra;
+	}
 
-    public void setReferencia(String referencia) {
-        this.referencia = referencia;
-    }
+	public void setProcCompra(String procCompra) {
+		this.procCompra = procCompra;
+	}
 
-    public Boolean getConfirmado() {
-        return confirmado;
-    }
+	public String getProcCompraGrp() {
+		return procCompraGrp;
+	}
 
-    public void setConfirmado(Boolean confirmado) {
-        this.confirmado = confirmado;
-    }
+	public void setProcCompraGrp(String procCompraGrp) {
+		this.procCompraGrp = procCompraGrp;
+	}
 
-    public Documentos getPagoDoc() {
-        return pagoDoc;
-    }
+	public Boolean getTienePagos() {
+		return tienePagos;
+	}
 
-    public void setPagoDoc(Documentos pagoDoc) {
-        this.pagoDoc = pagoDoc;
-    }
+	public void setTienePagos(Boolean tienePagos) {
+		this.tienePagos = tienePagos;
+	}
 
-    public void toSystemOut() {
-        System.out.println("adqPk:" + (adqPk != null ? adqPk : "null"));
-        System.out.println("adqNombre:" + (adqNombre != null ? adqNombre : "null"));
-        System.out.println("fechaPlan:" + (fechaPlan != null ? fechaPlan : "null"));
-        System.out.println("importePlan:" + (importePlan != null ? importePlan : "null"));
-    }
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+
+	public Boolean getConfirmado() {
+		return confirmado;
+	}
+
+	public void setConfirmado(Boolean confirmado) {
+		this.confirmado = confirmado;
+	}
+
+	public Documentos getPagoDoc() {
+		return pagoDoc;
+	}
+
+	public void setPagoDoc(Documentos pagoDoc) {
+		this.pagoDoc = pagoDoc;
+	}
+
+	public Integer getIdAdquisicion() {
+		return idAdquisicion;
+	}
+
+	public void setIdAdquisicion(Integer idAdquisicion) {
+		this.idAdquisicion = idAdquisicion;
+	}
+
+	public Integer getOrden() {
+		return orden;
+	}
+
+	public void setOrden(Integer orden) {
+		this.orden = orden;
+	}
+
+	public boolean getPuedeBajar() {
+		return puedeBajar;
+	}
+
+	public void setPuedeBajar(boolean puedeBajar) {
+		this.puedeBajar = puedeBajar;
+	}
+
+	public boolean getPuedeSubir() {
+		return puedeSubir;
+	}
+
+	public void setPuedeSubir(boolean puedeSubir) {
+		this.puedeSubir = puedeSubir;
+	}
+
 }

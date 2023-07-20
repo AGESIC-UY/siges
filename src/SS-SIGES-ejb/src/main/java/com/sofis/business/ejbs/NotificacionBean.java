@@ -1,13 +1,14 @@
 package com.sofis.business.ejbs;
 
-import com.sofis.business.properties.LabelsEJB;
 import com.sofis.business.validations.NotificacionValidacion;
 import com.sofis.data.daos.NotificacionDAO;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.constantes.ConstanteApp;
-import com.sofis.entities.constantes.ConstantesNotificaciones;
 import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.MailTemplateDefecto;
+import com.sofis.entities.data.MailsTemplate;
 import com.sofis.entities.data.Notificacion;
+import com.sofis.entities.data.NotificacionDefecto;
 import com.sofis.entities.data.Organismos;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.TechnicalException;
@@ -30,22 +31,21 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "notificacionBean")
 @LocalBean
 public class NotificacionBean {
 
+	private static final Logger LOGGER = Logger.getLogger(NotificacionBean.class.getName());
+
 	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
 	private EntityManager em;
-        private static final Logger logger = Logger.getLogger(NotificacionBean.class.getName());
-	@Inject
-	private DatosUsuario du;
+
 	@Inject
 	private OrganismoBean organismoBean;
+
+	@Inject
+	private NotificacionDefectoBean notificacionDefectoBean;
 
 	public Notificacion guardar(Notificacion notif) {
 		if (notif != null) {
@@ -56,7 +56,7 @@ public class NotificacionBean {
 			try {
 				return dao.update(notif);
 			} catch (DAOGeneralException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				LOGGER.log(Level.SEVERE, null, ex);
 				BusinessException be = new BusinessException();
 				be.addError(MensajesNegocio.ERROR_NOTIFICACION_GUARDAR);
 				throw be;
@@ -65,48 +65,42 @@ public class NotificacionBean {
 		return null;
 	}
 
-	public void controlarNotifFaltantes() {
+	public void controlarFaltantes() {
+
 		List<Organismos> organismos = organismoBean.obtenerTodos();
-		if (organismos != null) {
-			for (Organismos org : organismos) {
-				Integer orgPk = org.getOrgPk();
-				List<Notificacion> notifList = obtenerTodosPorOrg(org.getOrgPk());
-				Map<String, Notificacion> notifMap = new HashMap<>();
-				if (notifList != null) {
-					for (Notificacion notif : notifList) {
-						notifMap.put(notif.getNotCod(), notif);
-					}
-				}
+		List<NotificacionDefecto> notificacionesDefecto = notificacionDefectoBean.obtenerTodas();
 
-				Notificacion[] notifArr = new Notificacion[]{
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_1, LabelsEJB.getValue("notif_cod_riesgos_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_1_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_RIESGOS_2, LabelsEJB.getValue("notif_cod_riesgos_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_riesgos_2_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_INICIO, LabelsEJB.getValue("notif_cod_inicio_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_inicio_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PLANIFICACION, LabelsEJB.getValue("notif_cod_planificacion_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_planificacion_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, LabelsEJB.getValue("notif_cod_actualizacion_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_1_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, LabelsEJB.getValue("notif_cod_actualizacion_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_actualizacion_2_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_1, LabelsEJB.getValue("notif_cod_presupuesto_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_1_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, LabelsEJB.getValue("notif_cod_presupuesto_2_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_2_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, LabelsEJB.getValue("notif_cod_presupuesto_3_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_3_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, LabelsEJB.getValue("notif_cod_presupuesto_4_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_4_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, LabelsEJB.getValue("notif_cod_presupuesto_5_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_presupuesto_5_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, LabelsEJB.getValue("notif_cod_cronograma_1_desc", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cronograma_1_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_CAMBIO_FASE_PROY_1, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_cambio_de_fase_1_mail", orgPk)),
-					new Notificacion(org, ConstantesNotificaciones.NOT_COD_ELIMINACION_PROY_1, LabelsEJB.getValue("notif_cod_eliminar_1_mail", orgPk), null, true, false, false, false, LabelsEJB.getValue("notif_cod_eliminar_1_mail", orgPk))
-				};
+		for (Organismos org : organismos) {
+			controlarFaltantesOrganismo(org, notificacionesDefecto);
+		}
 
-				for (int i = 0; i < notifArr.length; i++) {
-					if (!notifMap.containsKey(notifArr[i].getNotCod())) {
-						notifArr[i].setNotOrgFk(org);
-						try {
-							guardar(notifArr[i]);
-							logger.log(Level.INFO, "Se agregó la notificación '" + notifArr[i].getNotCod() + "' para el org " + org.getOrgPk());
-						} catch (BusinessException e) {
-							logger.log(Level.SEVERE, null, e);
-							logger.log(Level.INFO, "No se pudo guardar la notificacion: " + notifArr[i].getNotCod() + "(org:" + org.getOrgPk() + ")");
-						}
-					}
-				}
+	}
+
+	public void controlarFaltantesOrganismo(Organismos org) {
+
+		List<NotificacionDefecto> notificacionesDefecto = notificacionDefectoBean.obtenerTodas();
+
+		controlarFaltantesOrganismo(org, notificacionesDefecto);
+	}
+
+	private void controlarFaltantesOrganismo(Organismos org, List<NotificacionDefecto> notificacionesDefecto) {
+
+		List<Notificacion> notifList = obtenerTodosPorOrg(org.getOrgPk());
+		Map<String, Notificacion> notifMap = new HashMap<>();
+
+		for (Notificacion notif : notifList) {
+			notifMap.put(notif.getNotCod(), notif);
+		}
+
+		for (NotificacionDefecto nd : notificacionesDefecto) {
+			if (!notifMap.containsKey(nd.getCodigo())) {
+
+				Notificacion notificacion = new Notificacion(org, nd.getCodigo(), nd.getAsunto(),
+						nd.getDescripcion(), null, nd.getGerenteAdjunto(), nd.getPmof(), nd.getPmot(), nd.getSponsor(), nd.getMensaje());
+
+				guardar(notificacion);
+
+				LOGGER.log(Level.INFO, "Se agrega la notificacion {0} para el org {1}", new Object[]{notificacion.getNotCod(), org.getOrgPk()});
 			}
 		}
 	}
@@ -117,7 +111,7 @@ public class NotificacionBean {
 			return dao.findByOneProperty(Notificacion.class, "notOrgFk.orgPk", orgPk);
 
 		} catch (DAOGeneralException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			LOGGER.log(Level.SEVERE, null, ex);
 			BusinessException be = new BusinessException(ex);
 //            be.setEx(ex);
 			be.addError(MensajesNegocio.ERROR_NOTIFICACION_OBTENER);
@@ -131,7 +125,7 @@ public class NotificacionBean {
 		try {
 			return dao.findById(Notificacion.class, notifPk);
 		} catch (DAOGeneralException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			LOGGER.log(Level.SEVERE, null, ex);
 			TechnicalException te = new TechnicalException(ex);
 			te.addError(MensajesNegocio.ERROR_NOTIFICACION_OBTENER);
 			throw te;
@@ -166,7 +160,7 @@ public class NotificacionBean {
 				CriteriaTO criterio = DAOUtils.createMatchCriteriaTOString("notMsg", msg);
 				criterios.add(criterio);
 			}
-	
+
 			CriteriaTO condicion;
 			if (criterios.size() == 1) {
 				condicion = criterios.get(0);
@@ -186,7 +180,7 @@ public class NotificacionBean {
 			try {
 				return dao.findEntityByCriteria(Notificacion.class, condicion, orderBy, asc, null, null);
 			} catch (DAOGeneralException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				LOGGER.log(Level.SEVERE, null, ex);
 				BusinessException be = new BusinessException();
 				be.addError(MensajesNegocio.ERROR_NOTIFICACION_OBTENER);
 				throw be;
@@ -202,7 +196,7 @@ public class NotificacionBean {
 				Notificacion n = obtenerNotifPorPk(notifPk);
 				dao.delete(n);
 			} catch (DAOGeneralException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				LOGGER.log(Level.SEVERE, null, ex);
 
 				BusinessException be = new BusinessException();
 				be.addError(MensajesNegocio.ERROR_NOTIFICACION_ELIMINAR);

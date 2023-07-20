@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ice="http://www.icesoft.com/icefaces/component"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <composite:interface>
+        <composite:attribute name="paginator"/>
+        <composite:attribute name="styleClass"/>
+        <composite:attribute name="columnClasses"/>
+    </composite:interface>
+    
+    <composite:implementation>
+
+        <ice:panelGrid columns="3" rendered="#{cc.attrs.rendered}" 
+                       styleClass="#{(cc.attrs.styleClass ne null) ? cc.attrs.styleClass : 'paginator'}"
+                       columnClasses="#{(cc.attrs.columnClasses ne null) ? cc.attrs.columnClasses : 'paginatorCol1 paginatorCol2 paginatorCol3'}">
+            
+            <ace:pushButton styleClass="boton paginator-prev" action="#{cc.attrs.paginator.prev()}"/>
+            
+            <h:outputText value="#{cc.attrs.paginator.pageIndex} / #{cc.attrs.paginator.pages}"/>
+            
+            <ace:pushButton styleClass="boton paginator-next" action="#{cc.attrs.paginator.next()}"/>
+            
+            <h:inputHidden value="#{cc.attrs.paginator.pageIndex}"/>
+        
+        </ice:panelGrid>
+            
+    </composite:implementation>
+    
+</html>

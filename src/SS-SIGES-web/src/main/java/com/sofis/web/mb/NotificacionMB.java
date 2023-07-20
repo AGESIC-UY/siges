@@ -1,6 +1,5 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.data.Notificacion;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.web.componentes.SofisPopupUI;
@@ -20,18 +19,17 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 @ManagedBean(name = "notificacionMB")
 @ViewScoped
 public class NotificacionMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private static final Logger logger = Logger.getLogger(NotificacionMB.class.getName());
+	
     private static final String BUSQUEDA_MSG = "busquedaMsg";
     private static final String POPUP_MSG = "popupMsg";
+    private static final String NOTIF_ASUNTO = "notAsunto";
     private static final String NOTIF_COD = "notCod";
     private static final String NOTIF_DESC = "notDesc";
     private static final String NOTIF_MSG = "notMsg";
@@ -46,9 +44,12 @@ public class NotificacionMB implements Serializable {
     // Variables
     private String cantElementosPorPagina = "25";
     private String elementoOrdenacion = NOTIF_COD;
+	
     // 0=descendente, 1=ascendente.
     private int ascendente = 1;
+	
     private String filtroCodigo;
+    private String filtroAsunto;
     private String filtroDesc;
     private String filtroMsg;
     private List<Notificacion> listaResultado;
@@ -92,6 +93,14 @@ public class NotificacionMB implements Serializable {
     public void setAscendente(int ascendente) {
         this.ascendente = ascendente;
     }
+
+	public String getFiltroAsunto() {
+		return filtroAsunto;
+	}
+
+	public void setFiltroAsunto(String filtroAsunto) {
+		this.filtroAsunto = filtroAsunto;
+	}
 
     public String getFiltroCodigo() {
         return filtroCodigo;
@@ -199,6 +208,7 @@ public class NotificacionMB implements Serializable {
 
         Map<String, Object> mapFiltro = new HashMap<>();
         mapFiltro.put(NOTIF_COD, filtroCodigo);
+        mapFiltro.put(NOTIF_ASUNTO, filtroAsunto);
         mapFiltro.put(NOTIF_DESC, filtroDesc);
         mapFiltro.put(NOTIF_MSG, filtroMsg);
 
@@ -248,6 +258,7 @@ public class NotificacionMB implements Serializable {
      */
     public String limpiar() {
         filtroCodigo = null;
+        filtroAsunto = null;
         filtroDesc = null;
         filtroMsg = null;
         listaResultado = null;

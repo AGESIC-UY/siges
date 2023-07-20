@@ -21,10 +21,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author Usuario
- */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FiltroInicioTO implements Serializable {
@@ -65,18 +61,21 @@ public class FiltroInicioTO implements Serializable {
 	private ObjetivoEstrategico objEst;
 
 	private Integer fechaActColor;
-        
-        private Integer colorActSem;
+
+	private Integer colorActSem;
 
 	private String orderBy;
 
-//    @XmlJavaTypeAdapter(MapAdapter.class)
 	private Map<String, Configuracion> configuracion;
 
 	@XmlTransient
 	private HashMap<Integer, Object> proyectosIdsMap;
+
 	@XmlTransient
 	private HashMap<Integer, Object> programasIdsMap;
+
+	@XmlTransient
+	private Integer areaId;
 
 	@XmlAnyElement(lax = true)
 	private List<Object> anything;
@@ -442,14 +441,20 @@ public class FiltroInicioTO implements Serializable {
 		this.fechaActColor = fechaActColor;
 	}
 
-        public Integer getColorActSem() {
-            return colorActSem;
-        }
+	public Integer getColorActSem() {
+		return colorActSem;
+	}
 
-        public void setColorActSem(Integer colorActSem) {
-            this.colorActSem = colorActSem;
-        }
+	public void setColorActSem(Integer colorActSem) {
+		this.colorActSem = colorActSem;
+	}
 
-        
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 
 }

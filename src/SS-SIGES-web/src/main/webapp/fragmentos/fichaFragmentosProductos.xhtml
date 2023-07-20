@@ -120,13 +120,13 @@
                         </ice:panelGroup>
 
                         <ice:panelGroup styleClass="panelBotones">
-                            <h:commandButton id="btnEditarProd"
+                            <ice:commandButton id="btnEditarProd"
                                              styleClass="botonEditar iconoTabla" 
                                              title="#{labels.prod_tabla_btn_editar}"
                                              rendered="#{!editar and fichaMB.fieldRendered('editarProducto', fichaMB.isCoordinadorEntregable(prod.prodEntregableFk))}"
                                              action="#{fichaMB.editarProducto(prod)}" />
 
-                            <h:commandButton id="btnGuardarProd"
+                            <ice:commandButton id="btnGuardarProd"
                                              styleClass="botonGuardar iconoTabla" 
                                              title="#{labels.prod_tabla_btn_guardar}"
                                              rendered="#{editar and fichaMB.fieldRendered('editarProducto', fichaMB.isCoordinadorEntregable(prod.prodEntregableFk))}"
@@ -145,11 +145,12 @@
                                                     severity="info"
                                                     modal="true">
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesDelPend"
+                                    <ice:commandButton id="yesDelPend"
                                                      value="#{labels.si}"
                                                      styleClass="boton principal botonContinuar"
                                                      onclick="confirmationEliminarProd#{prod.prodPk}.hide();" 
-                                                     actionListener="#{fichaMB.eliminarProducto(prod)}"/>
+                                                     actionListener="#{fichaMB.eliminarProducto(prod)}">
+                                    </ice:commandButton>
                                     <h:commandButton id="noDelPend"
                                                      value="#{labels.no}"
                                                      styleClass="boton principal botonEliminar"
@@ -190,9 +191,9 @@
                                 <ice:outputText value="#{prodMes.prodmesReal}"
                                                 styleClass="alinearDerecha"
                                                 converter="ImporteFormatConverter"
-                                                rendered="#{!(editar and fichaMB.fichaTO.estado.isEstado(4) and fichaMB.editarRealProd(prodMes, prod.prodEntregableFk)) and prodMes.prodmesPk > 0}"/>
+                                                rendered="#{!(editar and fichaMB.fichaTO.estado.isEstado(4)) and prodMes.prodmesPk > 0}"/>
                                 <ace:textEntry value="#{prodMes.prodmesReal}" 
-                                               rendered="#{(editar and fichaMB.fichaTO.estado.isEstado(4) and fichaMB.editarRealProd(prodMes, prod.prodEntregableFk) and prodMes.prodmesPk > 0)}"
+                                               rendered="#{(editar and fichaMB.fichaTO.estado.isEstado(4) and prodMes.prodmesPk > 0)}"
                                                converter="ImporteFormatConverter"
                                                styleClass="textoCorto alinearDerecha"/>
 

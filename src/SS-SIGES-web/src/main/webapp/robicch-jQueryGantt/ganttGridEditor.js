@@ -88,8 +88,6 @@ function setParentTask(task, tasks) {
     var pos = tasks.indexOf(task);
     if (pos < tasks.length - 1 && tasks[pos + 1].level > task.level) {
         task.parent = true;
-        task.progress = 0;
-        task.esfuerzo = 1;
     }
 }
 
@@ -145,17 +143,22 @@ GridEditor.prototype.refreshTaskRow = function (task, coordinadores, master) {
             }
         }
 
+        var subtitulo = (task.tieneProd ? '(P)' : '') + (task.esReferencia ? '(R)' : '');
         if (task.parent) {
+
             if (task.id == 1) {
-                $(el).html((task.tieneProd ? '(P)' : '') + "<b> " + task.name + "</b><br><b>Esfuerzo T.</b>: " + master.esfuerzoTotal + " - <b>Horas T.</b>: " + master.horasTotal);
+                subtitulo += "<b> " + task.name + "</b><br><b>Esfuerzo T.</b>: " + master.esfuerzoTotal + " - <b>Horas T.</b>: " + master.horasTotal;
             } else {
-                $(el).html((task.tieneProd ? '(P)' : '') + "<b> " + task.name + "</b><br>Coordinador: " + coordName);
+                subtitulo += "<b> " + task.name + "</b><br>Coordinador: " + coordName;
             }
         } else {
-            $(el).html((task.tieneProd ? '(P)' : '') + "(" + task.esfuerzo + ")<b> " + task.name + "</b> " + "<br>Coordinador: " + coordName);
+            subtitulo += "(" + task.esfuerzo + ")<b> " + task.name + "</b> " + "<br>Coordinador: " + coordName;
         }
 
+        $(el).html(subtitulo);
+
     });
+
     /*FIN ampliacion SOFIS - SIGES 1.0*/
 
     row.find("[name=code]").val(task.code);
@@ -168,7 +171,13 @@ GridEditor.prototype.refreshTaskRow = function (task, coordinadores, master) {
     row.find("[name=endIsMilestone]").val(task.endIsMilestone);
     row.find("[name=progress]").val(task.progress);
     row.find(".taskAssigs").html(task.getAssigsString());
-    console.log(row);
+
+    if (task.esReferencia) {
+        row.find("[name=start]").attr("disabled", true);
+        row.find("[name=end]").attr("disabled", true);
+        row.find("[name=depends]").attr("disabled", true);
+        ;
+    }
     //profiler.stop();
 };
 GridEditor.prototype.redraw = function () {
@@ -182,10 +191,17 @@ GridEditor.prototype.reset = function () {
 GridEditor.prototype.bindRowEvents = function (task, taskRow) {
     var self = this;
     var isCoord = (task.coordinador == this.master.usuarioId);
+    var isPmoEditor = this.master.isPMOEditor;
+    console.log('isPmoEditor bindRowEvents ' + isPmoEditor);
+
     var editar = this.master.canWrite && (this.master.isPM || isCoord);
-    if (editar) {
+
+    console.log('editar en bindRowEvents ' + editar);
+    if (editar || isPmoEditor) {
+        console.log('entra a bloque 1');
         self.bindRowInputEvents(task, taskRow);
     } else { //cannot write: disable input
+        console.log('entra a bloque 2');
         taskRow.find("input").attr("readonly", true);
         var elem = taskRow.find(".teamworkIcon");
     }
@@ -362,6 +378,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
     //make task editor
     var taskEditor = $.JST.createFromTemplate({}, "TASK_EDITOR");
+
     taskEditor.find("#name").val(task.name);
     taskEditor.find("#description").val(task.description);
     taskEditor.find("#code").val(task.code);
@@ -379,7 +396,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 //    taskEditor.find("#end").val(new Date(task.end).format());
 
 
-    if (task.tieneProd || task.estadoTask > 1) {
+    if (task.tieneProd || task.estadoTask > 1 || task.esReferencia) {
         taskEditor.find("#endIsMilestone").attr("disabled", "true");
     }
 
@@ -462,13 +479,29 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     if (task.tieneProd) {
         taskEditor.find("#tieneProductos").val('Tiene productos asociados.');
     }
-    /*FIN ampliacion SOFIS - SIGES 1.0*/
+    if (task.esReferencia && task.referido) {
+        if (task.estadoTask > 1) {
+            taskEditor.find("#name").attr("disabled", "true");
+            taskEditor.find("#description").attr("disabled", "true");
+        }
+        taskEditor.find("#coordinador").attr("disabled", "true");
+        taskEditor.find("#nombre-referencia").html(task.referido.name);
+        taskEditor.find("#numero-entregable").html(task.referido.id);
+        taskEditor.find("#codigo-proyecto-refereido").html(task.proyectoReferido.id);
+        taskEditor.find("#proyecto-referencia").html(task.proyectoReferido.nombre);
+        taskEditor.find("#link-proyecto-referencia").attr("onclick", "navegarAProyecto({id:'" + task.proyectoReferido.id + "'})");
+        taskEditor.find("#referido-eliminado").remove();
 
-    /**
-     * BRUNO: Si es padre, desactivo las fechas del formulario
-     */
+    } else if (task.esReferencia) {
+
+        taskEditor.find("#div-entregable-referencia").remove();
+        taskEditor.find("#div-proyecto-referencia").remove();
+
+    } else {
+        taskEditor.find("#referencia").remove();
+    }
+
     if (task.isParent()) {
-        console.log("ES PADRE, DESACTIVO LAS FECHAS DEL FORMULARIO");
         taskEditor.find("#start").attr("disabled", "true");
         taskEditor.find("#end").attr("disabled", "true");
     }
@@ -478,9 +511,6 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         taskEditor.find("#inicioPeriodoDivRow").remove()
     }
 
-    //console.log("self.master.periodoEntregable: " + self.master.periodoEntregable);
-
-    //taskEditor.find("[name=depends]").val(task.depends);
 
     //make assignments table
     var assigsTable = taskEditor.find("#assigsTable");
@@ -501,7 +531,6 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
             $(this).dateField({
                 inputField: $(this),
                 callback: function (date) {
-                    //SOFIS VERIFICAR
 
                     /* corregido para que se comporte de forma similar al callback de taskEditor.find('#end') */
                     var start = Date.parseString(taskEditor.find("#start").val());
@@ -575,10 +604,6 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
             self.master.beginTransaction();
 
-            /**
-             * 
-             * BRUNO 06-04-17: Controlo el inicio y fin del período.
-             */
             var taskInicioPeriodo = self.master.getTaskInicioPeriodo();
             var taskFinPeriodo = self.master.getTaskFinPeriodo();
             var error = false;
@@ -613,56 +638,80 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
                 console.log("self.master.getTaskInicioPeriodoCheck(" + taskId + ") : " + false);
             }
 
-                var progress = Number(taskEditor.find("#progress").val());
-                if (!taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || progress < 0 || progress > 100)) {
-                       console.log("self.master.getProgress(" + taskId + ") : " + true);
-                       $('#error_msg').remove();
-                       $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del entregable "' + task.name + '" tiene que ser un número entero entre 0 y 100.</span></div>')
-                                       .insertBefore("#saveButton");
-                       error = true;
-                }else if(taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || (progress !== 0 && progress !== 100))){
-                       console.log("self.master.getProgress(" + taskId + ") : " + true);
-                       $('#error_msg').remove();
-                       $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del hito "' + task.name + '" tiene que ser 0 o 100.</span></div>')
-                                       .insertBefore("#saveButton");
-                       error = true;
-                }
-                
-                var esfuerzo = Number(taskEditor.find("#esfuerzo").val());
-                if(!(Number.isInteger(esfuerzo)) || esfuerzo < 0 ){
-                    console.log("self.master.getProgress(" + taskId + ") : " + true);
-                    $('#error_msg').remove();
-                    $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El esfuerzo del entregable "' + task.name + '" tiene que ser un número entero positivo.</span></div>')
-                                    .insertBefore("#saveButton");
-                    error = true;                    
-                }
+            Number.isInteger = Number.isInteger || function (value) {
+                return typeof value === "number" &&
+                        isFinite(value) &&
+                        Math.floor(value) === value;
+            };
+
+            var progress = Number(taskEditor.find("#progress").val());
+            if (!taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || progress < 0 || progress > 100)) {
+                console.log("self.master.getProgress(" + taskId + ") : " + true);
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del entregable "' + task.name + '" tiene que ser un número entero entre 0 y 100.</span></div>')
+                        .insertBefore("#saveButton");
+                error = true;
+            } else if (taskEditor.find("#endIsMilestone").is(":checked") && progress !== null && (isNaN(progress) || !(Number.isInteger(progress)) || (progress !== 0 && progress !== 100))) {
+                console.log("self.master.getProgress(" + taskId + ") : " + true);
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">El progreso del hito "' + task.name + '" tiene que ser 0 o 100.</span></div>')
+                        .insertBefore("#saveButton");
+                error = true;
+            }
+
+            var esfuerzo = Number(taskEditor.find("#esfuerzo").val());
+            if (!(Number.isInteger(esfuerzo)) || esfuerzo < 0) {
+                console.log("self.master.getProgress(" + taskId + ") : " + true);
+                $('#error_msg').remove();
+                $('<div id="error_msg" class="col-sm-12" style="margin-bottom: 10px;"><span style="color: red;">La ponderación del entregable "' + task.name + '" tiene que ser un número entero positivo.</span></div>')
+                        .insertBefore("#saveButton");
+                error = true;
+            }
 
 
 
-            if (error == true) {
+            if (error === true) {
                 return;
             }
 
             task.name = taskEditor.find("#name").val();
             task.description = taskEditor.find("#description").val();
             task.code = taskEditor.find("#code").val();
-            task.progress = parseInt(taskEditor.find("#progress").val());
+
+
+            if (isNaN(parseInt(taskEditor.find("#progress").val()))) {
+                task.progress = 0;
+            } else {
+                task.progress = parseInt(taskEditor.find("#progress").val());
+            }
+
+
             task.duration = parseInt(taskEditor.find("#duration").val());
             task.startIsMilestone = taskEditor.find("#startIsMilestone").is(":checked");
             task.endIsMilestone = taskEditor.find("#endIsMilestone").is(":checked");
-            /*INICIO ampliacion SOFIS - SIGES 1.0*/
+
             var coord = task.coordinador;
             task.coordinador = parseInt(taskEditor.find("#coordinador").val());
-            task.esfuerzo = parseFloat(taskEditor.find("#esfuerzo").val());
+
+            if (isNaN(parseFloat(taskEditor.find("#esfuerzo").val()))) {
+                task.esfuerzo = 0;
+            } else {
+                task.esfuerzo = parseFloat(taskEditor.find("#esfuerzo").val());
+            }
+
+
+
+
+
             task.horasEstimadas = taskEditor.find("#horasEstimadas").val();
             var cambiarHijos = taskEditor.find("#cambiarCoordHijos").is(":checked");
             task.relevantePMO = taskEditor.find("#relevantePMO").is(":checked");
-            /*FIN ampliacion SOFIS - SIGES 1.0*/
 
-            /*INICIO ampliacion SOFIS - SIGES 06-04-17*/
+
+
             task.inicioProyecto = taskEditor.find("#periodo_inicio").is(":checked");
             task.finProyecto = taskEditor.find("#periodo_fin").is(":checked");
-            /*FIN ampliacion SOFIS - SIGES 06-04-17*/
+
 
             if (task.endIsMilestone) {
                 task.start = task.end;
@@ -671,7 +720,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
             // Solo si es Gerente o adjunto, o coordinador. Y si selecciona un check.
             var isCoord = (coord == self.master.usuarioId);
-            if ((self.master.isPM || isCoord) && cambiarHijos) {
+            console.log('antes PMOEDITOR');
+            var isPmoEditor = self.master.isPMOEditor;
+            console.log('despues PMOEDITOR');
+            if ((self.master.isPM || isCoord || isPmoEditor) && cambiarHijos) {
                 var seguir = true;
                 var task_Id = task.id;
                 task_Id++;
@@ -679,17 +731,24 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
                 var arrTasks = self.master.tasks;
                 var encontro = false;
                 for (i = 0; i < arrTasks.length && seguir; i++) {
-                    var t = arrTasks[i];
-                    if (encontro &&
-                            typeof t !== 'undefined' && t !== null && t.level > taskLevel) {
-                        t.coordinador = task.coordinador;
-                    } else if (encontro) {
-                        seguir = false;
+                    try {
+                        var t = arrTasks[i];
+                        if (encontro &&
+                                typeof t !== 'undefined' && t !== null && t.level > taskLevel) {
+                            if (!t.esReferencia) {
+                                t.coordinador = task.coordinador;
+                            }
+                        } else if (encontro) {
+                            seguir = false;
+                        }
+
+                        if (encontro || t.id === task.id) {
+                            encontro = true;
+                        }
+                    } catch (ex) {
+                        console.log("Error en linea 721 GDE");
                     }
 
-                    if (encontro || t.id === task.id) {
-                        encontro = true;
-                    }
                 }
             }
 
@@ -703,19 +762,23 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
                 //check if an existing assig has been deleted and re-created with the same values
                 var found = false;
                 for (var i = 0; i < task.assigs.length; i++) {
-                    var ass = task.assigs[i];
-                    if (assId == ass.id) {
-                        ass.effort = effort;
-                        ass.roleId = roleId;
-                        ass.resourceId = resId;
-                        ass.touched = true;
-                        found = true;
-                        break;
-                    } else if (roleId == ass.roleId && resId == ass.resourceId) {
-                        ass.effort = effort;
-                        ass.touched = true;
-                        found = true;
-                        break;
+                    try {
+                        var ass = task.assigs[i];
+                        if (assId == ass.id) {
+                            ass.effort = effort;
+                            ass.roleId = roleId;
+                            ass.resourceId = resId;
+                            ass.touched = true;
+                            found = true;
+                            break;
+                        } else if (roleId == ass.roleId && resId == ass.resourceId) {
+                            ass.effort = effort;
+                            ass.touched = true;
+                            found = true;
+                            break;
+                        }
+                    } catch (ex) {
+                        console.log("Error en linea 753 GDE");
                     }
                 }
 
@@ -803,10 +866,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     // Carga el combo de Coordinadores
     selectCoord = document.getElementById("coordinador");
     var coord = this.master.coordinadores;
-    
+
     //console.log("imprimo coord a ver que sale");
     //console.log(coord);
-    
+
     for (var i = 0; i < coord.length; i++) {
         var arrSplit = coord[i].split(":");
         try {
@@ -824,28 +887,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         }
     }
 
-    // Carga el combo de Progreso
-    /*
-    selectProgress = document.getElementById("progress");
-    var progressValues;
-    if (task.endIsMilestone) {
-        progressValues = [0, 100];
-    } else {
-        progressValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    }
-*/
-/*    for (var i = 0; i < progressValues.length; i++) {
-        var value = progressValues[i];
-        var opt = document.createElement('option');
-        opt.value = value;
-        opt.text = value;
-        if (task.progress == value) {
-            opt.setAttribute('selected', true);
-        }
-        selectProgress.add(opt);
-    }
-  */  
-    if (task.tieneProd && task.progress % 10 != 0) {
+    if (task.tieneProd && task.progress % 10 !== 0) {
         var opt = document.createElement('option');
         opt.value = task.progress;
         opt.text = task.progress;
@@ -853,38 +895,40 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         //selectProgress.add(opt);
     }
 
-    /*
-     *  12-06-2018 Nico: Se agrega como condición de todos los if que el estado del proyecto sea finalizado,
-     *          de esta manera, no se le permite editar el cronograma al usuario cuando el proyecto se encuentra
-     *          en estado "FINALIZADO".
-    */
 
-    if (task.parent || this.master.estado == 5) {
+    if (task.parent || this.master.estado === 5) {
         document.getElementById("esfuerzo").setAttribute('disabled', 'true');
+    }
+
+    if (task.parent || this.master.estado === 5 || task.esReferencia) {
+
         document.getElementById("progress").setAttribute('disabled', 'true');
     }
 
-    if (this.master.estado == 4 || this.master.estado == 5) {
+    if (this.master.estado === 4 || this.master.estado === 5) {
         document.getElementById("name").setAttribute('disabled', 'true');
         document.getElementById("esfuerzo").setAttribute('disabled', 'true');
     }
 
-    //console.log("task.tieneProd: ----> " + task.tieneProd);
 
     if (task.tieneProd) {
         document.getElementById("progress").setAttribute('disabled', 'true');
     }
 
-    var isCoord = (task.coordinador == this.master.usuarioId);
+    var isCoord = (task.coordinador === this.master.usuarioId);
     var isPM = this.master.isPM;
-    var disable = !(isPM || isCoord);
-   
-    if (disable || this.master.estado == 5) {
+    var isPmoEditor = this.master.isPMOEditor;
+    var disable = !(isPM || isCoord || isPmoEditor);
+
+    if (disable || this.master.estado === 5) {
         document.getElementById("name").setAttribute('disabled', 'true');
-        document.getElementById("description").setAttribute('disabled', 'true');
+        document.getElementById("esfuerzo").setAttribute('disabled', 'true');
+    }
+
+    if (disable || this.master.estado === 5 || task.esReferencia) {
+//        document.getElementById("description").setAttribute('disabled', 'true');
         document.getElementById("coordinador").setAttribute('disabled', 'true');
         document.getElementById("tieneProductos").setAttribute('disabled', 'true');
-        document.getElementById("esfuerzo").setAttribute('disabled', 'true');
         document.getElementById("start").setAttribute('disabled', 'true');
         document.getElementById("progress").setAttribute('disabled', 'true');
         document.getElementById("end").setAttribute('disabled', 'true');
@@ -893,15 +937,18 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     }
 
     var isPMO = (this.master.isPMO);
-    if (!isPMO || this.master.estado == 5) {
+    if (!isPMO || this.master.estado === 5 || task.esReferencia) {
         document.getElementById("relevantePMO").setAttribute('disabled', 'true');
     } else {
         document.getElementById("relevantePMO").removeAttribute('disabled');
         document.getElementById("relevantePMO").removeAttribute('readonly');
     }
 
-    if (!isPM || this.master.estado == 5) {
-        //alert("No es PM y desactivo botones");
+    if (isPmoEditor) {
+        document.getElementById("description").removeAttribute('readonly');
+    }
+
+    if (!isPM || this.master.estado === 5) {
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');
         document.getElementById("addBelowBtn").setAttribute('disabled', 'true');
         document.getElementById("indentBtn").setAttribute('disabled', 'true');
@@ -918,5 +965,4 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
 function closeEditorDiv() {
     $("#__blackpopup__").trigger("close");
-//    $("#bwinPopupd").trigger("close");
 }

@@ -26,6 +26,8 @@ public class ConstantesEstandares {
     
     public static final String CALENDAR_PATTERN = "dd/MM/yyyy";
     
+     public static final String CALENDAR_TIME_PATTERN = "yyyy-MM-dd hh:mm:ss";
+    
     /*
     *   15-06-2018  ---> Se cambia el valor de CALENDAR_TIME_ZONE para que tome el "TimeZone" desde el sistema.
     */

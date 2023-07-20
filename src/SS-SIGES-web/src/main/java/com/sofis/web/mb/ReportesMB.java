@@ -74,9 +74,6 @@ public class ReportesMB implements Serializable {
         StringBuilder result = new StringBuilder();
         result.append("<b>Referencia:</b><br/>")
                 .append("<input class=\"botonSemaforo-dis\" type=\"submit\" value=\"\" style=\"background-color: ")
-                .append(ConstantesEstandares.SEMAFORO_GRIS).append(";\" disabled=\"disabled\">")
-                .append("Gris: Entregable padre.")
-                .append("<input class=\"botonSemaforo-dis\" type=\"submit\" value=\"\" style=\"background-color: ")
                 .append(ConstantesEstandares.SEMAFORO_AZUL).append(";\" disabled=\"disabled\">")
                 .append("Azul: Porcentaje de avance finalizado.")
                 .append("<input class=\"botonSemaforo-dis\" type=\"submit\" value=\"\" style=\"background-color: ")
@@ -84,7 +81,10 @@ public class ReportesMB implements Serializable {
                 .append("Verde: Porcentaje de avance en plazo.")
                 .append("<input class=\"botonSemaforo-dis\" type=\"submit\" value=\"\" style=\"background-color: ")
                 .append(ConstantesEstandares.SEMAFORO_ROJO).append(";\" disabled=\"disabled\">")
-                .append("Rojo: Porcentaje de avance atrasado.<br/>");
+                .append("Rojo: Porcentaje de avance atrasado.")
+                .append("<input class=\"botonSemaforo-dis\" type=\"submit\" value=\"\" style=\"background-color: ")
+                .append(ConstantesEstandares.SEMAFORO_GRIS).append(";\" disabled=\"disabled\">")
+                .append("Gris: Entregable padre sin esfuerzo.<br/>");
 
         return result.toString();
     }

@@ -21,7 +21,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
         <org-netbeans-modules-maven-jaxws._5f_C_5f_ObtenerCategorias>http://localhost:16456/SigesVisualizadorPrivado/ObtenerCategorias?WSDL</org-netbeans-modules-maven-jaxws._5f_C_5f_ObtenerCategorias>
         <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>JBoss4</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>
-        <netbeans.hint.jdkPlatform>JDK_1.7</netbeans.hint.jdkPlatform>
+        <netbeans.hint.jdkPlatform>JDK_1.7_80_</netbeans.hint.jdkPlatform>
         <netbeans.compile.on.save>none</netbeans.compile.on.save>
     </properties>
 </project-shared-configuration>

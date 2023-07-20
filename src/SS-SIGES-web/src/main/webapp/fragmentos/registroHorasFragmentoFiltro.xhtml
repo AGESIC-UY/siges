@@ -51,7 +51,14 @@
                             </ice:selectOneMenu>
                         </ice:panelGroup>
                     </ice:panelGroup>
-                    <ice:panelGroup styleClass="clearfix"/>
+                    <ice:panelGroup styleClass="col-sm-4 form-group">
+                         <ice:outputLabel value="#{labels.revisionHoras_part_usuario}:" styleClass="col-md-4" />
+                         <ice:panelGroup styleClass="col-md-8">
+                             <ice:selectOneMenu value="#{registroHorasMB.usuarioCombo.selected}">
+                                <f:selectItems value="#{registroHorasMB.usuarioCombo.items}" />
+                            </ice:selectOneMenu>
+                         </ice:panelGroup>
+                    </ice:panelGroup>
                     <ice:panelGroup styleClass="col-sm-4 form-group">
                         <ice:outputLabel value="#{labels.revisionHoras_aprobado}" styleClass="col-md-4"/>
                         <ice:panelGroup styleClass="col-md-8">

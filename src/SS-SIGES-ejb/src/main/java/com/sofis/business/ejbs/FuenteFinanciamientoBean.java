@@ -111,7 +111,15 @@ public class FuenteFinanciamientoBean {
 			throw be;
 		}
 	}
-
+	
+	public List<FuenteFinanciamiento> obtenerFuentesHabilitadasPorOrgId(Integer orgPk) {
+	
+        Map<String, Object> filtroFuentes = new HashMap<>();
+        filtroFuentes.put("habilitada", true);
+		
+		return busquedaFuenteFiltro(orgPk, filtroFuentes, "fueNombre", 1);
+	}
+	
 	public List<FuenteFinanciamiento> busquedaFuenteFiltro(Integer orgPk, Map<String, Object> mapFiltro,
 			String elementoOrdenacion, int ascendente) {
 		if (orgPk != null) {

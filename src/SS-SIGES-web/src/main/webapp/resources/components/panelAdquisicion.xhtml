@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:ice="http://www.icesoft.com/icefaces/component"
+      xmlns:o="http://omnifaces.org/ui"
+      >
+
+    <composite:interface >
+        <composite:attribute name="adquisicion"/>
+        <composite:attribute name="rendered"/>
+        <composite:attribute name="close" method-signature="void close()" />
+    </composite:interface>
+
+    <composite:implementation>
+        <o:importConstants type="com.sofis.web.genericos.constantes.ConstantesPresentacion" var="const"/>
+
+        <ice:panelPopup id="popupPresupuestoVerAdqForm"
+                        visible="#{cc.attrs.rendered}"
+                        rendered="#{cc.attrs.rendered}"
+                        draggable="false" 
+                        positionOnLoadOnly="true"
+                        modal="true">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.verAdquisicionTitulo}"/>
+                    <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                       action="#{cc.attrs.close}"/>
+                </ice:panelGroup>
+            </f:facet>
+            <f:facet name="body">
+                <ice:panelGroup id="presupuestoVerAdqForm" rendered="#{cc.attrs.rendered}">
+
+                    <ice:panelGroup styleClass="popup-panel-adquisicion">
+                        <ice:panelGrid styleClass="formulario" columns="2">
+                            <ice:outputLabel value="#{labels.adquisicion_nombre}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.nombre}" />
+
+                            <ice:outputLabel value="#{labels.adquisicion_proveedor}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.proveedor.nombre}" />
+
+                            <ice:outputLabel value="#{labels.adquisicion_fuente}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.fuenteFinanciamiento.nombre}"/>
+
+                            <ice:outputLabel value="#{labels.moneda}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.moneda.signo}"/>
+
+                            <ice:outputLabel value="#{labels.procedimientoCompra}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.procedimientoCompra.nombre}"/>
+
+                            <ice:outputLabel value="#{labels.causalCompra}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.causalCompra.nombre}"/>
+
+                            <ice:outputLabel value="#{labels.adquisicion_identificador_grp}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.identificadorGrpErp.nombre}" converter="porcentajeConverter"/>
+
+                            <ice:outputLabel value="#{labels.adquisicion_componente_producto}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.componenteProducto.nombre}"/>
+
+                            <ice:outputLabel value="#{labels.adquisicion_compartida}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.compartida}" converter="sinoConverter"/>
+
+                            <ice:outputLabel value="#{labels.adquisicion_compartida_usuario}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.responsable.nombreApellido}" />
+
+                            <ice:outputLabel value="#{labels.tipoRegistroAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.tipoRegistro.text}"/>
+
+                            <ice:outputLabel value="#{labels.arrastreAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.arrastre}" converter="sinoConverter"/>
+
+                            <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.fechaEstimadaInicioCompra}">
+                                <f:convertDateTime pattern="#{const.CALENDAR_PATTERN}" 
+                                                   timeZone="#{const.CALENDAR_TIME_ZONE}"/>
+                            </ice:outputText>
+
+                            <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.fechaEsperadaInicioEjecucion}">
+                                <f:convertDateTime pattern="#{const.CALENDAR_PATTERN}" 
+                                                   timeZone="#{const.CALENDAR_TIME_ZONE}"/>
+                            </ice:outputText>
+
+                            <ice:outputLabel value="#{labels.tipoAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.tipo.nombre}" />
+
+                            <ice:outputLabel value="#{labels.adquisicionIdAdquisicion}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.idAdquisicion}" />
+
+                            <ice:outputLabel value="#{labels.centroCosto}"/>
+                            <ice:outputText value="#{cc.attrs.adquisicion.centroCosto.nombre}" />
+
+                        </ice:panelGrid>
+                    </ice:panelGroup> 
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:linkButton value="#{labels.cerrar}" styleClass="boton secundario" 
+                                        immediate="true"
+                                        action="#{cc.attrs.close}"/>
+                    </ice:panelGroup>
+
+                </ice:panelGroup>
+            </f:facet>
+
+        </ice:panelPopup>
+
+    </composite:implementation>
+
+</html>

@@ -95,6 +95,15 @@
                             <h:outputText value="#{rol.rolintNombre}"/>
                         </ace:column>
                         
+                        <ace:column headerText="#{labels.rol_int_head_hab}" >
+                            <ice:panelGroup title="#{labels.rol_int_head_hab}">
+                                <ace:checkboxButton value="#{rol.habilitado}" 
+                                                    valueChangeListener="#{rolesInteresadosMB.actualizarHabilitado(rol)}">
+                                    <ace:ajax/>
+                                </ace:checkboxButton>
+                            </ice:panelGroup>
+                        </ace:column>
+                        
                         <ace:column headerText="" styleClass="columnaBoton">
                             <ice:panelGroup title="#{labels.editar}">
                                 <ace:pushButton styleClass="botonEditar iconoTabla" 

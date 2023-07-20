@@ -111,7 +111,7 @@ public class DataTestingBean {
         p.setAreasRestringidasSet(new HashSet<Areas>());
         p.setAreasTematicasSet(new HashSet<AreasTags>());
 
-        p = programasBean.guardarPrograma(p, usuario, org.getOrgPk());
+        p = programasBean.guardarPrograma(p, usuario, org.getOrgPk(), false);
 
         progIndicesBean.guardarIndicadoresNewTrans(p.getProgPk(), org.getOrgPk());
 
@@ -147,7 +147,6 @@ public class DataTestingBean {
 
         p = proyectosBean.guardarProyecto(p, usuario, org.getOrgPk());
 
-        logger.info("PROYECTO " + p);
         if (p == null) {
             return;
         }
@@ -171,7 +170,6 @@ public class DataTestingBean {
 
         HashSet documentosSet = new HashSet();
 
-        logger.info("INICIA DOC " + p);
         //la lista de documentos
         for (int y = 0; y < 30; y++) {
             Documentos r = new Documentos();
@@ -183,13 +181,11 @@ public class DataTestingBean {
             documentosSet.add(r);
         }
 
-        logger.info("FIN DOC " + p);
         p.setDocumentosSet(documentosSet);
 
         p = proyectosBean.guardarProyecto(p, usuario, org.getOrgPk());
         //p = emT.merge(p);
 
-        logger.info("INICIA CRO " + p);
 
         Cronogramas cro = new Cronogramas();
         cro.setCroEntSeleccionado(0);

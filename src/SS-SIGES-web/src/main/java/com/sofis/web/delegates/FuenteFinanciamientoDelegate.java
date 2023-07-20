@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class FuenteFinanciamientoDelegate {
 
     @Inject
@@ -35,4 +31,9 @@ public class FuenteFinanciamientoDelegate {
     public FuenteFinanciamiento guardarFuente(FuenteFinanciamiento fuenteEnEdicion) {
         return fuenteFinanciamientoBean.guardarFuente(fuenteEnEdicion);
     }
+	
+    public List<FuenteFinanciamiento> obtenerFuentesHabilitadasPorOrgId(Integer orgId) {
+        return fuenteFinanciamientoBean.obtenerFuentesHabilitadasPorOrgId(orgId);
+    }
+
 }

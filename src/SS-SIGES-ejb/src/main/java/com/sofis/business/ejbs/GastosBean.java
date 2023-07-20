@@ -87,7 +87,7 @@ public class GastosBean {
         return gasto;
     }
 
-    public List<Gastos> obtenerRegistrosGastos(Integer usuId, Integer proyPk, Date fDesde, Date fHasta, TipoGasto tipoGasto, Long desde, Long cant, Integer aprobado) {
+    public List<Gastos> obtenerRegistrosGastos(Integer usuId, Integer proyPk, Date fDesde, Date fHasta, TipoGasto tipoGasto, Long desde, Long cant, Integer aprobado, Integer orgPk) {
         List<Gastos> registrosGastos = new LinkedList<>();
         try {
             GastosDAO dao = new GastosDAO(em);
@@ -109,6 +109,9 @@ public class GastosBean {
             if (tipoGasto != null) {
                 crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasTipoFk.tipogasPk", tipoGasto.getTipogasPk()));
             }
+            if (orgPk != null) {
+                crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasProyFk.proyOrgFk.orgPk", orgPk));
+            }
             if (aprobado != null) {
                 if (aprobado.equals(0)) {
                     CriteriaTO aproFalse = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasAprobado", Boolean.FALSE);
@@ -118,11 +121,14 @@ public class GastosBean {
                     crits.add(CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "gasAprobado", Boolean.TRUE));
                 }
             }
-
             if (crits.isEmpty()) {
                 registrosGastos = dao.findAll(Gastos.class);
             } else {
-                CriteriaTO crit = CriteriaTOUtils.createANDTO(crits.toArray(new CriteriaTO[0]));
+                CriteriaTO crit = null;
+                if (crits.size() == 1)
+                    crit = crits.get(0);
+                else
+                    crit = CriteriaTOUtils.createANDTO(crits.toArray(new CriteriaTO[0]));
 
                 String[] orderBy1 = new String[]{"gasFecha", "gasUsuarioFk.usuPrimerNombre", "gasUsuarioFk.usuPrimerApellido", "gasProyFk.proyNombre"};
                 boolean[] orderBy2 = new boolean[]{false, true, true, true};
@@ -213,7 +219,23 @@ public class GastosBean {
         }
         return null;
     }
-
+    
+    public Boolean tieneGastoEnMonedaAnio(Integer proyPk, Integer monPk, Integer anio, Boolean aprobado) {
+        if (proyPk != null) {
+            GastosDAO dao = new GastosDAO(em);
+            return dao.tieneGastoEnMonedaAnio(proyPk, monPk, anio, aprobado);
+        }
+        return null;
+    }
+    
+    public Boolean tieneGastosProy(Integer proyPk) {
+        if (proyPk != null) {
+            GastosDAO dao = new GastosDAO(em);
+            return dao.tieneGastosProy(proyPk);
+        }
+        return null;
+    }
+            
     /**
      * Si asc es true retorna la primera fecha, si no la última.
      *

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmPopup">
+        <ice:panelPopup rendered="#{mailTemplateDefectoMB.renderPopupEdicion.isRenderPopup()}" 
+                        draggable="true" 
+                        autoCentre="true" 
+                        modal="true"
+                        style="width: 900px;">
+            <f:facet name="header">
+                <ice:panelGroup styleClass="cabezalPopup">
+                    <ice:outputText value="#{labels.mail_tmpl_titulo}"/>
+                    <ice:commandButton styleClass="botonCerrar" 
+                                       action="#{mailTemplateDefectoMB.cancelar()}"/>
+                </ice:panelGroup>
+            </f:facet>
+
+            <f:facet name="body">
+                <ice:panelGroup id="form">
+                    <ice:panelGrid styleClass="formulario" columns="4">
+                        <ice:outputLabel value="#{labels.mail_tmpl_head_cod}:" styleClass="obligatorio"/>
+                        <ace:textEntry value="#{mailTemplateDefectoMB.templateEnEdicion.codigo}" disabled="true"/>
+
+                        <ice:outputLabel value="#{labels.mail_tmpl_head_asunto}:" styleClass="obligatorio"/>
+                        <ace:textAreaEntry value="#{mailTemplateDefectoMB.templateEnEdicion.asunto}" />
+                    </ice:panelGrid>
+
+                    <ice:panelGrid styleClass="formulario" >
+                        <ice:outputLabel value="#{labels.mail_tmpl_head_mensaje}:" styleClass="obligatorio"/>
+                        <ace:richTextEntry id="mailMensaje"
+                                           value="#{mailTemplateDefectoMB.templateEnEdicion.mensaje}" 
+                                           toolbar="Basic" immediate="true" language="es"
+                                           skin="kama" saveOnSubmit="true"
+                                           styleClass="ancho100" height="80px" 
+                                           converter="SanitizerAceRichTextConverter"/>
+                    </ice:panelGrid>
+
+                    <ice:panelGroup styleClass="panelBotones">
+                        <ace:messages id="popupMsg"/>
+                        <ace:pushButton value="#{labels.guardar}" 
+                                        action="#{mailTemplateDefectoMB.guardar}" 
+                                        styleClass="boton principal guardar"/>
+                        <ace:linkButton value="#{labels.cancelar}" 
+                                        action="#{mailTemplateDefectoMB.cancelar()}"
+                                        styleClass="boton secundario" />
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelPopup>
+    </o:form>
+</ui:composition>

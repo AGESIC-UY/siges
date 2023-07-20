@@ -20,10 +20,6 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "notificacion")
 @XmlRootElement
@@ -44,35 +40,51 @@ public class Notificacion implements Serializable {
     public static final int MENSAJE_LENGHT = 5000;
 
     private static final long serialVersionUID = 1L;
-    @Id
+    
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "not_pk")
     private Integer notPk;
-    @JoinColumn(name = "not_org_fk", referencedColumnName = "org_pk")
+    
+	@JoinColumn(name = "not_org_fk", referencedColumnName = "org_pk")
     @ManyToOne(optional = false)
     private Organismos notOrgFk;
-    @Column(name = "not_cod")
+    
+	@Column(name = "not_cod")
     private String notCod;
-    @Basic(optional = false)
+    
+	@Basic(optional = false)
+    @NotNull
+    @Column(name = "not_asunto")
+    private String notAsunto;
+	
+	@Basic(optional = false)
     @NotNull
     @Column(name = "not_desc")
     private String notDesc;
-    @Column(name = "not_valor")
+    
+	@Column(name = "not_valor")
     private Integer notValor;
-    @Column(name = "not_gerente_adjunto")
+    
+	@Column(name = "not_gerente_adjunto")
     private Boolean notGerenteAdjunto;
-    @Column(name = "not_pmof")
+    
+	@Column(name = "not_pmof")
     private Boolean notPmof;
-    @Column(name = "not_pmot")
+    
+	@Column(name = "not_pmot")
     private Boolean notPmot;
-    @Column(name = "not_sponsor")
+    
+	@Column(name = "not_sponsor")
     private Boolean notSponsor;
-    @Basic(optional = false)
+    
+	@Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 5000)
     @Column(name = "not_msg")
     private String notMsg;
+	
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notinstNotFk")
     private Set<NotificacionInstancia> notificacionInstanciaSet;
 
@@ -89,10 +101,13 @@ public class Notificacion implements Serializable {
         this.notMsg = notMsg;
     }
 
-    public Notificacion(Organismos notOrgFk, String notCod, String notDesc, Integer notValor, Boolean notGerenteAdjunto, Boolean notPmof, Boolean notPmot, Boolean notSponsor, String notMsg) {
-        this.notOrgFk = notOrgFk;
+    public Notificacion(Organismos notOrgFk, String notCod, String notAsunto, String notDesc, 
+			Integer notValor, Boolean notGerenteAdjunto, Boolean notPmof, Boolean notPmot, Boolean notSponsor, String notMsg) {
+        
+		this.notOrgFk = notOrgFk;
         this.notCod = notCod;
-        this.notDesc = notDesc;
+        this.notAsunto = notAsunto;
+		this.notDesc = notDesc;
         this.notValor = notValor;
         this.notGerenteAdjunto = notGerenteAdjunto;
         this.notPmof = notPmof;
@@ -124,6 +139,14 @@ public class Notificacion implements Serializable {
     public void setNotCod(String notCod) {
         this.notCod = notCod;
     }
+
+	public String getNotAsunto() {
+		return notAsunto;
+	}
+
+	public void setNotAsunto(String notAsunto) {
+		this.notAsunto = notAsunto;
+	}
 
     public String getNotDesc() {
         return notDesc;

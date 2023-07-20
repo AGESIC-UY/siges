@@ -34,10 +34,10 @@
             <ice:panelGroup id="localizacionesForm" styleClass="formularioPopup formulario">
 
                 <h:panelGrid columns="1">
-                    <h:commandButton value="#{labels.agregarLocalizacion}" 
+                     <ace:pushButton value="#{labels.agregarLocalizacion}" 
                                      action="#{fichaMB.abrirLocalizacionAction()}"
                                      rendered="#{fichaMB.fieldRendered('agregarLocalizacion')}"                                     
-                                     styleClass="boton principal botonAgregar" />
+                                    styleClass="boton principal agregar" />
                 </h:panelGrid>
 
                 <ice:panelPopup draggable="false" 
@@ -159,7 +159,7 @@
                                                 modal="true"
                                                 position="center">
                             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                <h:commandButton value="#{labels.si}"
+                                <ice:commandButton value="#{labels.si}"
                                                  styleClass="boton principal botonContinuar"
                                                  onclick="confirmationEliminarLoc#{loc.latlngPk}.hide();" 
                                                  actionListener="#{fichaMB.eliminarLocalizacionAction(loc)}"/>

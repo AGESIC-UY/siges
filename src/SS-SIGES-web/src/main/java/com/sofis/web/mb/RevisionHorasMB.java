@@ -89,6 +89,7 @@ public class RevisionHorasMB implements Serializable {
 	private SofisCombo listaUsuariosCombo;
 
 	private String participanteHoras;
+        private static final String CONFIRMAR_GENERAR_HORAS_MSG = "confirmarGenerarHoras";
 
 	public RevisionHorasMB() {
 	}
@@ -329,7 +330,13 @@ public class RevisionHorasMB implements Serializable {
 		}
 
 		if (listaEntregablesFiltro != null) {
-			listaEntregablesCombo = new SofisCombo((List) listaEntregablesFiltro, "nivelNombreCombo");
+                        List<Entregables> listaEnt = new ArrayList<>();
+                        for (Entregables e: listaEntregablesFiltro){
+                            if (e.getEsReferencia() == null || !e.getEsReferencia()){
+                                listaEnt.add(e);
+                            }
+                        }
+			listaEntregablesCombo = new SofisCombo((List) listaEnt, "nivelNombreCombo");
 			listaEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 		}
 
@@ -346,7 +353,7 @@ public class RevisionHorasMB implements Serializable {
 			participante.getPartProyectoFk().getProyPk(),
 			(entregable != null ? entregable.getEntPk() : null),
 			filtroFechaDesde, filtroFechaHasta, null, null,
-			(aprob != null ? (Integer) aprob.getItemObject() : null));
+			(aprob != null ? (Integer) aprob.getItemObject() : null), null);
 		revisionHorasListado = RegistroHorasUtils.sortByFecha(revisionHorasListado, false);
 		return null;
 	}
@@ -387,15 +394,14 @@ public class RevisionHorasMB implements Serializable {
 
 	public String confirmarGenerarHoras() {
 		Entregables entregable = (Entregables) listaEntregablesCombo.getSelectedObject();
-		if (entregable == null || entregable.getEntPk() <= 0
-			|| generarHorasFechaHasta == null
-			|| generarHorasFechaDesde == null
-			|| generarHorasFechaDesde.after(generarHorasFechaHasta)
-			|| generarHorasHorasDiarias == null
-			|| generarHorasHorasDiarias.intValue() < 0 || generarHorasHorasDiarias.intValue() > 24) {
-			return null;
-		}
+                     
+                List<String> listaErrores = obtenerErroresGenerarHoras(entregable);
 
+                if (!listaErrores.isEmpty()){
+                    JSFUtils.agregarMsgsErrores(CONFIRMAR_GENERAR_HORAS_MSG, listaErrores);
+                    return null;
+                }
+                
 		Proyectos proyecto = participante.getPartProyectoFk();
 		SsUsuario usuario = participante.getPartUsuarioFk();
 		RegistrosHoras registroHoras = null;
@@ -431,6 +437,26 @@ public class RevisionHorasMB implements Serializable {
 		return cerrarPopupGenerarHoras();
 	}
 
+        public List<String> obtenerErroresGenerarHoras(Entregables entregable) {
+
+            List<String> errorList = new ArrayList();
+            if (entregable == null || entregable.getEntPk() <= 0) 
+                errorList.add(Labels.getValue("error_registroshoras_entregable"));
+            if (generarHorasFechaDesde == null)
+                errorList.add(Labels.getValue("error_registroshoras_desde"));
+            if (generarHorasFechaHasta == null)
+                errorList.add(Labels.getValue("error_registroshoras_hasta"));
+            if (generarHorasFechaDesde != null && generarHorasFechaHasta != null){
+                if(generarHorasFechaDesde.after(generarHorasFechaHasta))
+                    errorList.add(Labels.getValue("error_registroshoras_desde_hasta"));
+                if (generarHorasFechaDesde.after(new Date()) || generarHorasFechaHasta.after(new Date()))
+                    errorList.add(Labels.getValue("error_registroshoras_fechadesde"));
+            }
+            if (generarHorasHorasDiarias == null || generarHorasHorasDiarias.intValue() <= 0 || generarHorasHorasDiarias.intValue() > 24)
+                errorList.add(Labels.getValue("error_registroshoras_horas"));
+            return errorList;        
+	}
+        
 	public String cancelarGenerarHoras() {
 		return cerrarPopupGenerarHoras();
 	}
@@ -515,7 +541,7 @@ public class RevisionHorasMB implements Serializable {
 
 			revisionHorasListado = registrosHorasDelegate.obtenerRegistrosHoras(participante.getPartUsuarioFk().getUsuId(),
 				participante.getPartProyectoFk().getProyPk(), null,
-				filtroFechaDesde, filtroFechaHasta, null, null, hsAprob);
+				filtroFechaDesde, filtroFechaHasta, null, null, hsAprob, null);
 			revisionHorasListado = RegistroHorasUtils.sortByFecha(revisionHorasListado, false);
 
 		} else {

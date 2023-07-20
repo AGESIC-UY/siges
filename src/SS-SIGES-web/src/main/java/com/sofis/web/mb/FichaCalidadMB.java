@@ -35,334 +35,341 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 @ManagedBean(name = "fichaCalidadMB")
 @ViewScoped
 public class FichaCalidadMB implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(FichaCalidadMB.class.getName());
-    private static final String MSG_FORMULARIO = "msgCalidad";
-    private static final String MSG_BTN_GUARDAR = "msgCalidad";
-    private static final String MSG_CALIDAD = "msgCalidad";
+	private static final long serialVersionUID = 1L;
 
-    //Inject
-    @ManagedProperty("#{fichaMB}")
-    private FichaMB fichaMB;
-    @Inject
-    private ValorCalidadCodigosDelegate valorCalidadCodigosDelegate;
-    @Inject
-    private TemasCalidadDelegate temasCalidadDelegate;
-    @Inject
-    private EntregablesDelegate entregablesDelegate;
-    @Inject
-    private ProductosDelegate productosDelegate;
-    @Inject
-    private CalidadDelegate calidadDelegate;
+	private static final Logger LOGGER = Logger.getLogger(FichaCalidadMB.class.getName());
 
-    // Variables
-    private Double indiceCalidad;
-    private String indiceCalidadColor;
-    private List<Calidad> listaResumen;
-    private List<Calidad> listaResultado;
-    private SofisComboG<ComboItemTO> listaValorCalidadCombo;
-    private SofisComboG<ComboItemTO> listaTipoCalidadCombo;
-    private SofisComboG<TemasCalidad> listaAgregarTemaCalidaCombo;
-    private SofisComboG<Entregables> listaAgregarEntregablesCombo;
-    private SofisComboG<Productos> listaAgregarProductosCombo;
+	private static final String MSG_FORMULARIO = "msgCalidad";
+	private static final String MSG_BTN_GUARDAR = "msgCalidad";
+	private static final String MSG_CALIDAD = "msgCalidad";
 
-    public FichaCalidadMB() {
-    }
+	//Inject
+	@ManagedProperty("#{fichaMB}")
+	private FichaMB fichaMB;
+	@Inject
+	private ValorCalidadCodigosDelegate valorCalidadCodigosDelegate;
+	@Inject
+	private TemasCalidadDelegate temasCalidadDelegate;
+	@Inject
+	private EntregablesDelegate entregablesDelegate;
+	@Inject
+	private ProductosDelegate productosDelegate;
+	@Inject
+	private CalidadDelegate calidadDelegate;
 
-    @PostConstruct
-    public void init() {
-        cargarCombos();
-        cargarResumen();
-        calcularIndiceCalidad();
-//        buscarCalidadAction();
-    }
+	// Variables
+	private Double indiceCalidad;
+	private String indiceCalidadColor;
+	private List<Calidad> listaResumen;
+	private List<Calidad> listaResultado;
+	private SofisComboG<ComboItemTO> listaValorCalidadCombo;
+	private SofisComboG<ComboItemTO> listaTipoCalidadCombo;
+	private SofisComboG<TemasCalidad> listaAgregarTemaCalidaCombo;
+	private SofisComboG<Entregables> listaAgregarEntregablesCombo;
+	private SofisComboG<Productos> listaAgregarProductosCombo;
 
-    // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public FichaMB getFichaMB() {
-        return fichaMB;
-    }
+	public FichaCalidadMB() {
+	}
 
-    public void setFichaMB(FichaMB fichaMB) {
-        this.fichaMB = fichaMB;
-    }
+	@PostConstruct
+	public void init() {
+		cargarCombos();
+		cargarResumen();
+		calcularIndiceCalidad();
+	}
 
-    public Double getIndiceCalidad() {
-        return indiceCalidad;
-    }
+	public String mostrarFrameCalidad() {
 
-    public void setIndiceCalidad(Double indiceCalidad) {
-        this.indiceCalidad = indiceCalidad;
-    }
+		fichaMB.miMostrar(7L);
+		cargarCombos();
+		calcularIndiceCalidad();
+		buscarCalidadAction();
 
-    public String getIndiceCalidadColor() {
-        return indiceCalidadColor;
-    }
+		return null;
+	}
 
-    public void setIndiceCalidadColor(String indiceCalidadColor) {
-        this.indiceCalidadColor = indiceCalidadColor;
-    }
+	public String buscarCalidadAction() {
+		ComboItemTO ciTipoCalidad = listaTipoCalidadCombo.getSelectedT();
+		ComboItemTO ciValorCalidad = listaValorCalidadCombo.getSelectedT();
 
-    public List<Calidad> getListaResumen() {
-        return listaResumen;
-    }
+		FiltroCalidadTO filtro = new FiltroCalidadTO();
+		filtro.setProyPk(fichaMB.getFichaTO().getFichaFk());
+		if (ciTipoCalidad != null) {
+			filtro.setTipo((Integer) ciTipoCalidad.getItemObject());
+		}
+		if (ciValorCalidad != null) {
+			filtro.setValor((Integer) ciValorCalidad.getItemObject());
+		}
 
-    public void setListaResumen(List<Calidad> listaResumen) {
-        this.listaResumen = listaResumen;
-    }
+		listaResultado = calidadDelegate.buscarPorFiltro(filtro, fichaMB.getInicioMB().getOrganismo().getOrgPk());
+		listaResultado = CalidadUtils.sortByActualizacion(listaResultado, true);
 
-    public List<Calidad> getListaResultado() {
-        return listaResultado;
-    }
+		return null;
+	}
 
-    public void setListaResultado(List<Calidad> listaResultado) {
-        this.listaResultado = listaResultado;
-    }
+	private Calidad agregarCalidad(Calidad cal) {
+		if (cal != null) {
+			cal.setCalProyFk(new Proyectos(fichaMB.getFichaTO().getFichaFk()));
+			try {
+				cal = calidadDelegate.guardar(cal, fichaMB.getInicioMB().getOrganismo().getOrgPk(), fichaMB.getInicioMB().getUsuario());
+				if (cal != null) {
+					JSFUtils.agregarMsg(MSG_FORMULARIO, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
+					calcularIndiceCalidad();
+					cargarResumen();
+					resetAgregar();
+					buscarCalidadAction();
+				}
+			} catch (BusinessException be) {
+				LOGGER.log(Level.SEVERE, be.getMessage(), be);
 
-    public SofisComboG<TemasCalidad> getListaAgregarTemaCalidaCombo() {
-        return listaAgregarTemaCalidaCombo;
-    }
+				for (String iterStr : be.getErrores()) {
+					JSFUtils.agregarMsgError(MSG_FORMULARIO, Labels.getValue(iterStr), null);
+				}
 
-    public void setListaAgregarTemaCalidaCombo(SofisComboG<TemasCalidad> listaAgregarTemaCalidaCombo) {
-        this.listaAgregarTemaCalidaCombo = listaAgregarTemaCalidaCombo;
-    }
+			}
+		}
+		return cal;
+	}
 
-    public SofisComboG<Entregables> getListaAgregarEntregablesCombo() {
-        return listaAgregarEntregablesCombo;
-    }
+	public String agregarTemaCalidadAction() {
+		TemasCalidad tca = listaAgregarTemaCalidaCombo.getSelectedT();
+		if (tca != null) {
+			Calidad cal = new Calidad();
+			cal.setCalTcaFk(tca);
+			agregarCalidad(cal);
+		}
+		resetAgregar();
+		return null;
+	}
 
-    public void setListaAgregarEntregablesCombo(SofisComboG<Entregables> listaAgregarEntregablesCombo) {
-        this.listaAgregarEntregablesCombo = listaAgregarEntregablesCombo;
-    }
+	public String agregarEntregableAction() {
+		Entregables ent = listaAgregarEntregablesCombo.getSelectedT();
+		if (ent != null) {
+			Calidad cal = new Calidad();
+			cal.setCalEntFk(ent);
+			agregarCalidad(cal);
+		}
+		resetAgregar();
+		return null;
+	}
 
-    public SofisComboG<Productos> getListaAgregarProductosCombo() {
-        return listaAgregarProductosCombo;
-    }
+	public String agregarProductosAction() {
+		Productos prod = listaAgregarProductosCombo.getSelectedT();
+		if (prod != null) {
+			Calidad cal = new Calidad();
+			cal.setCalProdFk(prod);
+			agregarCalidad(cal);
+		}
+		resetAgregar();
+		return null;
+	}
 
-    public void setListaAgregarProductosCombo(SofisComboG<Productos> listaAgregarProductosCombo) {
-        this.listaAgregarProductosCombo = listaAgregarProductosCombo;
-    }
+	public String eliminarAction(Integer calPk) {
+		if (calPk != null) {
+			try {
+				calidadDelegate.eliminar(calPk);
 
-    public SofisComboG<ComboItemTO> getListaValorCalidadCombo() {
-        return listaValorCalidadCombo;
-    }
+				List<Calidad> listAux = new ArrayList<>();
+				for (Calidad c : listaResultado) {
+					if (!c.getCalPk().equals(calPk)) {
+						listAux.add(c);
+					}
+				}
+				listaResultado = listAux;
 
-    public void setListaValorCalidadCombo(SofisComboG<ComboItemTO> listaValorCalidadCombo) {
-        this.listaValorCalidadCombo = listaValorCalidadCombo;
-    }
+				fichaMB.actualizarFichaTO(null);
 
-    public SofisComboG<ComboItemTO> getListaTipoCalidadCombo() {
-        return listaTipoCalidadCombo;
-    }
+				calcularIndiceCalidad();
+				cargarResumen();
+				//JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_ELIMINADO, null);
+			} catch (BusinessException be) {
+				LOGGER.log(Level.SEVERE, be.getMessage(), be);
 
-    public void setListaTipoCalidadCombo(SofisComboG<ComboItemTO> listaTipoCalidadCombo) {
-        this.listaTipoCalidadCombo = listaTipoCalidadCombo;
-    }
+				for (String iterStr : be.getErrores()) {
+					JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);
+				}
 
-    // </editor-fold>
-    public String mostrarFrameCalidad() {
-        fichaMB.miMostrar(7L);
-        cargarCombos();
-//        cargarResumen();
-        calcularIndiceCalidad();
-        buscarCalidadAction();
+			}
+		}
+		return null;
+	}
 
-        return null;
-    }
-
-    public String buscarCalidadAction() {
-        ComboItemTO ciTipoCalidad = listaTipoCalidadCombo.getSelectedT();
-        ComboItemTO ciValorCalidad = listaValorCalidadCombo.getSelectedT();
-
-        FiltroCalidadTO filtro = new FiltroCalidadTO();
-        filtro.setProyPk(fichaMB.getFichaTO().getFichaFk());
-        if (ciTipoCalidad != null) {
-            filtro.setTipo((Integer) ciTipoCalidad.getItemObject());
-        }
-        if (ciValorCalidad != null) {
-            filtro.setValor((Integer) ciValorCalidad.getItemObject());
-        }
-
-        listaResultado = calidadDelegate.buscarPorFiltro(filtro, fichaMB.getInicioMB().getOrganismo().getOrgPk());
-        listaResultado = CalidadUtils.sortByActualizacion(listaResultado, true);
-
-        return null;
-    }
-
-    private Calidad agregarCalidad(Calidad cal) {
-        if (cal != null) {
-            cal.setCalProyFk(new Proyectos(fichaMB.getFichaTO().getFichaFk()));
-            try {
-                cal = calidadDelegate.guardar(cal, fichaMB.getInicioMB().getOrganismo().getOrgPk(), fichaMB.getInicioMB().getUsuario());
-                if (cal != null) {
-                    JSFUtils.agregarMsg(MSG_FORMULARIO, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
-                    calcularIndiceCalidad();
-                    cargarResumen();
-                    resetAgregar();
-                    buscarCalidadAction();
-                }
-            } catch (BusinessException be) {
-                logger.log(Level.SEVERE, be.getMessage(), be);
-
-                for(String iterStr : be.getErrores()){
-                    JSFUtils.agregarMsgError(MSG_FORMULARIO, Labels.getValue(iterStr), null);                
-                }                
-
-            }
-        }
-        return cal;
-    }
-
-    public String agregarTemaCalidadAction() {
-        TemasCalidad tca = listaAgregarTemaCalidaCombo.getSelectedT();
-        if (tca != null) {
-            Calidad cal = new Calidad();
-            cal.setCalTcaFk(tca);
-            agregarCalidad(cal);
-        }
-        resetAgregar();
-        return null;
-    }
-
-    public String agregarEntregableAction() {
-        Entregables ent = listaAgregarEntregablesCombo.getSelectedT();
-        if (ent != null) {
-            Calidad cal = new Calidad();
-            cal.setCalEntFk(ent);
-            agregarCalidad(cal);
-        }
-        resetAgregar();
-        return null;
-    }
-
-    public String agregarProductosAction() {
-        Productos prod = listaAgregarProductosCombo.getSelectedT();
-        if (prod != null) {
-            Calidad cal = new Calidad();
-            cal.setCalProdFk(prod);
-            agregarCalidad(cal);
-        }
-        resetAgregar();
-        return null;
-    }
-
-    public String eliminarAction(Integer calPk) {
-        if (calPk != null) {
-            try {
-                calidadDelegate.eliminar(calPk);
-
-                List<Calidad> listAux = new ArrayList<>();
-                for (Calidad c : listaResultado) {
-                    if (!c.getCalPk().equals(calPk)) {
-                        listAux.add(c);
-                    }
-                }
-                listaResultado = listAux;
-
-                calcularIndiceCalidad();
-                cargarResumen();
-                JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_ELIMINADO, null);
-            } catch (BusinessException be) {
-                logger.log(Level.SEVERE, be.getMessage(), be);
-
-                for(String iterStr : be.getErrores()){
-                    JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
-                }                
-                
-            }
-        }
-        return null;
-    }
-
-    public String guardarTablaAction() {
-        if (CollectionsUtils.isNotEmpty(listaResultado)) {
-            try {
-                listaResultado = calidadDelegate.guardar(listaResultado, 
+	public String guardarTablaAction() {
+		if (CollectionsUtils.isNotEmpty(listaResultado)) {
+			try {
+				listaResultado = calidadDelegate.guardar(listaResultado,
 						fichaMB.getInicioMB().getOrganismo().getOrgPk(), fichaMB.getInicioMB().getUsuario());
 
 				calcularIndiceCalidad();
-                JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
-            } catch (BusinessException be) {
-                logger.log(Level.SEVERE, null, be);
-                
-                for(String iterStr : be.getErrores()){
-                    JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);                
-                }                    
+				JSFUtils.agregarMsg(MSG_CALIDAD, MensajesNegocio.INFO_CALIDAD_GUARDADO, null);
 
-            }
-        }
-        return null;
-    }
+				fichaMB.actualizarFichaTO(null);
 
-    private void cargarCombos() {
-        List<ComboItemTO> listaValor = valorCalidadCodigosDelegate.obtenerTodosParaCombo();
-        listaValor = ComboItemTOUtils.sortByTextoCombo(listaValor, true);
-        if (listaValor != null) {
-            listaValorCalidadCombo = new SofisComboG<>(listaValor, "itemNombre");
-            listaValorCalidadCombo.addEmptyItem(Labels.getValue("comboTodos"));
-        }
+			} catch (BusinessException be) {
+				LOGGER.log(Level.SEVERE, null, be);
 
-        List<ComboItemTO> listaTipoCal = new ArrayList<>();
-        listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.GENERAL.ordinal(), Labels.getValue("tca_general")));
-        listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.ENTREGABLE.ordinal(), Labels.getValue("tca_entregable")));
-        listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.PRODUCTO.ordinal(), Labels.getValue("tca_producto")));
-        listaTipoCalidadCombo = new SofisComboG<>(listaTipoCal, "itemNombre");
-        listaTipoCalidadCombo.addEmptyItem(Labels.getValue("comboTodos"));
+				for (String iterStr : be.getErrores()) {
+					JSFUtils.agregarMsgError(MSG_CALIDAD, Labels.getValue(iterStr), null);
+				}
 
-        List<TemasCalidad> listTca = temasCalidadDelegate.obtenerPorOrg(fichaMB.getInicioMB().getOrganismo().getOrgPk());
-        listTca = TemasCalidadUtils.sortByNombre(listTca, true);
-        if (listTca != null) {
-            listaAgregarTemaCalidaCombo = new SofisComboG<>(listTca, "tcaNombre");
-            listaAgregarTemaCalidaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-        }
+			}
+		}
+		return null;
+	}
 
-        List<Entregables> listEnt = new ArrayList<>();
-        Integer proyId = fichaMB.getFichaTO().getFichaFk();
-        listEnt = entregablesDelegate.obtenerEntPorProyPk(proyId);
-        listEnt = EntregablesUtils.cargarCamposCombos(listEnt);
-        if (listEnt != null) {
-            listaAgregarEntregablesCombo = new SofisComboG<>(listEnt, "nivelNombreCombo");
-            listaAgregarEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-        }
+	private void cargarCombos() {
+		List<ComboItemTO> listaValor = valorCalidadCodigosDelegate.obtenerTodosParaCombo();
+		listaValor = ComboItemTOUtils.sortByTextoCombo(listaValor, true);
+		if (listaValor != null) {
+			listaValorCalidadCombo = new SofisComboG<>(listaValor, "itemNombre");
+			listaValorCalidadCombo.addEmptyItem(Labels.getValue("comboTodos"));
+		}
 
-        List<Productos> listProd = productosDelegate.obtenerProdPorProyPk(proyId);
-        listProd = ProductosUtils.sortByEntProdNombre(listProd, true);
-        if (listProd != null) {
-            listaAgregarProductosCombo = new SofisComboG<Productos>(listProd, "entProdNombre");
-            listaAgregarProductosCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-        }
-    }
+		List<ComboItemTO> listaTipoCal = new ArrayList<>();
+		listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.GENERAL.ordinal(), Labels.getValue("tca_general")));
+		listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.ENTREGABLE.ordinal(), Labels.getValue("tca_entregable")));
+		listaTipoCal.add(new ComboItemTO(TipoCalidadEnum.PRODUCTO.ordinal(), Labels.getValue("tca_producto")));
+		listaTipoCalidadCombo = new SofisComboG<>(listaTipoCal, "itemNombre");
+		listaTipoCalidadCombo.addEmptyItem(Labels.getValue("comboTodos"));
 
-    private void cargarResumen() {
-        listaResumen = calidadDelegate.obtenerResumenCalidad(fichaMB.getFichaTO().getFichaFk(), 5);
-    }
+		List<TemasCalidad> listTca = temasCalidadDelegate.obtenerPorOrg(fichaMB.getInicioMB().getOrganismo().getOrgPk());
+		listTca = TemasCalidadUtils.sortByNombre(listTca, true);
+		if (listTca != null) {
+			listaAgregarTemaCalidaCombo = new SofisComboG<>(listTca, "tcaNombre");
+			listaAgregarTemaCalidaCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+		}
 
-    private void calcularIndiceCalidad() {
-        Integer proyId = fichaMB.getFichaTO().getFichaFk();
-        Integer orgPk = fichaMB.getInicioMB().getOrganismo().getOrgPk();
-        indiceCalidad = calidadDelegate.calcularIndiceCalidad(proyId, orgPk);
-        indiceCalidadColor = calidadDelegate.calcularIndiceCalidadColor(indiceCalidad, orgPk);
-    }
+		Integer proyId = fichaMB.getFichaTO().getFichaFk();
+		List<Entregables> listEnt = entregablesDelegate.obtenerEntPorProyPk(proyId);
+		listEnt = EntregablesUtils.cargarCamposCombos(listEnt);
 
-    private void resetAgregar() {
-        listaAgregarTemaCalidaCombo.setSelected(-1);
-        listaAgregarEntregablesCombo.setSelected(-1);
-        listaAgregarProductosCombo.setSelected(-1);
-    }
+		if (listEnt != null) {
+                        List<Entregables> listaEntregables = new ArrayList<>();
+                        for (Entregables e: listEnt){
+                            if (e.getEsReferencia() == null || !e.getEsReferencia()){
+                                listaEntregables.add(e);
+                            }
+                        }
+			listaAgregarEntregablesCombo = new SofisComboG<>(listaEntregables, "nivelNombreCombo");
+			listaAgregarEntregablesCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+		}
 
-    public String tipoCalidadStr(Integer tipo) {
-        return calidadDelegate.tipoCalidadStr(tipo, 
-			fichaMB.getInicioMB().getOrganismoSeleccionado());
-    }
+		List<Productos> listProd = productosDelegate.obtenerProdPorProyPk(proyId);
+		listProd = ProductosUtils.sortByEntProdNombre(listProd, true);
+		if (listProd != null) {
+			listaAgregarProductosCombo = new SofisComboG<>(listProd, "entProdNombre");
+			listaAgregarProductosCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+		}
+	}
 
-    public String valorColorTabla(String cod) {
-        return calidadDelegate.valorColorTabla(cod);
-    }
+	private void cargarResumen() {
+		listaResumen = calidadDelegate.obtenerResumenCalidad(fichaMB.getFichaTO().getFichaFk(), 5);
+	}
+
+	private void calcularIndiceCalidad() {
+		Integer proyId = fichaMB.getFichaTO().getFichaFk();
+		Integer orgPk = fichaMB.getInicioMB().getOrganismo().getOrgPk();
+		indiceCalidad = calidadDelegate.calcularIndiceCalidad(proyId, orgPk);
+		indiceCalidadColor = calidadDelegate.calcularIndiceCalidadColor(indiceCalidad, orgPk);
+	}
+
+	private void resetAgregar() {
+		listaAgregarTemaCalidaCombo.setSelected(-1);
+		listaAgregarEntregablesCombo.setSelected(-1);
+		listaAgregarProductosCombo.setSelected(-1);
+	}
+
+	public String tipoCalidadStr(Integer tipo) {
+		return calidadDelegate.tipoCalidadStr(tipo,
+				fichaMB.getInicioMB().getOrganismoSeleccionado());
+	}
+
+	public String valorColorTabla(String cod) {
+		return calidadDelegate.valorColorTabla(cod);
+	}
+
+	public FichaMB getFichaMB() {
+		return fichaMB;
+	}
+
+	public void setFichaMB(FichaMB fichaMB) {
+		this.fichaMB = fichaMB;
+	}
+
+	public Double getIndiceCalidad() {
+		return indiceCalidad;
+	}
+
+	public void setIndiceCalidad(Double indiceCalidad) {
+		this.indiceCalidad = indiceCalidad;
+	}
+
+	public String getIndiceCalidadColor() {
+		return indiceCalidadColor;
+	}
+
+	public void setIndiceCalidadColor(String indiceCalidadColor) {
+		this.indiceCalidadColor = indiceCalidadColor;
+	}
+
+	public List<Calidad> getListaResumen() {
+		return listaResumen;
+	}
+
+	public void setListaResumen(List<Calidad> listaResumen) {
+		this.listaResumen = listaResumen;
+	}
+
+	public List<Calidad> getListaResultado() {
+		return listaResultado;
+	}
+
+	public void setListaResultado(List<Calidad> listaResultado) {
+		this.listaResultado = listaResultado;
+	}
+
+	public SofisComboG<TemasCalidad> getListaAgregarTemaCalidaCombo() {
+		return listaAgregarTemaCalidaCombo;
+	}
+
+	public void setListaAgregarTemaCalidaCombo(SofisComboG<TemasCalidad> listaAgregarTemaCalidaCombo) {
+		this.listaAgregarTemaCalidaCombo = listaAgregarTemaCalidaCombo;
+	}
+
+	public SofisComboG<Entregables> getListaAgregarEntregablesCombo() {
+		return listaAgregarEntregablesCombo;
+	}
+
+	public void setListaAgregarEntregablesCombo(SofisComboG<Entregables> listaAgregarEntregablesCombo) {
+		this.listaAgregarEntregablesCombo = listaAgregarEntregablesCombo;
+	}
+
+	public SofisComboG<Productos> getListaAgregarProductosCombo() {
+		return listaAgregarProductosCombo;
+	}
+
+	public void setListaAgregarProductosCombo(SofisComboG<Productos> listaAgregarProductosCombo) {
+		this.listaAgregarProductosCombo = listaAgregarProductosCombo;
+	}
+
+	public SofisComboG<ComboItemTO> getListaValorCalidadCombo() {
+		return listaValorCalidadCombo;
+	}
+
+	public void setListaValorCalidadCombo(SofisComboG<ComboItemTO> listaValorCalidadCombo) {
+		this.listaValorCalidadCombo = listaValorCalidadCombo;
+	}
+
+	public SofisComboG<ComboItemTO> getListaTipoCalidadCombo() {
+		return listaTipoCalidadCombo;
+	}
+
+	public void setListaTipoCalidadCombo(SofisComboG<ComboItemTO> listaTipoCalidadCombo) {
+		this.listaTipoCalidadCombo = listaTipoCalidadCombo;
+	}
+
 }

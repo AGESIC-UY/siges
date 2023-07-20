@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.Id;
+import javax.persistence.Parameter;
 
 /**
  * Clase desarrollada por Sofis Solutions, implementación del patrón de diseño
@@ -166,7 +167,7 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 	 */
 	public List<T> findEntityByCriteria(Class<T> entityClass, CriteriaTO criteria, String[] orderBy, boolean[] ascending, Long startPosition, Long maxResult) throws DAOGeneralException {
 		try {
-
+                                   
 			//vemos todas las propiedades que tienen que navegar por colecciones.
 			StringBuffer collection = new StringBuffer();
 			StringBuffer fromClause = new StringBuffer(" FROM " + entityClass.getSimpleName() + " a ");
@@ -177,6 +178,7 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 
 			HashMap<String, ValueCriteriaTO> valuesCriteria = null;
 			Character index = 'b';
+                        Character lastIndex = 'a';
 			if (criteria != null) {
 				//obtenemos el hashmap de la forma KEY y ValueCriteriaTO estos son las hojas del arbol formado
 				//por criteria
@@ -194,22 +196,37 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 
 					HashMap str = this.isCollection(entityClass, property);
 					if (str != null && collection.indexOf(str.toString()) < 0 && valueCriteriaTO.getValue() != null && !valueCriteriaTO.getValue().toString().equalsIgnoreCase("")) {
-						String t = (String) str.keySet().iterator().next();
-						if (!colPr.containsKey(t)) {
-							col.put(valueCriteriaTO, index.toString());
 
-							//collection.append(", IN(a.");
-							collection.append(" LEFT OUTER JOIN a.");
-							colPr.put(t, index.toString());
-							collection.append(t);
-							//collection.append(") ");
-							collection.append(" ");
-							collection.append(index);
-							index = (char) (index + 1);
-						} else {
-							col.put(valueCriteriaTO, colPr.get(t));
+                                                Integer indexActualCollection = 1;
+//                                                for (Object string : str.keySet()){
+                                                for (int i = 0; i< str.keySet().size();i++){
+      
+                                                    String string = ((String)str.get(i)).substring(0,((String)str.get(i)).indexOf("|"));
+                                                    if (!colPr.containsKey(string)) {
+                                                            col.put(valueCriteriaTO, index.toString());
+                                                            if (str.keySet().size()==1){
+                                                                collection.append(" LEFT OUTER JOIN a.");
+                                                                collection.append(string);
+                                                                colPr.put(string, index.toString());
+                                                                collection.append(" ");
+                                                                collection.append(index);
+                                                            }
+                                                            else if (str.keySet().size()>1){
+                                                                lastIndex = (char) (index - 1);
+                                                                collection.append(" LEFT OUTER JOIN "+lastIndex+".");
+                                                                collection.append(string);
+                                                                colPr.put(string, index.toString());
+                                                                collection.append(" ");
+                                                                collection.append(index);
+                                                            }else if(indexActualCollection >= str.keySet().size()){
+                                                                col.put(valueCriteriaTO, index.toString());
+                                                            }
+                                                            index = (char) (index + 1);
+                                                    } else {
+                                                            col.put(valueCriteriaTO, colPr.get(string));
 
-						}
+                                                    }
+                                                }
 					} else {
 						//genera los left join en las propiedades utilizadas en los campos de busqueda
 						String[] propertySplit = property.split("[.]");
@@ -481,6 +498,7 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 
 			HashMap<String, ValueCriteriaTO> valuesCriteria = null;
 			Character index = 'b';
+			Character lastIndex = 'a';
 			if (criteria != null) {
 				//obtenemos el hashmap de la forma KEY y ValueCriteriaTO estos son las hojas del arbol formado
 				//por criteria
@@ -495,21 +513,36 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 					String property = valueCriteriaTO.getComponent().getProperty();
 					HashMap str = this.isCollection(entityClass, property);
 					if (str != null && collection.indexOf(str.toString()) < 0 && valueCriteriaTO.getValue() != null && !valueCriteriaTO.getValue().toString().equalsIgnoreCase("")) {
-						String t = (String) str.keySet().iterator().next();
-						if (!colPr.containsKey(t)) {
-							col.put(valueCriteriaTO, index.toString());
-							//collection.append(", IN(a.");
-							collection.append(" LEFT OUTER JOIN a.");
-							colPr.put(t, index.toString());
-							collection.append(t);
-							//collection.append(") ");
-							collection.append(" ");
-							collection.append(index);
-							index = (char) (index + 1);
-						} else {
-							col.put(valueCriteriaTO, colPr.get(t));
 
-						}
+                                                Integer indexActualCollection = 1;
+                                                for (int i = 0; i< str.keySet().size();i++){
+                                                    String string = ((String)str.get(i)).substring(0,((String)str.get(i)).indexOf("|"));
+                                                    if (!colPr.containsKey(string)) {                                                 
+                                                            col.put(valueCriteriaTO, index.toString());
+                                                     
+                                                            if (str.keySet().size()==1){
+                                                                collection.append(" LEFT OUTER JOIN a.");
+                                                                collection.append(string);
+                                                                colPr.put(string, index.toString());
+                                                                collection.append(" ");
+                                                                collection.append(index);
+                                                            }
+                                                            else if (str.keySet().size()>1){
+                                                                lastIndex = (char) (index - 1);
+                                                                collection.append(" LEFT OUTER JOIN "+lastIndex+".");
+                                                                collection.append(string);
+                                                                colPr.put(string, index.toString());
+                                                                collection.append(" ");
+                                                                collection.append(index);
+                                                            }else if(indexActualCollection >= str.keySet().size()){
+                                                                col.put(valueCriteriaTO, index.toString());
+                                                            }
+                                                            index = (char) (index + 1);
+                                                    } else {
+                                                            col.put(valueCriteriaTO, colPr.get(string));
+
+                                                    }
+                                                }
 					} else {
 
 						//genera los left join en las propiedades utilizadas en los campos de busqueda
@@ -561,10 +594,10 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 			if (count) {
 				sql = sql.append(") ");
 			}
-
+                        
 			//Las otras propiedades
 			for (int i = 0; i < propertyNames.length; i++) {
-				HashMap c = isCollection(entityClass, propertyNames[i]);
+                            HashMap c = isCollection(entityClass, propertyNames[i]);
 				if (c != null) {
 					//si es coleccion se pone b. la propiedad y no a. la propiedad
 					String t = (String) c.keySet().iterator().next();
@@ -699,11 +732,10 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 					}
 				}
 			}
-
+                        
 			if (debug) {
 				System.out.println("LA CONSULTA ES " + sql + " " + em);
 			}
-
 			Query query = em.createQuery(sql.toString());
 
 			if (whereClause != null) {
@@ -769,7 +801,7 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 				Object[] obj = {new Long(res + "")};
 				toRe.add(obj);
 				return toRe;
-			} else {
+			} else {                            
 				List<Object[]> result = query.getResultList();
 				return result;
 			}
@@ -864,30 +896,83 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 		//ejemplo pais.nombre
 		String collectionPropProp = new String();
 
-		int d = property.indexOf("Collection.");
-		if (d >= 0) {
-			collectionProp = property.substring(0, d) + "Collection";
-			collectionPropProp = property.substring(d + 11, property.length());
-			HashMap r = new HashMap();
-			r.put(collectionProp, collectionPropProp);
-			return r;
+                int iter=0;
+                int index = 0;
+                String guess = "";
+                String ultimaCollectionProp="";
+                
+                guess = "Collection.";
+//		int d = property.indexOf("Collection.");
+                index = property.indexOf(guess);
+		if (index >= 0) {
+                    HashMap r = new HashMap();
+                    iter=0;
+                    while (index >= 0) {
+			collectionProp = property.substring(0, index) + "Collection";
+			collectionPropProp = property.substring(index + 11, property.length());
+                        if (iter > 0){
+                            collectionProp = collectionProp.replace(ultimaCollectionProp+".", "");
+                        }
+                        String nuevoResultado = collectionProp+"|"+collectionPropProp;
+			r.put(iter, nuevoResultado);
+                        iter++;
+                        ultimaCollectionProp = collectionProp;
+                        index = property.indexOf(guess, index + 1);
+                    }
+                    return r;
 		}
-		d = property.indexOf("List.");
-		if (d >= 0) {
-			collectionProp = property.substring(0, d) + "List";
-			collectionPropProp = property.substring(d + 5, property.length());
-			HashMap r = new HashMap();
-			r.put(collectionProp, collectionPropProp);
-			return r;
+                
+                
+                
+                guess = "List.";
+//		d = property.indexOf("List.");
+                index = property.indexOf(guess);
+		if (index >= 0) {
+                    HashMap r = new HashMap();
+                    iter=0;
+                    while (index >= 0) {
+			collectionProp = property.substring(0, index) + "List";
+			collectionPropProp = property.substring(index + 5, property.length());
+                        if (iter > 0){
+                            //Quito el path del ultimo Set de la property
+                            collectionProp = collectionProp.replace(ultimaCollectionProp+".", "");
+                        }
+                        String nuevoResultado = collectionProp+"|"+collectionPropProp;
+			r.put(iter, nuevoResultado);
+                        iter++;
+                        ultimaCollectionProp = collectionProp;
+                        index = property.indexOf(guess, index + 1);
+                    }
+                    return r;
 		}
 
-		d = property.indexOf("Set.");
-		if (d >= 0) {
-			collectionProp = property.substring(0, d) + "Set";
-			collectionPropProp = property.substring(d + 4, property.length());
-			HashMap r = new HashMap();
-			r.put(collectionProp, collectionPropProp);
-			return r;
+                guess = "Set.";
+                // Primera ocurrencia
+                index = property.indexOf(guess);
+                if (index >= 0) {
+                    HashMap r = new HashMap();
+                    iter=0;
+                    while (index >= 0) {
+                        
+			collectionProp = property.substring(0, index) + "Set";
+			collectionPropProp = property.substring(index + 4, property.length());
+                        
+                        if (iter > 0){
+                            collectionProp = collectionProp.replace(ultimaCollectionProp+".", "");
+                            
+                           String toReplace = ((String)r.get(iter-1)).replace(collectionProp+".", "");
+                           r.put(iter-1, toReplace );
+
+                        }                       
+			String nuevoResultado = collectionProp+"|"+collectionPropProp;
+                        // Se cambió para procesar en orden
+//			r.put(collectionProp, collectionPropProp);
+			r.put(iter, nuevoResultado);
+                        iter++;
+                        ultimaCollectionProp = collectionProp;
+                        index = property.indexOf(guess, index + 1);
+                    }
+                    return r;
 		}
 
 		return null;

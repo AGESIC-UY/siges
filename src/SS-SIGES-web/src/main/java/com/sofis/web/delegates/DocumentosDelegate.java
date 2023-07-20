@@ -72,9 +72,9 @@ public class DocumentosDelegate {
         return documentosBean.obtenerDocumentosOrderByFecha(fichaFk, tipoFicha);
     }
 
-    public Double calcularIndiceEstadoMetodologiaPrograma(Set<Proyectos> proyectos) {
-        return documentosBean.calcularIndiceEstadoMetodologiaPrograma(proyectos);
-    }
+//    public Double calcularIndiceEstadoMetodologiaPrograma(Set<Proyectos> proyectos) {
+//        return documentosBean.calcularIndiceEstadoMetodologiaPrograma(proyectos);
+//    }
 
     public Double calcularIndiceEstadoMetodologiaProyecto(List<Documentos> documentos, Integer proyPk, Integer orgPk, Estados estado) {
         return documentosBean.calcularIndiceEstadoMetodologiaProyecto(documentos, proyPk, orgPk, estado);

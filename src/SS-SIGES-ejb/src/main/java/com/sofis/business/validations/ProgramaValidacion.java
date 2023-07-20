@@ -20,7 +20,7 @@ public class ProgramaValidacion {
     private static final Logger logger = Logger.getLogger(ProgramaValidacion.class.getName());
 
     public static boolean validar(Programas prog, SsUsuario usuario, Integer orgPk) throws BusinessException {
-
+        //"usuario" para guardar entregables con referencia viene vacio
         BusinessException be = new BusinessException();
         be.addError(MensajesNegocio.ERROR_PROGRAMA);
 

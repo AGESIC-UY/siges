@@ -24,25 +24,21 @@ import com.sofis.entities.data.RolesInteresados;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.enums.ColoresCodigosEnum;
 import com.sofis.entities.enums.NivelEnum;
-import com.sofis.entities.tipos.FichaTO;
-import com.sofis.entities.tipos.FiltroInicioItem;
-import com.sofis.entities.tipos.FiltroInicioResultadoTO;
+import com.sofis.entities.tipos.ItemInicioTO;
+import com.sofis.entities.tipos.ResultadoInicioTO;
 import com.sofis.entities.tipos.FiltroInicioTO;
 import com.sofis.entities.utils.FichaUtils;
 import com.sofis.entities.utils.SsUsuariosUtils;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.generico.utils.generalutils.DatesUtils;
 import com.sofis.generico.utils.generalutils.StringsUtils;
-import com.sofis.web.delegates.AreasDelegate;
 import com.sofis.web.delegates.BusquedaFiltroDelegate;
 import com.sofis.web.delegates.ConfiguracionDelegate;
 import com.sofis.web.delegates.MonedaDelegate;
-import com.sofis.web.delegates.PresupuestoDelegate;
 import com.sofis.web.delegates.ProgProyDelegate;
 import com.sofis.web.delegates.ProgramasDelegate;
 import com.sofis.web.delegates.ProgramasProyectosDelegate;
 import com.sofis.web.delegates.ProyectosDelegate;
-import com.sofis.web.delegates.TipoDocumentoInstanciaDelegate;
 import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
@@ -84,47 +80,47 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.icefaces.ace.event.ExpansionChangeEvent;
+import org.icefaces.ace.model.table.RowStateMap;
+import org.icefaces.util.JavaScriptRunner;
 
-/**
- *
- * @author Usuario
- */
 @ManagedBean(name = "ProgramasProyectosMB")
 @ViewScoped
 public class ProgramasProyectosMB implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ProgramasProyectosMB.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ProgramasProyectosMB.class.getName());
+
+	private static final String ORDEN_PROG_PROY_NOMBRE = "1";
+	private static final String ORDEN_PROG_PROY_CODIGO = "2";
 
 	@ManagedProperty("#{inicioMB}")
 	private InicioMB inicioMB;
-	@ManagedProperty("#{aplicacionMB}")
-	private AplicacionMB aplicacionMB;
 
 	@Inject
 	private ProgramasDelegate programasDelegate;
+
 	@Inject
 	private ProyectosDelegate proyectosDelegate;
+
 	@Inject
 	private ProgramasProyectosDelegate programasProyectosDelegate;
+
 	@Inject
 	private ProgProyDelegate progProyDelegate;
+
 	@Inject
 	private BusquedaFiltroDelegate busquedaFiltroDelegate;
-	@Inject
-	private AreasDelegate areasDelegate;
+
 	@Inject
 	private ConfiguracionDelegate configuracionDelegate;
+
 	@Inject
 	private ProyReplanificacionBean proyReplanificacionBean;
+
 	@Inject
 	private MonedaDelegate monedaDelegate;
-	@Inject
-	private TipoDocumentoInstanciaDelegate tipoDocumentoInstanciaDelegate;
-	@Inject
-	private PresupuestoDelegate presupuestoDelegate;
 
-	private List<FiltroInicioResultadoTO> filtroInicioResultado = new ArrayList<>();
+	private List<ResultadoInicioTO> resultados = new ArrayList<>();
 	private String cantElementosPorPagina = "25";
 	private OrganiIntProve organizacion;
 	private Estados estado;
@@ -132,10 +128,11 @@ public class ProgramasProyectosMB implements Serializable {
 	private Integer presupuesto;
 	private Areas area;
 	private Integer reportes;
-	private static String GROUP_NAME = "everyone";
-//    private PortableRenderer portableRenderer;
-//    private long TIEMPO_ACTUALIZACION = 3000;
 	private List<Moneda> monedasUsadas = new ArrayList<>();
+
+	private Integer cantidadProyectos;
+	private Integer cantidadProgramas;
+
 	// Replanificación
 	private ProyReplanificacion replanificacion;
 	private Boolean renderPopupReplanificacion = false;
@@ -144,15 +141,18 @@ public class ProgramasProyectosMB implements Serializable {
 
 	//Filtro al cual corresponde el listado actual
 	FiltroInicioTO filtroActual = null;
-        
-        
-        private FiltroInicioItem itemReplan;
+
+	private ItemInicioTO itemReplan;
+
+	private Boolean ocultarIds;
 
 	@PostConstruct
 	public void init() {
 		configs = cargarConfigLimites(inicioMB.getOrganismo().getOrgPk());
-		buscarAction();
 
+		ocultarIds = Boolean.valueOf(configs.get(ConfiguracionCodigos.OCULTAR_IDENTIFICADORES_INICIO));
+
+		buscarAction();
 	}
 
 	public void programaExpand(ExpansionChangeEvent event) {
@@ -162,28 +162,31 @@ public class ProgramasProyectosMB implements Serializable {
 			event.setPhaseId(PhaseId.UPDATE_MODEL_VALUES);
 			event.queue();
 		} else if (phaseId.equals(PhaseId.UPDATE_MODEL_VALUES)) {
-			List<Moneda> monedas = monedaDelegate.obtenerMonedas();
 
 			if (event.isExpanded()) {
-				final Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-				FiltroInicioItem item = (FiltroInicioItem) event.getRowData();
-				for (Map.Entry<FiltroInicioItem, List> item1 : item.getInicioResultado().getPrimerNivel()) {
+
+				ItemInicioTO item = (ItemInicioTO) event.getRowData();
+				for (Map.Entry<ItemInicioTO, List> item1 : item.getInicioResultado().getPrimerNivel()) {
+
 					if (item1.getKey().getFichaFk().equals(item.getFichaFk()) && item1.getKey().getTipoFicha().equals(item.getTipoFicha())) {
+
 						inicioMB.getFiltro().setProgPk(item.getFichaFk());
 						inicioMB.getFiltro().setActivo(Boolean.TRUE);
-						final FiltroInicioResultadoTO resultado = programasProyectosDelegate.obtenerSegundoNivel(inicioMB.getOrganismo().getOrgPk(), item.getAreaId(), inicioMB.getUsuario(), inicioMB.getFiltro());
+
+						final ResultadoInicioTO resultado = programasProyectosDelegate.obtenerSegundoNivel(inicioMB.getFiltro(), item);
 
 						inicioMB.getFiltro().setProgPk(null);
-						if (resultado != null && resultado.getPrimerNivel() != null && !resultado.getPrimerNivel().isEmpty()) {
+
+						if (!resultado.getPrimerNivel().isEmpty()) {
 							item1.setValue(resultado.getPrimerNivel());
 						}
 
 						for (Entry e : resultado.getPrimerNivel()) {
-							FiltroInicioItem fii = (FiltroInicioItem) e.getKey();
-							//TODO solo valido para llamada local al ejb, si es remote no funciona
-							programasProyectosDelegate.obtenerIndicadoresMaterializados(fii, orgPk, configs, monedas);
-                                                        fii.setProgPadre(item);
+							ItemInicioTO fii = (ItemInicioTO) e.getKey();
+
+							fii.setProgPadre(item);
 						}
+
 						break;
 					}
 				}
@@ -193,90 +196,52 @@ public class ProgramasProyectosMB implements Serializable {
 
 	public Map<String, String> cargarConfigLimites(Integer orgPk) {
 		String[] confs = {
-			ConfiguracionCodigos.DOCUMENTO_PORCENTAJE_LIMITE_AMARILLO,
-			ConfiguracionCodigos.DOCUMENTO_PORCENTAJE_LIMITE_ROJO,
-			ConfiguracionCodigos.RIESGO_INDICE_LIMITE_AMARILLO,
-			ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO,
-			ConfiguracionCodigos.RIESGO_TIEMPO_LIMITE_AMARILLO,
-			ConfiguracionCodigos.RIESGO_TIEMPO_LIMITE_ROJO,
 			ConfiguracionCodigos.COSTO_ACTUAL_LIMITE_AMARILLO,
 			ConfiguracionCodigos.COSTO_ACTUAL_LIMITE_ROJO,
-			ConfiguracionCodigos.ESTADO_INICIO_LIMITE_AMARILLO,
-			ConfiguracionCodigos.ESTADO_INICIO_LIMITE_ROJO,
-			ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_AMARILLO,
-			ConfiguracionCodigos.ESTADO_PLANIFICACION_LIMITE_ROJO
+			ConfiguracionCodigos.OCULTAR_IDENTIFICADORES_INICIO
 		};
 
 		configsT = configuracionDelegate.obtenerCnfPorCodigoYOrg(orgPk, null, confs);
-		Map<String, String> configs = new HashMap<String, String>();
+
+		Map<String, String> configs = new HashMap<>();
 		for (Configuracion c : configsT.values()) {
 			configs.put(c.getCnfCodigo(), c.getCnfValor());
 		}
+
 		return configs;
 	}
 
 	public void buscarAction() {
-		if (inicioMB.getOrganismo() != null) {
+                
+		if (inicioMB.getOrganismo() == null) {
+			return;
+		}
 
-			filtroActual = inicioMB.getFiltro();
+		filtroActual = inicioMB.getFiltro();
 
-			filtroInicioResultado.clear();
+		inicioMB.setAreasTematicasToFiltro();
+		inicioMB.obtenerCombosSeleccionados();
+		inicioMB.setSelectedCombosFiltro();
 
-			inicioMB.setAreasTematicasToFiltro();
-			inicioMB.obtenerCombosSeleccionados();
-			inicioMB.setSelectedCombosFiltro();
+		if (filtroActual.getEstados().contains(Integer.toString(Estados.ESTADOS.PENDIENTE.estado_id))) {
+			filtroActual.getEstados().add(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
+			filtroActual.getEstados().add(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
+		}
 
-			final Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-			final SsUsuario usuario = inicioMB.getUsuario();
+		filtroActual.setActivo(Boolean.TRUE);
+		Boolean ocultarIdentificadoresInicio = Boolean.valueOf(configsT.get(ConfiguracionCodigos.OCULTAR_IDENTIFICADORES_INICIO).getCnfValor());
 
-			if (usuario == null) {
-				return;
-			}
-			//para cada area comienzo a cargar los datos
-			//si el filtro tiene una area seteada entonces solo es para esa area
-			//si el filtro no tiene area seteada es para todas las areas
-			Integer areaOrganizacion = inicioMB.getFiltro().getAreasOrganizacion() != null ? inicioMB.getFiltro().getAreasOrganizacion().getAreaPk() : null;
-			final List<Areas> areas;
+		if (ocultarIdentificadoresInicio) {
+			filtroActual.setOrderBy(ORDEN_PROG_PROY_NOMBRE);
+		}
+		resultados = programasProyectosDelegate.obtenerPrimerNivel(filtroActual);
 
-			if (areaOrganizacion != null && areaOrganizacion > 0) {
-				areas = new ArrayList();
-				areas.add(new Areas(areaOrganizacion));
-			} else if (inicioMB.getFiltro().getPorArea() != null && inicioMB.getFiltro().getPorArea().equals(Boolean.TRUE)) {
-				areas = areasDelegate.obtenerAreasPorOrganismo(orgPk, false);
-			} else {
-				areas = null;
-			}
+		cantidadProyectos = 0;
+		cantidadProgramas = 0;
 
-			final FiltroInicioTO filtro = inicioMB.getFiltro();
-                        
-                        if(filtro.getEstados().contains(Integer.toString(Estados.ESTADOS.PENDIENTE.estado_id))) {
-                            filtro.getEstados().add(Estados.ESTADOS.PENDIENTE_PMOT.estado_id);
-                            filtro.getEstados().add(Estados.ESTADOS.PENDIENTE_PMOF.estado_id);
-                        }
-                        
-			filtro.setActivo(Boolean.TRUE);
-			Configuracion confAmarillo = configsT.get(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_AMARILLO);
-			Configuracion confRojo = configsT.get(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO);
-
-			if (areas != null) {
-				for (Areas ar : areas) {
-					final FiltroInicioResultadoTO resultado = programasProyectosDelegate.obtenerPrimerNivel(orgPk, ar, usuario, filtro, confAmarillo, confRojo);
-					if (resultado.getPrimerNivel() != null && !resultado.getPrimerNivel().isEmpty()) {
-						filtroInicioResultado.add(resultado);
-					}
-				}
-			} else {
-				final FiltroInicioResultadoTO resultado = programasProyectosDelegate.obtenerPrimerNivel(orgPk, null, usuario, filtro, confAmarillo, confRojo);
-				filtroInicioResultado.add(resultado);
-			}
-			FiltroInicioItem item = null;
-			List<Moneda> monedas = monedaDelegate.obtenerMonedas();
-			for (final FiltroInicioResultadoTO resultado : filtroInicioResultado) {
-				for (Entry e : resultado.getPrimerNivel()) {
-					item = (FiltroInicioItem) e.getKey();
-					programasProyectosDelegate.obtenerIndicadoresMaterializados(item, orgPk, configs, monedas);
-				}
-			}
+		for (ResultadoInicioTO resultado : resultados) {
+			cantidadProyectos += resultado.getCantidadProyectos();
+			cantidadProgramas += resultado.getCantidadProgramas();
 		}
 	}
 
@@ -284,144 +249,130 @@ public class ProgramasProyectosMB implements Serializable {
 		inicioMB.filtroPorDefecto();
 	}
 
-	/**
-	 * Obtiene el filtro guardado y lo carga en el Filtro.
-	 */
 	public void obtenerFiltroBusqueda() {
 		inicioMB.setFiltro(busquedaFiltroDelegate.obtenerFiltroInicio(inicioMB.getUsuario(), inicioMB.getOrganismo()));
 		inicioMB.setSelectedCombosFiltro();
 	}
 
-	/**
-	 * Guarda los criterios de busqueda del filtro.
-	 */
 	public void guardarFiltro() {
 		inicioMB.obtenerCombosSeleccionados();
 		try {
-                    busquedaFiltroDelegate.guardar(inicioMB.getFiltro(), inicioMB.getUsuario(), inicioMB.getOrganismo());
-                    JSFUtils.agregarMsg("filtroBusquedaMsg", "info_filtro_guardado", null);
+			busquedaFiltroDelegate.guardar(inicioMB.getFiltro(), inicioMB.getUsuario(), inicioMB.getOrganismo());
+			JSFUtils.agregarMsg("filtroBusquedaMsg", "info_filtro_guardado", null);
 		} catch (GeneralException ge) {
-                    logger.log(Level.SEVERE, null, ge);
-                    
-                    /*
-                    *  18-06-2018 Inspección de código.
-                    */                    
-                    //JSFUtils.agregarMsg("filtroBusquedaMsg", "error_filtro_guardar", null);
-                    JSFUtils.agregarMsgError("filtroBusquedaMsg", Labels.getValue("error_filtro_guardar"), null);                           
+			LOGGER.log(Level.SEVERE, null, ge);
 
+			JSFUtils.agregarMsgError("filtroBusquedaMsg", Labels.getValue("error_filtro_guardar"), null);
 		}
 	}
 
-	public String guardarAprobarFichaAction(FiltroInicioItem item) {
-            logger.log(Level.FINE, "Guardar y aprobar ficha:{0}, tipo:{1}", new Object[]{item.getFichaFk(), item.getTipoFicha()});
-            try {
-                    if (FichaUtils.isPrograma(item)) {
-                        Programas prog = programasDelegate.obtenerProgPorId(item.getFichaFk());
-                        guardarAprobacion(prog);
+	public String guardarAprobarFichaAction(ItemInicioTO item) {
 
-                    } else if (FichaUtils.isProyecto(item)) {
-                        Proyectos proy = proyectosDelegate.obtenerProyPorId(item.getFichaFk());
-                        proy = (Proyectos) guardarAprobacion(proy);
-                        item.setEstado(proy.getProyEstFk());
-                        item.setEstadoPendiente(proy.getProyEstPendienteFk());
-                        item.setSolCambioFase(proy.isEstPendienteFk());
-                    }
+		LOGGER.log(Level.FINE, "Guardar y aprobar ficha:{0}, tipo:{1}", new Object[]{item.getFichaFk(), item.getTipoFicha()});
+		try {
+			if (FichaUtils.isPrograma(item)) {
+				Programas prog = programasDelegate.obtenerProgPorId(item.getFichaFk());
+				guardarAprobacion(prog);
 
-            } catch (GeneralException ex) {
-                logger.log(Level.SEVERE, ex.getMessage());
-                JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "warn_aprobacion_fallo", null);
-                JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, ex.getErrores());
-                inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-            }
-            this.actualizarItem(item);
-            buscarAction();
-            return null;
+			} else if (FichaUtils.isProyecto(item)) {
+				Proyectos proy = proyectosDelegate.obtenerProyPorId(item.getFichaFk());
+				proy = (Proyectos) guardarAprobacion(proy);
+				item.setEstado(proy.getProyEstFk());
+				item.setEstadoPendiente(proy.getProyEstPendienteFk());
+				item.setSolCambioFase(proy.isEstPendienteFk());
+			}
+
+		} catch (GeneralException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage());
+			JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "warn_aprobacion_fallo", null);
+			JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, ex.getErrores());
+			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+		}
+		this.actualizarItem(item);
+		buscarAction();
+		return null;
 	}
 
 	private Object guardarAprobacion(Object progProy) throws GeneralException {
-            progProy = progProyDelegate.guardarAprobacion(progProy, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
-            JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_ficha_aprobacion_guardada", null);
-            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+		progProy = progProyDelegate.guardarAprobacion(progProy, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+		JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "info_ficha_aprobacion_guardada", null);
+		inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
-            return progProy;
+		return progProy;
 	}
 
-    public String retrocederEstadoFichaAction(FiltroInicioItem item) {
-        if (FichaUtils.isProyecto(item)) {
-            replanificacion = new ProyReplanificacion();
-            replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
-            replanificacion.setProyreplanActivo(true);
-            replanificacion.setItem(item);
-            SsUsuario usuario = inicioMB.getUsuario();
-            Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-            
-            this.itemReplan = item;
-            
-            if (item.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
-                
-                
+	public String retrocederEstadoFichaAction(ItemInicioTO item) {
 
-                if (SsUsuariosUtils.isUsuarioPMOF(item, usuario, orgPk)) {
-                        replanificacion = new ProyReplanificacion();
-                        replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
-                        replanificacion.setItem(item);
-                        replanificacion.setProyreplanActivo(true);
-                        replanificacion.setProyreplanHistorial(Boolean.TRUE);
-                        
-                        renderPopupReplanificacion = true;
-                } else if (usuario.isUsuarioPMOT(orgPk)) {
-                    if (item.getEstadoPendiente() != null
-                        && item.getEstadoPendiente().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
-                        replanificacion = proyReplanificacionBean.obtenerUltimaSolicitud(item.getFichaFk());
-                        if (replanificacion == null) {
-                            replanificacion = new ProyReplanificacion();
-                        }
-                        replanificacion.setItem(item);
-                        replanificacion.setProyreplanActivo(true);
-                        replanificacion.setProyreplanHistorial(Boolean.TRUE);
-                        
-                        renderPopupReplanificacion = true;
-                    } else {
-                        replanificacion = new ProyReplanificacion();
-                        replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
-                        replanificacion.setItem(item);
-                        replanificacion.setProyreplanActivo(true);
-                        replanificacion.setProyreplanHistorial(Boolean.TRUE);
-                        
-                        renderPopupReplanificacion = true;
-                    }
-                } else {
-                    /*
-                    *  18-06-2018 Inspección de código.
-                    */                                                  
-                    //JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "error_modificar_estado", null);
-                    JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_modificar_estado"), null); 
-                    
-                    inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-                }
-            } else {
-                this.guardarRetrocederEstado();
+		if (FichaUtils.isProyecto(item)) {
+			replanificacion = new ProyReplanificacion();
+			replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
+			replanificacion.setProyreplanActivo(true);
+			replanificacion.setItem(item);
+			SsUsuario usuario = inicioMB.getUsuario();
+			Integer orgPk = inicioMB.getOrganismo().getOrgPk();
 
-                this.actualizarItem(item);
-            }
-        }
-        return null;
-    }
-        
+			this.itemReplan = item;
+
+			if (item.getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
+
+				if (SsUsuariosUtils.isUsuarioPMOF(item, usuario, orgPk)) {
+					replanificacion = new ProyReplanificacion();
+					replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
+					replanificacion.setItem(item);
+					replanificacion.setProyreplanActivo(true);
+					replanificacion.setProyreplanHistorial(Boolean.TRUE);
+
+					renderPopupReplanificacion = true;
+				} else if (usuario.isUsuarioPMOT(orgPk)) {
+					if (item.getEstadoPendiente() != null
+							&& item.getEstadoPendiente().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+						replanificacion = proyReplanificacionBean.obtenerUltimaSolicitud(item.getFichaFk());
+						if (replanificacion == null) {
+							replanificacion = new ProyReplanificacion();
+						}
+						replanificacion.setItem(item);
+						replanificacion.setProyreplanActivo(true);
+						replanificacion.setProyreplanHistorial(Boolean.TRUE);
+
+						renderPopupReplanificacion = true;
+					} else {
+						replanificacion = new ProyReplanificacion();
+						replanificacion.setProyectoFk(new Proyectos(item.getFichaFk()));
+						replanificacion.setItem(item);
+						replanificacion.setProyreplanActivo(true);
+						replanificacion.setProyreplanHistorial(Boolean.TRUE);
+
+						renderPopupReplanificacion = true;
+					}
+				} else {
+
+					JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_modificar_estado"), null);
+
+					inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+				}
+			} else {
+				this.guardarRetrocederEstado();
+
+				this.actualizarItem(item);
+			}
+		}
+		return null;
+	}
+
 	public void replanificacionGenerarLineaBaseChange(ValueChangeEvent ev) {
-//        System.out.println("CALL replanificacionGenerarLineaBaseChange");
+
 		replanificacion.setProyreplanGenerarLineaBase((Boolean) ev.getNewValue());
 		if (!replanificacion.isProyreplanGenerarLineaBase()) {
 			replanificacion.setProyreplanHistorial(false);
-                        replanificacion.setProyreplanGenerarPresupuesto(false);
-                        replanificacion.setProyreplanGenerarProducto(false); 
-                        replanificacion.setProyreplanPermitEditar(false);
+			replanificacion.setProyreplanGenerarPresupuesto(false);
+			replanificacion.setProyreplanGenerarProducto(false);
+			replanificacion.setProyreplanPermitEditar(false);
 			replanificacion.setProyreplanDesc("");
 		}
 	}
 
 	public void replanificacionProyreplanHistorialChange(ValueChangeEvent ev) {
-//        System.out.println("CALL replanificacionProyreplanHistorialChange");
+
 		replanificacion.setProyreplanHistorial((Boolean) ev.getNewValue());
 		if (!replanificacion.getProyreplanHistorial()) {
 			replanificacion.setProyreplanDesc("");
@@ -429,146 +380,126 @@ public class ProgramasProyectosMB implements Serializable {
 	}
 
 	public String guardarRetrocederEstado() {
-            try {
+		try {
 
-//              if (replanificacion != null) {
-//		replanificacion.setProyreplanHistorial(replanificacion.isProyreplanGenerarLineaBase() && replanificacion.getProyreplanHistorial());
-//		replanificacion.setProyreplanDesc(replanificacion.getProyreplanHistorial() ? replanificacion.getProyreplanDesc() : "");
-//		}
+			if (replanificacion != null && StringsUtils.isEmpty(replanificacion.getProyreplanDesc())
+					&& replanificacion.getItem().getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)) {
 
-//              if (replanificacion != null && replanificacion.getProyreplanHistorial() && StringsUtils.isEmpty(replanificacion.getProyreplanDesc())) {
-                if(replanificacion != null && StringsUtils.isEmpty(replanificacion.getProyreplanDesc())  
-                        && replanificacion.getItem().getEstado().isEstado(Estados.ESTADOS.EJECUCION.estado_id)){
-                    
-                        JSFUtils.agregarMsg(FichaMB.REPLANIFICACION_POPUP_MSG, "error_ficha_msg_retroceder_descripcion_obligatorio", null);
-                        return null;
-                    }
+				JSFUtils.agregarMsg(FichaMB.REPLANIFICACION_POPUP_MSG, "error_ficha_msg_retroceder_descripcion_obligatorio", null);
+				return null;
+			}
 
-                    Proyectos proy = progProyDelegate.guardarRetrocederEstado(replanificacion.getProyectoFk().getProyPk(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk(), replanificacion);
-                    replanificacion.getItem().setEstado(proy.getProyEstFk());
-                    replanificacion.getItem().setEstadoPendiente(proy.getProyEstPendienteFk());
-                    replanificacion.getItem().setSolCambioFase(proy.getProyEstPendienteFk() != null);
-                renderPopupReplanificacion = false;                    
-                JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "ficha_msg_retroceder_estado", null);
-                inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-            } catch (GeneralException ge) {
-                logger.log(Level.SEVERE, ge.getMessage());
+			Proyectos proy = progProyDelegate.guardarRetrocederEstado(replanificacion.getProyectoFk().getProyPk(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk(), replanificacion);
+			replanificacion.getItem().setEstado(proy.getProyEstFk());
+			replanificacion.getItem().setEstadoPendiente(proy.getProyEstPendienteFk());
+			replanificacion.getItem().setSolCambioFase(proy.getProyEstPendienteFk() != null);
+			renderPopupReplanificacion = false;
+			JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "ficha_msg_retroceder_estado", null);
+			inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+		} catch (GeneralException ge) {
+			LOGGER.log(Level.SEVERE, ge.getMessage());
 
-                /*
-                *  18-06-2018 Inspección de código.
-                */
+			for (String iterStr : ge.getErrores()) {
+				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);
+			}
+		}
 
-                //JSFUtils.agregarMsgs(ConstantesPresentacion.MESSAGE_ID_POPUP, ge.getErrores());
-
-                for(String iterStr : ge.getErrores()){
-                    JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);                
-                }                          
-            }
-
-            actualizarItem(this.itemReplan);
-            buscarAction();
-            return null;
+		actualizarItem(this.itemReplan);
+		buscarAction();
+		return null;
 
 	}
 
 	public String cancelarReplanificacion() {
-            try {
-                if (replanificacion.getProyreplanPk() != null) {
-                    replanificacion.setProyreplanActivo(false);
-                    proyectosDelegate.guardarProyectoRechazarCambioEstado(replanificacion.getProyectoFk().getProyPk(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk(), replanificacion);
-                    JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "ficha_msg_replanificacion_descartada", null);
-                }
-                renderPopupReplanificacion = false;
+		try {
+			if (replanificacion.getProyreplanPk() != null) {
+				replanificacion.setProyreplanActivo(false);
+				proyectosDelegate.guardarProyectoRechazarCambioEstado(replanificacion.getProyectoFk().getProyPk(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk(), replanificacion);
+				JSFUtils.agregarMsg(ConstantesPresentacion.MESSAGE_ID_POPUP, "ficha_msg_replanificacion_descartada", null);
+			}
+			renderPopupReplanificacion = false;
 
-            } catch (GeneralException ge) {
-                for(String iterStr : ge.getErrores()){
-                    JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);                
-                }                    
+		} catch (GeneralException ge) {
+			for (String iterStr : ge.getErrores()) {
+				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue(iterStr), null);
+			}
 
-            }
-            actualizarItem(this.itemReplan);
-            return null;
-        }
+		}
+		actualizarItem(this.itemReplan);
+		return null;
+	}
 
 	public String cerrarPopupReplanificacion() {
 		renderPopupReplanificacion = false;
 		return null;
 	}
 
-    public String inicioTooltipNombreFicha(FiltroInicioItem item) {
-            StringBuffer result = new StringBuffer();
-            if (item != null) {
-                result.append(Labels.getValue("editarTooltip")).append(": ").append(item.getNombre());
+	public String inicioTooltipNombreFicha(ItemInicioTO item) {
+		StringBuffer result = new StringBuffer();
+		if (item != null) {
+			result.append(Labels.getValue("editarTooltip")).append(": ").append(item.getNombre());
 
-                if (item.getPeso() != null) {
-                    result.append(ConstantesPresentacion.SALTO_LINEA)
-                        .append(Labels.getValue(FichaUtils.isPrograma(item) ? "tooltip_ini_peso_total" : "tooltip_ini_peso"))
-                        .append(": ")
-                        .append(item.getPeso().toString());
-                }
+			if (item.getPeso() != null) {
+				result.append(ConstantesPresentacion.SALTO_LINEA)
+						.append(Labels.getValue(FichaUtils.isPrograma(item) ? "tooltip_ini_peso_total" : "tooltip_ini_peso"))
+						.append(": ")
+						.append(item.getPeso().toString());
+			}
 
-                if (FichaUtils.isProyecto(item)) {
-                    Double porcentajePeso = item.getIndicesProy() != null ? item.getIndicesProy().getProyindPorcPesoTotal() : null;
-                    if (porcentajePeso != null && porcentajePeso > 0) {
-                        result = result.append(" (")
-                            .append(NumbersUtils.formatDouble((porcentajePeso)))
-                            .append("%)");
-                    }
-                }
-            }
+			if (FichaUtils.isProyecto(item)) {
+				Double porcentajePeso = item.getIndicesProy() != null ? item.getIndicesProy().getProyindPorcPesoTotal() : null;
+				if (porcentajePeso != null && porcentajePeso > 0) {
+					result = result.append(" (")
+							.append(NumbersUtils.formatDouble((porcentajePeso)))
+							.append("%)");
+				}
+			}
+		}
 
-            return result.toString();
-    }
+		return result.toString();
+	}
 
-	public String inicioTooltipAvanceFinalizado(FiltroInicioItem item) {
+	public String inicioTooltipAvanceFinalizado(ItemInicioTO item) {
 		StringBuffer result = new StringBuffer();
 		if (item != null) {
 			int[] indAvance = item.getIndiceAvanceFinalizado();
-			/**
-			 * 14-12-2016: Siempre se tiene que mostrar los tooltip por más que
-			 * alguno de sus colores sea 0.
-			 */
-//            if (indAvance[0] != 0 && indAvance[1] != 0 && indAvance[2] != 0) {
+
 			result = result.append(Labels.getValue("crono_ind_avance_finalizado"))
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_azul")).append(": ")
-				.append(String.valueOf(indAvance[0])).append("%")
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_verde")).append(": ")
-				.append(String.valueOf(indAvance[1])).append("%")
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_rojo")).append(": ")
-				.append(String.valueOf(indAvance[2])).append("%");
-//            }
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_azul")).append(": ")
+					.append(String.valueOf(indAvance[0])).append("%")
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_verde")).append(": ")
+					.append(String.valueOf(indAvance[1])).append("%")
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_rojo")).append(": ")
+					.append(String.valueOf(indAvance[2])).append("%");
+
 		}
 		return result.toString();
 	}
 
-	public String inicioTooltipAvanceParcial(FiltroInicioItem item) {
+	public String inicioTooltipAvanceParcial(ItemInicioTO item) {
 		StringBuffer result = new StringBuffer();
 		if (item != null) {
 			int[] indAvance = item.getIndiceAvanceParcial();
-			/**
-			 * 14-12-2016: Siempre se tiene que mostrar los tooltip por más que
-			 * alguno de sus colores sea 0.
-			 */
-//            if (indAvance[0] != 0 && indAvance[1] != 0 && indAvance[2] != 0) {
+
 			result = result.append(Labels.getValue("crono_ind_avance_parcial"))
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_azul")).append(": ")
-				.append(String.valueOf(indAvance[0])).append("%")
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_verde")).append(": ")
-				.append(String.valueOf(indAvance[1])).append("%")
-				.append(ConstantesPresentacion.SALTO_LINEA)
-				.append(Labels.getValue("crono_ind_rojo")).append(": ")
-				.append(String.valueOf(indAvance[2])).append("%");
-//            }
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_azul")).append(": ")
+					.append(String.valueOf(indAvance[0])).append("%")
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_verde")).append(": ")
+					.append(String.valueOf(indAvance[1])).append("%")
+					.append(ConstantesPresentacion.SALTO_LINEA)
+					.append(Labels.getValue("crono_ind_rojo")).append(": ")
+					.append(String.valueOf(indAvance[2])).append("%");
+
 		}
 		return result.toString();
 	}
 
-	public String inicioTooltipMetodologia(FiltroInicioItem item) {
+	public String inicioTooltipMetodologia(ItemInicioTO item) {
 		StringBuffer result = new StringBuffer();
 		if (item != null) {
 			Double indiceEstado = null;
@@ -590,21 +521,12 @@ public class ProgramasProyectosMB implements Serializable {
 				indiceEstado = 0d;
 			}
 			result = result.append(Labels.getValue("tooltip_doc_total")).append(": ")
-				.append(indiceEstado.toString()).append("%");
-
-//            List<TipoDocumentoInstancia> listTdi = tipoDocumentoInstanciaDelegate.obtenerTipoDocInstResumen(item.getFichaFk(), item.getTipoFicha(), item.getEstado(), 5);
-//            if (listTdi != null) {
-//                for (TipoDocumentoInstancia tdi : listTdi) {
-//                    result = result.append(ConstantesPresentacion.SALTO_LINEA)
-//                            .append(tdi.getDocsEstado() != null ? tdi.getDocsEstado().toString() : String.valueOf(0d)).append(" ")
-//                            .append(tdi.getTipodocInstTipoDocFk() != null ? tdi.getTipodocInstTipoDocFk().getTipodocNombre() : "");
-//                }
-//            }
+					.append(indiceEstado.toString()).append("%");
 		}
 		return result.toString();
 	}
 
-	public String inicioTooltipPresupuesto(FiltroInicioItem item, Integer monPk) {
+	public String inicioTooltipPresupuesto(ItemInicioTO item, Integer monPk) {
 		StringBuffer result = new StringBuffer();
 		if (item != null && monPk != null) {
 			Moneda moneda = monedaDelegate.obtenerMonedaPorId(monPk);
@@ -654,29 +576,29 @@ public class ProgramasProyectosMB implements Serializable {
 			}
 			if (estadoPre != 0) {
 				result = result.append(" - ")
-					.append(presupuestoEstadoACStr(estadoPre))
-					.append(ConstantesPresentacion.SALTO_LINEA)
-					.append(presupuestoDesviacionStr(estadoPre));
+						.append(presupuestoEstadoACStr(estadoPre))
+						.append(ConstantesPresentacion.SALTO_LINEA)
+						.append(presupuestoDesviacionStr(estadoPre));
 			}
 			if (total != null) {
 				result = result.append(ConstantesPresentacion.SALTO_LINEA)
-					.append(Labels.getValue("presupuesto_resumen_total")).append(": ")
-					.append(NumbersUtils.formatImporte(total));
+						.append(Labels.getValue("presupuesto_resumen_total")).append(": ")
+						.append(NumbersUtils.formatImporte(total));
 
 				if (anio != null) {
 					result = result.append(ConstantesPresentacion.SALTO_LINEA)
-						.append(year.toString()).append(": ")
-						.append(NumbersUtils.formatImporte(anio));
+							.append(year.toString()).append(": ")
+							.append(NumbersUtils.formatImporte(anio));
 				}
 				if (PV != null) {
 					result = result.append(ConstantesPresentacion.SALTO_LINEA)
-						.append(Labels.getValue("presupuesto_resumen_pv")).append(": ")
-						.append(NumbersUtils.formatImporte(PV));
+							.append(Labels.getValue("presupuesto_resumen_pv")).append(": ")
+							.append(NumbersUtils.formatImporte(PV));
 				}
 				if (AC != null) {
 					result = result.append(ConstantesPresentacion.SALTO_LINEA)
-						.append(Labels.getValue("presupuesto_resumen_ac")).append(": ")
-						.append(NumbersUtils.formatImporte(AC));
+							.append(Labels.getValue("presupuesto_resumen_ac")).append(": ")
+							.append(NumbersUtils.formatImporte(AC));
 				}
 			}
 		}
@@ -822,7 +744,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda.setCellStyle(filtroStyle);
 
 		if (inicioMB.getListaObjetivosEstrategicosCombo() != null
-			&& inicioMB.getListaObjetivosEstrategicosCombo().getSelected() == -1) {
+				&& inicioMB.getListaObjetivosEstrategicosCombo().getSelected() == -1) {
 			celda.setCellValue("");
 		} else {
 			celda.setCellValue(((ObjetivoEstrategico) inicioMB.getListaObjetivosEstrategicosCombo().getSelectedObject()).getObjEstNombre());
@@ -866,7 +788,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda.setCellValue(Labels.getValue("inicio_col_PMOF") + ": ");
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
-		//SsUsuario pmof = (SsUsuario)inicioMB.getListaPmoFederadaCombo().getSelectedObject();
+
 		SsUsuario pmof = (SsUsuario) inicioMB.getListaPmoFederadaCombo().getObjectById(filtroActual.getPmoFederada());
 		celda.setCellValue(pmof != null ? pmof.getNombreApellido() : Labels.getValue("inicio_col_todos"));
 
@@ -887,6 +809,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda.setCellValue(Labels.getValue("inicio_col_fases") + ": ");
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
+
 		StringBuilder sb = new StringBuilder("");
 		if (!filtroActual.getEstados().isEmpty()) {
 			for (SelectItem si : inicioMB.getListaEstadosItem()) {
@@ -933,6 +856,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
 		sb = new StringBuilder("");
+
 		if (!filtroActual.getGradoRiesgo().isEmpty()) {
 			for (SelectItem si : inicioMB.getListaGradoRiesgoItems()) {
 				if (filtroActual.getGradoRiesgo().contains(si.getValue().toString())) {
@@ -1041,7 +965,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
 		Boolean porArea = filtroActual.getPorArea();
-		celda.setCellValue(porArea != null && porArea.booleanValue() ? Labels.getValue("sí") : Labels.getValue("no"));
+		celda.setCellValue((porArea != null && porArea) ? Labels.getValue("sí") : Labels.getValue("no"));
 
 		fila = hoja.createRow(++filaNro);
 		fila.setRowStyle(filtroStyle);
@@ -1056,7 +980,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda.setCellValue(Labels.getValue("inicio_col_indice") + ": ");
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
-//	Object indice = (Object)inicioMB.getListaCalIndiceCombo().getObjectById(filtroActual.getCalidadIndice());
+
 		SofisComboItem indice = ((SofisComboItem) inicioMB.getListaCalIndiceCombo().getSelectedObject());
 		celda.setCellValue(indice != null ? indice.getLabel() : "Todos");
 
@@ -1073,7 +997,7 @@ public class ProgramasProyectosMB implements Serializable {
 		celda.setCellValue("Ordenar por: ");
 		celda = fila.createCell(2);
 		celda.setCellStyle(filtroStyle);
-//	Object indice = (Object)inicioMB.getListaCalIndiceCombo().getObjectById(filtroActual.getCalidadIndice());
+
 		if ("2".equals(filtroActual.getOrderBy())) {
 			celda.setCellValue("Prog/Proy Código");
 		} else {
@@ -1086,14 +1010,14 @@ public class ProgramasProyectosMB implements Serializable {
 
 		int nroColumnas = 3;
 
-		if (filtroInicioResultado != null) {
+		if (resultados != null) {
 
 			//Cargar todas las monedas
 			List<Moneda> monedas = monedaDelegate.obtenerMonedas();
 
 			nroColumnas = 14 + monedas.size();
 
-			for (FiltroInicioResultadoTO itemArea : filtroInicioResultado) {
+			for (ResultadoInicioTO itemArea : resultados) {
 
 				if (itemArea.getArea() != null) {
 					fila = hoja.createRow(++filaNro);
@@ -1154,13 +1078,13 @@ public class ProgramasProyectosMB implements Serializable {
 					celda.setCellValue(moneda.getMonSigno());
 				}
 
-				for (Map.Entry<FiltroInicioItem, List> itemsNivel1 : itemArea.getPrimerNivel()) {
-					FiltroInicioItem itemNivel1 = itemsNivel1.getKey();
-					List<Map.Entry<FiltroInicioItem, List>> itemsNivel2 = itemsNivel1.getValue();
+				for (Map.Entry<ItemInicioTO, List> itemsNivel1 : itemArea.getPrimerNivel()) {
+					ItemInicioTO itemNivel1 = itemsNivel1.getKey();
+					List<Map.Entry<ItemInicioTO, List>> itemsNivel2 = itemsNivel1.getValue();
 					fila = hoja.createRow(++filaNro);
 					generarLinea(fila, itemNivel1, monedas, palette);
 					if (itemsNivel2 != null && !itemsNivel2.isEmpty()) {
-						for (Map.Entry<FiltroInicioItem, List> itemNivel2 : itemsNivel2) {
+						for (Map.Entry<ItemInicioTO, List> itemNivel2 : itemsNivel2) {
 							if (itemNivel2.getKey().getFichaFk() != null) {
 								fila = hoja.createRow(++filaNro);
 								generarLinea(fila, itemNivel2.getKey(), monedas, palette);
@@ -1168,9 +1092,7 @@ public class ProgramasProyectosMB implements Serializable {
 						}
 					}
 				}
-
 			}
-
 		}
 
 		for (int i = 0; i < nroColumnas; i++) {
@@ -1185,7 +1107,7 @@ public class ProgramasProyectosMB implements Serializable {
 			planilla.write(bos);
 			bytes = bos.toByteArray();
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
+			LOGGER.log(Level.SEVERE, null, ex);
 			JSFUtils.agregarMsgError("No se pudo generar la planilla");
 			return null;
 		} finally {
@@ -1193,7 +1115,7 @@ public class ProgramasProyectosMB implements Serializable {
 				try {
 					bos.close();
 				} catch (IOException ex) {
-					logger.log(Level.SEVERE, null, ex);
+					LOGGER.log(Level.SEVERE, null, ex);
 				}
 			}
 		}
@@ -1217,7 +1139,7 @@ public class ProgramasProyectosMB implements Serializable {
 		return null;
 	}
 
-	private void generarLinea(HSSFRow fila, FiltroInicioItem item, List<Moneda> monedas, HSSFPalette palette) {
+	private void generarLinea(HSSFRow fila, ItemInicioTO item, List<Moneda> monedas, HSSFPalette palette) {
 		int celdaNro = 0;
 
 		HSSFCell celda = null;
@@ -1246,19 +1168,19 @@ public class ProgramasProyectosMB implements Serializable {
 		//Actualizacion
 		celda = fila.createCell(celdaNro++);
 
-                Color color;
-                HSSFColor cellColor;
-                HSSFCellStyle cellStyle;
-                
-                if(!"transparent".equals(item.getActualizacionColor())){
-                    color = Color.decode(item.getActualizacionColor());
-                    cellColor = palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
-                    cellStyle = fila.getSheet().getWorkbook().createCellStyle();
-                    cellStyle.setFillForegroundColor(cellColor.getIndex());
-                    cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-                    celda.setCellStyle(cellStyle);
-                }
-		
+		Color color;
+		HSSFColor cellColor;
+		HSSFCellStyle cellStyle;
+
+		if (!"transparent".equals(item.getActualizacionColor())) {
+			color = Color.decode(item.getActualizacionColor());
+			cellColor = palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
+			cellStyle = fila.getSheet().getWorkbook().createCellStyle();
+			cellStyle.setFillForegroundColor(cellColor.getIndex());
+			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			celda.setCellStyle(cellStyle);
+		}
+
 		celda.setCellValue(DatesUtils.toStringFormat(item.getActualizacion(), ConstantesEstandares.CALENDAR_PATTERN));
 		celda = fila.createCell(celdaNro++);
 		celda.setCellValue("Amarillo: " + item.getSemaforoAmarillo() + " días, Rojo: " + item.getSemaforoRojo() + " días.");
@@ -1304,87 +1226,84 @@ public class ProgramasProyectosMB implements Serializable {
 			}
 		}
 	}
-        
-        
-    private void actualizarItem(FiltroInicioItem item) {
-        
-        Proyectos auxProy = proyectosDelegate.obtenerProyPorId(item.getFichaFk());
-        String colorFechaActRet = "transparent";
-        String colorFaseRet = "transparent";
-        
-        if(auxProy != null){
-            if((auxProy.getProyIndices() != null)){
-                if(auxProy.getProyIndices().getProyindFechaActColor() != null){
-                    
-                    switch (auxProy.getProyIndices().getProyindFechaActColor()){
-                    case 1:
-                        colorFechaActRet = ConstantesEstandares.SEMAFORO_VERDE;
-                        break;
-                    case 2:
-                        colorFechaActRet = ConstantesEstandares.SEMAFORO_AMARILLO;
-                        break;
-                    case 3: 
-                        colorFechaActRet = ConstantesEstandares.SEMAFORO_ROJO;
-                        break;
-                    case 4: 
-                        colorFechaActRet = ConstantesEstandares.SEMAFORO_AZUL;
-                        break;
-                    default:
-                        colorFechaActRet = "transparent";
-                        break;
-                    }
-                }
-                    
-                item.setActualizacionColor(colorFechaActRet);
-                item.setActualizacion(auxProy.getProyFechaAct());
-                
-                item.setFaseColor(programasProyectosDelegate.obtenerColorEstadoAcFromCodigo(auxProy.getProyIndices().getProyindFaseColor()));
-                
-                Programas auxProg = item.getPrograma();
-                
-                if(auxProg != null){
-                    
-                    FiltroInicioItem itemProgPadre = item.getProgPadre();
-                    
-                    if(auxProg.getProgIndices() != null){
-                        if(auxProg.getProgIndices().getProgindFechaActColor() != null){
-                            
-                            switch (auxProy.getProyIndices().getProyindFechaActColor()){
-                            case 1:
-                                colorFechaActRet = ConstantesEstandares.SEMAFORO_VERDE;
-                                break;
-                            case 2:
-                                colorFechaActRet = ConstantesEstandares.SEMAFORO_AMARILLO;
-                                break;
-                            case 3: 
-                                colorFechaActRet = ConstantesEstandares.SEMAFORO_ROJO;
-                                break;
-                            case 4: 
-                                colorFechaActRet = ConstantesEstandares.SEMAFORO_AZUL;
-                                break;
-                            default:
-                                colorFechaActRet = "transparent";
-                                break;
-                            }
-                            
-                            itemProgPadre.setActualizacionColor(colorFechaActRet);
-                            itemProgPadre.setActualizacion(auxProg.getProgIndices().getProgindFechaAct());
-                            
-                        }
-                    }
 
-                }
-                
-                item.setEstado(auxProy.getProyEstFk());
-                item.setEstadoPendiente(auxProy.getProyEstPendienteFk());
-                item.setSolCambioFase(auxProy.getProyEstPendienteFk() != null);
+	private void actualizarItem(ItemInicioTO item) {
 
-            }
+		Proyectos auxProy = proyectosDelegate.obtenerProyPorId(item.getFichaFk());
+		String colorFechaActRet = "transparent";
 
-        }
-    }
+		if (auxProy != null) {
+			if ((auxProy.getProyIndices() != null)) {
+				if (auxProy.getProyIndices().getProyindFechaActColor() != null) {
 
-	//<editor-fold defaultstate="collapsed" desc="getters-setters">
+					switch (auxProy.getProyIndices().getProyindFechaActColor()) {
+						case 1:
+							colorFechaActRet = ConstantesEstandares.SEMAFORO_VERDE;
+							break;
+						case 2:
+							colorFechaActRet = ConstantesEstandares.SEMAFORO_AMARILLO;
+							break;
+						case 3:
+							colorFechaActRet = ConstantesEstandares.SEMAFORO_ROJO;
+							break;
+						case 4:
+							colorFechaActRet = ConstantesEstandares.SEMAFORO_AZUL;
+							break;
+						default:
+							colorFechaActRet = "transparent";
+							break;
+					}
+				}
+
+				item.setActualizacionColor(colorFechaActRet);
+				item.setActualizacion(auxProy.getProyFechaAct());
+
+				item.setFaseColor(programasProyectosDelegate.obtenerColorEstadoAcFromCodigo(auxProy.getProyIndices().getProyindFaseColor()));
+
+				Programas auxProg = item.getPrograma();
+
+				if (auxProg != null) {
+
+					ItemInicioTO itemProgPadre = item.getProgPadre();
+
+					if (auxProg.getProgIndices() != null) {
+						if (auxProg.getProgIndices().getProgindFechaActColor() != null) {
+
+							switch (auxProy.getProyIndices().getProyindFechaActColor()) {
+								case 1:
+									colorFechaActRet = ConstantesEstandares.SEMAFORO_VERDE;
+									break;
+								case 2:
+									colorFechaActRet = ConstantesEstandares.SEMAFORO_AMARILLO;
+									break;
+								case 3:
+									colorFechaActRet = ConstantesEstandares.SEMAFORO_ROJO;
+									break;
+								case 4:
+									colorFechaActRet = ConstantesEstandares.SEMAFORO_AZUL;
+									break;
+								default:
+									colorFechaActRet = "transparent";
+									break;
+							}
+
+							itemProgPadre.setActualizacionColor(colorFechaActRet);
+							itemProgPadre.setActualizacion(auxProg.getProgIndices().getProgindFechaAct());
+						}
+					}
+				}
+
+				item.setEstado(auxProy.getProyEstFk());
+				item.setEstadoPendiente(auxProy.getProyEstPendienteFk());
+				item.setSolCambioFase(auxProy.getProyEstPendienteFk() != null);
+			}
+		}
+	}
+
+	public String obtenerNombreMostrar(Integer id, String nombre) {
+
+		return (ocultarIds ? "" : (id + " - ")) + nombre;
+	}
 
 	public OrganiIntProve getOrganizacion() {
 		return organizacion;
@@ -1392,10 +1311,6 @@ public class ProgramasProyectosMB implements Serializable {
 
 	public void setOrganizacion(OrganiIntProve organizacion) {
 		this.organizacion = organizacion;
-	}
-
-	public void setAplicacionMB(AplicacionMB aplicacionMB) {
-		this.aplicacionMB = aplicacionMB;
 	}
 
 	public Estados getEstado() {
@@ -1450,12 +1365,12 @@ public class ProgramasProyectosMB implements Serializable {
 		this.inicioMB = inicioMB;
 	}
 
-	public List<FiltroInicioResultadoTO> getFiltroInicioResultado() {
-		return filtroInicioResultado;
+	public List<ResultadoInicioTO> getResultados() {
+		return resultados;
 	}
 
-	public void setFiltroInicioResultado(List<FiltroInicioResultadoTO> filtroInicioResultado) {
-		this.filtroInicioResultado = filtroInicioResultado;
+	public void setResultados(List<ResultadoInicioTO> resultados) {
+		this.resultados = resultados;
 	}
 
 	public List<Moneda> getMonedasUsadas() {
@@ -1482,5 +1397,25 @@ public class ProgramasProyectosMB implements Serializable {
 		this.renderPopupReplanificacion = renderPopupReplanificacion;
 	}
 
- 	//</editor-fold>   
-}
+	public Integer getCantidadProyectos() {
+		return cantidadProyectos;
+	}
+
+	public void setCantidadProyectos(Integer cantidadProyectos) {
+		this.cantidadProyectos = cantidadProyectos;
+	}
+
+	public Integer getCantidadProgramas() {
+		return cantidadProgramas;
+	}
+
+	public void setCantidadProgramas(Integer cantidadProgramas) {
+		this.cantidadProgramas = cantidadProgramas;
+	}
+        
+        public  void showReasignar(){
+            JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), "ice.ace.instance('reasignarDialog').show()");
+            
+        }
+        
+    }

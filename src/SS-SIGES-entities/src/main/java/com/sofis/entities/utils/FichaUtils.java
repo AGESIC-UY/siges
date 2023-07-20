@@ -2,7 +2,7 @@ package com.sofis.entities.utils;
 
 import com.sofis.entities.enums.TipoFichaEnum;
 import com.sofis.entities.tipos.FichaTO;
-import com.sofis.entities.tipos.FiltroInicioItem;
+import com.sofis.entities.tipos.ItemInicioTO;
 import com.sofis.generico.utils.generalutils.StringsUtils;
 
 /**
@@ -16,8 +16,8 @@ public class FichaUtils {
             Integer tipoFicha = null;
             if (obj instanceof FichaTO) {
                 tipoFicha = ((FichaTO) obj).getTipoFicha();
-            } else if (obj instanceof FiltroInicioItem) {
-                tipoFicha = ((FiltroInicioItem) obj).getTipoFicha();
+            } else if (obj instanceof ItemInicioTO) {
+                tipoFicha = ((ItemInicioTO) obj).getTipoFicha();
             }
             if (tipoFicha != null && tipoFicha.equals(TipoFichaEnum.PROGRAMA.id)) {
                 return true;
@@ -31,8 +31,8 @@ public class FichaUtils {
             Integer tipoFicha = null;
             if (obj instanceof FichaTO) {
                 tipoFicha = ((FichaTO) obj).getTipoFicha();
-            } else if (obj instanceof FiltroInicioItem) {
-                tipoFicha = ((FiltroInicioItem) obj).getTipoFicha();
+            } else if (obj instanceof ItemInicioTO) {
+                tipoFicha = ((ItemInicioTO) obj).getTipoFicha();
             }
             if (tipoFicha != null && tipoFicha.equals(TipoFichaEnum.PROYECTO.id)) {
                 return true;

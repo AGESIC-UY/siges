@@ -198,7 +198,7 @@
                     </ace:column>
 
                     <ace:column headerText="" styleClass="columnaBoton">
-                        <ice:panelGroup title="#{labels.cal_eliminar}">
+                      
                             <h:commandButton onclick="confirmationEliminar#{item.calPk}.show()"
                                              styleClass="botonEliminar iconoTabla" 
                                              rendered="#{fichaMB.fieldRendered('eliminarCalidad')}"
@@ -212,20 +212,24 @@
                                                     closeOnEscape="true"
                                                     severity="info"
                                                     modal="true"
-                                                    position="center">
+                                                   >
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesEliminar"
+                                    <ice:commandButton id="yesEliminar"
                                                      value="#{labels.si}"
                                                      styleClass="boton principal botonContinuar"
-                                                     onclick="confirmationEliminar#{item.calPk}.hide()" 
-                                                     actionListener="#{fichaCalidadMB.eliminarAction(item.calPk)}"/>
+                                                     onclick="confirmationEliminar#{item.calPk}.hide();" 
+                                                     actionListener="#{fichaCalidadMB.eliminarAction(item.calPk)}">
+                                    
+                                   
+                                    </ice:commandButton>
+                                        
                                     <h:commandButton id="noEliminar"
                                                      value="#{labels.no}"
                                                      styleClass="boton principal botonEliminar"
                                                      onclick="confirmationEliminar#{item.calPk}.hide()"  />
                                 </h:panelGrid>
                             </ace:confirmationDialog> 
-                        </ice:panelGroup>
+                        
                     </ace:column>
                 </ace:dataTable>
 

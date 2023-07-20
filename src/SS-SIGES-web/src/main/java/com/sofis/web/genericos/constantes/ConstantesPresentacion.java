@@ -1,6 +1,9 @@
 package com.sofis.web.genericos.constantes;
 
+import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.web.properties.Labels;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  *
@@ -58,6 +61,11 @@ public class ConstantesPresentacion {
     public static final String TASK_HORAS_ESTIMADAS = "horasEstimadas";
     public static final String TASK_CAN_DELETE = "canDelete";
     public static final String TASK_TIENE_PRODUCTOS = "tieneProd";
+    public static final String TASK_TIENE_VINCULACION_WEKAN = "tieneVincWekan";
+    public static final String TASK_ES_REFERENCIA = "esReferencia";
+    public static final String TASK_REFERIDO = "referido";
+    public static final String TASK_PROYECTO_REFERIDO = "proyectoReferido";
+
     
     /* 12-12-2016 para enviar el estado en el que se encuentra el proyecto */
     /* 0 = inicio, 1 = planificación, 2 = ejecución, 3 = finalizado */
@@ -87,4 +95,13 @@ public class ConstantesPresentacion {
     public static final String PROG_PROY_ID = "programaProyectoId";
     
     public static final String MIS_TAREAS = "misTareasNav";
+	
+	public static final String REPORTE_PRESUPUESTO = "reporte-presupuesto";
+	public static final String REPORTE_CRONOGRAMA = "reporte-cronograma";
+	public static final String REPORTE_ALCANCE = "reporte-alcance";
+	
+    public static final String CALENDAR_PATTERN = "dd/MM/yyyy";
+    public static final String CALENDAR_TIME_ZONE = TimeZone.getDefault().getID();
+
+	public static final Locale LOCALE_SISTEMA = new Locale(ConstantesEstandares.CURRENT_LOCALE_LANGUAGE, ConstantesEstandares.CURRENT_LOCALE_COUNTRY);
 }

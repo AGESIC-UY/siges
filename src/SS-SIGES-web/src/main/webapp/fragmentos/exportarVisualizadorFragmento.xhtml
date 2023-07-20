@@ -9,10 +9,10 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:icecore="http://www.icefaces.org/icefaces/core"
                 xmlns:ice="http://www.icesoft.com/icefaces/component"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:of="http://omnifaces.org/functions">
+                xmlns:o="http://omnifaces.org/ui">
 
     <o:form id="frmExportar">
+
         <!-- Filtro -->
         <ice:panelGroup id="filtroExpVisuaPanel" styleClass="buscador recuadro">
             <ice:outputText value="#{labels.exp_visua_filtro}" styleClass="subtitulo"/>
@@ -20,9 +20,6 @@
             <c:set var="colFiltro" value="col-sm-12" />
             <c:set var="colNombre" value="col-sm-3" />
             <c:set var="colInput" value="col-sm-9" />
-
-            <!--<h:panelGrid columns="2" columnClasses="col-sm-6,col-sm-6">-->
-
 
             <h:panelGroup layout="block" styleClass="col-sm-12 formulario-resp">
 
@@ -128,6 +125,10 @@
                     <ace:progressBar id="progressBarExp" value="#{exportarVisualizadorMB.progressProy}" 
                                      rendered="#{exportarVisualizadorMB.progressProy != null}"/>
                 </ice:panelGroup>
+                <ice:panelGroup styleClass="noHayImagenPrinEnExportProy">
+                    <ice:outputText value="Uno o mas proyectos no contienen imagen principal publicable." 
+                                    rendered="#{exportarVisualizadorMB.proySinImagenPrin}"/>
+                </ice:panelGroup>
             </ice:panelGroup>
 
             <ice:panelGroup styleClass="panelBotones">
@@ -148,7 +149,7 @@
             </ice:panelGroup>
 
 
-            <ice:panelGroup >
+            <ice:panelGroup>
                 <ice:outputText styleClass="resultadoBusqueda" value="#{labels.resultadoBusqueda}: #{exportarVisualizadorMB.listFichaTO.size()}"/>
             </ice:panelGroup>
 
@@ -169,16 +170,6 @@
                                      title="#{labels.inicio_link_nombre}">
                         <ice:graphicImage value="../img/nueva_ventana.png" />
                     </ice:commandLink>
-
-<!--                    <h:link id="linkEditarFicha2"
-                            styleClass="#{item.tipoFicha eq 1 ? 'esPrograma' : ''}"
-                            outcome="IR_A_EDITAR_FICHA" 
-                            rendered="#{item.proyProgId != null}"
-                            title="#{labels.inicio_link_nombre}"
-                            target="_newtab">
-                        <o:param name="programaProyectoId" value="#{item.proyProgId}" />
-                        <ice:graphicImage value="../img/nueva_ventana.png" />
-                    </h:link>-->
 
                 </ace:column>
 
@@ -211,12 +202,27 @@
                     </ice:outputText>
                 </ace:column>
 
-                <ace:column headerText="#{labels.exp_visua_sel}" sortBy="#{item.seleccionado}" 
+                <ace:column sortBy="#{item.seleccionado}" 
                             rendered="#{exportarVisualizadorMB.fieldRendered('btnExportarVisualizador')}">
-                    <h:selectBooleanCheckbox value="#{item.seleccionado}" 
+                    <f:facet name="header">
+                        <h:selectBooleanCheckbox id="seleccionarTodoCheckbox" value="#{exportarVisualizadorMB.todoSeleccionado}" 
+                                                 styleClass="formulario"
+                                                 title="#{labels.exp_visua_seleccionar_todo}"
+                                                 valueChangeListener="#{exportarVisualizadorMB.seleccionarTodo}">
+                            <f:ajax immediate="true" render="tblResultados"/>
+                        </h:selectBooleanCheckbox>
+                        
+                        <h:outputText value="#{labels.exp_visua_seleccion}"/>
+                    </f:facet>
+                    
+                    <h:selectBooleanCheckbox id="checkboxSeleccionProyecto"
+                                             value="#{item.seleccionado}" 
                                              styleClass="formulario"
                                              title="#{item.publicable ? labels.exp_visua_check_pub : labels.exp_visua_no_pub}"
-                                             rendered="#{item.publicable}"/>
+                                             rendered="#{item.publicable}"
+                                             valueChangeListener="#{exportarVisualizadorMB.seleccionarProyecto}">
+                            <f:ajax immediate="true" render="seleccionarTodoCheckbox"/>
+                    </h:selectBooleanCheckbox>
                 </ace:column>
 
                 <ace:column >

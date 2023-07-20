@@ -1,15 +1,14 @@
 package com.sofis.business.utils;
 
 import com.sofis.entities.data.Proyectos;
+import com.sofis.entities.tipos.ProyectoTO;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- *
- * @author Usuario
- */
+
+
 public class ProyectosUtils {
 
     /**
@@ -33,4 +32,14 @@ public class ProyectosUtils {
 
         return listProyectos;
     }
+    
+    public static ProyectoTO convert(Proyectos proyecto) {
+
+		ProyectoTO result = new ProyectoTO();
+		result.setId(proyecto.getProyPk());
+		result.setNombre(proyecto.getProyNombre());
+
+		return result;
+	}
+
 }

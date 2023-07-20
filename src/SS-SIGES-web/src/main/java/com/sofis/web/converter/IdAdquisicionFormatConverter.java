@@ -14,20 +14,11 @@ public class IdAdquisicionFormatConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 
-		Boolean exigido = (Boolean) component.getAttributes().get("exigido");
-
 		if (StringsUtils.isEmpty(value)) {
 			return null;
 		}
 		try {
-			Integer id = Integer.valueOf(value);
-
-			if (id < 0 || (Boolean.TRUE.equals(exigido) && id == 0)) {
-
-				throw new ConverterException();
-			}
-
-			return id;
+			return Integer.valueOf(value);
 
 		} catch (NumberFormatException | ConverterException e) {
 

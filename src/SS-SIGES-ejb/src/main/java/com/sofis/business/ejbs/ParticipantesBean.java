@@ -29,210 +29,222 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author Usuario
- */
 @Named
 @Stateless(name = "ParticipantesBean")
 @LocalBean
 public class ParticipantesBean {
 
-    private static final Logger logger = Logger.getLogger(ParticipantesBean.class.getName());
-    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-    private EntityManager em;
+	private static final Logger LOGGER = Logger.getLogger(ParticipantesBean.class.getName());
 
-    @Inject
-    private DatosUsuario du;
-    @Inject
-    private RegistrosHorasBean registrosHorasBean;
-    @Inject
-    private GastosBean gastosBean;
+	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+	private EntityManager em;
 
-    public Participantes guardar(Participantes participante) throws GeneralException {
+	@Inject
+	private RegistrosHorasBean registrosHorasBean;
 
-        ParticipantesValidacion.validar(participante);
-        ParticipantesDao participantesDao = new ParticipantesDao(em);
-        try {
-            participante = participantesDao.update(participante);
-        } catch (BusinessException be) {
-            //Si es de tipo negocio envía la misma excepción
-            logger.log(Level.SEVERE, null, be);
-            throw be;
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+	@Inject
+	private GastosBean gastosBean;
 
-            if (ex.getCause() instanceof javax.persistence.PersistenceException
-                    && ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-                BusinessException be = new BusinessException();
-                be.addError(MensajesNegocio.ERROR_PARTICIPANTE_CONST_VIOLATION);
-                throw be;
-            }
+	@Inject
+	private ProyectosBean proyectoBean;
 
-            TechnicalException ge = new TechnicalException(ex);
-            ge.addError(ex.getMessage());
-            throw ge;
-        }
-        return participante;
-    }
+	public Participantes guardar(Participantes participante) throws GeneralException {
 
-    public Participantes guardarParticipante(Participantes part) {
-        if (part != null) {
-            if (part.getPartActivo() == null) {
-                part.setPartActivo(Boolean.TRUE);
-            }
-        }
-        if (part.getPartUsuarioFk() != null) {
-            SsUsuario s = em.find(SsUsuario.class, part.getPartUsuarioFk().getUsuId());
-            part.setPartUsuarioFk(s);
-        }
-        return guardar(part);
-    }
+		ParticipantesValidacion.validar(participante);
+		ParticipantesDao participantesDao = new ParticipantesDao(em);
+		try {
+			participante = participantesDao.update(participante);
 
-    public Participantes obtenerParticipantesPorPk(Integer partPk) {
-        try {
-            ParticipantesDao participantesDao = new ParticipantesDao(em);
-            return participantesDao.findById(Participantes.class, partPk);
-        } catch (BusinessException be) {
-            throw be;
-        } catch (Exception ex) {
-            logger.logp(Level.SEVERE, ParticipantesBean.class.getName(), "obtenerParticipantesPorPk", ex.getMessage(), ex);
-            TechnicalException ge = new TechnicalException(ex);
-            ge.addError(ex.getMessage());
-            throw ge;
-        }
-    }
+			proyectoBean.actualizarFechaUltimaModificacion(participante.getPartProyectoFk().getProyPk());
 
-    public List<Participantes> obtenerParticipantesPorProyPk(Integer fichaFk) {
-        try {
-            ParticipantesDao participantesDao = new ParticipantesDao(em);
-            return participantesDao.findByOneProperty(Participantes.class, "partProyectoFk.proyPk", fichaFk);
-        } catch (BusinessException be) {
-            throw be;
-        } catch (Exception ex) {
-            logger.logp(Level.SEVERE, ParticipantesBean.class.getName(), "obtenerParticipantesPorFichaPk", ex.getMessage(), ex);
-            TechnicalException ge = new TechnicalException(ex);
-            ge.addError(ex.getMessage());
-            throw ge;
-        }
-    }
+		} catch (BusinessException be) {
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void eliminarNewTrans(Integer partPk) {
-        eliminar(partPk);
-    }
-    
-    public void eliminar(Integer partPk) {
-        ParticipantesDao participantesDao = new ParticipantesDao(em);
+			LOGGER.log(Level.SEVERE, null, be);
 
-        try {
-            Participantes part = obtenerParticipantesPorPk(partPk);
-            if (part != null) {
-                boolean horasAprob = registrosHorasBean.usuTieneHorasAprob(part.getPartUsuarioFk().getUsuId(), part.getPartProyectoFk().getProyPk());
-                boolean gastosAprob = gastosBean.usuTieneGastosAprob(part.getPartUsuarioFk().getUsuId(), part.getPartProyectoFk().getProyPk());
-                if (horasAprob || gastosAprob) {
-                    part.setPartActivo(false);
-                    guardar(part);
-                } else {
-                    participantesDao.delete(part);
-                }
-            }
-        } catch (DAOGeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            BusinessException be = new BusinessException();
-            be.addError(MensajesNegocio.ERROR_PARTICIPANTE_ELIMINAR);
-            throw be;
-        }
+			throw be;
 
-    }
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
 
-    public List<Proyectos> obtenerProyectosPorUsuarioParticipante(Integer usuId) {
-        List<Proyectos> proyectos = new LinkedList<>();
-        try {
-            ParticipantesDao participantesDao = new ParticipantesDao(em);
-            List<Participantes> parts = participantesDao.findByOneProperty(Participantes.class, "partUsuarioFk.usuId", usuId);
-            if (parts != null) {
-                for (Participantes part : parts) {
-                    proyectos.add(part.getPartProyectoFk());
-                }
-            }
-            return proyectos;
-        } catch (BusinessException be) {
-            throw be;
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            TechnicalException ge = new TechnicalException(ex);
-            ge.addError(ex.getMessage());
-            throw ge;
-        }
-    }
+			if (ex.getCause() instanceof javax.persistence.PersistenceException
+					&& ex.getCause().getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+				BusinessException be = new BusinessException();
+				be.addError(MensajesNegocio.ERROR_PARTICIPANTE_CONST_VIOLATION);
+				throw be;
+			}
 
-    public List<Proyectos> obtenerProyectosPorUsuarioParticipanteActivo(Integer usuId) {
-        List<Proyectos> proyectos = new LinkedList<>();
-        try {
-            ParticipantesDao participantesDao = new ParticipantesDao(em);
-            List<Participantes> parts = participantesDao.findByOneProperty(Participantes.class, "partUsuarioFk.usuId", usuId);
-            if (parts != null) {
-                for (Participantes part : parts) {
-                    if (part.isParticipanteActivo()) {
-                        proyectos.add(part.getPartProyectoFk());
-                    }
-                }
-            }
-            return proyectos;
-        } catch (BusinessException be) {
-            throw be;
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            TechnicalException ge = new TechnicalException(ex);
-            ge.addError(ex.getMessage());
-            throw ge;
-        }
-    }
+			TechnicalException ge = new TechnicalException(ex);
+			ge.addError(ex.getMessage());
+			throw ge;
+		}
 
-    public Participantes obtenerParticipantesPorUsuId(Integer proyPk, Integer usuId) {
-        if (usuId != null) {
-            ParticipantesDao dao = new ParticipantesDao(em);
-            try {
-                MatchCriteriaTO proyCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "partProyectoFk.proyPk", proyPk);
-                MatchCriteriaTO usuCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "partUsuarioFk.usuId", usuId);
-                CriteriaTO criteria = CriteriaTOUtils.createANDTO(proyCriteria, usuCriteria);
+		return participante;
+	}
 
-                String[] orderBy = {};
-                boolean[] asc = {};
+	public Participantes guardarParticipante(Participantes part) {
 
-                List<Participantes> result = dao.findEntityByCriteria(Participantes.class, criteria, orderBy, asc, null, null);
-                return (Participantes) DAOUtils.obtenerSingleResult(result);
-            } catch (DAOGeneralException ex) {
-                Logger.getLogger(ParticipantesBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
-    }
+		if (part.getPartActivo() == null) {
+			part.setPartActivo(Boolean.TRUE);
+		}
 
-    public List<Participantes> obtenerParticipantesConHoraYGasto(Integer proyPk) {
-        if (proyPk != null) {
-            List<Participantes> listPart = obtenerParticipantesPorProyPk(proyPk);
-            for (Participantes part : listPart) {
-                Integer usuId = part.getPartUsuarioFk().getUsuId();
-                Double horasAprob = registrosHorasBean.obtenerHorasAbrobPorProy(proyPk, usuId);
-                Double horasPendientes = registrosHorasBean.obtenerHorasPendPorProy(proyPk, usuId);
-                MonedaImporteTO[] gastosAprob = gastosBean.obtenerGastosPorProyYMon(proyPk, usuId, true);
-                MonedaImporteTO[] gastosPendientes = gastosBean.obtenerGastosPorProyYMon(proyPk, usuId, false);
+		if (part.getPartUsuarioFk() != null) {
+			SsUsuario s = em.find(SsUsuario.class, part.getPartUsuarioFk().getUsuId());
+			part.setPartUsuarioFk(s);
+		}
 
-                part.setHorasAprobadas(horasAprob);
-                part.setHorasPendientes(horasPendientes);
-                part.setGastosAprobados(gastosAprob);
-                part.setGastosPendientes(gastosPendientes);
-            }
+		return guardar(part);
+	}
 
-            return listPart;
-        }
-        return null;
-    }
+	public Participantes obtenerParticipantesPorPk(Integer partPk) {
+		try {
+			ParticipantesDao participantesDao = new ParticipantesDao(em);
+			return participantesDao.findById(Participantes.class, partPk);
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception ex) {
+			LOGGER.logp(Level.SEVERE, ParticipantesBean.class.getName(), "obtenerParticipantesPorPk", ex.getMessage(), ex);
+			TechnicalException ge = new TechnicalException(ex);
+			ge.addError(ex.getMessage());
+			throw ge;
+		}
+	}
 
-    public boolean tieneDependenciasEnt(Integer entPk) {
-        ParticipantesDao dao = new ParticipantesDao(em);
-        return dao.tieneDependenciasEnt(entPk);
-    }
+	public List<Participantes> obtenerParticipantesPorProyPk(Integer fichaFk) {
+		try {
+			ParticipantesDao participantesDao = new ParticipantesDao(em);
+			return participantesDao.findByOneProperty(Participantes.class, "partProyectoFk.proyPk", fichaFk);
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception ex) {
+			LOGGER.logp(Level.SEVERE, ParticipantesBean.class.getName(), "obtenerParticipantesPorFichaPk", ex.getMessage(), ex);
+			TechnicalException ge = new TechnicalException(ex);
+			ge.addError(ex.getMessage());
+			throw ge;
+		}
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void eliminarNewTrans(Integer partPk) {
+		eliminar(partPk);
+	}
+
+	public void eliminar(Integer partPk) {
+		ParticipantesDao participantesDao = new ParticipantesDao(em);
+
+		try {
+			Participantes part = obtenerParticipantesPorPk(partPk);
+
+			if (part == null) {
+				return;
+			}
+
+			boolean horasAprob = registrosHorasBean.usuTieneHorasAprob(part.getPartUsuarioFk().getUsuId(), part.getPartProyectoFk().getProyPk());
+			boolean gastosAprob = gastosBean.usuTieneGastosAprob(part.getPartUsuarioFk().getUsuId(), part.getPartProyectoFk().getProyPk());
+
+			if (horasAprob || gastosAprob) {
+				part.setPartActivo(false);
+				guardar(part);
+			} else {
+				participantesDao.delete(part);
+				proyectoBean.actualizarFechaUltimaModificacion(part.getPartProyectoFk().getProyPk());
+			}
+
+		} catch (DAOGeneralException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			BusinessException be = new BusinessException();
+			be.addError(MensajesNegocio.ERROR_PARTICIPANTE_ELIMINAR);
+			throw be;
+		}
+
+	}
+
+	public List<Proyectos> obtenerProyectosPorUsuarioParticipante(Integer usuId) {
+		List<Proyectos> proyectos = new LinkedList<>();
+		try {
+			ParticipantesDao participantesDao = new ParticipantesDao(em);
+			List<Participantes> parts = participantesDao.findByOneProperty(Participantes.class, "partUsuarioFk.usuId", usuId);
+			if (parts != null) {
+				for (Participantes part : parts) {
+					proyectos.add(part.getPartProyectoFk());
+				}
+			}
+			return proyectos;
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException ge = new TechnicalException(ex);
+			ge.addError(ex.getMessage());
+			throw ge;
+		}
+	}
+
+	public List<Proyectos> obtenerProyectosPorUsuarioParticipanteActivo(Integer usuId) {
+		List<Proyectos> proyectos = new LinkedList<>();
+		try {
+			ParticipantesDao participantesDao = new ParticipantesDao(em);
+			List<Participantes> parts = participantesDao.findByOneProperty(Participantes.class, "partUsuarioFk.usuId", usuId);
+			if (parts != null) {
+				for (Participantes part : parts) {
+					if (part.isParticipanteActivo()) {
+						proyectos.add(part.getPartProyectoFk());
+					}
+				}
+			}
+			return proyectos;
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			TechnicalException ge = new TechnicalException(ex);
+			ge.addError(ex.getMessage());
+			throw ge;
+		}
+	}
+
+	public Participantes obtenerParticipantesPorUsuId(Integer proyPk, Integer usuId) {
+		if (usuId != null) {
+			ParticipantesDao dao = new ParticipantesDao(em);
+			try {
+				MatchCriteriaTO proyCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "partProyectoFk.proyPk", proyPk);
+				MatchCriteriaTO usuCriteria = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "partUsuarioFk.usuId", usuId);
+				CriteriaTO criteria = CriteriaTOUtils.createANDTO(proyCriteria, usuCriteria);
+
+				String[] orderBy = {};
+				boolean[] asc = {};
+
+				List<Participantes> result = dao.findEntityByCriteria(Participantes.class, criteria, orderBy, asc, null, null);
+				return (Participantes) DAOUtils.obtenerSingleResult(result);
+			} catch (DAOGeneralException ex) {
+				Logger.getLogger(ParticipantesBean.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		return null;
+	}
+
+	public List<Participantes> obtenerParticipantesConHoraYGasto(Integer proyPk) {
+		if (proyPk != null) {
+			List<Participantes> listPart = obtenerParticipantesPorProyPk(proyPk);
+			for (Participantes part : listPart) {
+				Integer usuId = part.getPartUsuarioFk().getUsuId();
+				Double horasAprob = registrosHorasBean.obtenerHorasAbrobPorProy(proyPk, usuId);
+				Double horasPendientes = registrosHorasBean.obtenerHorasPendPorProy(proyPk, usuId);
+				MonedaImporteTO[] gastosAprob = gastosBean.obtenerGastosPorProyYMon(proyPk, usuId, true);
+				MonedaImporteTO[] gastosPendientes = gastosBean.obtenerGastosPorProyYMon(proyPk, usuId, false);
+
+				part.setHorasAprobadas(horasAprob);
+				part.setHorasPendientes(horasPendientes);
+				part.setGastosAprobados(gastosAprob);
+				part.setGastosPendientes(gastosPendientes);
+			}
+
+			return listPart;
+		}
+		return null;
+	}
+
+	public boolean tieneDependenciasEnt(Integer entPk) {
+		ParticipantesDao dao = new ParticipantesDao(em);
+		return dao.tieneDependenciasEnt(entPk);
+	}
 }

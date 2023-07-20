@@ -2,6 +2,9 @@ package com.sofis.business.utils;
 
 import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.data.Entregables;
+import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.EntregableTO;
+import com.sofis.entities.tipos.UsuarioTO;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.DatesUtils;
@@ -20,12 +23,107 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author Usuario
- */
 public class EntregablesUtils {
+
+	public static EntregableTO convert(Entregables entregable) {
+
+		EntregableTO result = new EntregableTO();
+		result.setId(entregable.getEntPk());
+		result.setNumero(entregable.getEntId());
+		result.setNivel(entregable.getEntNivel());
+		result.setEsPadre(entregable.getEntParent());
+
+		result.setNombre(entregable.getEntNombre());
+		result.setDescripcion(entregable.getEntDescripcion());
+
+		result.setFechaInicio(entregable.getEntInicioDate());
+		result.setFechaFin(entregable.getEntFinDate());
+		result.setDuracion(entregable.getEntDuracion());
+
+		result.setProgreso(entregable.getEntProgreso());
+		result.setEsfuerzo(entregable.getEntEsfuerzo());
+
+		result.setDependencias(entregable.getEntPredecesorFk());
+		result.setStatus(entregable.getEntStatus());
+
+		result.setInicioEsHito(entregable.getEntInicioEsHito());
+		result.setFinEsHito(entregable.getEntFinEsHito());
+
+		result.setEsRelevantePMO(entregable.getEntRelevante());
+
+		result.setInicioLineaBase(entregable.getEntInicioLineaBaseDate());
+		result.setFinLineaBase(entregable.getEntFinLineaBaseDate());
+		result.setDuracionLineaBase(entregable.getEntDuracionLineaBase());
+
+		result.setEsInicioProyecto(entregable.getEntInicioProyecto());
+		result.setEsFinProyecto(entregable.getEntFinProyecto());
+
+		result.setHorasEstimadas(entregable.getEntHorasEstimadas());
+
+		result.setEsReferencia(entregable.getEsReferencia());
+                
+		result.setCoordinador(convert(entregable.getCoordinadorUsuFk()));
+                
+                if (result.getEsReferencia() != null && result.getEsReferencia() && result.getReferido() != null){
+                    result.setReferido(convert(entregable.getReferido()));
+                }
+		return result;
+	}
+        
+        public static UsuarioTO convert(SsUsuario usuario) {
+
+		UsuarioTO result = new UsuarioTO();
+		result.setId(usuario.getUsuId());
+                result.setPrimerNombre(usuario.getNombreApellido());
+		result.setPrimerApellido(usuario.getNombreApellido());
+		
+
+		return result;
+	}
+
+	public static Entregables convert(EntregableTO entregable) {
+
+		Entregables result = new Entregables();
+		result.setEntPk(entregable.getId());
+		result.setEntId(entregable.getNumero());
+		result.setEntNivel(entregable.getNivel());
+		result.setEntParent(entregable.getEsPadre());
+
+		result.setEntNombre(entregable.getNombre());
+		result.setEntDescripcion(entregable.getDescripcion());
+
+		result.setEntInicio(entregable.getFechaInicio().getTime());
+		result.setEntFin(entregable.getFechaFin().getTime());
+		result.setEntDuracion(entregable.getDuracion());
+
+		result.setEntProgreso((entregable.getProgreso() != null) ? entregable.getProgreso() : 0);
+		result.setEntEsfuerzo((entregable.getEsfuerzo() != null) ? entregable.getEsfuerzo() : 0);
+
+		result.setEntPredecesorFk(entregable.getDependencias());
+		result.setEntStatus(entregable.getStatus());
+
+		result.setEntInicioEsHito(entregable.getInicioEsHito());
+		result.setEntFinEsHito(entregable.getFinEsHito());
+
+		result.setEntRelevante(entregable.getEsRelevantePMO());
+
+		result.setEntInicioLineaBase((entregable.getInicioLineaBase() != null) ? entregable.getInicioLineaBase().getTime() : null);
+		result.setEntFinLineaBase((entregable.getFinLineaBase() != null) ? entregable.getFinLineaBase().getTime() : null);
+		result.setEntDuracionLineaBase(entregable.getDuracionLineaBase());
+
+		result.setEntInicioProyecto(entregable.getEsInicioProyecto());
+		result.setEntFinProyecto(entregable.getEsFinProyecto());
+
+		result.setEntHorasEstimadas(entregable.getHorasEstimadas());
+		result.setEsReferencia((entregable.getEsReferencia() != null) ? entregable.getEsReferencia() : false);
+
+
+
+
+		return result;
+	}
 
 	/**
 	 * Ordenar la lista de entregables por la descripción
@@ -100,8 +198,8 @@ public class EntregablesUtils {
 
 		return listEntregables;
 	}
-
-	public static List<Entregables> sortByEsfuerzo(List<Entregables> listEntregables, final boolean desc) {
+        
+       public static List<Entregables> sortByEsfuerzo(List<Entregables> listEntregables, final boolean desc) {
 		if (listEntregables != null && !listEntregables.isEmpty()) {
 			Collections.sort(listEntregables, new Comparator<Entregables>() {
 				@Override
@@ -111,6 +209,26 @@ public class EntregablesUtils {
 							return e1.getEntEsfuerzo().compareTo(e2.getEntEsfuerzo());
 						} else {
 							return e2.getEntEsfuerzo().compareTo(e1.getEntEsfuerzo());
+						}
+					}
+					return 0;
+				}
+			});
+		}
+
+		return listEntregables;
+	}
+
+	public static List<Entregables> sortByNivel(List<Entregables> listEntregables, final boolean desc) {
+		if (listEntregables != null && !listEntregables.isEmpty()) {
+			Collections.sort(listEntregables, new Comparator<Entregables>() {
+				@Override
+				public int compare(Entregables e1, Entregables e2) {
+					if (e1 != null && e1.getEntNivel() != null && e2 != null && e2.getEntNivel() != null) {
+						if (!desc) {
+							return e1.getEntNivel().compareTo(e2.getEntNivel());
+						} else {
+							return e2.getEntNivel().compareTo(e1.getEntNivel());
 						}
 					}
 					return 0;
@@ -155,28 +273,23 @@ public class EntregablesUtils {
 		}
 		return entregables;
 	}
-        
-        /*
-        * 19-03-18 Nico: Redefino esta función para poder sacar los entregables que no estan asociados al coordinador loggeado.
-        */
 
-        public static List<Entregables> entregablesSinPadres(List<Entregables> entregables, Map<Integer, Boolean> auxAsocCoordEnt) {
+	public static List<Entregables> filtrarEntregablesEditables(List<Entregables> entregables, Map<Integer, Boolean> mapaEditables) {
+
+		List<Entregables> result = new ArrayList<>();
 		if (entregables != null && !entregables.isEmpty()) {
-			List<Entregables> result = new ArrayList<>();
+
 			for (Entregables ent : entregables) {
-				if (ent.getEntParent() != null && !ent.getEntParent()) {
-					if(auxAsocCoordEnt.get(ent.getEntId())){
-                                            result.add(ent);
-                                        }
+
+				if (mapaEditables.get(ent.getEntId())) {
+					result.add(ent);
 				}
 			}
-			return result;
 		}
-		return entregables;
+
+		return result;
 	}
 
-        
-        
 	/**
 	 * Retorna la lista de entregables sin los hitos.
 	 *
@@ -209,7 +322,7 @@ public class EntregablesUtils {
 					}
 				}
 				if (entNext == null || ent.getEntNivel().equals(entNext.getEntNivel())
-					|| ent.getEntNivel() > entNext.getEntNivel()) {
+						|| ent.getEntNivel() > entNext.getEntNivel()) {
 					result.add(ent);
 				}
 			}
@@ -274,10 +387,10 @@ public class EntregablesUtils {
 			} else {
 				int diaDelAnio = 0;
 				if (calIni.get(Calendar.YEAR) == anio
-					&& calFin.get(Calendar.YEAR) == anio) {
+						&& calFin.get(Calendar.YEAR) == anio) {
 					if (verUnDia
-						&& calIni.get(Calendar.MONTH) == calFin.get(Calendar.MONTH)
-						&& calIni.get(Calendar.DAY_OF_MONTH) == calFin.get(Calendar.DAY_OF_MONTH)) {
+							&& calIni.get(Calendar.MONTH) == calFin.get(Calendar.MONTH)
+							&& calIni.get(Calendar.DAY_OF_MONTH) == calFin.get(Calendar.DAY_OF_MONTH)) {
 						duracion = 1;
 					} else {
 						duracion = DatesUtils.diasEntreFechas(inicio, fin);
@@ -326,12 +439,42 @@ public class EntregablesUtils {
 
 			for (int i = 0; i < arrEnt.length; i++) {
 				arrEnt[i].setEntParent(arrEnt[i].getEntId() == 0
-					|| (i + 1 < arrEnt.length && arrEnt[i].getEntNivel() < arrEnt[i + 1].getEntNivel()));
+						|| (i + 1 < arrEnt.length && arrEnt[i].getEntNivel() < arrEnt[i + 1].getEntNivel()));
 			}
 			listaEntregables = Arrays.asList(arrEnt);
 		}
 		return listaEntregables;
 	}
+              
+        /**
+	 * Retorna el entregable padre a partir de un entregable hijo
+	 * indicado.
+	 *
+	 * @param listEnt
+	 * @param entHijo
+	 * @return
+	 */
+	public static Entregables obtenerPadre(List<Entregables> listEnt, Entregables entHijo) {
+		if (CollectionsUtils.isNotEmpty(listEnt) && entHijo != null && entHijo.getEntNivel() != null && entHijo.getEntNivel() != 0) {
+			Entregables result = null;
+			listEnt = sortById(listEnt);
+			Entregables[] arrEnt = listEnt.toArray(new Entregables[listEnt.size()]);
+
+			for (int i = 0; i < arrEnt.length; i++) {
+				if ((arrEnt[i].getEntPk() != null && entHijo.getEntPk() != null && arrEnt[i].getEntPk().equals(entHijo.getEntPk()))
+						|| (arrEnt[i].getEntId() != null && entHijo.getEntId() != null && arrEnt[i].getEntId().equals(entHijo.getEntId()))) {
+					if (arrEnt[i].getEntNivel() == arrEnt[i-1].getEntNivel()-1) {
+						result = arrEnt[i-1];
+                                        } else {
+                                            break;
+                                        }
+				}
+			}
+			return result;
+		}
+		return null;
+	}
+
 
 	/**
 	 * Dado una lista de entregables se le carga el indicador de nivel.
@@ -368,8 +511,8 @@ public class EntregablesUtils {
 	 */
 	public static Boolean entregableEsHijo(List<Entregables> listEnt, Entregables entPadre, Entregables entHijo) {
 		if (CollectionsUtils.isNotEmpty(listEnt)
-			&& entPadre != null
-			&& entHijo != null) {
+				&& entPadre != null
+				&& entHijo != null) {
 			List<Entregables> hijos = obtenerHijos(listEnt, entPadre, Boolean.TRUE);
 
 			return hijos.contains(entHijo);
@@ -394,7 +537,7 @@ public class EntregablesUtils {
 
 			for (int i = 0; i < arrEnt.length; i++) {
 				if ((arrEnt[i].getEntPk() != null && entPadre.getEntPk() != null && arrEnt[i].getEntPk().equals(entPadre.getEntPk()))
-					|| (arrEnt[i].getEntId() != null && entPadre.getEntId() != null && arrEnt[i].getEntId().equals(entPadre.getEntId()))) {
+						|| (arrEnt[i].getEntId() != null && entPadre.getEntId() != null && arrEnt[i].getEntId().equals(entPadre.getEntId()))) {
 					if (agregarPadre != null && agregarPadre) {
 						result.add(arrEnt[i]);
 					}
@@ -411,6 +554,7 @@ public class EntregablesUtils {
 		}
 		return listEnt;
 	}
+        
 
 	/**
 	 *
@@ -427,16 +571,15 @@ public class EntregablesUtils {
 
 		return listEnt;
 	}
-        
-        /*
+
+	/*
         * 19-03-18 Nico: Redefino esta función para poder sacar los entregables que no estan asociados al coordinador loggeado.
-        */
-        
+	 */
 	public static List<Entregables> cargarCamposCombos(List<Entregables> listEnt, Map<Integer, Boolean> auxAsocCoordEnt) {
 		if (CollectionsUtils.isNotEmpty(listEnt)) {
 			listEnt = cargarNivelStr(listEnt);
 			for (Entregables ent : listEnt) {
-				if(auxAsocCoordEnt.get(ent.getEntId())) {
+				if (auxAsocCoordEnt.get(ent.getEntId())) {
 					cargarCamposEntregable(ent);
 				}
 			}
@@ -452,6 +595,7 @@ public class EntregablesUtils {
 		ent.setNivelNombreCombo(StringsUtils.concat(nivel, ent.getEntNombre()));
 		ent.setFechaNivelNombreCombo(StringsUtils.concat("(", ini, "-", fin, ") ", nivel, ent.getEntNombre()));
 	}
+
 	/**
 	 * Retorna true si la fecha de fin del entregable es menor a hoy o si es
 	 * mayor al fin de la linea base.
@@ -511,29 +655,29 @@ public class EntregablesUtils {
 						esPadre = true;
 						if (eHijo.getEntInicio() != null) {
 							minInicio = minInicio == null
-								|| eHijo.getEntInicio() < e.getEntInicio()
-								? eHijo.getEntInicio()
-								: minInicio;
+									|| eHijo.getEntInicio() < e.getEntInicio()
+									? eHijo.getEntInicio()
+									: minInicio;
 
 						}
 						if (eHijo.getEntFin() != null) {
 							maxFin = maxFin == null
-								|| eHijo.getEntFin() > e.getEntFin()
-								? eHijo.getEntFin()
-								: maxFin;
+									|| eHijo.getEntFin() > e.getEntFin()
+									? eHijo.getEntFin()
+									: maxFin;
 						}
 						if (corregirLineaBase && eHijo.getEntInicioLineaBase() != null && e.getEntInicioLineaBase() != null) {
 							minInicioLB = minInicioLB == null
-								|| eHijo.getEntInicioLineaBase() < e.getEntInicioLineaBase()
-								? eHijo.getEntInicioLineaBase()
-								: minInicioLB;
+									|| eHijo.getEntInicioLineaBase() < e.getEntInicioLineaBase()
+									? eHijo.getEntInicioLineaBase()
+									: minInicioLB;
 
 						}
 						if (corregirLineaBase && eHijo.getEntFinLineaBase() != null && e.getEntFinLineaBase() != null) {
 							maxFinLB = maxFinLB == null
-								|| eHijo.getEntFinLineaBase() > e.getEntFinLineaBase()
-								? eHijo.getEntFinLineaBase()
-								: maxFinLB;
+									|| eHijo.getEntFinLineaBase() > e.getEntFinLineaBase()
+									? eHijo.getEntFinLineaBase()
+									: maxFinLB;
 						}
 
 					} else {
@@ -559,57 +703,19 @@ public class EntregablesUtils {
 						e.setEntParent(esPadre);
 					}
 					e.setEntDuracion(DatesUtils.diasEntreFechas(
-						e.getEntInicioDate(),
-						e.getEntFinDate())
-						+ 1);
+							e.getEntInicioDate(),
+							e.getEntFinDate())
+							+ 1);
 					if (e.getEntFinLineaBase() != null && e.getEntInicioLineaBase() != null) {
 						e.setEntDuracionLineaBase(
-							DatesUtils.diasEntreFechas(
-								e.getEntInicioLineaBaseDate(),
-								e.getEntFinLineaBaseDate())
-							+ 1);
+								DatesUtils.diasEntreFechas(
+										e.getEntInicioLineaBaseDate(),
+										e.getEntFinLineaBaseDate())
+								+ 1);
 					}
 
 				}
 			}
-
-//            for (Entregables en : entregables) {
-//                if (en.getEntPredecesorFk() != null && !StringsUtils.isEmpty(en.getEntPredecesorFk())) {
-//                    Matcher matcher = EntregablesValidacion.DEPENDENCIA_PATTERN.matcher(en.getEntPredecesorFk());
-//                    if (matcher.matches()) {
-//                        String[] dependencias = en.getEntPredecesorFk().split(",");
-//                        String[] de;
-//                        Integer[] elem;
-//                        Entregables entDep = null;
-//                        Long maxFinDep = 0L;
-//                        Date finDepAux = null;
-//                        for (String d : dependencias) {
-//                            de = d.split(":");
-//                            Integer entPreId = Integer.parseInt(de[0]);
-//                            Integer dias = de.length > 1 && !StringsUtils.isEmpty(de[1])
-//                                    ? Integer.parseInt(de[1])
-//                                    : null;
-//                            elem = new Integer[2];
-//                            elem[0] = entPreId;
-//                            elem[1] = dias;
-//                            entDep = entIdMap.get(elem[0]);
-//                            if (entDep != null && !(entDep.getEntId().equals(en.getEntId()))
-//                                    && !EntregablesUtils.entregableEsHijo(entregables, entDep, en)) {
-//
-//                                if (elem[1] != null) {
-//                                    finDepAux = DatesUtils.incrementarDias(entDep.getEntFinDate(), elem[1]);
-//                                } else {
-//                                    finDepAux = entDep.getEntFinDate();
-//                                }
-//                                maxFinDep = maxFinDep < finDepAux.getTime() ? finDepAux.getTime() : maxFinDep;
-//                            }
-//                        }
-//
-//                        en.setEntInicio(DatesUtils.incrementarDias(new Date(maxFinDep), 1).getTime());
-//                        en.setEntFin(DatesUtils.incrementarDias(en.getEntInicioDate(), en.getEntDuracion()).getTime());
-//                    }
-//                }
-//            }
 		}
 		return entregables;
 	}
@@ -659,16 +765,15 @@ public class EntregablesUtils {
 			return entregables;
 		}
 		NodoEntregable nodoEntregableRaiz = (NodoEntregable) grafo[0];
-    
-    //imprimirGrafo(nodoEntregableRaiz, 2);
-    
+
+		//imprimirGrafo(nodoEntregableRaiz, 2);
 		Map<Integer, NodoEntregable> nodosEntregables = (Map<Integer, NodoEntregable>) grafo[1];
 		//Repetir el procedimiento de ajuste de fechas hasta que en una pasada no cambie ninguna
 		boolean huboCambios;
 		do {
 			huboCambios = ajustarFechas(nodoEntregableRaiz, nodosEntregables);
 		} while (huboCambios);
-    
+
 		//Repetir el procedimiento de ajuste de fechas de la línea base hasta que en una pasada no cambie ninguna
 		do {
 			huboCambios = ajustarFechasLineaBase(nodoEntregableRaiz, nodosEntregables);
@@ -689,23 +794,6 @@ public class EntregablesUtils {
 		return entregables;
 	}
 
-//  private static void imprimirGrafo(NodoEntregable nodo, int x)  {
-//    if(nodo==null) {
-//      return;
-//    }
-//    String s = "";
-//    for(int i=0; i<x; i++) {
-//      s += "**";
-//    }
-//    System.out.println(s+" - "+nodo.getEntregable().getEntNivel()+"-"+nodo.getEntregable().getEntNombre()+"-");
-//    if(nodo.getHijos()!=null) {
-//      for(NodoEntregable nodo1 : nodo.getHijos()) {
-//        imprimirGrafo(nodo1, x+2);
-//      }
-//    }
-//  }
-  
-  
 	/**
 	 * Arma un grafo de nodos entregables para poder detectar si existen ciclos
 	 * y en caso de no haberlos para poder ajustar las fechas de cada entregable
@@ -770,12 +858,12 @@ public class EntregablesUtils {
 		}
 		//Verificar que no existan ciclos (lanza excepción si los hay)
 		detectarCiclos(nodoEntregableRaiz, nodosEntregables);
-    
-    //Si no hay cilcos, validar que un nodo no tenga como predecesor a un descendiente
-    for(NodoEntregable nodo : nodosEntregables.values()) {
-      detectarPrecesorDescendiente(nodo);
-    }
-    
+
+		//Si no hay cilcos, validar que un nodo no tenga como predecesor a un descendiente
+		for (NodoEntregable nodo : nodosEntregables.values()) {
+			detectarPrecesorDescendiente(nodo);
+		}
+
 		//Respuesta
 		Object[] ret = new Object[2];
 		ret[0] = nodoEntregableRaiz;
@@ -783,54 +871,55 @@ public class EntregablesUtils {
 		return ret;
 	}
 
-  
-  /**
-   * Intenta determinar si algún nodo del grafo (ya se debe haber hecha la validación de ciclos) tiene como dependencia a un nodo que es 
-   * descendiente del mismo.
-   * Esto es porque un nodo no puede tener como dependencia a un descendiente porque si lo tuviese tendría que comenzar cuando ese 
-   * dependendiente termine, pero un nodo no puede terminar (y por tanto comenzar) más tarde que el último dependiente.
-   * @param nodo 
-   */
-  private static void detectarPrecesorDescendiente(NodoEntregable nodo) {
-    if(nodo.getEntregable().getEntPredecesorFk() != null) {
-      String[] predecesores = nodo.getEntregable().getEntPredecesorFk().split(",");
-      for (String predecesor : predecesores) {
-        String[] partes = predecesor.split(":");
-        if(!partes[0].trim().isEmpty()) {
-          Integer predecesorId = Integer.valueOf(partes[0].trim());
-          if(esDescendiente(nodo, predecesorId)) {
-            throw new BusinessException("Hay un entregable que tiene como predecesor a un entregable descendiente");
-          }
-        }
-      }
-    }
-  }
-  
-  /**
-   * Determina si el nodo indicado es el nodoId, o alguno de sus hijos lo es
-   * @param nodo
-   * @param nodoId
-   * @return 
-   */
-  private static boolean esDescendiente(NodoEntregable nodo, Integer nodoId) {
-    if(nodo==null || nodoId==null) {
-      return false;
-    }
-    if(nodo.getEntregable().getEntId().equals(nodoId)) {
-      return true;
-    }
-    if(nodo.getHijos()!=null) {
-      for(NodoEntregable nodo1 : nodo.getHijos()) {
-        if(esDescendiente(nodo1, nodoId)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
-  
-  
+	/**
+	 * Intenta determinar si algún nodo del grafo (ya se debe haber hecha la
+	 * validación de ciclos) tiene como dependencia a un nodo que es
+	 * descendiente del mismo. Esto es porque un nodo no puede tener como
+	 * dependencia a un descendiente porque si lo tuviese tendría que comenzar
+	 * cuando ese dependendiente termine, pero un nodo no puede terminar (y por
+	 * tanto comenzar) más tarde que el último dependiente.
+	 *
+	 * @param nodo
+	 */
+	private static void detectarPrecesorDescendiente(NodoEntregable nodo) {
+		if (nodo.getEntregable().getEntPredecesorFk() != null) {
+			String[] predecesores = nodo.getEntregable().getEntPredecesorFk().split(",");
+			for (String predecesor : predecesores) {
+				String[] partes = predecesor.split(":");
+				if (!partes[0].trim().isEmpty()) {
+					Integer predecesorId = Integer.valueOf(partes[0].trim());
+					if (esDescendiente(nodo, predecesorId)) {
+						throw new BusinessException("Hay un entregable que tiene como predecesor a un entregable descendiente");
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Determina si el nodo indicado es el nodoId, o alguno de sus hijos lo es
+	 *
+	 * @param nodo
+	 * @param nodoId
+	 * @return
+	 */
+	private static boolean esDescendiente(NodoEntregable nodo, Integer nodoId) {
+		if (nodo == null || nodoId == null) {
+			return false;
+		}
+		if (nodo.getEntregable().getEntId().equals(nodoId)) {
+			return true;
+		}
+		if (nodo.getHijos() != null) {
+			for (NodoEntregable nodo1 : nodo.getHijos()) {
+				if (esDescendiente(nodo1, nodoId)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Intenta detectar si existe algún ciclo en el grafo de entregables. Si en
 	 * el grafo de entregables existen ciclos no va a ser posible ajustar las
@@ -866,17 +955,17 @@ public class EntregablesUtils {
 			String[] predecesores = nodoVisitar.getEntregable().getEntPredecesorFk().split(",");
 			for (String predecesor : predecesores) {
 				String[] partes = predecesor.split(":");
-        if(!partes[0].trim().isEmpty()) {
-          Integer predecesorId = Integer.valueOf(partes[0].trim());
-          if (nodosEntregables.containsKey(predecesorId)) {
-            NodoEntregable nodoPred = nodosEntregables.get(predecesorId);
-            if(!nodosDestino.contains(nodoPred)) {
-              nodosDestino.add(nodoPred);
-            }
-          } else {
-            throw new BusinessException("Hay un entregable que tiene como predecesor a un entregable inexistente");
-          }
-        }
+				if (!partes[0].trim().isEmpty()) {
+					Integer predecesorId = Integer.valueOf(partes[0].trim());
+					if (nodosEntregables.containsKey(predecesorId)) {
+						NodoEntregable nodoPred = nodosEntregables.get(predecesorId);
+						if (!nodosDestino.contains(nodoPred)) {
+							nodosDestino.add(nodoPred);
+						}
+					} else {
+						throw new BusinessException("Hay un entregable que tiene como predecesor a un entregable inexistente");
+					}
+				}
 			}
 		}
 		nodoVisitar.setMarcaTemporal(true);
@@ -912,7 +1001,7 @@ public class EntregablesUtils {
 		if (nodoEntregable == null) {
 			return false;
 		}
-    
+
 		//Si al terminar el proceso esta variable está en true entonces hay que hacer otra pasada completa
 		boolean hayModificaciones = false;
 		//En primer lugar se ajustan las fechas del entregable considerando la menor fecha de inicio y la mayor fecha de fin de los hijos
@@ -1066,32 +1155,181 @@ public class EntregablesUtils {
 				return o1.getEntId().compareTo(o2.getEntId());
 			}
 		});
-                int cantNivelesCero = 0;
+		int cantNivelesCero = 0;
 		if (entregables != null && entregables.size() > 1) {
-                    Iterator<Entregables> it = entregables.iterator();
-                    Entregables entAnterior = it.next();
-                    Entregables entActual;
-                    if(entAnterior.getEntNivel().equals(0)){
-                        cantNivelesCero++;
-                    }
-                    do {
-                            entActual = it.next();
-                            if (entAnterior.getEntNivel() < 0
-                                    || entActual.getEntNivel() < 0
-                                    || entActual.getEntNivel() > entAnterior.getEntNivel() + 1) {
-                                    throw new BusinessException("El entregable \"" + entActual.getEntNombre() + "\" tiene un nivel inválido");
-                            }
-                            entAnterior = entActual;
-                            if(entAnterior.getEntNivel().equals(0)){
-                                cantNivelesCero++;
-                            }
-                    } while (it.hasNext());
-                    
-                    if(cantNivelesCero != 1){
-                        throw new BusinessException("El conjunto de entregables tiene más de un nivel 0");
-                    }
+			Iterator<Entregables> it = entregables.iterator();
+			Entregables entAnterior = it.next();
+			Entregables entActual;
+			if (entAnterior.getEntNivel().equals(0)) {
+				cantNivelesCero++;
+			}
+			do {
+				entActual = it.next();
+				if (entAnterior.getEntNivel() < 0
+						|| entActual.getEntNivel() < 0
+						|| entActual.getEntNivel() > entAnterior.getEntNivel() + 1) {
+					throw new BusinessException("El entregable \"" + entActual.getEntNombre() + "\" tiene un nivel inválido");
+				}
+				entAnterior = entActual;
+				if (entAnterior.getEntNivel().equals(0)) {
+					cantNivelesCero++;
+				}
+			} while (it.hasNext());
+
+			if (cantNivelesCero != 1) {
+				throw new BusinessException("El conjunto de entregables tiene más de un nivel 0");
+			}
 		}
 
+	}
+
+	public static void asignarProgresoEsfuerzoPadres(List<Entregables> entregables) {
+
+		asignarProgresoEsfuerzoPadres(new HashSet<>(entregables));
+	}
+
+	public static void asignarProgresoEsfuerzoPadres(Set<Entregables> entregables) {
+
+             System.out.println("com.sofis.business.utils.EntregablesUtils.asignarProgresoEsfuerzoPadres()");
+		Entregables raiz = null;
+		for (Entregables e : entregables) {
+			if (e.getEntId().equals(1)) {
+
+				raiz = e;
+			}
+		}
+
+		if (raiz == null) {
+			return;
+		}
+
+		asignarProgresoEsfuerzoPadres(new ArrayList<>(entregables), raiz);
+	}
+
+	private static double[] asignarProgresoEsfuerzoPadres(List<Entregables> entregables, Entregables raiz) {
+
+		if (!raiz.esEntParent()) {
+
+			double[] result = new double[2];
+
+			result[0] = raiz.getEntProgreso();
+			result[1] = raiz.getEntEsfuerzo();
+
+			return result;
+		}
+
+		List<Entregables> hijos = obtenerHijosDirectos(entregables, raiz);
+
+		double progreso = 0;
+		int esfuerzo = 0;
+		for (Entregables e : hijos) {
+
+			double[] datosHijos = asignarProgresoEsfuerzoPadres(entregables, e);
+
+			progreso += datosHijos[0] * datosHijos[1];
+			esfuerzo += datosHijos[1];
+		}
+
+		progreso = (esfuerzo > 0) ? (progreso / esfuerzo) : 0;
+
+		int progresoInt = (progreso % 1 < 0.5)
+				? new Double(Math.floor(progreso)).intValue()
+				: new Double(Math.ceil(progreso)).intValue();
+
+		raiz.setEntProgreso(progresoInt);
+		raiz.setEntEsfuerzo(esfuerzo);
+
+		double[] result = new double[2];
+
+		result[0] = progreso;
+		result[1] = esfuerzo;
+
+		return result;
+	}
+        
+        
+        public static void asignarFechaInicioFinPadres(Set<Entregables> entregables) {
+
+		Entregables raiz = null;
+		for (Entregables e : entregables) {
+			if (e.getEntId().equals(1)) {
+
+				raiz = e;
+			}
+		}
+
+		if (raiz == null) {
+			return;
+		}
+
+		Long[] result = asignarFechaInicioFinPadres(new ArrayList<>(entregables), raiz);
+                raiz.setEntInicio(result[0]);
+                raiz.setEntFin(result[1]);
+	}
+        
+        private static Long[] asignarFechaInicioFinPadres(List<Entregables> entregables, Entregables raiz) {
+
+		if (!raiz.esEntParent()) {
+
+			Long[] result = new Long[3];
+
+			result[0] = raiz.getEntInicio();
+			result[1] = raiz.getEntFin();
+			result[2] = raiz.getEntDuracion().longValue();
+
+			return result;
+		}
+
+		List<Entregables> hijos = obtenerHijosDirectos(entregables, raiz);
+
+		Long fechaInicio = null;
+		Long fechaFin = null;
+		Long duracion = null;
+		for (Entregables e : hijos) {
+
+			Long[] datosHijos = asignarFechaInicioFinPadres(entregables, e);
+                        
+                        if (fechaInicio == null || fechaInicio >= datosHijos[0]){
+                            fechaInicio = datosHijos[0];
+                        }
+                        if (fechaFin == null || fechaFin <= datosHijos[1]){
+                            fechaFin = datosHijos[1];
+                        }
+		}
+                if (fechaInicio != null && fechaFin != null){
+                    duracion = TimeUnit.DAYS.convert(fechaFin-fechaInicio, TimeUnit.MILLISECONDS);
+                }
+
+		raiz.setEntInicio(fechaInicio);
+		raiz.setEntFin(fechaFin);
+		
+		Long[] result = new Long[3];
+
+		result[0] = fechaInicio;
+		result[1] = fechaFin;
+		result[2] = duracion;
+
+		return result;
+	}
+        
+        
+
+	private static List<Entregables> obtenerHijosDirectos(List<Entregables> entregables, Entregables raiz) {
+
+		int nivel = raiz.getEntNivel() + 1;
+
+		List<Entregables> descendientes = obtenerHijos(entregables, raiz, false);
+
+		List<Entregables> hijosDirectos = new ArrayList<>();
+
+		for (Entregables e : descendientes) {
+
+			if (e.getEntNivel().equals(nivel)) {
+				hijosDirectos.add(e);
+			}
+		}
+
+		return hijosDirectos;
 	}
 
 }

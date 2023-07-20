@@ -85,10 +85,10 @@
             <ice:panelGroup styleClass="formulario formularioPopup">
 
                 <h:panelGrid columns="1">
-                    <h:commandButton value="#{labels.agregarParticipante}" 
+                    <ace:pushButton value="#{labels.agregarParticipante}" 
                                      action="#{revisionHorasMB.abrir()}"
                                      rendered="#{revisionHorasMB.renderedHorasGastos == 0 and !fichaMB.partFormDataExpanded and fichaMB.fieldRendered('agregarParticipante')}"
-                                     styleClass="boton principal #{fichaMB.documento.docsPk ne null ? 'botonEditar' : 'botonAgregar'}" />
+                                      styleClass="boton principal agregar" />
                 </h:panelGrid>
 
                 <ice:panelPopup id="popupParticipantesForm"
@@ -119,21 +119,21 @@
                             <ice:panelGroup id="participantesFormData">
                                 <ice:panelGrid styleClass="formulario" columns="2">
 
-                                    <ice:outputLabel value="#{labels.revisionHoras_part_usuario}:" />
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_usuario}" styleClass="obligatorio"/>
                                     <ice:selectOneMenu value="#{revisionHorasMB.listaUsuariosCombo.selected}"
                                                        disabled="#{revisionHorasMB.participante.partPk != null}">
                                         <f:selectItems value="#{revisionHorasMB.listaUsuariosCombo.items}" />
                                     </ice:selectOneMenu>
 
-                                    <ice:outputLabel value="#{labels.revisionHoras_entregable}:" />
+                                    <ice:outputLabel value="#{labels.revisionHoras_entregable}" styleClass="obligatorio"/>
                                     <ice:selectOneMenu value="#{revisionHorasMB.listaEntregablesCombo.selected}">
                                         <f:selectItems value="#{revisionHorasMB.listaEntregablesCombo.items}" />
                                     </ice:selectOneMenu>
 
-                                    <ice:outputLabel value="#{labels.revisionHoras_part_activo}:" />
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_activo}" />
                                     <ace:checkboxButton value="#{revisionHorasMB.participante.participanteActivo}" />
 
-                                    <ice:outputLabel value="#{labels.revisionHoras_part_horas_plan}:" />
+                                    <ice:outputLabel value="#{labels.revisionHoras_part_horas_plan}" styleClass="obligatorio" />
                                     <ice:inputText value="#{revisionHorasMB.participanteHoras}" styleClass="textoCorto" />
                                 </ice:panelGrid>
                             </ice:panelGroup> 
@@ -217,7 +217,7 @@
                         </ace:column>
 
                         <ace:column styleClass="columnaBoton">
-                            <h:commandButton styleClass="botonEditar iconoTabla"
+                            <ice:commandButton styleClass="botonEditar iconoTabla"
                                              rendered="#{fichaMB.fieldRendered('editarParticipante')}"
                                              action="#{revisionHorasMB.editarPart(part)}"
                                              title="#{labels.revisionHoras_editar_part}"/>
@@ -238,7 +238,7 @@
                                                     modal="true"
                                                     position="center">
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                                    <h:commandButton id="yesDelPart"
+                                    <ice:commandButton id="yesDelPart"
                                                      value="#{labels.si}"
                                                      styleClass="boton principal botonContinuar"
                                                      onclick="confirmationEliminarPart#{part.partPk}.hide();" 

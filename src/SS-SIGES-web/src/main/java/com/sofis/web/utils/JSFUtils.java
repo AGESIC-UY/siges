@@ -4,11 +4,17 @@ import com.sofis.generico.utils.generalutils.StringsUtils;
 import com.sofis.web.properties.Labels;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 public class JSFUtils {
+    
+    private static final Logger LOGGER = Logger.getLogger(JSFUtils.class.getName());
 
 	private static String findMessage(String labelKey) {
 		if (Labels.containsKey(labelKey)) {
@@ -138,4 +144,16 @@ public class JSFUtils {
 		}
 		return id;
 	}
+        
+        
+        public static void refreshCurrentPage() {
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            externalContext.redirect(((HttpServletRequest) externalContext.getRequest()).getRequestURI());
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+        
+        
 }

@@ -17,18 +17,50 @@
         <ice:outputText value="#{labels.reporte_titulo_cronograma}"/>
     </ice:panelGroup>
 
-    <ice:panelGroup styleClass="RefLineaBase" rendered="#{not empty reporteProyectoMB.histReplanificacion}">
+    <ice:panelGroup styleClass="refLineaBase" rendered="#{not empty reporteProyectoMB.histReplanificacion}" style="padding-bottom: 10px;">
         <b><ice:outputText value="#{labels.reporte_crono_ref_linea_base}" /></b>
         <c:forEach var="histReplan" items="#{reporteProyectoMB.histReplanificacion}">
             <div class="cadaEntHistLineaBase">
                 <ice:outputText value="#{histReplan.proyreplanPk} - "/>
-                <ice:outputText value="#{histReplan.proyreplanFecha}"
-                                converter="fechaConverter"/>
+                <ice:outputText value="#{histReplan.proyreplanFecha}" converter="fechaConverter"/>
+                
+                <ice:outputText rendered="#{histReplan.proyreplanGenerarLineaBase}" 
+                                value=" - #{labels.reporte_crono_generar_linea_base_cronograma_habilitada}" 
+                                title="#{labels.reporte_crono_generar_linea_base_cronograma_habilitada_detalle}"/>
+                
+                <ice:outputText rendered="#{histReplan.proyreplanPermitEditar}" 
+                                value=" - #{labels.reporte_crono_generar_linea_base_presupuesto_habilitada}"
+                                title="#{labels.reporte_crono_generar_linea_base_presupuesto_habilitada_detalle}"/>
+                
+                <ice:outputText rendered="#{histReplan.proyreplanGenerarPresupuesto}" 
+                                value=" - #{labels.reporte_crono_datos_reales_presupuesto_habilitada}"
+                                title="#{labels.reporte_crono_datos_reales_presupuesto_habilitada_detalle}"/>
+                
                 <ice:outputText value=" - #{histReplan.proyreplanDesc}"/>
             </div>
         </c:forEach>
     </ice:panelGroup>
-
+    
+    <ice:panelGroup rendered="#{not empty reporteProyectoMB.histReplanificacion}">
+        <ice:panelGroup style="padding-bottom: 20px;">
+            <ice:panelGroup>
+                <b><ice:outputText value="#{labels.referencia}:"/></b>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <b><ice:outputText value="#{labels.reporte_crono_generar_linea_base_cronograma_habilitada}: "/></b>
+                <ice:outputText value="#{labels.reporte_crono_generar_linea_base_cronograma_habilitada_detalle}"/>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <b><ice:outputText value="#{labels.reporte_crono_generar_linea_base_presupuesto_habilitada}: "/></b>
+                <ice:outputText value="#{labels.reporte_crono_generar_linea_base_presupuesto_habilitada_detalle}"/>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <b><ice:outputText value="#{labels.reporte_crono_datos_reales_presupuesto_habilitada}: "/></b>
+                <ice:outputText value="#{labels.reporte_crono_datos_reales_presupuesto_habilitada_detalle}"/>
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:panelGroup>
+    
     <ice:panelGroup styleClass="anioProducto">
         <ice:commandLink action="#{reporteProyectoMB.retrocederAnio()}" 
                          rendered="#{reporteProyectoMB.contieneAnioMenor()}">
@@ -55,7 +87,7 @@
 	</ace:checkboxButton>
     </ice:panelGroup>
 
-    <ice:panelGroup>
+    <ice:panelGroup style="padding-bottom: 10px;">
         <div class="reporteFicha">
             <div class="cabezalMeses prodItem">
                 <span class="prodItemTitle primerEspacio"></span>
@@ -100,20 +132,25 @@
 			    <c:set var="display" value="#{reporteProyectoMB.displayEnt(ent) ? '' : 'none'}" />
 			    <c:set var="left" value="#{reporteProyectoMB.calcularLeftEntByDate(ent.entInicioDate)}px" />
 			    <c:set var="width" value="#{reporteProyectoMB.calcularWitdhEntByDate(ent.entInicioDate, ent.entFinDate, ent.entDuracion)}px" />
-			    <div class="indice3color" style="left:#{left}; width:#{width}; display:#{display};">
-				<c:if test="#{ent.entParent}">
-				    <div class="" style="width: 100%;background-color: #bababa;">&nbsp;</div>
-				</c:if>
-				<c:if test="#{!ent.entParent}">
-				    <!-- barras de colores -->
-				    <c:set var="progresoPorc" value="#{ent.entProgreso}%" />
-				    <c:set var="faltante" value="#{100 - ent.entProgreso}" />
-				    <c:set var="faltantePorc" value="#{faltante}%" />
+			    <c:set var="borderTop" value="#{ent.entParent ? '3px solid black' : ''}" />
+                            
+                            <div class="indice3color" style="left:#{left}; width:#{width}; display:#{display}; border-top:#{borderTop};">
 
-				    <div class="indice3colorBlue" style="width:#{progresoPorc}">#{ent.entProgreso}%</div>
-				    <div class="#{reporteProyectoMB.entAtrasado(ent) ? 'indice3colorRed':'indice3colorGreen'}" style="width:#{faltantePorc}">#{faltante}%</div>
-				</c:if>
-			    </div>
+                                <c:if test="#{ent.entParent and ent.entEsfuerzo eq 0}" >
+                                    <div class="" style="width: 100%;background-color: #bababa;">&nbsp;</div>
+                                </c:if>
+
+                                <c:if test="#{not ent.entParent or ent.entEsfuerzo ne 0}" >
+                            
+                                    <!-- barras de colores -->
+                                    <c:set var="progresoPorc" value="#{ent.entProgreso}%" />
+                                    <c:set var="faltante" value="#{100 - ent.entProgreso}" />
+                                    <c:set var="faltantePorc" value="#{faltante}%" />
+
+                                    <div class="indice3colorBlue" style="width:#{progresoPorc}">#{ent.entProgreso}%</div>
+                                    <div class="#{reporteProyectoMB.entAtrasado(ent) ? 'indice3colorRed':'indice3colorGreen'}" style="width:#{faltantePorc}">#{faltante}%</div>
+                                </c:if>
+                            </div>
 			</div>
 		    </div>
 

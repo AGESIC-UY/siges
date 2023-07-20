@@ -19,6 +19,7 @@ public class MensajesNegocio {
     public final static String ERROR_PROGRAMA_GUARDAR = "error_programa_guardar";
     public final static String ERROR_PROYECTO = "warn_proyecto";
     public final static String ERROR_PROYECTO_GUARDAR = "error_proyecto_guardar";
+    public final static String ERROR_PROYECTO_NO_ENCONTRADO = "error_proyecto_no_encontrado";
     public final static String ERROR_FICHA_NULL = "error_ficha_null";
     public final static String ERROR_FICHA_PROG_HABILITADO = "error_ficha_prog_habilitado";
     public final static String ERROR_FICHA_ORGANISMO = "error_ficha_organismo";
@@ -66,6 +67,8 @@ public class MensajesNegocio {
     public final static String ERROR_INTERESADO_TELEFONO = "error_interesado_telefono";
     public final static String ERROR_INTERESADO_CORREO = "error_interesado_correo";
     public final static String ERROR_INTERESADO_CORREO_INVALIDO = "error_interesado_correo_invalido";
+    public final static String ERROR_INTERESADO_USUARIO = "error_interesado_usuario";
+    public final static String ERROR_INTERESADO_TIPO = "error_interesado_tipo";
     // VALIDACIONES Riesgos
     public final static String ERROR_RIESGOS_NULL = "error_riesgos_null";
     public final static String ERROR_RIESGOS_NOMBRE = "error_riesgos_nombre";
@@ -100,6 +103,9 @@ public class MensajesNegocio {
     public final static String ERROR_ADQISICION_ELIMINAR_PAGO_CONF = "error_adquisicion_eliminar_pago_conf";
     public final static String ERROR_ADQISICION_USUARIO_COMPARTIDA_REQUERIDO = "error_adquiscion_usuario_compartida_requerido";
     public final static String ERROR_ADQUISICION_TIPO_COMPRA_VACIO = "error_adquisicion_tipo_compra_vacio";
+    public final static String ERROR_ADQUISICION_DUPLICAR_ESTADO_PROYECTO_INVALIDO = "error_adquisicion_duplicar_estado_proyecto_invalido";
+    public final static String ERROR_ADQUISICION_DUPLICAR_FECHA_PRIMER_PAGO_INVALIDA = "error_adquisicion_duplicar_fecha_primer_pago_invalida";
+    public final static String ERROR_ADQUISICION_DUPLICAR_PORCENTAJE_IMPORTE_INVALIDO = "error_adquisicion_duplicar_porcentaje_importe_invalido";
     public final static String ERROR_ADQUISICION_FECHA_INICIO_MAYOR_FECHA_EJECUCION = "error_adquisicion_fecha_inicio_mayor_ejecucion";
     public final static String ERROR_ADQUISICION_TIPO_ADQUISICION_VACIO = "error_adquisicion_tipo_adquisicion_vacio";
     public final static String ERROR_ADQUISICION_ID_ADQUISICION_VACIO = "error_adquisicion_id_adquisicion_vacio";
@@ -108,6 +114,7 @@ public class MensajesNegocio {
     public final static String ERROR_ADQUISICION_CENTRO_COSTO_VACIO = "error_adquisicion_centro_costo_vacio";
     public final static String ERROR_ADQUISICION_SIN_PROVEEDOR = "error_adquisicion_sin_proveedor";
     public final static String ERROR_ADQUISICION_SIN_CAUSAL = "error_adquisicion_sin_causal";
+    public static String ERROR_ADQUISICION_ORDEN = "error_adquisicion_orden";
 
     // DEVENGADO
     public final static String ERROR_DEVENGADO_ELIMINAR = "error_devengado_eliminar";
@@ -130,6 +137,9 @@ public class MensajesNegocio {
     public final static String ERROR_PAGO_SIN_PROVEEDOR = "error_pago_sin_proveedor";
     public final static String ERROR_PAGO_SIN_CLIENTE = "error_pago_sin_cliente";
     public final static String ERROR_PAGO_APROB_SIN_CLIENTE = "error_pago_aprob_sin_cliente";
+    public final static String ERROR_PAGO_REVERTIR_NO_PMO = "error_pago_revertir_no_pmo";
+    public final static String ERROR_PAGO_CAMBIAR_PROCEDIMIENTO_COMPRA = "error_pago_actualizar_procedimiento";
+
     //VALIDACIONES Cronogramas
     public final static String ERROR_CRONOGRAMAS_NULL = "error_crono_null";
     public final static String ERROR_CRO_OBTENER = "error_cro_obtener";
@@ -141,10 +151,12 @@ public class MensajesNegocio {
     public final static String ERROR_CRO_ENTREGABLE_HITO_PADRE = "error_cro_guardar_ent_hito_padre";
     public final static String ERROR_CRO_ENTREGABLE_NULL = "error_cro_entregable_null";
     public final static String ERROR_CRO_CONST_VIOLATION = "error_cro_const_violation";
+    public final static String ERROR_CRO_DURACION_MAS_15 = "error_cro_guardar_mayor_15";
     // Entregables
     public final static String ERROR_ENTREGABLE_BORRAR_DEPEDENCIAS = "error_entregables_borrar_dependencias";
     public final static String ERROR_ENTREGABLE_BORRAR_PRODUCTOS = "error_entregables_borrar_productos";
     public final static String ERROR_ENTREGABLE_BORRAR_AVANCE = "error_entregables_borrar_avance";
+    public final static String ERROR_ENTREGABLE_BORRAR_VINCULACION_WEKAN = "error_entregables_borrar_vinculacion_wekan";
     public final static String ERROR_ENTREGABLE_BORRAR_PART = "error_entregables_borrar_part";
     public final static String ERROR_ENTREGABLE_BORRAR_HORAS = "error_entregables_borrar_horas";
     public final static String ERROR_ENTREGABLE_BORRAR_ESTADO = "error_entregables_borrar_estado";
@@ -211,6 +223,13 @@ public class MensajesNegocio {
     public final static String ERROR_USUARIO_APROB_FACT_TIPO_USU = "error_usuario_aprob_fact_tipo_usu";
     public final static String ERROR_USUARIO_AREA = "error_usuario_area";
     public final static String ERROR_USUARIO_NO_PERMISO_ACCION = "error_usuario_no_permiso_accion";
+
+    public final static String ERROR_USUARIO_PASSWORD_LONGITUD = "error_usuario_password_longitud";
+
+    public final static String ERROR_USUARIO_PASSWORD_MAYUSUCLAS = "error_usuario_password_mayusculas";
+    public final static String ERROR_USUARIO_PASSWORD_MINUSCULAS = "error_usuario_password_minusculas";
+    public final static String ERROR_USUARIO_PASSWORD_NUMEROS = "error_usuario_password_numeros";
+
     //VALIDACIONES Organismos
     public final static String ERROR_ORGANISMO_NULL = "error_organismo_null";
     public final static String ERROR_ORGANISMO_NOMBRE = "error_organismo_nombre";
@@ -292,6 +311,7 @@ public class MensajesNegocio {
     public final static String ERROR_NOTIFICACION_GUARDAR = "error_notif_guardar";
     public final static String ERROR_NOTIFICACION_NULL = "error_notif_null";
     public final static String ERROR_NOTIFICACION_CODIGO = "error_notif_codigo";
+    public final static String ERROR_NOTIFICACION_ASUNTO = "error_notif_asunto";
     public final static String ERROR_NOTIFICACION_DESC = "error_notif_desc";
     public final static String ERROR_NOTIFICACION_MSG = "error_notif_msg";
     public final static String ERROR_NOTIFICACION_ORG = "error_notif_org";
@@ -307,6 +327,7 @@ public class MensajesNegocio {
     public final static String ERROR_AREAS_TEMATICAS_NULL = "error_areas_tematicas_null";
     public final static String ERROR_AREAS_TEMATICAS_NOMBRE = "error_areas_tematicas_nombre";
     public final static String ERROR_AREAS_TEMATICAS_PADRE = "error_areas_tematicas_padre";
+    public final static String ERROR_AREAS_TEMATICAS_HABILITADA = "error_areas_tematicas_habilitada";
     public final static String ERROR_AREAS_TEMATICAS_OBTENER = "error_areas_tematicas_obtener";
     public final static String ERROR_AREAS_TEMATICAS_BUSCAR = "error_areas_tematicas_buscar";
     public final static String ERROR_AREAS_TEMATICAS_ELIMINAR = "error_areas_tematicas_eliminar";
@@ -470,12 +491,16 @@ public class MensajesNegocio {
     public final static String ERROR_PUB_WEB_GUARDAR_ITEM = "error_pub_web_guardar_item";
     // Editor Estado
     public final static String ERROR_EDITOR_ESTADO_OBTENER = "error_editor_estado_obtener";
-    // Copia Proyecto
+    // Copia Proyecto o Programa
     public final static String ERROR_COPIA_PROY_NULL = "error_copia_proy_null";
+    public final static String ERROR_COPIA_PROG_NULL = "error_copia_prog_null";
     public final static String ERROR_COPIA_PROY_GUARDAR = "error_copia_proy_guardar";
+    public final static String ERROR_COPIA_PROG_GUARDAR = "error_copia_prog_guardar";
     public final static String ERROR_COPIA_PROY_NOMBRE = "error_copia_proy_nombre";
+    public final static String ERROR_COPIA_PROG_NOMBRE = "error_copia_prog_nombre";
     public final static String ERROR_COPIA_PROY_FECHA = "error_copia_proy_fecha";
     public final static String ERROR_COPIA_PROY_ORG = "error_copia_proy_org";
+    public final static String ERROR_COPIA_PROG_ORG = "error_copia_prog_org";
 
     // Temas Calidad
     public final static String ERROR_TEMAS_CALIDAD_NULL = "error_temas_calidad_null";
@@ -596,9 +621,28 @@ public class MensajesNegocio {
     public final static String ERROR_CAUSAL_COMPRA_NULL = "error_cau_com_null";
     public final static String ERROR_CAUSAL_COMPRA_NOMBRE = "error_cau_com_nombre";
     public final static String ERROR_CAUSAL_COMPRA_DESCRIPCION = "error_cau_com_descripcion";
-    
+    public final static String ERROR_CAUSAL_COMPRA_OBTENER = "error_cau_com_obtener";
+
     //VALIDACIONES Identificador GRP/ERP
     public final static String ERROR_IDENTIFICADOR_GRP_ERP_NULL = "error_id_grp_erp_null";
     public final static String ERROR_IDENTIFICADOR_GRP_ERP_NOMBRE = "error_id_grp_erp_nombre";
-    public final static String ERROR_IDENTIFICADOR_GRP_ERP_DESCRIPCION = "error_id_grp_erp_descripcion";   
+    public final static String ERROR_IDENTIFICADOR_GRP_ERP_DESCRIPCION = "error_id_grp_erp_descripcion";
+
+    public final static String ERROR_GENERAL = "error_general";
+
+    public static String PROYECTO_ACTIVADO = "proyecto_activado";
+    public static String PROYECTO_DESACTIVADO = "proyecto_desactivado";
+
+    //Validaciones Rango Adquisicion
+    public final static String ERROR_ADQISICION_RANGO_DESDE_MAYOR_HASTA = "error_adquiscion_rango_desde_mayor_hasta";
+    public final static String ERROR_ADQISICION_RANGO_DESDE_MAYOR_0 = "error_rango_adquisicion_desde_mayor_0";
+    public final static String ERROR_ADQISICION_RANGO_HASTA_MAYOR_0 = "error_rango_adquisicion_hasta_mayor_0";
+    public final static String ERROR_ADQISICION_RANGO_YA_EXISTE = "error_rango_adquisicion_ya_existe";
+    
+    //Tipo Riesgo
+     public final static String ERROR_TIPO_RIESGO_ELIMINAR = "error_tipo_riesgo_eliminar";
+       public final static String ERROR_TIPO_RIESGO_CONST_VIOLATION = "error_tipo_riesgo_const_violation";
+       public final static String ERROR_TIPO_RIESGO_NOMBRE_100 = "error_tipo_riesgo_nombre_100";
+     
+
 }

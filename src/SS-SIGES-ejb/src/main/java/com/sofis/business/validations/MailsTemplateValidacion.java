@@ -1,18 +1,12 @@
 package com.sofis.business.validations;
 
-import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
-import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.MailsTemplate;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.StringsUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Usuario
- */
 public class MailsTemplateValidacion {
     
     private static final Logger logger = Logger.getLogger(MailsTemplateValidacion.class.getName());   

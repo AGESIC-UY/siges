@@ -4,6 +4,7 @@ import com.sofis.business.ejbs.CronogramasBean;
 import com.sofis.entities.data.Cronogramas;
 import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.CronogramaTO;
 import com.sofis.exceptions.GeneralException;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class CronogramaDelegate {
     private CronogramasBean cronogramasBean;
 
     public Cronogramas guardar(Cronogramas cro) throws GeneralException {
-        return cronogramasBean.guardar(cro);
+		return cronogramasBean.guardar(cro);
     }
     
     public Cronogramas guardarDespuesDeCheck(Cronogramas cro) throws GeneralException {
@@ -49,4 +50,14 @@ public class CronogramaDelegate {
     public String horasTotales(Cronogramas cro) {
         return cronogramasBean.horasTotales(cro);
     }
+	
+    public void calcularAvancePadresProyectos() {
+
+            cronogramasBean.calcularAvancePadresProyectos();
+    }
+
+    public CronogramaTO obtenerCronogramaCompletoPorIdProyecto(Integer proyPk) {
+            return cronogramasBean.obtenerCronogramaCompletoPorIdProyecto(proyPk);
+    }
+
 }

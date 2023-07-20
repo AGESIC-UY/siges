@@ -53,6 +53,9 @@
                                             style="#{!fichaMB.riskPopup.riskSuperado ? 'font-weight: bold;' : ''}; color: #{!fichaMB.riskPopup.riskSuperado ? fichaMB.riskPopup.fechaLimiteColor : ''};"
                                             converter="fechaConverter"/>
 
+                            <ice:outputLabel value="#{labels.riesgo_observaciones}"/>
+                            <ice:outputText value="#{fichaMB.riskPopup.riskObservaciones}" styleClass="border" />
+
                             <ice:outputLabel value="#{labels.riesgo_efecto}"/>
                             <ice:outputText value="#{fichaMB.riskPopup.riskEfecto}" styleClass="border"/>
 
@@ -64,9 +67,6 @@
 
                             <ice:outputLabel value="#{labels.riesgo_contingencia}"/>
                             <ice:outputText value="#{fichaMB.riskPopup.riskContingencia}" styleClass="border" />
-
-                            <ice:outputLabel value="#{labels.riesgo_observaciones}"/>
-                            <ice:outputText value="#{fichaMB.riskPopup.riskObservaciones}" styleClass="border" />
 
                         </ice:panelGrid>
                     </ice:panelGroup> 

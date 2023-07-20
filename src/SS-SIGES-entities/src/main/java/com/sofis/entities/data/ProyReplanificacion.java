@@ -1,6 +1,6 @@
 package com.sofis.entities.data;
 
-import com.sofis.entities.tipos.FiltroInicioItem;
+import com.sofis.entities.tipos.ItemInicioTO;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -90,7 +90,7 @@ public class ProyReplanificacion implements Serializable {
     
     
     @Transient
-    private FiltroInicioItem item;
+    private ItemInicioTO item;
 
     public ProyReplanificacion() {
         proyreplanFecha = new Date();
@@ -156,11 +156,11 @@ public class ProyReplanificacion implements Serializable {
         this.proyectoFk = proyectoFk;
     }
 
-    public FiltroInicioItem getItem() {
+    public ItemInicioTO getItem() {
         return item;
     }
 
-    public void setItem(FiltroInicioItem item) {
+    public void setItem(ItemInicioTO item) {
         this.item = item;
     }
 

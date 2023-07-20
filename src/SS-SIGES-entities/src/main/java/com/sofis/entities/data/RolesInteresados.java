@@ -22,101 +22,113 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 @Table(name = "roles_interesados")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "RolesInteresados.findAll", query = "SELECT r FROM RolesInteresados r"),
+	@NamedQuery(name = "RolesInteresados.findAll", query = "SELECT r FROM RolesInteresados r"),
     @NamedQuery(name = "RolesInteresados.findByOrganismo", query = "SELECT r FROM RolesInteresados r WHERE r.rolintOrgFk.orgPk = :org_pk ORDER BY r.rolintNombre"),
+    @NamedQuery(name = "RolesInteresados.findHabilitadosByOrganismo", query = "SELECT r FROM RolesInteresados r WHERE r.rolintOrgFk.orgPk = :orgPk and r.habilitado = :habilitado ORDER BY r.rolintNombre"),
 })
 public class RolesInteresados implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rolint_pk")
-    private Integer rolintPk;
-    @Size(max = 45)
-    @Column(name = "rolint_nombre")
-    private String rolintNombre;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "intRolintFk")
-    @Fetch(FetchMode.SELECT)
-    private Set<Interesados> interesadosSet;
-    @JoinColumn(name = "rolint_org_fk", referencedColumnName = "org_pk")
-    @ManyToOne(optional = false)
-    private Organismos rolintOrgFk;
+	private static final long serialVersionUID = 1L;
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "rolint_pk")
+	private Integer rolintPk;
+	
+	@Size(max = 45)
+	@Column(name = "rolint_nombre")
+	private String rolintNombre;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "intRolintFk")
+	@Fetch(FetchMode.SELECT)
+	private Set<Interesados> interesadosSet;
+	
+	@JoinColumn(name = "rolint_org_fk", referencedColumnName = "org_pk")
+	@ManyToOne(optional = false)
+	private Organismos rolintOrgFk;
 
-    public RolesInteresados() {
-    }
+	@Column(name = "rolint_habilitado")
+	private Boolean habilitado;
 
-    public RolesInteresados(Integer rolintPk) {
-        this.rolintPk = rolintPk;
-    }
+	public RolesInteresados() {
+	}
 
-    public RolesInteresados(Integer rolintPk, String rolintNombre) {
-        this.rolintPk = rolintPk;
-        this.rolintNombre = rolintNombre;
-    }
+	public RolesInteresados(Integer rolintPk) {
+		this.rolintPk = rolintPk;
+	}
 
-    public Integer getRolintPk() {
-        return rolintPk;
-    }
+	public RolesInteresados(Integer rolintPk, String rolintNombre) {
+		this.rolintPk = rolintPk;
+		this.rolintNombre = rolintNombre;
+	}
 
-    public void setRolintPk(Integer rolintPk) {
-        this.rolintPk = rolintPk;
-    }
+	public Integer getRolintPk() {
+		return rolintPk;
+	}
 
-    public String getRolintNombre() {
-        return rolintNombre;
-    }
+	public void setRolintPk(Integer rolintPk) {
+		this.rolintPk = rolintPk;
+	}
 
-    public void setRolintNombre(String rolintNombre) {
-        this.rolintNombre = rolintNombre;
-    }
+	public String getRolintNombre() {
+		return rolintNombre;
+	}
 
-    public Organismos getRolintOrgFk() {
-        return rolintOrgFk;
-    }
+	public void setRolintNombre(String rolintNombre) {
+		this.rolintNombre = rolintNombre;
+	}
 
-    public void setRolintOrgFk(Organismos rolintOrgFk) {
-        this.rolintOrgFk = rolintOrgFk;
-    }
+	public Organismos getRolintOrgFk() {
+		return rolintOrgFk;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (rolintPk != null ? rolintPk.hashCode() : 0);
-        return hash;
-    }
+	public void setRolintOrgFk(Organismos rolintOrgFk) {
+		this.rolintOrgFk = rolintOrgFk;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof RolesInteresados)) {
-            return false;
-        }
-        RolesInteresados other = (RolesInteresados) object;
-        if ((this.rolintPk == null && other.rolintPk != null) || (this.rolintPk != null && !this.rolintPk.equals(other.rolintPk))) {
-            return false;
-        }
-        return true;
-    }
+	public Boolean getHabilitado() {
+		return habilitado;
+	}
 
-    @Override
-    public String toString() {
-        return "com.sofis.entities.data.RolesInteresados[ rolintPk=" + rolintPk + " ]";
-    }
+	public void setHabilitado(Boolean habilitado) {
+		this.habilitado = habilitado;
+	}
 
-    @XmlTransient
-    public Set<Interesados> getInteresadosSet() {
-        return interesadosSet;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (rolintPk != null ? rolintPk.hashCode() : 0);
+		return hash;
+	}
 
-    public void setInteresadosSet(Set<Interesados> interesadosSet) {
-        this.interesadosSet = interesadosSet;
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof RolesInteresados)) {
+			return false;
+		}
+		RolesInteresados other = (RolesInteresados) object;
+		if ((this.rolintPk == null && other.rolintPk != null) || (this.rolintPk != null && !this.rolintPk.equals(other.rolintPk))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.sofis.entities.data.RolesInteresados[ rolintPk=" + rolintPk + " ]";
+	}
+
+	@XmlTransient
+	public Set<Interesados> getInteresadosSet() {
+		return interesadosSet;
+	}
+
+	public void setInteresadosSet(Set<Interesados> interesadosSet) {
+		this.interesadosSet = interesadosSet;
+	}
+
 }

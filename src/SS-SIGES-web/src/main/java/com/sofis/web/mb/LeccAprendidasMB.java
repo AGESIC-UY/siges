@@ -33,6 +33,7 @@ import com.sofis.web.delegates.TipoLeccionDelegate;
 import com.sofis.web.enums.FieldAttributeEnum;
 import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
+import com.sofis.web.utils.AreaTematicaUtils;
 import com.sofis.web.utils.JSFUtils;
 import com.sofis.web.utils.SofisCombo;
 import com.sofis.web.utils.WebUtils;
@@ -546,21 +547,16 @@ public class LeccAprendidasMB implements Serializable {
 		try {
 			renderPopupAreaTematica = true;
 
-			// 30-05-2018 Nico: Este new ya se hace en el PostConstruct
-			// listaAreasTagsTreeNode = new ArrayList<>();
-
 			listaAreasTags = areaTematicaDelegate
-					.obtenerAreasTematicasPorOrganizacion(inicioMB.getOrganismo().getOrgPk());
+					.obtenerPorOrganismo(inicioMB.getOrganismo().getOrgPk());
 			if (listaAreasTags != null && !listaAreasTags.isEmpty()) {
 
 				if (this.mapAreasTag == null) {
-					mapAreasTag = WebUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode,
-							areasTematicas, areasTematicasStateMap);
+					mapAreasTag = AreaTematicaUtils.setNodosForAreaTematica(listaAreasTags, listaAreasTagsTreeNode, areasTematicas, false);
 				}
-				listaAreasTagsTreeNode = (List<MutableTreeNode>) this.mapAreasTag
-						.get(WebUtils.LISTA_AREAS_TAG_TREE_NODE);
-
-				areasTematicasStateMap = (NodeStateMap) this.mapAreasTag.get(WebUtils.AREAS_TEMATICAS_STATE_MAP);
+				
+				listaAreasTagsTreeNode = (List<MutableTreeNode>) this.mapAreasTag.get(AreaTematicaUtils.LISTA_AREAS_TAG_TREE_NODE);
+				areasTematicasStateMap = (NodeStateMap) this.mapAreasTag.get(AreaTematicaUtils.AREAS_TEMATICAS_STATE_MAP);
 			}
 		} catch (GeneralException ex) {
 			logger.log(Level.SEVERE, null, ex);

@@ -24,41 +24,220 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 @ManagedBean(name = "organiIntProveMB")
 @ViewScoped
 public class OrganiIntProveMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(OrganiIntProveMB.class.getName());
+
+    private static final Logger LOGGER = Logger.getLogger(OrganiIntProveMB.class.getName());
+
     private static final String ORGA_NOMBRE = "orgaNombre";
-    //private static final String BUSQUEDA_MSG = "busquedaMsg";
+    private static final String ORGA_RAZON_SOCIAL = "orgaRazonSocial";
+    private static final String ORGA_HABILITADO = "orgaHabilitado";
+    private static final String ORGA_RUT = "orgaRut";
+
     private static final String POPUP_MSG = "popupMsg";
-    
+
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
+
     @ManagedProperty("#{aplicacionMB}")
     private AplicacionMB aplicacionMB;
+
     @Inject
     private OrganiIntProveDelegate organiIntProveDelegate;
+
     @Inject
     private AmbitoDelegate ambitoDelegate;
-    
+
     // Variables
     private String cantElementosPorPagina = "25";
     private String elementoOrdenacion = ORGA_NOMBRE;
+
     // 0=descendente, 1=ascendente.
     private int ascendente = 1;
+
     private SofisPopupUI renderPopupEdicion;
+
     private String filtroNombre;
+    private String filtroRazonSocial;
+    private String filtroHabilitado;
+    private String filtroRut;
+
     private List<OrganiIntProve> listaResultado;
     private OrganiIntProve orgaEnEdicion;
     private SofisComboG<Ambito> listaIntAmbitoCombo = new SofisComboG<>();
 
     public OrganiIntProveMB() {
+    }
+
+    @PostConstruct
+    public void init() {
+
+        filtroNombre = "";
+        listaResultado = new ArrayList<OrganiIntProve>();
+        orgaEnEdicion = new OrganiIntProve();
+        renderPopupEdicion = new SofisPopupUI();
+
+        inicioMB.cargarOrganismoSeleccionado();
+
+        List<Ambito> listaAmbito = ambitoDelegate.obtenerAmbitoPorOrg(inicioMB.getOrganismo().getOrgPk());
+        if (listaAmbito != null) {
+            listaIntAmbitoCombo = new SofisComboG<>(listaAmbito, "ambNombre");
+            listaIntAmbitoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        buscar();
+    }
+
+    public String agregar() {
+        orgaEnEdicion = new OrganiIntProve();
+        orgaEnEdicion.setOrgaHabilitado(true);
+
+        renderPopupEdicion.abrir();
+        return null;
+    }
+
+    public String eliminar(Integer orgaPk) {
+        if (orgaPk != null) {
+            try {
+                organiIntProveDelegate.eliminarOrga(orgaPk);
+                aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
+                for (OrganiIntProve orga : listaResultado) {
+                    if (orga.getOrgaPk().equals(orgaPk)) {
+                        listaResultado.remove(orga);
+                        break;
+                    }
+                }
+            } catch (BusinessException e) {
+                LOGGER.log(Level.SEVERE, null, e);
+
+                for (String iterStr : e.getErrores()) {
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+                }
+                inicioMB.abrirPopupMensajes();
+            }
+        }
+        return null;
+    }
+
+    public String buscar() {
+
+        Boolean habilitado;
+
+        if (filtroHabilitado == null || filtroHabilitado.isEmpty()) {
+            habilitado = null;
+        } else {
+            habilitado = filtroHabilitado.equals("1");
+        }
+
+        Map<String, Object> mapFiltro = new HashMap<>();
+        mapFiltro.put(ORGA_NOMBRE, filtroNombre);
+        mapFiltro.put(ORGA_RAZON_SOCIAL, filtroRazonSocial);
+        mapFiltro.put(ORGA_HABILITADO, habilitado);
+        mapFiltro.put(ORGA_RUT, filtroRut);
+        listaResultado = organiIntProveDelegate.busquedaOrgaFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
+
+        return null;
+    }
+
+    public String editar(Integer orgaPk) {
+        try {
+            orgaEnEdicion = organiIntProveDelegate.obtenerOrganiIntProvePorId(orgaPk);
+
+            if (orgaEnEdicion != null && orgaEnEdicion.getOrgaAmbFk() != null) {
+                listaIntAmbitoCombo.setSelectedT(orgaEnEdicion.getOrgaAmbFk());
+            } else {
+                listaIntAmbitoCombo.setSelected(-1);
+            }
+        } catch (BusinessException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);
+            }
+        }
+
+        renderPopupEdicion.abrir();
+        return null;
+    }
+
+    public String guardar() {
+        orgaEnEdicion.setOrgaOrgFk(inicioMB.getOrganismo());
+
+        Ambito ambito = listaIntAmbitoCombo.getSelectedT();
+        orgaEnEdicion.setOrgaAmbFk(ambito);
+
+        try {
+            orgaEnEdicion = organiIntProveDelegate.guardarOrga(orgaEnEdicion);
+            aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
+            if (orgaEnEdicion != null) {
+                renderPopupEdicion.cerrar();
+                buscar();
+            }
+        } catch (BusinessException be) {
+            LOGGER.log(Level.SEVERE, be.getMessage(), be);
+
+            for (String iterStr : be.getErrores()) {
+                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);
+            }
+        }
+        return null;
+    }
+
+    public void cancelar() {
+        renderPopupEdicion.cerrar();
+        orgaEnEdicion = new OrganiIntProve();
+        listaIntAmbitoCombo.setSelected(-1);
+    }
+
+    public String limpiar() {
+        filtroNombre = null;
+        filtroRazonSocial = null;
+        filtroHabilitado = null;
+        filtroRut = null;
+        listaResultado = null;
+        elementoOrdenacion = ORGA_NOMBRE;
+        ascendente = 1;
+
+        return null;
+    }
+
+    public void cambiarCantPaginas(ValueChangeEvent evt) {
+        buscar();
+    }
+
+    public void cambiarCriterioOrdenacion(ValueChangeEvent evt) {
+        elementoOrdenacion = evt.getNewValue().toString();
+        buscar();
+    }
+
+    public void cambiarAscendenteOrdenacion(ValueChangeEvent evt) {
+        ascendente = Integer.valueOf(evt.getNewValue().toString());
+        buscar();
+    }
+
+    public void organismoHabilitadoChange(OrganiIntProve organismo) {
+
+        try {
+            organismo.setOrgaHabilitado(!organismo.getOrgaHabilitado());
+            organiIntProveDelegate.guardarOrga(organismo);
+
+            buscar();
+            aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
+
+            JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+
+        } catch (GeneralException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
+            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
+        }
     }
 
     public void setInicioMB(InicioMB inicioMB) {
@@ -69,8 +248,6 @@ public class OrganiIntProveMB implements Serializable {
         this.aplicacionMB = aplicacionMB;
     }
 
-    
-    
     public String getCantElementosPorPagina() {
         return cantElementosPorPagina;
     }
@@ -135,198 +312,28 @@ public class OrganiIntProveMB implements Serializable {
         this.listaIntAmbitoCombo = listaIntAmbitoCombo;
     }
 
-    @PostConstruct
-    public void init() {
-        
-        /*
-        *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
-        */        
-        
-        filtroNombre = "";
-        listaResultado = new ArrayList<OrganiIntProve>();
-        orgaEnEdicion = new OrganiIntProve();
-        renderPopupEdicion = new SofisPopupUI();        
-        
-        inicioMB.cargarOrganismoSeleccionado();
-
-        List<Ambito> listaAmbito = ambitoDelegate.obtenerAmbitoPorOrg(inicioMB.getOrganismo().getOrgPk());
-        if (listaAmbito != null) {
-            listaIntAmbitoCombo = new SofisComboG<>(listaAmbito, "ambNombre");
-            listaIntAmbitoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
-        }
-
-        buscar();
+    public String getFiltroRazonSocial() {
+        return filtroRazonSocial;
     }
 
-    /**
-     * Action agregar.
-     *
-     * @return
-     */
-    public String agregar() {
-        orgaEnEdicion = new OrganiIntProve();
-        orgaEnEdicion.setOrgaHabilitado(true);
-
-        renderPopupEdicion.abrir();
-        return null;
+    public void setFiltroRazonSocial(String filtroRazonSocial) {
+        this.filtroRazonSocial = filtroRazonSocial;
     }
 
-    /**
-     * Action eliminar una Organización.
-     *
-     * @return
-     */
-    public String eliminar(Integer orgaPk) {
-        if (orgaPk != null) {
-            try {
-                organiIntProveDelegate.eliminarOrga(orgaPk);
-                aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
-                for (OrganiIntProve orga : listaResultado) {
-                    if (orga.getOrgaPk().equals(orgaPk)) {
-                        listaResultado.remove(orga);
-                        break;
-                    }
-                }
-            } catch (BusinessException e) {
-                logger.log(Level.SEVERE, null, e);
-                
-                /*
-                *  18-06-2018 Inspección de código.
-                */
-
-                //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
-
-                for(String iterStr : e.getErrores()){
-                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-                }                 
-                inicioMB.abrirPopupMensajes();
-            }
-        }
-        return null;
+    public String getFiltroHabilitado() {
+        return filtroHabilitado;
     }
 
-    /**
-     * Action Buscar.
-     *
-     * @return
-     */
-    public String buscar() {
-        Map<String, Object> mapFiltro = new HashMap<String, Object>();
-        mapFiltro.put(ORGA_NOMBRE, filtroNombre);
-        listaResultado = organiIntProveDelegate.busquedaOrgaFiltro(inicioMB.getOrganismo().getOrgPk(), mapFiltro, elementoOrdenacion, ascendente);
-
-        return null;
+    public void setFiltroHabilitado(String filtroHabilitado) {
+        this.filtroHabilitado = filtroHabilitado;
     }
 
-    public String editar(Integer orgaPk) {
-        try {
-            orgaEnEdicion = organiIntProveDelegate.obtenerOrganiIntProvePorId(orgaPk);
-
-            if (orgaEnEdicion != null && orgaEnEdicion.getOrgaAmbFk() != null) {
-                listaIntAmbitoCombo.setSelectedT(orgaEnEdicion.getOrgaAmbFk());
-            } else {
-                listaIntAmbitoCombo.setSelected(-1);
-            }
-        } catch (BusinessException ex) {
-            logger.log(Level.SEVERE, null, ex);
-
-            /*
-            *  18-06-2018 Inspección de código.
-            */
-
-            //JSFUtils.agregarMsgs(POPUP_MSG, ex.getErrores());
-
-            for(String iterStr : ex.getErrores()){
-                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
-            }                  
-        }
-
-        renderPopupEdicion.abrir();
-        return null;
+    public String getFiltroRut() {
+        return filtroRut;
     }
 
-    public String guardar() {
-        orgaEnEdicion.setOrgaOrgFk(inicioMB.getOrganismo());
-
-        Ambito ambito = listaIntAmbitoCombo.getSelectedT();
-        orgaEnEdicion.setOrgaAmbFk(ambito);
-
-        try {
-            orgaEnEdicion = organiIntProveDelegate.guardarOrga(orgaEnEdicion);
-            aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
-            if (orgaEnEdicion != null) {
-                renderPopupEdicion.cerrar();
-                buscar();
-            }
-        } catch (BusinessException be) {
-            logger.log(Level.SEVERE, be.getMessage(), be);
-            
-            /*
-            *  18-06-2018 Inspección de código.
-            */
-
-            //JSFUtils.agregarMsgs(BUSQUEDA_MSG, be.getErrores());
-
-            for(String iterStr : be.getErrores()){
-                JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);                
-            }              
-        }
-        return null;
+    public void setFiltroRut(String filtroRut) {
+        this.filtroRut = filtroRut;
     }
 
-    public void cancelar() {
-        renderPopupEdicion.cerrar();
-        orgaEnEdicion = new OrganiIntProve();
-        listaIntAmbitoCombo.setSelected(-1);
-    }
-
-    /**
-     * Action limpiar formulario de busqueda.
-     *
-     * @return
-     */
-    public String limpiar() {
-        filtroNombre = null;
-        listaResultado = null;
-        elementoOrdenacion = ORGA_NOMBRE;
-        ascendente = 1;
-
-        return null;
-    }
-
-    public void cambiarCantPaginas(ValueChangeEvent evt) {
-        buscar();
-    }
-
-    public void cambiarCriterioOrdenacion(ValueChangeEvent evt) {
-        elementoOrdenacion = evt.getNewValue().toString();
-        buscar();
-    }
-
-    public void cambiarAscendenteOrdenacion(ValueChangeEvent evt) {
-        ascendente = Integer.valueOf(evt.getNewValue().toString());
-        buscar();
-    }
-    
-    public void organismoHabilitadoChange(OrganiIntProve organismo) {
-
-        try {
-            organismo.setOrgaHabilitado(!organismo.getOrgaHabilitado());
-            organiIntProveDelegate.guardarOrga(organismo);
-
-            buscar();
-            aplicacionMB.cargarOrganiIntPorOrganismo(inicioMB.getOrganismo().getOrgPk());
-            
-            JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
-            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-
-        } catch (GeneralException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-
-            for(String iterStr : ex.getErrores()){
-                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-            }            
-            inicioMB.setRenderPopupMensajes(Boolean.TRUE);
-        }
-    }
 }

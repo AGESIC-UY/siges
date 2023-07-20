@@ -12,6 +12,7 @@
 
     <script type="text/javascript">
         function limpiarCorreoAutocompletar() {
+            console.log('limpiarCorreo')
             if (document.getElementById('ficha:autoCompleteInteresadoCorreo_input')) {
                 document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value = '';
 //            alert(document.getElementById('ficha:autoCompleteInteresadoCorreo_input').value);
@@ -64,10 +65,10 @@
 
                 <h:panelGrid columns="1">
                     <ace:linkButton value="#{labels.cronograma}" action="#{fichaMB.miMostrar(3)}" />
-                    <ice:commandButton value="#{labels.agregarInteresado}"
-                                       action="#{fichaMB.abrirInteresadosAction()}"
-                                       onclick="limpiarCorreoAutocompletar()"
-                                       styleClass="boton principal botonAgregar"
+                     <ace:pushButton value="#{labels.agregarInteresado}"
+                                       action="#{fichaMB.abrirInteresadosAction()}" 
+                                      styleClass="boton principal agregar"
+                                     
                                        rendered="#{fichaMB.fieldRendered('agregarInteresado')}"/>
                 </h:panelGrid>
 
@@ -77,7 +78,7 @@
                                 draggable="true"
                                 positionOnLoadOnly="true"
                                 modal="true">
-
+                              
                     <f:facet name="header">
                         <ice:panelGroup styleClass="cabezalPopup">
                             <ice:outputText value="#{fichaMB.interesado.intPk ne null ? labels.editarInteresado : labels.agregarInteresado}"/>
@@ -91,7 +92,7 @@
                         <ice:panelGroup>
                             <ice:panelGroup id="interesadosFormData">
                                 <ice:panelGrid  styleClass="formulario" columns="2">
-                                    <ice:outputLabel value="#{labels.organizacion}"/>
+                                    <ice:outputLabel value="#{labels.organizacion}" styleClass="obligatorio"/>
                                     <ice:selectOneMenu id="comboOrganizacion"
                                                        value="#{fichaMB.listaOrganizacionCombo.selected}"
                                                        valueChangeListener="#{fichaMB.cargarInteresadosRolSelectAction}"
@@ -102,7 +103,16 @@
                                     <ice:outputLabel value=""/>
                                     <ice:outputLabel value=""/>
 
-                                    <ice:outputLabel value="#{labels.correo}"/>
+                                    <ice:outputLabel value="#{labels.interesado_tipo}"/>
+                                    <ice:selectOneRadio partialSubmit="true" 
+                                                        value="#{fichaMB.interesado.tipo}"
+                                                        styleClass="radioButton"
+                                                        disabled="#{fichaMB.interesado.intPk ne null}">
+                                        <f:selectItem itemValue="#{fichaMB.tipoInteresadoExterno}" itemLabel="#{labels.interesado_externo}"/>
+                                        <f:selectItem itemValue="#{fichaMB.tipoInteresadoInterno}" itemLabel="#{labels.interesado_interno}"/>
+                                    </ice:selectOneRadio>
+
+                                    <ice:outputLabel value="#{labels.correo}" styleClass="obligatorio" rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoExterno}"/>
                                     <ace:autoCompleteEntry id="autoCompleteInteresadoCorreo" 
                                                            value="#{fichaMB.interesado.intPersonaFk.persMail}"
                                                            rows="20"
@@ -112,7 +122,8 @@
                                                            binding="#{fichaMB.autoCompletePersonasComponent}"
                                                            listVar="personas"
                                                            listValue="#{fichaMB.autoCompletePersonasList}"
-                                                           valueChangeListener="#{fichaMB.autoCompleteInteresadoCorreoValueChangeListener}">
+                                                           valueChangeListener="#{fichaMB.autoCompleteInteresadoCorreoValueChangeListener}"
+                                                           rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoExterno}">
                                         <ace:ajax />
                                         <f:facet name="row">
                                             <h:panelGrid columns="2" width="100%" >
@@ -122,26 +133,31 @@
                                         </f:facet>
                                     </ace:autoCompleteEntry>
 
-                                    <ice:outputLabel value="#{labels.nombre}"/>
-                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persNombre}"/>
+                                    <ice:outputLabel value="#{labels.nombre}" styleClass="obligatorio" rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoExterno}"/>
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persNombre}" rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoExterno}"/>
+
+                                    <h:outputLabel value="#{labels.usuario}" styleClass="obligatorio" rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoInterno}"/>
+                                    <h:selectOneMenu value="#{fichaMB.listaUsuariosInteresadoCombo.selected}" rendered="#{fichaMB.interesado.tipo eq fichaMB.tipoInteresadoInterno}">
+                                        <f:selectItems value="#{fichaMB.listaUsuariosInteresadoCombo.items}"/>
+                                    </h:selectOneMenu>
 
                                     <ice:outputLabel value="#{labels.telefono}"/>
-                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persTelefono}" />
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persTelefono}"/>
 
-                                    <ice:outputLabel value="#{labels.cargo}"/>
-                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persCargo}" />
+                                    <ice:outputLabel value="#{labels.cargo}" styleClass="obligatorio"/>
+                                    <ace:textEntry value="#{fichaMB.interesado.intPersonaFk.persCargo}"/>
 
                                     <ice:outputLabel value="" styleClass="separador"/>
                                     <ice:outputLabel value="" styleClass="separador"/>
 
-                                    <ice:outputLabel value="#{labels.rol}"/>
+                                    <ice:outputLabel value="#{labels.rol}" styleClass="obligatorio"/>
                                     <ace:simpleSelectOneMenu id="comboRolesInteresados"
                                                              value="#{fichaMB.listaRolesInteresadosCombo.selected}">
                                         <f:selectItems value="#{fichaMB.listaRolesInteresadosCombo.items}"/>
                                     </ace:simpleSelectOneMenu>
 
                                     <ice:outputLabel value="#{labels.observaciones}"/>
-                                    <ace:textAreaEntry value="#{fichaMB.interesado.intObservaciones}" />
+                                    <ace:textAreaEntry value="#{fichaMB.interesado.intObservaciones}"/>
 
                                     <ice:outputLabel value="#{labels.entregables}"/>
                                     <ice:selectOneMenu value="#{fichaMB.listaIntEntregablesCombo.selected}">
@@ -178,19 +194,19 @@
                                    paginator="true" pageCount="5" 
                                    rows="#{configuracionMB.cantElementosPorPagina}">
                         <ace:column headerText="#{labels.inicio_col_Nombre}" >
-                            <h:outputText value="#{int.intPersonaFk != null ?  int.intPersonaFk.persNombre : ''}"/>
-                        </ace:column>
-                        <ace:column headerText="#{labels.hTelefono}">
-                            <h:outputText value="#{int.intPersonaFk != null ?  int.intPersonaFk.persTelefono : ''}"/>
+                            <h:outputText value="#{int.intPersonaFk.persNombre}"/>
                         </ace:column>
                         <ace:column headerText="#{labels.hCorreo}">
-                            <h:outputText value="#{int.intPersonaFk != null ?  int.intPersonaFk.persMail : ''}"/>
+                            <h:outputText value="#{int.intPersonaFk.persMail}"/>
                         </ace:column>
                         <ace:column headerText="#{labels.hOrganizacion}"  >
-                            <ice:outputText value="#{int.intPersonaFk != null and int.intOrgaFk != null ?  int.intOrgaFk.orgaNombre : ''}"/>
+                            <ice:outputText value="#{int.intOrgaFk.orgaNombre}"/>
                         </ace:column>
                         <ace:column headerText="#{labels.hRol}"  >
-                            <ice:outputText value="#{int.intPersonaFk != null and int.intRolintFk != null ?  int.intRolintFk.rolintNombre : ''}"/>
+                            <ice:outputText value="#{int.intRolintFk.rolintNombre}"/>
+                        </ace:column>
+                        <ace:column headerText="#{labels.hEntregable}">
+                            <h:outputText value="#{int.intEntregable.entNombre}"/>
                         </ace:column>
 
                         <ace:column styleClass="columnaBoton"

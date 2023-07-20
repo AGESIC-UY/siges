@@ -3,6 +3,7 @@ package com.sofis.web.mb;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.web.delegates.ConfiguracionDelegate;
+import com.sofis.web.delegates.CronogramaDelegate;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
@@ -36,12 +38,22 @@ public class CargaManualMB implements Serializable {
 	private ConfiguracionDelegate configuracionDelegate;
 	private File upFileDoc;
 
+	@Inject
+	private CronogramaDelegate cronogramaDelegate;
+	
+	private boolean mostrarAvancePadres;
+	
 	/**
 	 * Creates a new instance of ConfiguracionMB
 	 */
 	public CargaManualMB(){
 	}
 
+	@PostConstruct
+	public void init() {
+		mostrarAvancePadres = Boolean.valueOf(configuracionDelegate.obtenerCnfValorPorCodigo("MOSTRAR_BOTON_AVANCE_PADRES", null));
+	}
+	
 	public void subirArchivoDocAction(FileEntryEvent e) {
 
 		JSFUtils.removerMensages();
@@ -130,5 +142,16 @@ public class CargaManualMB implements Serializable {
 
             return null;
         }
+		
+	public String calcularAvancePadresProyectos() {
 
+		cronogramaDelegate.calcularAvancePadresProyectos();
+		return null;
+	}
+
+	public boolean isMostrarAvancePadres() {
+		return mostrarAvancePadres;
+	}
+	
+	
 }

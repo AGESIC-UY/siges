@@ -78,6 +78,37 @@ public class SsUsuarioValidacion {
             ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_DIF_REINGRESO);
         }
 
+        if (nuevaContrasenia != null && (nuevaContrasenia.length() > 12 || nuevaContrasenia.length() < 8)) {
+            ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_LONGITUD);
+        } else if (nuevaContrasenia != null) {
+
+            int cantidadMayusculas = 0;
+            int cantidadMinusculas = 0;
+            int cantidadNumeros = 0;
+
+            for (int i = 0; i < nuevaContrasenia.length(); i++) {
+                if (Character.isUpperCase(nuevaContrasenia.charAt(i))) {
+                    cantidadMayusculas = cantidadMayusculas + 1;
+                } else if (Character.isLowerCase(nuevaContrasenia.charAt(i))) {
+                    cantidadMinusculas = cantidadMinusculas + 1;
+                } else if (Character.isDigit(nuevaContrasenia.charAt(i))) {
+                    cantidadNumeros = cantidadNumeros + 1;
+                }
+            }
+
+            if (cantidadMayusculas < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_MAYUSUCLAS);
+            }
+
+            if (cantidadMinusculas < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_MINUSCULAS);
+            }
+            if (cantidadNumeros < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_NUMEROS);
+            }
+
+        }
+
         if (ge.getErrores().size() > 0) {
             throw ge;
         }

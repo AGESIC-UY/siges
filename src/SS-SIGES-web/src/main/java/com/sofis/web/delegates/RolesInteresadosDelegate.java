@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-/**
- *
- * @author Usuario
- */
 public class RolesInteresadosDelegate implements Serializable {
 
     @Inject
@@ -25,6 +21,10 @@ public class RolesInteresadosDelegate implements Serializable {
         return rolesInteresadosBean.obtenerRolPorOrgPk(orgaId);
     }
     
+    public List<RolesInteresados> obtenerHabilitadosPorOrganismo(Integer orgPk) throws GeneralException {
+        return rolesInteresadosBean.obtenerHabilitadosPorOrganismo(orgPk);
+    }
+
     public RolesInteresados obtenerRolesInteresadosPorId(Integer rolId){
         return rolesInteresadosBean.obtenerRolesInteresadosPorId(rolId);
     }

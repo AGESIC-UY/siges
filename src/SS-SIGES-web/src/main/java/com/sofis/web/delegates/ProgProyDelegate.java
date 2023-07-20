@@ -5,7 +5,7 @@ import com.sofis.entities.data.ProyReplanificacion;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.FichaTO;
-import com.sofis.entities.tipos.FiltroInicioItem;
+import com.sofis.entities.tipos.ItemInicioTO;
 import com.sofis.exceptions.GeneralException;
 import javax.inject.Inject;
 
@@ -67,13 +67,13 @@ public class ProgProyDelegate {
         if (fichaTO.isPrograma()) {
             return programaDelegate.darBajaPrograma(fichaTO.getFichaFk(), usuario, orgPk);
         } else if (fichaTO.isProyecto()) {
-            return proyectoDelegate.darBajaProyecto(fichaTO.getFichaFk(), usuario, orgPk);
+            return proyectoDelegate.darBajaProyecto(fichaTO.getFichaFk());
         } else {
             return null;
         }
     }
     
-    public FiltroInicioItem crearFiltroInicioItem(Object o){
+    public ItemInicioTO crearFiltroInicioItem(Object o){
         return programasProyectosDelegate.crearFiltroInicioItem(o);
     }
 }

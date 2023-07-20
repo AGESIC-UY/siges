@@ -30,6 +30,9 @@ public class PresupuestoTO {
 	
 	@XmlElement (name = "fuenteFinanciamiento")
 	private Integer fuenteFinanciamiento;
+        
+        @XmlElement (name = "preOcultarPagosConfirmados")
+        private Boolean preOcultarPagosConfirmados;
 	
 	
     @XmlElement(name="attrs")
@@ -88,7 +91,15 @@ public class PresupuestoTO {
 	public void setFuenteFinanciamiento(Integer fuenteFinanciamiento) {
 		this.fuenteFinanciamiento = fuenteFinanciamiento;
 	}
+
+        public Boolean getPreOcultarPagosConfirmados() {
+            return preOcultarPagosConfirmados;
+        }
+
+        public void setPreOcultarPagosConfirmados(Boolean preOcultarPagosConfirmados) {
+            this.preOcultarPagosConfirmados = preOcultarPagosConfirmados;
+        }
     
-    
+        
 }
 //</editor-fold>

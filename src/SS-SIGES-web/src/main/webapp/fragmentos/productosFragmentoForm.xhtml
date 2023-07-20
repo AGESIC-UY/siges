@@ -45,7 +45,7 @@
                         <ice:outputLabel value="#{labels.prod_form_nombre}"/>
                         <ace:textEntry value="#{fichaMB.producto.prodDesc}" />
 
-                        <ice:outputLabel value="#{labels.prod_form_entregable}:"/>
+                        <ice:outputLabel value="#{labels.prod_form_entregable}:" styleClass="obligatorio"/>
                         <ace:simpleSelectOneMenu id="comboEntProd"
                                                  value="#{fichaMB.listaEntProdCombo.selected}">
                             <f:selectItems value="#{fichaMB.listaEntProdCombo.items}"/>

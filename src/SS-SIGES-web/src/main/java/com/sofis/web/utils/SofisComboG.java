@@ -2,7 +2,6 @@
  * 
  * 
  */
-
 package com.sofis.web.utils;
 
 import java.io.Serializable;
@@ -20,7 +19,7 @@ import javax.faces.model.SelectItem;
  *
  * @author sofis
  */
-public class SofisComboG<T> implements Serializable{
+public class SofisComboG<T> implements Serializable {
 
     private HashMap<Integer, T> objetos = new HashMap<Integer, T>();
     private HashMap<Integer, T> objetosComunes = new HashMap<Integer, T>();
@@ -36,7 +35,6 @@ public class SofisComboG<T> implements Serializable{
     private Boolean comunes = null;
 
     // <editor-fold defaultstate="collapsed" desc="  Constructores ">
-
     public SofisComboG() {
 
     }
@@ -61,9 +59,9 @@ public class SofisComboG<T> implements Serializable{
         this.objetos = this.objetosNoComunes;
         this.items = this.itemsNoComunes;
     }
-    
-    public SofisComboG(List<T> objetosComunes, List<T> objetos, String propertyName){
-    	this.propertyName = propertyName;
+
+    public SofisComboG(List<T> objetosComunes, List<T> objetos, String propertyName) {
+        this.propertyName = propertyName;
         if ((objetos != null) && (objetos.size() > 0)) {
             for (T obj : objetos) {
                 add(obj);
@@ -81,7 +79,7 @@ public class SofisComboG<T> implements Serializable{
         this.items.add(si);
         comunes = true;
     }
-    
+
     public SofisComboG(Set<T> objetos, String propertyName) {
         this.propertyName = propertyName;
         if ((objetos != null) && (objetos.size() > 0)) {
@@ -95,41 +93,42 @@ public class SofisComboG<T> implements Serializable{
     }
 
     // </editor-fold>
-
     /**
      * Devulve todos los objetos que tiene el combo
+     *
      * @return
      */
-    public List getAllTs(){
+    public List getAllTs() {
         LinkedList resultado = new LinkedList();
         Collection<T> c = objetos.values();
-        for (T o : c){
+        for (T o : c) {
             resultado.add(o);
         }
         return resultado;
     }
-    
+
     /**
      * Elimina el objeto del combo
+     *
      * @param objeto
      */
-    public void remove (T objeto){
+    public void remove(T objeto) {
         int hc = objeto.hashCode();
         SelectItem item = null;
-        for (SelectItem si : items){
-            if (si.getValue().hashCode() == hc){
+        for (SelectItem si : items) {
+            if (si.getValue().hashCode() == hc) {
                 item = si;
             }
         }
-        if (item !=null){
+        if (item != null) {
             items.remove(item);
             objetos.remove(item.getValue());
         }
     }
-    
-    public void addComun(T objeto){
-    	String name;
-        if (propertyName == null){
+
+    public void addComun(T objeto) {
+        String name;
+        if (propertyName == null) {
             name = objeto.toString();
         }else{
             name = getPropertyValue(objeto, propertyName).toString();
@@ -138,11 +137,10 @@ public class SofisComboG<T> implements Serializable{
         itemsComunes.add(selectItem);
         objetosComunes.put(objeto.hashCode(), objeto);
     }
-    
-    
+
     public void add(T objeto) {
         String name;
-        if (propertyName == null){
+        if (propertyName == null) {
             name = objeto.toString();
         }else{
             name = getPropertyValue(objeto, propertyName).toString();
@@ -151,7 +149,7 @@ public class SofisComboG<T> implements Serializable{
         itemsNoComunes.add(selectItem);
         objetosNoComunes.put(objeto.hashCode(), objeto);
     }
-    
+
     public T getSelectedT() {
         if (selected != null) {
             return objetos.get(selected);
@@ -161,44 +159,44 @@ public class SofisComboG<T> implements Serializable{
     }
 
     public void setSelectedT(T objeto) {
-    	if (comunes!=null && comunes == true){
-    		if (!this.objetos.containsValue(objeto)){
-    			this.items = itemsNoComunes;
-    			this.objetos = objetosNoComunes;
-    			comunes = false;
-    		}
-    	}
+        if (comunes != null && comunes == true) {
+            if (!this.objetos.containsValue(objeto)) {
+                this.items = itemsNoComunes;
+                this.objetos = objetosNoComunes;
+                comunes = false;
+            }
+        }
         if (objeto != null) {
             selected = objeto.hashCode();
         }
     }
 
-    public void addEmptyItem(String name){
+    public void addEmptyItem(String name) {
         SelectItem si = new SelectItem(-1, name);
         items.add(0, si);
         objetos.put(-1, null);
         selected = -1;
     }
-    
-    public void addEmptyWithoutSelecting(String name){
+
+    public void addEmptyWithoutSelecting(String name) {
         SelectItem si = new SelectItem(-1, name);
         items.add(0, si);
         objetos.put(-1, null);
     }
-    
+
     /**
      * Este evento es solo para cuando hay elementos comunes y no comunes
+     *
      * @param event
      */
-    public void changeItem(ValueChangeEvent event){
-    	this.selected = (Integer) event.getNewValue();
-    	if (this.selected == -2){
-    		this.items = this.itemsNoComunes;
-    		this.objetos = this.objetosNoComunes;
-    		comunes = false;
-    	}
+    public void changeItem(ValueChangeEvent event) {
+        this.selected = (Integer) event.getNewValue();
+        if (this.selected == -2) {
+            this.items = this.itemsNoComunes;
+            this.objetos = this.objetosNoComunes;
+            comunes = false;
+        }
     }
-    
 
 // <editor-fold defaultstate="collapsed" desc="  Funciones Auxiliares ">
     private Object getPropertyValue(T o, String propertyName) {
@@ -235,7 +233,7 @@ public class SofisComboG<T> implements Serializable{
     }
 
     private void setPropertyValue(T o, String propertyName,
-                                    Class propertyClass, T value) {
+            Class propertyClass, T value) {
 
         String methodName = "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
 
