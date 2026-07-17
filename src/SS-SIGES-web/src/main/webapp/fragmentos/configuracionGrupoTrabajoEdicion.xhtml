@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <o:form id="frmComponenteProducto">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.grupo_trabajo_titulo}"/>
+        </ice:panelGroup>
+
+
+
+
+        <ice:panelGroup id="formFuente" styleClass=" recuadro  margen-inf">
+            <ice:panelGrid styleClass="formulario" columns="4">
+                <ice:outputLabel value="#{labels.componente_producto_head_nombre}:" styleClass="obligatorio"/>
+                <ace:textEntry value="#{grupoTrabajoEdicionMB.cgrupoTrabajoEnEdicion.gtbNombre}" />
+
+                <ice:outputLabel value="#{labels.grupo_trabajo_habilitado}:" styleClass="obligatorio"/>
+                <ace:checkboxButton value="#{grupoTrabajoEdicionMB.cgrupoTrabajoEnEdicion.gtbHabilitado}"
+                                    />
+            </ice:panelGrid>
+
+
+
+            <ice:panelGroup styleClass="panelBotones">
+                <ice:panelGroup rendered="#{grupoTrabajoEdicionMB.mostratMensajeGuardadoGrupo}"
+                                >
+                    <ice:graphicImage value="../img/mens-ok.png" />
+                    <ice:outputText value="#{labels.general_form_success}"/>
+                </ice:panelGroup>
+                <ace:pushButton value="#{labels.guardar}" 
+                                action="#{grupoTrabajoEdicionMB.guardarSoloGrupo}" 
+                                styleClass="boton principal guardar"/>
+                 <ace:linkButton value="#{labels.volver_listado}" action="#{grupoTrabajoEdicionMB.regresar()}"/>
+
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+        <br/>
+        <ice:panelGroup id="buscador"
+                        styleClass="buscador recuadro filtroProyecto margen-inf">
+
+
+
+            <ace:pushButton id="botonFiltro" styleClass="#{grupoTrabajoEdicionMB.mostrarAcciones ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                            action="#{grupoTrabajoEdicionMB.mostrarAccionAction()}">
+                <ace:ajax execute="@this" render="frmComponenteProducto:botonFiltro"/>
+                <ace:ajax execute="@this" render="frmComponenteProducto:FiltroMisAdquisiciones"/>
+            </ace:pushButton>
+
+            <h:outputText value="Acciones" styleClass="subtitulo"/>
+
+
+
+
+
+            <h:panelGroup id="FiltroMisAdquisiciones">
+                <h:panelGroup rendered="#{grupoTrabajoEdicionMB.mostrarAcciones}" >
+
+
+                    <center>
+                        <h:panelGrid  styleClass="formulario" columns="5">
+                            <div style="height:200px;width:200px;"/>    
+                            <ace:list id="secondList" value="#{grupoTrabajoEdicionMB.oneWaySourceList}"
+                                      dropGroup="textGroup"
+                                      style="height:200px;"
+                                      bodyStyle="height:200px;width: 100%;"
+                                      styleClass="inlineList">
+                                <ace:ajax event="migrate" />
+                            </ace:list>
+                            <h:panelGrid id="gridAcciones" >
+                                
+                                    <h:commandButton id="sacarAcciones"
+                                                     styleClass="haciaIzquierda iconoTabla" 
+                                                     action="#{grupoTrabajoEdicionMB.quitarTodasAcciones()}"
+                                                     title="#{labels.grupo_quitar_todos}"
+
+                                                     >
+
+                                        <f:ajax execute="sacarAcciones" render="secondList thirdList"  />
+                                    </h:commandButton>
+                               <br/>
+
+                                <h:commandButton id="colocarAcciones"
+                                                 styleClass="haciaDerecha iconoTabla" 
+                                                 action="#{grupoTrabajoEdicionMB.seleccionarTodasAcciones()}"
+                                                 title="#{labels.grupo_agregar_todos}"
+
+                                                 >
+
+                                    <f:ajax execute="colocarAcciones" render="secondList thirdList"  />
+                                </h:commandButton>
+
+                            </h:panelGrid>
+                            <ace:list id="thirdList" value="#{grupoTrabajoEdicionMB.oneWayDestList}"
+                                      dropGroup="textGroup"
+                                      style="height:200px;"
+                                      bodyStyle="height:200px;width: 100%;"
+                                      styleClass="inlineList" >
+                                <ace:ajax event="migrate" />
+                            </ace:list>
+
+
+
+
+
+                            <div style="height:200px;width:200px;"/>
+                        </h:panelGrid>
+
+                    </center>
+                    <h:panelGroup styleClass="panelBotones">
+                        <ice:panelGroup rendered="#{grupoTrabajoEdicionMB.mostrarMensajeAccion}"
+                                        >
+                            <ice:graphicImage value="../img/mens-ok.png" />
+                            <ice:outputText value="#{labels.grupo_trabajo_acciones_agregados}"/>
+                        </ice:panelGroup>
+                        <ace:pushButton value="#{labels.guardar_acciones}" 
+                                        styleClass="boton guardar principal" 
+                                        action="#{grupoTrabajoEdicionMB.guardar()}" />
+
+                    </h:panelGroup>
+
+
+                </h:panelGroup>
+            </h:panelGroup>
+
+
+        </ice:panelGroup>
+        
+
+
+        <ice:panelGroup id="usuarios"
+                        styleClass="buscador recuadro filtroProyecto margen-inf">
+
+
+            <ace:pushButton id="botonUsuarios" styleClass="#{grupoTrabajoEdicionMB.mostrarUsuarios ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                            action="#{grupoTrabajoEdicionMB.mostrarUsuarioAction()}">
+                <ace:ajax execute="@this" render="frmComponenteProducto:botonUsuarios"/>
+                <ace:ajax execute="@this" render="frmComponenteProducto:usuariosPanel"/>
+            </ace:pushButton>
+
+            <h:outputText value="Usuarios" styleClass="subtitulo"/>
+
+            <h:panelGroup id="usuariosPanel">
+                <h:panelGroup rendered="#{grupoTrabajoEdicionMB.mostrarUsuarios}" >
+
+
+                    <ice:panelGrid  styleClass="formulario" columns="3">
+                        <div style="width:60px;"/>
+
+                        <ice:outputLabel value="#{labels.usuario_busqueda_nombre}"/>
+
+                        <h:panelGroup  >
+
+                            <ace:textEntry id="textNombreUsuario" value="#{grupoTrabajoEdicionMB.filtroNombre}"  />
+                            <h:commandButton id="btnEditarProvAdq"
+                                             styleClass="botonBuscar iconoTabla" 
+
+                                             action="#{grupoTrabajoEdicionMB.cargarUsuarios()}"
+
+                                             >
+
+                                <f:ajax execute="btnEditarProvAdq textNombreUsuario" render="usuarioList" />
+                            </h:commandButton>
+                        </h:panelGroup>
+
+
+                    </ice:panelGrid>   
+
+                    <h:panelGrid  styleClass="formulario" columns="5">
+
+
+
+                        <div style="height:200px;width:200px;"/>
+                        <ace:list id="usuarioList" value="#{grupoTrabajoEdicionMB.usuarioListOrigen}"
+                                  dropGroup="textGroup"
+                                  style="height:200px;width: 100%;"
+                                  bodyStyle="height:200px;width: 100%;"
+                                  styleClass="inlineList">
+                            <ace:ajax event="migrate" />
+                        </ace:list>
+
+
+
+
+                        <h:panelGrid >
+
+                            <h:commandButton id="sacarAccionesU"
+                                             styleClass="haciaIzquierda iconoTabla" 
+                                             action="#{grupoTrabajoEdicionMB.quitarTodosUsuarios()}"
+                                             title="#{labels.grupo_quitar_todos}"
+
+                                             >
+
+                                <f:ajax execute="sacarAccionesU" render="usuarioList usuarioList2"  />
+                            </h:commandButton>
+                            <br/>
+
+                            <h:commandButton id="colocarAccionesU"
+                                             styleClass="haciaDerecha iconoTabla" 
+                                             action="#{grupoTrabajoEdicionMB.agregarTodosUsuarios()}"
+                                             title="#{labels.grupo_agregar_todos}"
+
+                                             >
+
+                                <f:ajax execute="colocarAccionesU" render="usuarioList usuarioList2"  />
+                            </h:commandButton>
+
+                        </h:panelGrid>
+                        <ace:list id="usuarioList2" value="#{grupoTrabajoEdicionMB.usuarioListDestino}"
+                                  dropGroup="textGroup"
+                                  style="height:200px;width: 100%;"
+                                  bodyStyle="height:200px;width: 100%;"
+                                  styleClass="inlineList" >
+                            <ace:ajax event="migrate" />
+                        </ace:list>
+
+
+
+
+
+                        <div style="height:200px;width:200px;"/>
+                    </h:panelGrid>
+
+
+
+                    <h:panelGroup styleClass="panelBotones">
+                        <ice:panelGroup rendered="#{grupoTrabajoEdicionMB.mostrarMensajeUsuario}"
+                                        >
+                            <ice:graphicImage value="../img/mens-ok.png" />
+                            <ice:outputText value="#{labels.grupo_trabajo_usuarios_agregados}"/>
+                        </ice:panelGroup>
+                        <ace:pushButton value="#{labels.guardar_usuarios}" 
+                                        styleClass="boton guardar principal" 
+                                        action="#{grupoTrabajoEdicionMB.guardarUsuarios()}" />
+
+                    </h:panelGroup>
+
+
+
+
+                </h:panelGroup>
+            </h:panelGroup>
+        </ice:panelGroup>
+
+        <ace:linkButton value="#{labels.volver_listado}" action="#{grupoTrabajoEdicionMB.regresar()}"/>
+
+
+    </o:form>
+</ui:composition>

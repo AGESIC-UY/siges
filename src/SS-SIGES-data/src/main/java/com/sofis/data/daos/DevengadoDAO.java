@@ -26,15 +26,14 @@ public class DevengadoDAO extends HibernateJpaDAOImp<Devengado, Integer> impleme
 					+ " AND d.devAnio = :anioDev";
 
 			try {
-				Query query = super.getEm().createQuery(queryStr);
+				Query query = super.getEm().createQuery(queryStr);                             
 				query.setParameter("adqPk", adqPk);
 				query.setParameter("mesDev", mesDev);
 				query.setParameter("anioDev", anioDev);
 
-				List<Devengado> result = query.getResultList();
-
-				return (Devengado) DAOUtils.obtenerSingleResult(result);
-
+				List<Devengado> result = query.getResultList();                              
+                return devolverDevengado(result);
+				
 			} catch (Exception ex) {
 				TechnicalException te = new TechnicalException(ex);
 				te.addError(MensajesNegocio.ERROR_DEVENGADO_OBTENER);
@@ -44,4 +43,13 @@ public class DevengadoDAO extends HibernateJpaDAOImp<Devengado, Integer> impleme
 
 		return null;
 	}
+
+    private Devengado devolverDevengado(List<Devengado> result) {
+        if (result.size() > 0) {
+            int element =result.size() -1;
+            return result.get(element);
+        } else {
+            return (Devengado) DAOUtils.obtenerSingleResult(result);
+        }
+    }
 }

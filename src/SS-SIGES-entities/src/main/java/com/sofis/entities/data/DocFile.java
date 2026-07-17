@@ -201,8 +201,10 @@ public class DocFile implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sofis.entities.data.DocFile[ docfilePk=" + docfilePk + " ]";
+        return "DocFile{" + "docfilePk=" + docfilePk + ", docfilePath=" + docfilePath + ", docfileNombre=" + docfileNombre + ", docfileDocFk=" + docfileDocFk + ", docfileUltUsuario=" + docfileUltUsuario + ", docfileUltMod=" + docfileUltMod + ", docfileUltOrigen=" + docfileUltOrigen + ", docfileVersion=" + docfileVersion + ", docfileFileStream=" + docfileFileStream + ", docfileNombreHist=" + docfileNombreHist + ", rev=" + rev + '}';
     }
+
+   
 
     /**
      * @return the docfileFileStream
@@ -218,6 +220,9 @@ public class DocFile implements Serializable {
 	this.docfileFileStream = docfileFileStream;
     }
 
+     public String getDocsNombreDownloads() {
+		return (new Date()).getTime() + "_" + docfileNombre;
+	}
     /**
      * @return the docfilePath
      */

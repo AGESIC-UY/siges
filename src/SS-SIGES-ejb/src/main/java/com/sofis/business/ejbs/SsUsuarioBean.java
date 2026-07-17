@@ -4,16 +4,20 @@ import com.sofis.business.interceptors.LoggedInterceptor;
 import com.sofis.business.utils.DatosAuditoria;
 import com.sofis.business.utils.Utils;
 import com.sofis.business.validations.SsUsuarioValidacion;
+import com.sofis.data.daos.OrganismoDAO;
 import com.sofis.data.daos.SsUsuarioDAO;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.ConstantesErrores;
 import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.Configuracion;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.SsOficina;
 import com.sofis.entities.data.SsRol;
 import com.sofis.entities.data.SsUsuOfiRoles;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.IdNombreTO;
+import com.sofis.entities.tipos.TokenSegundoFactor;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.exceptions.MailException;
@@ -27,17 +31,21 @@ import com.sofis.sofisform.to.CriteriaTO;
 import com.sofis.sofisform.to.MatchCriteriaTO;
 import com.sofis.sofisform.to.OR_TO;
 import com.sofis.utils.CriteriaTOUtils;
+import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -48,7 +56,9 @@ import javax.inject.Named;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.apache.commons.lang.time.DateUtils;
 import org.jboss.ejb3.annotation.TransactionTimeout;
+import org.joda.time.LocalDateTime;
 
 @Named
 @Stateless(name = "SsUsuarioBean")
@@ -76,6 +86,8 @@ public class SsUsuarioBean implements UsuarioLocal {
     private SsRolBean ssRolBean;
     @Inject
     private MutexBean mutexBean;
+    @Inject
+    private ConfiguracionBean configuracionBean;
 
     /**
      * Este método guarda un elemento de tipo SsUsuario. Se aplica para la
@@ -89,6 +101,7 @@ public class SsUsuarioBean implements UsuarioLocal {
         try {
             //Validar el elemento a guardar. Si no valida, se lanza una excepcion
             validarUsuarioDuplicado(usuario);
+            System.out.println("llegue al guardar usuarioo validar ");
             SsUsuarioValidacion.validar(usuario, orgPk);
 
             DatosAuditoria da = new DatosAuditoria();
@@ -296,11 +309,26 @@ public class SsUsuarioBean implements UsuarioLocal {
         return guardar(usu, orgPk);
     }
 
-    public void cambiarContrasenia(String usuarioMail, String nuevaContrasenia, Integer orgPk) throws GeneralException {
-        SsUsuario usu = obtenerSsUsuarioPorMail(usuarioMail);
+    public SsUsuario cambiarContraseniaNuevoProcedimiento(String codigoSsUsuario, String nuevaContrasenia, String confirmacionContrasenia) throws GeneralException {
+        SsUsuario usu = obtenerSsUsuarioPorMail(codigoSsUsuario);
+
+        SsUsuarioValidacion.validarCambioPassNuevoProcedimiento(usu, nuevaContrasenia, confirmacionContrasenia);
+
         String pass = Utils.md5(nuevaContrasenia);
         usu.setUsuPassword(pass);
         usu.setUsuFechaPassword(new Date());
+        usu.setUsuIntentosFallidos(0);
+        usu.setUsuFinBloqueo(null);
+        return guardar(usu, null);
+    }
+
+    public void cambiarContrasenia(String usuarioMail, String nuevaContrasenia, Integer orgPk) throws GeneralException {
+        SsUsuario usu = obtenerSsUsuarioPorMail(usuarioMail);
+
+        usu.setUsuHashToken(nuevaContrasenia);
+        Date targetTime = Calendar.getInstance().getTime();
+        Date addMinutes = DateUtils.addMinutes(targetTime, 10);
+        usu.setUsuFinHashToen(addMinutes);
         guardar(usu, orgPk);
     }
 
@@ -333,6 +361,24 @@ public class SsUsuarioBean implements UsuarioLocal {
             SsUsuarioDAO dao = new SsUsuarioDAO(em);
             try {
                 List<SsUsuario> resultado = dao.findByOneProperty(SsUsuario.class, "usuCorreoElectronico", mail);
+                return (SsUsuario) DAOUtils.obtenerSingleResult(resultado);
+            } catch (DAOGeneralException ex) {
+                logger.log(Level.SEVERE, SsUsuarioBean.class.getName(), ex);
+                BusinessException be = new BusinessException(ex);
+                be.addError(MensajesNegocio.ERROR_USUARIO_OBTENER);
+                throw be;
+            }
+        }
+        return null;
+    }
+
+    public SsUsuario obtenerSsUsuarioPorHashToken(String hashToken) throws GeneralException {
+        logger.log(Level.FINEST, "obtenerSsUsuarioPorMail...");
+        if (!StringsUtils.isEmpty(hashToken)) {
+
+            SsUsuarioDAO dao = new SsUsuarioDAO(em);
+            try {
+                List<SsUsuario> resultado = dao.findByOneProperty(SsUsuario.class, "usuHashToken", hashToken);
                 return (SsUsuario) DAOUtils.obtenerSingleResult(resultado);
             } catch (DAOGeneralException ex) {
                 logger.log(Level.SEVERE, SsUsuarioBean.class.getName(), ex);
@@ -660,9 +706,10 @@ public class SsUsuarioBean implements UsuarioLocal {
 
     public boolean resetearContrasenia(final String email, Integer orgPk) throws BusinessException {
         if (!StringsUtils.isEmpty(email)) {
+            String emailNormalizado = email.toLowerCase();
             EmailValidator ev = new EmailValidator();
-            if (ev.validate(email)) {
-                final SsUsuario usu = obtenerSsUsuarioPorMail(email);
+            if (ev.validate(emailNormalizado)) {
+                final SsUsuario usu = obtenerSsUsuarioPorMail(emailNormalizado);
                 if (usu != null) {
                     Set<SsUsuOfiRoles> setUsuRoles = usu.getSsUsuOfiRolesCollectionActivos();
                     if (orgPk == null) {
@@ -683,12 +730,23 @@ public class SsUsuarioBean implements UsuarioLocal {
                         BusinessException be = new BusinessException();
 //                    be.addError(MensajesNegocio.ERROR_RESET_PASS_USUARIO);
 
-                        be.addError("No es posible envíar mail con recuperación de contraseña por favor contactar al administrador de su Organismo");
+                        be.addError("error_reset_pass");
                         throw be;
                     }
+                    String hashTokenAux = Utils.generarContraseniaConParam(usu.getUsuId().toString()).toLowerCase();
+                    boolean actualizarUsuario = true;
+                    if (usu.getUsuFinHashToen() != null) {
+                        if (usu.getUsuFinHashToen().after(new Date())) {
+                            hashTokenAux = usu.getUsuHashToken();
+                            actualizarUsuario = false;
+                        }
+                    }
 
-                    final String pass = Utils.generarContrasenia();
-                    cambiarContrasenia(usu.getUsuCorreoElectronico(), pass, orgPk);
+                    final String pass = hashTokenAux;
+                    if (actualizarUsuario) {
+                        cambiarContrasenia(usu.getUsuCorreoElectronico(), pass, orgPk);
+                    }
+
                     try {
                         final Integer orgPkFinal = orgPk;
                         Thread t = new Thread(new Runnable() {
@@ -713,12 +771,6 @@ public class SsUsuarioBean implements UsuarioLocal {
                         logger.log(Level.WARNING, ex.getMessage(), ex);
                     }
                     return true;
-                } else {
-                    logger.log(Level.WARNING, "No se encontró un usuario para la dirección de correo electrónico " + email);
-                    BusinessException be = new BusinessException();
-//                    be.addError(MensajesNegocio.ERROR_RESET_PASS_USUARIO);
-                    be.addError("No se encontró un usuario para la dirección de correo electrónico " + email);
-                    throw be;
                 }
             } else {
                 logger.log(Level.WARNING, "'" + email + "' no es una dirección de correo electrónico válida");
@@ -732,6 +784,7 @@ public class SsUsuarioBean implements UsuarioLocal {
             be.addError("No se especificó una dirección de correo electrónico");
             throw be;
         }
+        return false;
     }
 
     /**
@@ -919,4 +972,208 @@ public class SsUsuarioBean implements UsuarioLocal {
 
     }
 
-}
+    public void actualizarExportacionUsuario(Integer puedeExportar, Integer usuarioPk, Integer orgPk) {
+        logger.log(Level.INFO, "actualizarExportacionUsuario...");
+
+        SsUsuarioDAO dao = new SsUsuarioDAO(em);
+        dao.actualizarExportacionUsuario(puedeExportar, usuarioPk, orgPk);
+    }
+
+    @Override
+    public boolean usuarioBloqueado(Integer intgr) {
+        try {
+            logger.log(Level.INFO, "usuarioBloquedo..." + intgr);
+
+            SsUsuarioDAO dao = new SsUsuarioDAO(em);
+            SsUsuario usuarioBase = dao.findById(SsUsuario.class, intgr);
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT-3"));
+            logger.log(Level.INFO, "fecha nueva" + new Date());
+
+            logger.log(Level.INFO, "fecha nueva user block" + usuarioBase.getUsuFinBloqueo());       
+            if (usuarioBase.getUsuFinBloqueo() == null) {
+                logger.log(Level.INFO, "no está bloqueado");
+                return false;
+            } else {
+                if (usuarioBase.getUsuFinBloqueo().after(new Date())) {
+                    logger.log(Level.INFO, "bloqueo posterior a hoy");
+                    return true;
+                }
+            }
+
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsUsuarioBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+
+    }
+
+    @Override
+    public void resetearIntentosFallidos(Integer intgr) {
+        SsUsuarioDAO dao = new SsUsuarioDAO(em);
+        dao.resetearIntentosFallidos(intgr);
+    }
+
+    @Override
+    public void gestionarIntentosFallidos(Integer intgr) {
+        try {
+            SsUsuarioDAO dao = new SsUsuarioDAO(em);
+            SsUsuario usuarioBase = dao.findById(SsUsuario.class, intgr);
+
+            if (usuarioBase.getUsuIntentosFallidos().equals(2) && usuarioBase.getUsuFinBloqueo() == null) {
+                Date targetTime = Calendar.getInstance().getTime();
+                Date addMinutes = DateUtils.addMinutes(targetTime, 10);
+                usuarioBase.setUsuFinBloqueo(addMinutes);
+            } else if (usuarioBase.getUsuIntentosFallidos() < 2) {
+                usuarioBase.setUsuIntentosFallidos(usuarioBase.getUsuIntentosFallidos() + 1);
+                logger.severe("usuintentofallido bloqueo 1");
+                usuarioBase.setUsuFinBloqueo(null);
+            } else {
+                logger.severe("usuintentofallido bloqueo 2");
+                usuarioBase.setUsuFinBloqueo(null);
+                usuarioBase.setUsuIntentosFallidos(1);
+            }
+
+            dao.update(usuarioBase);
+
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsUsuarioBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Override
+
+    public void actualizarFechaLogin(Integer intgr) {
+        try {
+            SsUsuarioDAO dao = new SsUsuarioDAO(em);
+        
+            SsUsuario usuarioBase = dao.findById(SsUsuario.class, intgr);
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT-3"));
+            usuarioBase.setUsuFechaUuid(new Date());
+            dao.update(usuarioBase);
+        } catch (DAOGeneralException ex) {
+            Logger.getLogger(SsUsuarioBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public TokenSegundoFactor crearTokenSegundoFactor(String username) {
+
+        LocalDateTime ahora = LocalDateTime.now();
+        String codigo = Long.toString(ahora.toDate().getTime());
+        codigo = codigo.substring(codigo.length() - 6);
+        Configuracion confCod = configuracionBean.obtenerCnfPorCodigoYOrg("DOBLE_FACTOR_SEGUNDOS", null);
+        Configuracion dobleFactorActivo = configuracionBean.obtenerCnfPorCodigoYOrg("DOBLE_FACTOR_ACTIVO", null);
+
+        if (dobleFactorActivo.getCnfValor().equals("true")) {
+            SsUsuario usuario = obtenerSsUsuarioPorMail(username);
+            if (!usuarioBloqueado(usuario.getUsuId())) {
+                String asunto = "Código de Acceso SIGES PORTAFOLIO";
+                String mensaje = "Estimado <b>" + usuario.getNombreApellido() + "</b>, se ha solicitado un código de acceso a SIGES PORTAFOLIO<br>"
+                        + "<b>" + codigo + "</b><br>"
+                        + "Para acceder en SIGES, debe ingresar este valor a la brevedad. "
+                        + "Si no ha solicitado este token, favor no compartirlo con nadie y dar aviso al equipo de AGESIC.";
+
+                Organismos organismo = null;
+                Set<SsUsuOfiRoles> oficinasRoles = usuario.getSsUsuOfiRolesCollectionActivos();
+
+                organismo = cargarOrganismo(oficinasRoles, usuario, organismo); 
+                TokenSegundoFactor token = new TokenSegundoFactor(codigo, ahora, ahora.plusSeconds(parseInt(confCod.getCnfValor())));
+                logger.severe("codiggoooooo" + codigo);
+                mailBean.enviarMail(asunto, "", new String[]{username}, mensaje, organismo.getOrgPk());
+                return token;
+            }
+
+            return null;
+        }
+        return null;
+    }
+
+    private Organismos cargarOrganismo(Set<SsUsuOfiRoles> oficinasRoles, SsUsuario usuario, Organismos organismo) {
+        // Cargar Organismo
+        TreeMap<String, Organismos> listaOrganismosUsuario = new TreeMap<String, Organismos>();
+        HashMap<Integer, ?> aux = new HashMap<>();
+        if (oficinasRoles != null) {
+            for (SsUsuOfiRoles ofRoles : oficinasRoles) {
+                if (ofRoles.getUsuOfiRolesOficina() != null
+                        && ofRoles.getUsuOfiRolesOficina().isOfiActivo()
+                        && !aux.containsKey(ofRoles.getUsuOfiRolesOficina().getOfiId())) {
+                    listaOrganismosUsuario.put(
+                            ofRoles.getUsuOfiRolesOficina().getOfiNombre(),
+                            new Organismos(
+                                    ofRoles.getUsuOfiRolesOficina().getOfiId(),
+                                    ofRoles.getUsuOfiRolesOficina().getOfiNombre()
+                            )
+                    );
+                    aux.put(ofRoles.getUsuOfiRolesOficina().getOfiId(), null);
+                }
+            }
+        }
+        // Ordenar organismos por nombre
+        if (!listaOrganismosUsuario.isEmpty()) {
+            
+            OrganismoDAO orgDao = new OrganismoDAO(em);
+            
+            Organismos orgDefecto = null;
+            try {
+                orgDefecto = orgDao.findById(Organismos.class, usuario.getUsuOficinaPorDefecto());
+            } catch (DAOGeneralException ex) {
+                Logger.getLogger(SsUsuarioBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            /**
+             * f
+             * [Bruno] 31-07-17, ticket #239251: si el organismo por
+             * defecto del usuario está desactivado, no puede cargarlo
+             */
+            if (orgDefecto != null && !orgDefecto.getOrgActivo()) {
+                orgDefecto = null;
+            }
+            
+            List<Integer> orgListId = new ArrayList<Integer>();
+            for (SsUsuOfiRoles ssUsuOfiRoles : oficinasRoles) {
+                orgListId.add(ssUsuOfiRoles.getUsuOfiRolesOficina().getOfiId());
+            }
+            if (orgDefecto != null && orgListId.contains(orgDefecto.getOrgPk())) {
+                organismo = orgDefecto;
+            } else {
+                for (Map.Entry<String, Organismos> e : listaOrganismosUsuario.entrySet()) {
+                    if (e.getValue() != null) {
+                        organismo = e.getValue();
+                        break;
+                    }
+                }
+            }
+            
+            
+            
+        }
+        return organismo;
+    }
+
+        @Override
+        public void bloquearUsuario
+        (Integer usuId
+        
+            ) {
+        SsUsuarioDAO dao = new SsUsuarioDAO(em);
+
+            try {
+                SsUsuario usuario = dao.findById(SsUsuario.class, usuId);
+
+                if (usuario == null) {
+                    Logger.getLogger(SsUsuarioBean.class.getName())
+                            .log(Level.WARNING, "No se encontró usuario para usuId={0}", usuId);
+                    return;
+                }
+                usuario.setUsuIntentosFallidos(3);
+                Date targetTime = Calendar.getInstance().getTime();
+                Date addMinutes = DateUtils.addMinutes(targetTime, 10);
+                usuario.setUsuFinBloqueo(addMinutes);
+                dao.update(usuario);
+
+            } catch (DAOGeneralException ex) {
+                Logger.getLogger(SsUsuarioBean.class.getName())
+                        .log(Level.SEVERE, "Error registrando intento de segundo factor para usuId=" + usuId, ex);
+            }
+        }
+
+    }

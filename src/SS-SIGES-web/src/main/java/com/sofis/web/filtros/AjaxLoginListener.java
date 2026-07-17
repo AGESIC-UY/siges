@@ -31,8 +31,10 @@ public class AjaxLoginListener implements PhaseListener {
         if (context.getPartialViewContext().isAjaxRequest()
                 && originalURL != null) {
             try {
+                System.out.println("afterPhase()...");
                 context.getExternalContext().redirect(originalURL);
             } catch (IOException e) {
+                System.out.println("afterPhase() fallo...");
                 throw new FacesException(e);
             }
         }

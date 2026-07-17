@@ -244,6 +244,13 @@ public class ReportesBean {
 			criterios.add(new OR_TO(nombreProy, nombreProg));
 		}
 
+                // Nombre
+		if (filtro.getProyPk() != null && filtro.getProyPk() != 0) {
+                    MatchCriteriaTO proyPk = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS,
+                        "proyPk", filtro.getProyPk());
+                    criterios.add(proyPk);
+		}
+
 		// Estados Filtro
 		List<Object> estados;
 		if (filtro.getEstados() != null && !filtro.getEstados().isEmpty()) {

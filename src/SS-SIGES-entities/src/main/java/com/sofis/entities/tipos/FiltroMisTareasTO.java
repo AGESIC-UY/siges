@@ -18,8 +18,17 @@ public class FiltroMisTareasTO implements Serializable{
     private Boolean tareaFinalizada;
     private Integer anio;
     private Boolean conProductos;
+    private Integer proyectoCodigo;
 
     public FiltroMisTareasTO() {
+    }
+
+    public Integer getProyectoCodigo() {
+        return proyectoCodigo;
+    }
+
+    public void setProyectoCodigo(Integer proyectoCodigo) {
+        this.proyectoCodigo = proyectoCodigo;
     }
 
     public Integer getProgPk() {

@@ -1,6 +1,7 @@
 package com.sofis.entities.data;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -89,13 +90,6 @@ public class TipoDocumentoInstancia implements Serializable {
         this.tipodocInstPeso = tipodocInstPeso;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (tipodocInstPk != null ? tipodocInstPk.hashCode() : 0);
-        return hash;
-    }
-
     public Integer getTipodocInstProyFk() {
         return tipodocInstProyFk;
     }
@@ -137,20 +131,6 @@ public class TipoDocumentoInstancia implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        
-        if (!(object instanceof TipoDocumentoInstancia)) {
-            return false;
-        }
-        TipoDocumentoInstancia other = (TipoDocumentoInstancia) object;
-        if ((this.tipodocInstPk == null && other.tipodocInstPk != null) 
-                || (this.tipodocInstPk != null && !this.tipodocInstPk.equals(other.tipodocInstPk))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "com.sofis.entities.data.TipoDocumentoInstancia[ tipodocInstPk=" + tipodocInstPk + " ]";
     }
@@ -167,5 +147,66 @@ public class TipoDocumentoInstancia implements Serializable {
      */
     public void setTipodocExigidoDesdeString(String tipodocExigidoDesdeString) {
         this.tipodocExigidoDesdeString = tipodocExigidoDesdeString;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstPk);
+        hash = 73 * hash + Objects.hashCode(this.tipodocExigidoDesde);
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstPeso);
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstTipoDocFk);
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstProyFk);
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstProgFk);
+        hash = 73 * hash + Objects.hashCode(this.tipodocInstResumenEjecutivo);
+        hash = 73 * hash + Objects.hashCode(this.docsEstadoColor);
+        hash = 73 * hash + Objects.hashCode(this.docsEstado);
+        hash = 73 * hash + Objects.hashCode(this.tipodocExigidoDesdeString);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TipoDocumentoInstancia other = (TipoDocumentoInstancia) obj;
+        if (!Objects.equals(this.docsEstadoColor, other.docsEstadoColor)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocExigidoDesdeString, other.tipodocExigidoDesdeString)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstPk, other.tipodocInstPk)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocExigidoDesde, other.tipodocExigidoDesde)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstPeso, other.tipodocInstPeso)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstTipoDocFk, other.tipodocInstTipoDocFk)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstProyFk, other.tipodocInstProyFk)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstProgFk, other.tipodocInstProgFk)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipodocInstResumenEjecutivo, other.tipodocInstResumenEjecutivo)) {
+            return false;
+        }
+        if (!Objects.equals(this.docsEstado, other.docsEstado)) {
+            return false;
+        }
+        return true;
     }
 }

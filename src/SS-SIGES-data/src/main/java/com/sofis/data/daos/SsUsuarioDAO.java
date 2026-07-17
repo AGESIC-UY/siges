@@ -6,6 +6,7 @@ import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -18,7 +19,7 @@ public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> impleme
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(SsUsuarioDAO.class.getName());
-    
+
     public SsUsuarioDAO(EntityManager em) {
         super(em);
     }
@@ -26,7 +27,7 @@ public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> impleme
     public List<SsUsuario> obtenerUsuariosPorRol(List<Integer> rolCodArr, Integer orgId, Boolean activos) {
         /*
         *   Se agrega este parámetro para poder tomar el correo electrónico del usuario al momento de requerir una solicitud de cambio de fase.
-        */
+         */
         String queryStr = "SELECT DISTINCT new SsUsuario(s.usuId,s.usuFechaPassword,s.usuNroDoc,s.usuOrigen,s.usuPrimerApellido,s.usuSegundoApellido,s.usuPrimerNombre,s.usuSegundoNombre,s.usuUserCode,s.usuVigente,s.usuCorreoElectronico, b)"
                 + " FROM SsUsuario s, IN(s.ssUsuOfiRolesCollection) b"
                 + " WHERE ( ";
@@ -40,7 +41,7 @@ public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> impleme
             i++;
         }
         queryStr = queryStr + " ) ";
-        
+
         if (activos != null) {
             queryStr = queryStr + " AND s.usuVigente = :usuVigente"
                     + " AND b.usuOfiRolesOficina.ofiId = :org"
@@ -118,7 +119,7 @@ public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> impleme
                 + " FROM SsUsuOfiRoles uor"
                 + " WHERE uor.usuOfiRolesOficina.ofiId = :orgPk"
                 + " AND uor.usuOfiRolesActivo = :activo)"
-//                + " GROUP BY e.coordinadorUsuFk" //Se comenta porque no funciona en Postgres
+                //                + " GROUP BY e.coordinadorUsuFk" //Se comenta porque no funciona en Postgres
                 + " ORDER BY e.coordinadorUsuFk.usuPrimerNombre, e.coordinadorUsuFk.usuPrimerApellido";
 
         Query query = getEm().createQuery(queryStr);
@@ -149,4 +150,32 @@ public class SsUsuarioDAO extends HibernateJpaDAOImp<SsUsuario, Integer> impleme
 
         return result != null && result.size() == 1;
     }
+
+    public void actualizarExportacionUsuario(Integer puedeExportar, Integer usuarioPk, Integer orgPk) {
+        logger.log(Level.INFO, "actualizarExportacionUsuario...");
+        String queryStr = "UPDATE ss_usu_ofi_roles\n"
+                + "       SET usu_ofi_roles_puede_exportar=" + puedeExportar
+                + " WHERE usu_ofi_roles_usuario=" + usuarioPk + " and usu_ofi_roles_oficina=" + orgPk;
+
+        Query query = super.getEm().createNativeQuery(queryStr);
+        query.executeUpdate();
+    }
+
+    public void resetearIntentosFallidos(Integer intgr) {
+         logger.log(Level.INFO, "resetearIntentosFallidos...");
+        try {
+            String queryStr = "UPDATE ss_usuario \n"
+                    + "SET usu_intentos_fallidos=0, usu_fin_bloqueo=NULL \n"
+                    + "WHERE usu_id=" + intgr;
+             
+            
+            Query query = super.getEm().createNativeQuery(queryStr);
+            query.executeUpdate();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "resetearIntentosFallidos...",e);
+        }
+
+    }
+
+  
 }

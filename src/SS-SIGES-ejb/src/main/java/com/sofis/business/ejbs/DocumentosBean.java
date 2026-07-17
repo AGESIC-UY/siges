@@ -624,8 +624,10 @@ public class DocumentosBean {
 	}
 
 	public List<Documentos> cargarArchivosDocumentos(List<Documentos> listDocumentos) {
+            logger.severe("se entra al cargar archivo ");
 		if (CollectionsUtils.isNotEmpty(listDocumentos)) {
 			for (Documentos doc : listDocumentos) {
+                            logger.severe("carga archico docs");
 				doc = cargarArchivosDocumentos(doc);
 			}
 		}
@@ -634,6 +636,7 @@ public class DocumentosBean {
 
 	public Documentos cargarArchivosDocumentos(Documentos doc) {
 		if (doc != null && doc.getDocsPk() != null) {
+                    logger.severe("obteniendo el doc");
 			doc.setDocFile(obtenerDocFilePorDocId(doc.getDocsPk()));
 		}
 		return doc;

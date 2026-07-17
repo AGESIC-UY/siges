@@ -32,16 +32,16 @@ import javax.persistence.PersistenceContext;
 @Stateless(name = "TipoDocumentoInstanciaBean")
 @LocalBean
 public class TipoDocumentoInstanciaBean {
-
+    
     private static final Logger logger = Logger.getLogger(TipoDocumentoInstanciaBean.class.getName());
     @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
     private EntityManager em;
-
+    
     @Inject
     private EstadosBean estadosBean;
     @EJB
     private DocumentosBean documentosBean;
-
+    
     public List<TipoDocumentoInstancia> guardarTiposDocsIntancia(List<TipoDocumentoInstancia> instancias) throws GeneralException {
 
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
@@ -54,7 +54,7 @@ public class TipoDocumentoInstanciaBean {
                 t = tipoDocInstanciaDao.update(t);
                 result.add(t);
             }
-
+            
             return result;
         } catch (DAOGeneralException ex) {
             logger.logp(Level.SEVERE, TipoDocumentoInstanciaBean.class.getName(), "guardar", ex.getMessage(), ex);
@@ -86,10 +86,10 @@ public class TipoDocumentoInstanciaBean {
             nvaTDI.setTipodocInstTipoDocFk(tdi.getTipodocInstTipoDocFk());
             tdiListResult.add(nvaTDI);
         }
-
+        
         return guardarTiposDocsIntancia(tdiListResult);
     }
-    
+
     /**
      * Guarda una copia de los TipoDocumentoInstancia del programa aportado para
      * el nuevo programa.
@@ -112,12 +112,12 @@ public class TipoDocumentoInstanciaBean {
             nvaTDI.setTipodocInstTipoDocFk(tdi.getTipodocInstTipoDocFk());
             tdiListResult.add(nvaTDI);
         }
-
+        
         return guardarTiposDocsIntancia(tdiListResult);
     }
-
+    
     public List<TipoDocumentoInstancia> obtenerTipoDocInstResumen(Integer fichaFk, Integer tipoFicha, Estados est, int size) {
-
+        
         if (fichaFk != null && tipoFicha != null) {
             TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
             List<TipoDocumentoInstancia> tipoDocInst = null;
@@ -126,7 +126,7 @@ public class TipoDocumentoInstanciaBean {
             } catch (DAOGeneralException ex) {
                 logger.log(Level.SEVERE, null, ex);
             }
-
+            
             if (tipoDocInst != null) {
                 List<TipoDocumentoInstancia> result = new ArrayList<>();
                 for (TipoDocumentoInstancia tdi : tipoDocInst) {
@@ -164,10 +164,10 @@ public class TipoDocumentoInstanciaBean {
     private void copiarTDIFaltantes(Integer fichaId, Integer tipoFicha, Integer orgPk) {
         TipoDocumentoDAO tipoDocDao = new TipoDocumentoDAO(em);
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
-
+        
         try {
             List<TipoDocumentoInstancia> tiposDocumentosInstanciaList = tipoDocInstanciaDao.obtenerTipoDocsInstanciaPorProgProyId(fichaId, tipoFicha);
-
+            
             if (tiposDocumentosInstanciaList == null) {
                 //debemos cargar la instancia de tipos de documentos con los valores por defecto
                 //en la base de tipos de documentos para la organizacion del proyecto
@@ -191,7 +191,7 @@ public class TipoDocumentoInstanciaBean {
                 //a validar que crear esta intancia no dependa del estado del proyecto
                 //es decir si por ejemplo el proyecto ya esta en estado Iniciado si se tiene que crear la instancia
                 List<TipoDocumento> tiposDocumentos = tipoDocInstanciaDao.obtenerTipoDocsSinInstanciaPorProgProyId(fichaId, tipoFicha, orgPk);
-
+                
                 for (TipoDocumento t : tiposDocumentos) {
                     TipoDocumentoInstancia toInsert = new TipoDocumentoInstancia();
                     toInsert.setTipodocExigidoDesde(t.getTipodocExigidoDesde());
@@ -212,7 +212,7 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public List<TipoDocumentoInstancia> obtenerTipoDocsInstanciaPorProgProyId(Integer fichaId, Integer tipoFicha, Integer orgPk) {
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
         try {
@@ -226,7 +226,7 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public List<TipoDocumentoInstancia> obtenerTiposDocumentoInstanciaPorProyecto(Integer proyId) {
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
         try {
@@ -240,12 +240,12 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public List<TipoDocumentoInstancia> obtenerTipoDocsNoContenidosPorProyectoId(Integer proyId, Integer orgPk) {
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
         try {
             return tipoDocInstanciaDao.obtenerTipoDocsNoContenidosPorProyectoId(proyId, orgPk);
-
+            
         } catch (DAOGeneralException ex) {
             logger.logp(Level.SEVERE, TipoDocumentoInstanciaBean.class.getName(), "obtenerTipoDocsNoContenidosPorProyectoId", ex.getMessage(), ex);
             TechnicalException te = new TechnicalException(ex);
@@ -253,7 +253,7 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public List<TipoDocumentoInstancia> obtenerTipoDocsNoContenidosPorProgramaId(Integer progId, Integer orgPk) {
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
         try {
@@ -265,7 +265,7 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public void eliminarPorProyectoId(Integer proyPk) {
         TipoDocumentoInstanciaDAO tipoDocInstanciaDao = new TipoDocumentoInstanciaDAO(em);
         try {
@@ -277,7 +277,7 @@ public class TipoDocumentoInstanciaBean {
             throw te;
         }
     }
-
+    
     public void eliminar(List<TipoDocumentoInstancia> listTDI) {
         if (listTDI != null) {
             TipoDocumentoInstanciaDAO dao = new TipoDocumentoInstanciaDAO(em);

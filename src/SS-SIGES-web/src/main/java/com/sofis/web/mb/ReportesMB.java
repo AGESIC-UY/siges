@@ -40,7 +40,9 @@ public class ReportesMB implements Serializable {
     }
 
     public String mesAbreviadoStr(Integer mes) {
+        System.out.print("dentro de mesAbreviado");
         if (mes != null) {
+            System.out.print("fin de mesAbreviado");
             return Labels.getValue("date_mes_abreviado_" + mes);
         }
         return null;

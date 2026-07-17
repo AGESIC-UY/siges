@@ -93,7 +93,7 @@ public class PagosBean {
 
         String procedimientoFiltrados = cnfPagoFiltroProcedimientoCompra != null ? cnfPagoFiltroProcedimientoCompra.getCnfValor() : "";
 
-        PagoValidacion.validar(pago, exigeProveedorEnPago, exigeClienteEnPago,procedimientoFiltrados);
+        PagoValidacion.validar(pago, exigeProveedorEnPago, exigeClienteEnPago, procedimientoFiltrados);
 
         PagosDAO pagoDao = new PagosDAO(em);
 
@@ -172,12 +172,12 @@ public class PagosBean {
                 notificacionEnvioBean.superarFechaPagoVencida(proyPk);
             }
         }
-        pago = guardar(pago, proyPk, orgPk);
 
+       
+        pago = guardar(pago, proyPk, orgPk);
         if (pago.getPagFechaReal() != null) {
             notificacionEnvioBean.fechaProyectadaFinAnio(pago, proyPk, orgPk);
         }
-
         return pago;
     }
 

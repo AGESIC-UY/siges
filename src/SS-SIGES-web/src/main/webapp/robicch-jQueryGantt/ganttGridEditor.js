@@ -192,11 +192,17 @@ GridEditor.prototype.bindRowEvents = function (task, taskRow) {
     var self = this;
     var isCoord = (task.coordinador == this.master.usuarioId);
     var isPmoEditor = this.master.isPMOEditor;
-    console.log('isPmoEditor bindRowEvents ' + isPmoEditor);
+    console.log('nuestra task ' + task.name);
+    console.log('es editor al inicio  ' + isPmoEditor);
 
     var editar = this.master.canWrite && (this.master.isPM || isCoord);
 
+    console.log('master ' + this.master);
+    console.log('write ' + this.master.canWrite);
+    console.log('soy coord ' + isCoord);
+
     console.log('editar en bindRowEvents ' + editar);
+
     if (editar || isPmoEditor) {
         console.log('entra a bloque 1');
         self.bindRowInputEvents(task, taskRow);
@@ -371,15 +377,18 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
     });
 };
 GridEditor.prototype.openFullEditor = function (task, taskRow) {
+
     var self = this;
     //task editor in popup
     var taskId = taskRow.attr("taskId");
     ////console.debug(task);
-
     //make task editor
     var taskEditor = $.JST.createFromTemplate({}, "TASK_EDITOR");
 
+console.log("******"+  taskEditor.find("#progress").attr("disabled"));
+
     taskEditor.find("#name").val(task.name);
+    console.log("descripcion en el gantt grid editor" + task.description);
     taskEditor.find("#description").val(task.description);
     taskEditor.find("#code").val(task.code);
     taskEditor.find("#progress").val(task.progress ? parseFloat(task.progress) : 0);
@@ -408,8 +417,11 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     }
 
 
+    console.log("******" + task.estadoTask);
+    console.log("****** 416" + taskEditor.find("#progress").attr("disabled"));
 
     if (task.estadoTask > 1) {
+        console.log("****** entro al primer if");
         /* si está en ejecución o finalizado*/
         taskEditor.find("#start_plan").val(new Date(task.startLineaBase).format());
         taskEditor.find("#end_plan").val(new Date(task.endLineaBase).format());
@@ -436,8 +448,12 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         taskEditor.find("#planDuracionDiasSpan").text("Duración: " + taskEditor.find("#duration_plan").val() + " días");
         taskEditor.find("#periodo_inicio").attr("checked", task.inicioProyecto);
         taskEditor.find("#periodo_fin").attr("checked", task.finProyecto);
+        // taskEditor.find("#progress").attr("disabled", "");
+
 
     } else {
+
+
         /* si está en inicio o planificación */
         taskEditor.find("#start_plan").val(new Date(task.start).format());
         taskEditor.find("#end_plan").val(new Date(task.end).format());
@@ -465,8 +481,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         taskEditor.find("#periodo_fin").attr("checked", task.finProyecto);
     }
 
-//    console.log("task.inicioProyecto: "+ task.inicioProyecto);
-//    console.log("task.finProyecto: "+ task.finProyecto);
+    console.log("****** 474" + taskEditor.find("#progress").attr("disabled"));
+
+
 
     taskEditor.find("#duracionDiasSpan").text("Duración: " + taskEditor.find("#duration").val() + " días");
     /*FIN ampliacion SOFIS - SIGES 12-12-2016 */
@@ -482,10 +499,14 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     if (task.esReferencia && task.referido) {
         if (task.estadoTask > 1) {
             taskEditor.find("#name").attr("disabled", "true");
-            taskEditor.find("#description").attr("disabled", "true");
         }
         taskEditor.find("#coordinador").attr("disabled", "true");
-        taskEditor.find("#nombre-referencia").html(task.referido.name);
+        let nombreReferido = task.referido.name || "";
+        if (nombreReferido.length > 100) {
+            nombreReferido = nombreReferido.substring(0, 100) + "....";
+        }
+        taskEditor.find("#nombre-referencia").html(nombreReferido);
+        taskEditor.find("#observaciones-referencia").html(task.referido.description);
         taskEditor.find("#numero-entregable").html(task.referido.id);
         taskEditor.find("#codigo-proyecto-refereido").html(task.proyectoReferido.id);
         taskEditor.find("#proyecto-referencia").html(task.proyectoReferido.nombre);
@@ -522,7 +543,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         assigsTable.append(assigRow);
     }
 
-    if (!self.master.canWrite) {
+    var coordinador = task.coordinador;
+    var isCoordinador = (coordinador == self.master.usuarioId);
+
+    if (!self.master.canWrite && !isCoordinador) {
         taskEditor.find("input,textarea").attr("readOnly", true);
         taskEditor.find("input:checkbox,select").attr("disabled", true);
     } else {
@@ -600,6 +624,8 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         });
         //save task
         taskEditor.find("#saveButton").click(function () {
+
+            console.log("entro al guardar");
             var task = self.master.getTask(taskId); // get task again because in case of rollback old task is lost
 
             self.master.beginTransaction();
@@ -674,8 +700,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
                 return;
             }
 
-            task.name = taskEditor.find("#name").val();
+            task.name = taskEditor.find("#name").val();        
             task.description = taskEditor.find("#description").val();
+            console.log("descripcion en el gant grid editor 2" + task.description);
             task.code = taskEditor.find("#code").val();
 
 
@@ -895,6 +922,12 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         //selectProgress.add(opt);
     }
 
+    console.log("***************" + task.parent);
+    console.log("***************" + this.master.estado);
+    console.log("***************" + task.esReferencia);
+    console.log("***************" + task.tieneProd);
+    console.log("****** 909" + document.getElementById("progress").getAttribute("disabled"));
+
 
     if (task.parent || this.master.estado === 5) {
         document.getElementById("esfuerzo").setAttribute('disabled', 'true');
@@ -915,10 +948,14 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         document.getElementById("progress").setAttribute('disabled', 'true');
     }
 
-    var isCoord = (task.coordinador === this.master.usuarioId);
+    var isCoord = (task.coordinador == this.master.usuarioId);
     var isPM = this.master.isPM;
     var isPmoEditor = this.master.isPMOEditor;
     var disable = !(isPM || isCoord || isPmoEditor);
+    console.log("grantt grid editor is coord" + isCoord);
+    console.log("grantt grid editor disabled" + disable);
+
+
 
     if (disable || this.master.estado === 5) {
         document.getElementById("name").setAttribute('disabled', 'true');
@@ -934,7 +971,23 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         document.getElementById("end").setAttribute('disabled', 'true');
         document.getElementById("horasEstimadas").setAttribute('disabled', 'true');
         document.getElementById("cambiarCoordHijos").setAttribute('disabled', 'true');
+
     }
+
+    console.log("end ejec " + taskEditor.find("#end_ejec").attr("disabled"));
+    console.log("end ejec read" + taskEditor.find("#end_ejec").attr("readonly"));
+
+    if (isCoord) {
+
+        //document.getElementById("progress").removeAttribute('disabled');
+        document.getElementById("progress").removeAttribute('readonly');
+        document.getElementById("start").removeAttribute('readonly');
+        document.getElementById("end").removeAttribute('readonly');
+        document.getElementById("guardarBtn").removeAttribute('disabled');
+
+    }
+
+    console.log("****** 938" + document.getElementById("progress").getAttribute("readonly"));
 
     var isPMO = (this.master.isPMO);
     if (!isPMO || this.master.estado === 5 || task.esReferencia) {
@@ -944,11 +997,11 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         document.getElementById("relevantePMO").removeAttribute('readonly');
     }
 
-    if (isPmoEditor) {
+    if (isPmoEditor || isCoord) {
         document.getElementById("description").removeAttribute('readonly');
     }
 
-    if (!isPM || this.master.estado === 5) {
+    if ((!isPM && !isPmoEditor) || this.master.estado === 5) {
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');
         document.getElementById("addBelowBtn").setAttribute('disabled', 'true');
         document.getElementById("indentBtn").setAttribute('disabled', 'true');
@@ -960,7 +1013,12 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
 
     if ((disable && !isPMO) || this.master.estado == 5) {
         document.getElementById("saveButton").setAttribute('disabled', 'true');
+
     }
+    console.log("save  981" + document.getElementById("saveButton").getAttribute("disabled"));
+    console.log("****** 981" + document.getElementById("progress").getAttribute("disabled"));
+    console.log("boton guardar " + document.getElementById("guardarBtn").getAttribute("disabled"));
+
 };
 
 function closeEditorDiv() {

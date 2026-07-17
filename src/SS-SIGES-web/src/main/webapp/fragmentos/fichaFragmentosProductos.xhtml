@@ -180,32 +180,32 @@
 
                                 <ice:outputText value="#{prodMes.prodmesPlan}"
                                                 styleClass="alinearDerecha"
-                                                converter="ImporteFormatConverter"
+                                                converter="decimalFormatConverter"
                                                 rendered="#{!(editar and (fichaMB.fichaTO.estado.isEstado(2) or fichaMB.fichaTO.estado.isEstado(3))) and prodMes.prodmesPk > 0}">
                                 </ice:outputText>
                                 <ace:textEntry value="#{prodMes.prodmesPlan}" 
                                                rendered="#{editar and (fichaMB.fichaTO.estado.isEstado(2) or fichaMB.fichaTO.estado.isEstado(3)) and prodMes.prodmesPk > 0}"
-                                               converter="ImporteFormatConverter"
+                                               converter="decimalFormatConverter"
                                                styleClass="textoCorto alinearDerecha"/>
 
                                 <ice:outputText value="#{prodMes.prodmesReal}"
                                                 styleClass="alinearDerecha"
-                                                converter="ImporteFormatConverter"
+                                                converter="decimalFormatConverter"
                                                 rendered="#{!(editar and fichaMB.fichaTO.estado.isEstado(4)) and prodMes.prodmesPk > 0}"/>
                                 <ace:textEntry value="#{prodMes.prodmesReal}" 
                                                rendered="#{(editar and fichaMB.fichaTO.estado.isEstado(4) and prodMes.prodmesPk > 0)}"
-                                               converter="ImporteFormatConverter"
+                                               converter="decimalFormatConverter"
                                                styleClass="textoCorto alinearDerecha"/>
 
                                 <ice:outputText value="#{prodMes.prodmesAcuPlan}"
                                                 styleClass="alinearDerecha"
-                                                converter="ImporteFormatConverter"
+                                                converter="decimalFormatConverter"
                                                 rendered="#{prodMes.prodmesPk>0}"/>
 
                                 <ice:outputText value="#{prodMes.prodmesAcuReal}"
                                                 styleClass="alinearDerecha"
                                                 style="border-bottom: 6px solid #{fichaMB.getProdMesAcuRealColor(prodMes)}"
-                                                converter="ImporteFormatConverter"
+                                                converter="decimalFormatConverter"
                                                 rendered="#{prodMes.prodmesPk>0}"/>
 
                                 <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>

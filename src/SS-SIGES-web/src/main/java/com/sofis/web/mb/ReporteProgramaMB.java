@@ -363,19 +363,24 @@ public class ReporteProgramaMB implements Serializable {
     }
 
     public int calcularLeftEntByDate(Date inicio) {
+        logger.info("dentro de calcularLeftEntByDate");
 	return EntregablesUtils.calcularLeftEntByDate(inicio, anio, INICIO_REPORTE_GANTT, FIN_REPORTE_GANTT);
     }
 
     public int calcularWitdhEntByDate(Date inicio, Date fin, Integer duracion) {
+        logger.info("dentro de calcularWitdhEntByDate");
 	return EntregablesUtils.calcularWitdhEntByDate(inicio, fin, duracion, anio, INICIO_REPORTE_GANTT, FIN_REPORTE_GANTT);
     }
 
     public boolean displayDayRef() {
+        logger.info("dentro de displayDayRef");
+
 	Calendar cal = new GregorianCalendar();
 	return anio.equals(cal.get(Calendar.YEAR));
     }
 
     public boolean displayEnt(ReporteTaskTO task) {
+        logger.info("dentro de displayEnt");
 	return DatesUtils.isAnioEntreFechas(task.getInicio(), task.getFin(), anio);
     }
 
@@ -384,12 +389,14 @@ public class ReporteProgramaMB implements Serializable {
     }
 
     public boolean contieneAnioMenor() {
+        logger.info("Inicio de contiene anio menor");
 	if (CollectionsUtils.isNotEmpty(listaTasks)) {
 	    Calendar cal = new GregorianCalendar();
 	    for (ReporteTaskTO task : listaTasks) {
 		if (task.getInicio() != null) {
 		    cal.setTime(task.getInicio());
 		    if (cal.get(Calendar.YEAR) < anio) {
+                        logger.info("Final de contiene anio menor");
 			return true;
 		    }
 		}
@@ -399,21 +406,26 @@ public class ReporteProgramaMB implements Serializable {
 	    for (ReporteAcumuladoTO acu : listaAcumuladosPresupuesto) {
 		for (ReporteAcumuladoMesTO acuMes : acu.getMeses()) {
 		    if (acuMes.getAnio() < anio) {
+                        logger.info("Final de contiene anio menor");
 			return true;
 		    }
 		}
 	    }
 	}
+        logger.info("Final de contiene anio menor");
 	return false;
     }
 
     public boolean contieneAnioMayor() {
+        logger.info("Inicio de contiene anio mayor");
 	if (CollectionsUtils.isNotEmpty(listaTasks)) {
 	    Calendar cal = new GregorianCalendar();
 	    for (ReporteTaskTO task : listaTasks) {
 		if (task.getFin() != null) {
 		    cal.setTime(task.getFin());
 		    if (cal.get(Calendar.YEAR) > anio) {
+                        logger.info("Final de contiene anio mayor");
+
 			return true;
 		    }
 		}
@@ -423,20 +435,24 @@ public class ReporteProgramaMB implements Serializable {
 	    for (ReporteAcumuladoTO acu : listaAcumuladosPresupuesto) {
 		for (ReporteAcumuladoMesTO acuMes : acu.getMeses()) {
 		    if (acuMes.getAnio() > anio) {
+                        logger.info("Final de contiene anio mayor");
 			return true;
 		    }
 		}
 	    }
 	}
+        logger.info("Final de contiene anio mayor");
 	return false;
     }
 
     public String retrocederAnio() {
+        logger.info("Dentro de retroceder año");
 	anio--;
 	return null;
     }
 
     public String avanzarAnio() {
+       logger.info("Dentro de avanzar año");
 	anio++;
 	return null;
     }

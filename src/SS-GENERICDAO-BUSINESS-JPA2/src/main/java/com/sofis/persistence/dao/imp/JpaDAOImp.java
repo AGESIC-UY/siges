@@ -42,6 +42,8 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 	@Transient
 	protected EntityManager em;
 	boolean debug = false;
+            private static final Logger logger = Logger.getLogger(JpaDAOImp.class.getName());
+
 
 	public JpaDAOImp(EntityManager em) {
 		try {
@@ -307,13 +309,16 @@ public class JpaDAOImp<T, ID extends Serializable> implements GenericDAO<T, ID> 
 			if (debug) {
 				System.out.println("LA CONSULTA ES " + sql + " " + em);
 			}
+				System.out.println("LA CONSULTA ES " + sql + " " + em);
 
 			Query query = em.createQuery(sql.toString());
+                        
 
 			if (whereClause != null) {
 				for (String key : valuesCriteria.keySet()) {
 					ValueCriteriaTO valueCriteriaTO = valuesCriteria.get(key);
 					Object value = valueCriteriaTO.getValue();
+                                        System.out.println("PARAM ORIGINAL -> " + key + " = " + value);
 					/* No esta funcionando con JDK 1.7
                      if (value instanceof XMLGregorianCalendarImpl) {
                      XMLGregorianCalendarImpl valueXML = (XMLGregorianCalendarImpl) value;

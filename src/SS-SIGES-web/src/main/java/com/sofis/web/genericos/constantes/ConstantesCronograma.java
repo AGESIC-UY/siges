@@ -54,6 +54,7 @@ public abstract class ConstantesCronograma {
 	public static final String TASK_REFERIDO = "referido";
 	public static final String TASK_PROYECTO_REFERIDO = "proyectoReferido";
 	public static final String TASK_ES_REFERIDO_DESDE_OTRO_PROYECTO = "esReferidoDesdeOtroProyecto";
+        public static final String TASK_OBSERVACION_REFERIDA = "observacionReferida";
 
 	// estado en el que se encuentra el proyecto
 	// 0 = inicio, 1 = planificación, 2 = ejecución, 3 = finalizado

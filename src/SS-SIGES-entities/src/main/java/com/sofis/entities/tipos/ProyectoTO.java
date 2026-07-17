@@ -34,10 +34,13 @@ public class ProyectoTO implements Serializable {
 
 	private Integer idPresupuesto;
 	private Long cantidadAdquisiciones;
+        
+        private Boolean errorImportando=false;
 
 	public ProyectoTO() {
 		saldos = new ArrayList<>();
 		adquisiciones = new ArrayList<>();
+                errorImportando=false;
 	}
 
 	public ProyectoTO(Integer id, String nombre, Integer idEstado, String labelEstado,
@@ -302,6 +305,18 @@ public class ProyectoTO implements Serializable {
 		this.cantidadAdquisiciones = cantidadAdquisiciones;
 	}
 
+    public Boolean getErrorImportando() {
+        return errorImportando;
+    }
+
+    public void setErrorImportando(Boolean errorImportando) {
+        this.errorImportando = errorImportando;
+    }
+        
+        public String getProyPkNombre() {
+		return id != null && id > 0 ? id.toString().concat(" - ").concat(nombre) : nombre;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -326,5 +341,12 @@ public class ProyectoTO implements Serializable {
 		}
 		return true;
 	}
+
+    @Override
+    public String toString() {
+        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+        
+        
 
 }

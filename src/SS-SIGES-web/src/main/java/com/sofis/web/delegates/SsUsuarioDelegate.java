@@ -1,14 +1,17 @@
 package com.sofis.web.delegates;
 
 import com.sofis.business.ejbs.SsUsuarioBean;
+import com.sofis.data.daos.SsUsuarioDAO;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.SsRol;
 import com.sofis.entities.data.SsUsuOfiRoles;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.TokenSegundoFactor;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.sofisform.to.CriteriaTO;
 import java.util.List;
+import java.util.logging.Level;
 import javax.inject.Inject;
 
 /**
@@ -24,6 +27,15 @@ public class SsUsuarioDelegate {
         //System.out.println("guardarUsuario");
         return ssUsuarioBean.guardarUsuario(tdp, clave, orgPk);
     }
+    
+    public void bloquearUsuario(Integer usuId) throws GeneralException {
+        //System.out.println("guardarUsuario");
+        ssUsuarioBean.bloquearUsuario(usuId);
+    }
+    
+     public void actualizarFechaLogin(Integer intgr) {
+         ssUsuarioBean.actualizarFechaLogin(intgr);
+     }
 
     public SsUsuario guardarUsuario(SsUsuario tdp, Integer orgPk) throws GeneralException {
         //System.out.println("guardarUsuario");
@@ -31,7 +43,7 @@ public class SsUsuarioDelegate {
     }
 
     public SsUsuario obtenerSsUsuarioPorId(Integer id) throws GeneralException {
-       // System.out.println("obtenerSsUsuarioPorId");
+        // System.out.println("obtenerSsUsuarioPorId");
         return ssUsuarioBean.obtenerSsUsuarioPorId(id);
     }
 
@@ -44,8 +56,8 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerSsUsuarioPorMail");
         return ssUsuarioBean.obtenerSsUsuarioPorMail(mail);
     }
-	
-	public SsUsuario obtenerUsuarioPorLDAPUser(String codigoUsuario) {
+
+    public SsUsuario obtenerUsuarioPorLDAPUser(String codigoUsuario) {
         return ssUsuarioBean.obtenerSsUsuarioPorLDAPUser(codigoUsuario);
     }
 
@@ -55,12 +67,16 @@ public class SsUsuarioDelegate {
     }
 
     public List<SsUsuario> obtenerPorCriteria(CriteriaTO cto, String[] orderBy, boolean[] ascending, Long startPosition, Long cantidad) throws GeneralException {
-       // System.out.println("obtenerPorCriteria");
+        // System.out.println("obtenerPorCriteria");
         return ssUsuarioBean.obtenerPorCriteria(cto, orderBy, ascending, startPosition, cantidad);
     }
 
     public SsUsuario cambiarContrasenia(String codigoUsuario, String contraseniaActual, String nuevaContrasenia, String confirmacionContrasenia, Integer orgPk) throws GeneralException {
         return ssUsuarioBean.cambiarContrasenia(codigoUsuario, contraseniaActual, nuevaContrasenia, confirmacionContrasenia, orgPk);
+    }
+    
+      public SsUsuario cambiarContraseniaNuevoProcedimiento(String codigoUsuario,  String nuevaContrasenia, String confirmacionContrasenia) throws GeneralException {
+        return ssUsuarioBean.cambiarContraseniaNuevoProcedimiento(codigoUsuario, nuevaContrasenia, confirmacionContrasenia);
     }
 
     public List<Organismos> obtenerOrganismos(Integer usuPk) {
@@ -79,7 +95,7 @@ public class SsUsuarioDelegate {
     }
 
     public List<SsUsuario> obtenerUsuariosPorRol(String rolCod, Integer organismoId, String[] orden, boolean[] ascending) {
-       // System.out.println("obtenerUsuariosPorRol");
+        // System.out.println("obtenerUsuariosPorRol");
         return ssUsuarioBean.obtenerUsuariosPorRol(rolCod, organismoId, orden, ascending);
     }
 
@@ -87,7 +103,7 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerUsuariosPorRol 2");
         return ssUsuarioBean.obtenerUsuariosPorRol(rolCod, organismoId, orden, ascending);
     }
-    
+
     public List<SsUsuario> obtenerUsuariosPorRol(String rolCodArr, Integer orgId, String[] orden, boolean[] ascending, Boolean activo) {
         //System.out.println("obtenerUsuariosPorRol 1");
         return ssUsuarioBean.obtenerUsuariosPorRol(rolCodArr, orgId, orden, ascending, activo);
@@ -111,7 +127,7 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerTodosPorOrganismo");
         return ssUsuarioBean.obtenerTodosPorOrganismo(orgId);
     }
-    
+
     public List<SsUsuario> obtenerTodosPorOrganismo(Integer orgId, Boolean activos) {
         //System.out.println("obtenerTodosPorOrganismo");
         return ssUsuarioBean.obtenerTodosPorOrganismo(orgId, activos);
@@ -122,14 +138,14 @@ public class SsUsuarioDelegate {
         return ssUsuarioBean.obtenerInactivosPorOrganismo(orgId);
     }
 
-    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido,SsRol rol) {
+    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido, SsRol rol) {
         //System.out.println("busquedaUsuFiltro");
-        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido,rol);
+        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido, rol);
     }
 
-    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido, Boolean activo,SsRol rol,String elementoOrdenacion, String ascendente) {
-       // System.out.println("busquedaUsuFiltro");
-        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido, activo,rol,elementoOrdenacion,ascendente);
+    public List<SsUsuario> busquedaUsuFiltro(Organismos org, SsUsuario usu, String mail, String nombre, String apellido, Boolean activo, SsRol rol, String elementoOrdenacion, String ascendente) {
+        // System.out.println("busquedaUsuFiltro");
+        return ssUsuarioBean.busquedaUsuFiltro(org, usu, mail, nombre, apellido, activo, rol, elementoOrdenacion, ascendente);
     }
 
     public boolean resetearContrasenia(String email, Integer orgPk) throws BusinessException {
@@ -139,7 +155,7 @@ public class SsUsuarioDelegate {
     public List<SsUsuario> obtenerSsUsuariosCoordEnt(Integer orgPk) throws GeneralException {
         return ssUsuarioBean.obtenerSsUsuariosCoordEnt(orgPk);
     }
-    
+
     public String validarUsuarioToToken(String mail, String pass) {
         return ssUsuarioBean.validarUsuarioToToken(mail, pass);
     }
@@ -148,8 +164,26 @@ public class SsUsuarioDelegate {
         //System.out.println("obtenerUsuarioPorToken");
         return ssUsuarioBean.obtenerUsuarioPorToken(token);
     }
-    
+
     public boolean eliminarToken(String token) {
         return ssUsuarioBean.eliminarToken(token);
     }
+
+    public void actualizarExportacionUsuario(Integer puedeExportar, Integer usuarioPk, Integer orgPk) {
+        ssUsuarioBean.actualizarExportacionUsuario(puedeExportar, usuarioPk, orgPk);
+    }
+    
+    public TokenSegundoFactor crearTokenSegundoFactor(String username) {
+        return ssUsuarioBean.crearTokenSegundoFactor(username);
+    }
+    
+    public boolean usuarioBloqueado(Integer usuarioPk){
+        return ssUsuarioBean.usuarioBloqueado(usuarioPk);
+    }
+    
+     public SsUsuario obtenerUsuarioPorHashToken(String token) {
+        System.out.println(token);
+        return ssUsuarioBean.obtenerSsUsuarioPorHashToken(token);
+    }
+    
 }

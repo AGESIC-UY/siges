@@ -6,6 +6,7 @@ import com.sofis.data.daos.ConfiguracionDAO;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.entities.data.ConfiguracionDefecto;
@@ -40,297 +41,397 @@ import javax.persistence.PersistenceContext;
 @Interceptors({LoggedInterceptor.class})
 public class ConfiguracionBean {
 
-	private static final Logger LOGGER = Logger.getLogger(ConfiguracionBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConfiguracionBean.class.getName());
 
-	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-	private EntityManager em;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
 
-	@Inject
-	private DatosUsuario du;
+    @Inject
+    private DatosUsuario du;
 
-	@Inject
-	private OrganismoBean organismoBean;
+    @Inject
+    private OrganismoBean organismoBean;
 
-	@Inject
-	private ConfiguracionDefectoBean configuracionDefectoBean;
+    @Inject
+    private ConfiguracionDefectoBean configuracionDefectoBean;
 
-	/**
-	 * Este método guarda un elemento de tipo Configuracion. Se aplica para la
-	 * creación de la entidad y para la modificación de una entidad existente.
-	 *
-	 * @param cnf
-	 * @return Configuracion
-	 * @throws GeneralException Devuelve los códigos de error de la validación
-	 */
-	public Configuracion guardar(Configuracion cnf) throws GeneralException {
+    /**
+     * Este método guarda un elemento de tipo Configuracion. Se aplica para la
+     * creación de la entidad y para la modificación de una entidad existente.
+     *
+     * @param cnf
+     * @return Configuracion
+     * @throws GeneralException Devuelve los códigos de error de la validación
+     */
+    public Configuracion guardar(Configuracion cnf) throws GeneralException {
 
-		try {
-			//Validar el elemento a guardar. Si no valida, se lanza una excepcion
-			if (ConfiguracionValidacion.validar(cnf)) {
-				ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
-				if (cnf.getId() == null) {
-					Integer orgPk = cnf.getCnfOrgFk() != null ? cnf.getCnfOrgFk().getOrgPk() : null;
-					Configuracion cnfPersit = obtenerCnfPorCodigoYOrg(cnf.getCnfCodigo(), orgPk);
-					if (cnfPersit != null) {
-						BusinessException be = new BusinessException();
-						be.addError(MensajesNegocio.ERROR_CONFIG_COD_DUPLICADO);
-						throw be;
-					}
-					cnf = cnfDao.create(cnf, du.getCodigoUsuario(), du.getOrigen());
+        try {
+            //Validar el elemento a guardar. Si no valida, se lanza una excepcion
+            if (ConfiguracionValidacion.validar(cnf)) {
+                ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
+                if (cnf.getId() == null) {
+                    Integer orgPk = cnf.getCnfOrgFk() != null ? cnf.getCnfOrgFk().getOrgPk() : null;
+                    Configuracion cnfPersit = obtenerCnfPorCodigoYOrg(cnf.getCnfCodigo(), orgPk);
+                    if (cnfPersit != null) {
+                        BusinessException be = new BusinessException();
+                        be.addError(MensajesNegocio.ERROR_CONFIG_COD_DUPLICADO);
+                        throw be;
+                    }
+                    cnf = cnfDao.create(cnf, du.getCodigoUsuario(), du.getOrigen());
 
-				} else {
-					cnf = cnfDao.update(cnf, du.getCodigoUsuario(), du.getOrigen());
-				}
-			}
-			return cnf;
-		} catch (BusinessException be) {
-			//Si es de tipo negocio envía la misma excepción
-			LOGGER.log(Level.SEVERE, be.getMessage(), be);
-			throw be;
-		} catch (Exception ex) {
-			//Las demás excepciones se consideran técnicas
-			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-			TechnicalException ge = new TechnicalException(ex);
-			ge.addError(ex.getMessage());
-			throw ge;
-		}
+                } else {
+                    cnf = cnfDao.update(cnf, du.getCodigoUsuario(), du.getOrigen());
+                }
+            }
+            return cnf;
+        } catch (BusinessException be) {
+            //Si es de tipo negocio envía la misma excepción
+            LOGGER.log(Level.SEVERE, be.getMessage(), be);
+            throw be;
+        } catch (Exception ex) {
+            //Las demás excepciones se consideran técnicas
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            TechnicalException ge = new TechnicalException(ex);
+            ge.addError(ex.getMessage());
+            throw ge;
+        }
 
-	}
+    }
 
-	/**
-	 * Devuelve el elemento configuracion por el ID
-	 *
-	 * @param id
-	 * @return
-	 * @throws GeneralException
-	 */
-	public Configuracion obtenerCnfPorId(Integer id) throws GeneralException {
-		ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
-		try {
-			return cnfDao.findById(Configuracion.class, id);
-		} catch (DAOGeneralException ex) {
-			TechnicalException te = new TechnicalException(ex);
-			te.addError(ex.getMessage());
-			throw te;
-		}
-	}
+    /**
+     * Devuelve el elemento configuracion por el ID
+     *
+     * @param id
+     * @return
+     * @throws GeneralException
+     */
+    public Configuracion obtenerCnfPorId(Integer id) throws GeneralException {
+        ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
+        try {
+            return cnfDao.findById(Configuracion.class, id);
+        } catch (DAOGeneralException ex) {
+            TechnicalException te = new TechnicalException(ex);
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
 
-	public Map<String, Configuracion> obtenerCnfPorCodigoYOrg(Integer orgPk, String... codigo) throws GeneralException {
-		if (orgPk != null && codigo != null && codigo.length > 0) {
-			ConfiguracionDAO dao = new ConfiguracionDAO(em);
-			return dao.obtenerCnfPorCodigoYOrg(orgPk, codigo);
-		}
-		return null;
-	}
+    public Map<String, Configuracion> obtenerCnfPorCodigoYOrg(Integer orgPk, String... codigo) throws GeneralException {
+        if (orgPk != null && codigo != null && codigo.length > 0) {
+            ConfiguracionDAO dao = new ConfiguracionDAO(em);
+            return dao.obtenerCnfPorCodigoYOrg(orgPk, codigo);
+        }
+        return null;
+    }
 
-	public Map<String, Configuracion> obtenerCnfPorCodigoYOrg(Integer orgPk, Map<String, Configuracion> confs, String... codigo) throws GeneralException {
-		if (orgPk != null && codigo != null && codigo.length > 0) {
-			if (confs == null) {
-				confs = new HashMap<>();
-			}
-			ArrayList<String> codigosA = new ArrayList<>();
-			for (String cod : codigo) {
-				if (!confs.containsKey(cod)) {
-					codigosA.add(cod);
-				}
-			}
+    public Map<String, Configuracion> obtenerCnfPorCodigoYOrg(Integer orgPk, Map<String, Configuracion> confs, String... codigo) throws GeneralException {
+        if (orgPk != null && codigo != null && codigo.length > 0) {
+            if (confs == null) {
+                confs = new HashMap<>();
+            }
+            ArrayList<String> codigosA = new ArrayList<>();
+            for (String cod : codigo) {
+                if (!confs.containsKey(cod)) {
+                    codigosA.add(cod);
+                }
+            }
 
-			if (!codigosA.isEmpty()) {
-				confs.putAll(this.obtenerCnfPorCodigoYOrg(orgPk,
-						Arrays.copyOf(codigosA.toArray(), codigosA.size(), String[].class)));
-			}
+            if (!codigosA.isEmpty()) {
+                confs.putAll(this.obtenerCnfPorCodigoYOrg(orgPk,
+                        Arrays.copyOf(codigosA.toArray(), codigosA.size(), String[].class)));
+            }
 
-			return confs;
-		}
-		return null;
-	}
+            return confs;
+        }
+        return null;
+    }
 
-	public String obtenerCnfValorPorCodigo(String codigo, Integer orgPk) {
-		Configuracion conf = obtenerCnfPorCodigoYOrg(codigo, orgPk);
-		return conf != null ? conf.getCnfValor() : "";
-	}
+    public String obtenerCnfValorPorCodigo(String codigo, Integer orgPk) {
+        Configuracion conf = obtenerCnfPorCodigoYOrg(codigo, orgPk);
+        return conf != null ? conf.getCnfValor() : "";
+    }
 
-	public Configuracion obtenerCnfPorCodigoYOrg(String codigo, Integer orgPk) throws GeneralException {
-       //     LOGGER.info("BUSCANDO CONFIG "+ codigo);
-		if (!StringsUtils.isEmpty(codigo)) {
-			ConfiguracionDAO dao = new ConfiguracionDAO(em);
-			try {
-				CriteriaTO criteria;
-				CriteriaTO criteriaCod = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "cnfCodigo", codigo);
-				if (orgPk != null) {
-					CriteriaTO criteriaOrg = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "cnfOrgFk.orgPk", orgPk);
-					criteria = CriteriaTOUtils.createANDTO(criteriaOrg, criteriaCod);
-				} else {
-					CriteriaTO criteriaOrg = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "cnfOrgFk", 1);
-					criteria = CriteriaTOUtils.createANDTO(criteriaOrg, criteriaCod);
-				}
+    public Configuracion obtenerCnfPorCodigoYOrg(String codigo, Integer orgPk) throws GeneralException {
+        //     LOGGER.info("BUSCANDO CONFIG "+ codigo);
+        if (!StringsUtils.isEmpty(codigo)) {
+            ConfiguracionDAO dao = new ConfiguracionDAO(em);
+            try {
+                CriteriaTO criteria;
+                CriteriaTO criteriaCod = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "cnfCodigo", codigo);
+                if (orgPk != null) {
+                    CriteriaTO criteriaOrg = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "cnfOrgFk.orgPk", orgPk);
+                    criteria = CriteriaTOUtils.createANDTO(criteriaOrg, criteriaCod);
+                } else {
+                    CriteriaTO criteriaOrg = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NULL, "cnfOrgFk", 1);
+                    criteria = CriteriaTOUtils.createANDTO(criteriaOrg, criteriaCod);
+                }
 
-				List<Configuracion> resultado = dao.findEntityByCriteria(Configuracion.class, criteria, new String[]{}, new boolean[]{}, null, null);
-				return (Configuracion) DAOUtils.obtenerSingleResult(resultado);
-			} catch (DAOGeneralException ex) {
-				LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-				TechnicalException te = new TechnicalException(ex);
-				te.addError(ex.getMessage());
-				throw te;
-			}
-		}
-		return null;
-	}
+                List<Configuracion> resultado = dao.findEntityByCriteria(Configuracion.class, criteria, new String[]{}, new boolean[]{}, null, null);
+                return (Configuracion) DAOUtils.obtenerSingleResult(resultado);
+            } catch (DAOGeneralException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+                TechnicalException te = new TechnicalException(ex);
+                te.addError(ex.getMessage());
+                throw te;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * Devuelve todos los elementos de tipo configuracion
-	 *
-	 * @return
-	 * @throws GeneralException
-	 */
-	@Deprecated
-	public List<Configuracion> obtenerTodos() throws GeneralException {
-		ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
-		try {
-			return cnfDao.findAll(Configuracion.class);
-		} catch (Exception ex) {
-			TechnicalException te = new TechnicalException(ex);
-			te.addError(ex.getMessage());
-			throw te;
-		}
-	}
+    /**
+     * Obtiene la primera configuración con el código dado asociada a un organismo
+     * (menor orgPk). Útil cuando no hay organismo en contexto (p.ej. login).
+     */
+    public Configuracion obtenerCnfPorCodigoPrimerOrganismo(String codigo) throws GeneralException {
+        if (StringsUtils.isEmpty(codigo)) {
+            return null;
+        }
+        ConfiguracionDAO dao = new ConfiguracionDAO(em);
+        try {
+            CriteriaTO criteriaCod = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "cnfCodigo", codigo);
+            CriteriaTO criteriaOrg = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.NOT_NULL, "cnfOrgFk", 1);
+            CriteriaTO criteria = CriteriaTOUtils.createANDTO(criteriaOrg, criteriaCod);
+            List<Configuracion> resultado = dao.findEntityByCriteria(
+                    Configuracion.class,
+                    criteria,
+                    new String[]{"cnfOrgFk.orgPk"},
+                    new boolean[]{true},
+                    0L,
+                    1L);
+            return (Configuracion) DAOUtils.obtenerSingleResult(resultado);
+        } catch (DAOGeneralException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            TechnicalException te = new TechnicalException(ex);
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
 
-	/**
-	 * Devuelve los elementos que satisfacen el criterio ingresado
-	 *
-	 * @param cto
-	 * @param orderBy
-	 * @param ascending
-	 * @param startPosition
-	 * @param cantidad
-	 * @return
-	 * @throws GeneralException
-	 */
-	public List<Configuracion> obtenerPorCriteria(CriteriaTO cto, String[] orderBy, boolean[] ascending, Long startPosition, Long cantidad) throws GeneralException {
-		ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
-		try {
-			return cnfDao.findEntityByCriteria(Configuracion.class, cto, orderBy, ascending, startPosition, cantidad);
-		} catch (Exception ex) {
-			TechnicalException te = new TechnicalException(ex);
-			te.addError(ex.getMessage());
-			throw te;
-		}
-	}
+    /**
+     * Devuelve todos los elementos de tipo configuracion
+     *
+     * @return
+     * @throws GeneralException
+     */
+    @Deprecated
+    public List<Configuracion> obtenerTodos() throws GeneralException {
+        ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
+        try {
+            return cnfDao.findAll(Configuracion.class);
+        } catch (Exception ex) {
+            TechnicalException te = new TechnicalException(ex);
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
 
-	public List<Configuracion> obtenerTodosPorOrg(Integer orgPk) {
-		ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
-		try {
-			if (orgPk != null) {
-				return cnfDao.findByOneProperty(Configuracion.class, "cnfOrgFk.orgPk", orgPk);
-			} else {
-				return cnfDao.obtenerConfSinOrg();
-			}
-		} catch (DAOGeneralException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			BusinessException be = new BusinessException();
-			be.addError(MensajesNegocio.ERROR_CONFIG_OBTENER);
-			throw be;
-		}
-	}
+    /**
+     * Devuelve los elementos que satisfacen el criterio ingresado
+     *
+     * @param cto
+     * @param orderBy
+     * @param ascending
+     * @param startPosition
+     * @param cantidad
+     * @return
+     * @throws GeneralException
+     */
+    public List<Configuracion> obtenerPorCriteria(CriteriaTO cto, String[] orderBy, boolean[] ascending, Long startPosition, Long cantidad) throws GeneralException {
+        ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
+        try {
+            return cnfDao.findEntityByCriteria(Configuracion.class, cto, orderBy, ascending, startPosition, cantidad);
+        } catch (Exception ex) {
+            TechnicalException te = new TechnicalException(ex);
+            te.addError(ex.getMessage());
+            throw te;
+        }
+    }
 
-	public void controlarCnfFaltantes() {
+    public List<Configuracion> obtenerTodosPorOrg(Integer orgPk) {
+        ConfiguracionDAO cnfDao = new ConfiguracionDAO(em);
+        try {
+            if (orgPk != null) {
+                return cnfDao.findByOneProperty(Configuracion.class, "cnfOrgFk.orgPk", orgPk);
+            } else {
+                return cnfDao.obtenerConfSinOrg();
+            }
+        } catch (DAOGeneralException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            BusinessException be = new BusinessException();
+            be.addError(MensajesNegocio.ERROR_CONFIG_OBTENER);
+            throw be;
+        }
+    }
 
-		controlarConfiguracionGeneral();
+    public void controlarCnfFaltantes() {
 
-		List<ConfiguracionDefecto> valoresDefecto = configuracionDefectoBean.obtenerTodas();
+        controlarConfiguracionGeneral();
 
-		List<Organismos> organismos = organismoBean.obtenerTodos();
-		if (organismos != null) {
-			for (Organismos org : organismos) {
-				controlarConfiguracionOrganismo(org, valoresDefecto);
-			}
-		}
-	}
+        List<ConfiguracionDefecto> valoresDefecto = configuracionDefectoBean.obtenerTodas();
 
-	public void controlarConfiguracionOrganismo(Organismos org) {
-	
-		List<ConfiguracionDefecto> valoresDefecto = configuracionDefectoBean.obtenerTodas();
-		controlarConfiguracionOrganismo(org, valoresDefecto);
-	}
-	
-	private void controlarConfiguracionOrganismo(Organismos org, List<ConfiguracionDefecto> valoresDefecto) {
+        List<Organismos> organismos = organismoBean.obtenerTodos();
+        if (organismos != null) {
+            for (Organismos org : organismos) {
+                controlarConfiguracionOrganismo(org, valoresDefecto);
+            }
+        }
+    }
 
-		List<Configuracion> confList = obtenerTodosPorOrg(org.getOrgPk());
-		Map<String, Configuracion> configuracionesOrganismo = new HashMap<>();
+    public void controlarConfiguracionOrganismo(Organismos org) {
 
-		if (confList != null) {
-			for (Configuracion conf : confList) {
-				configuracionesOrganismo.put(conf.getCnfCodigo(), conf);
-			}
-		}
+        List<ConfiguracionDefecto> valoresDefecto = configuracionDefectoBean.obtenerTodas();
+        controlarConfiguracionOrganismo(org, valoresDefecto);
+    }
 
-		for (ConfiguracionDefecto conf : valoresDefecto) {
-			if (!configuracionesOrganismo.containsKey(conf.getCodigo())) {
+    private void controlarConfiguracionOrganismo(Organismos org, List<ConfiguracionDefecto> valoresDefecto) {
 
-				Configuracion configuracion = new Configuracion(conf.getCodigo(), conf.getDescripcion(), conf.getValor(), org, new Date(), 1);
+        List<Configuracion> confList = obtenerTodosPorOrg(org.getOrgPk());
+        Map<String, Configuracion> configuracionesOrganismo = new HashMap<>();
 
-				guardar(configuracion);
+        if (confList != null) {
+            for (Configuracion conf : confList) {
+                configuracionesOrganismo.put(conf.getCnfCodigo(), conf);
+            }
+        }
 
-				LOGGER.log(Level.INFO, "Se agregó la configuración {0} para el org {1}", new Object[]{configuracion.getCnfCodigo(), org.getOrgPk()});
-			}
-		}
+        for (ConfiguracionDefecto conf : valoresDefecto) {
+            if (!configuracionesOrganismo.containsKey(conf.getCodigo())) {
 
-		if (!configuracionesOrganismo.containsKey(ConfiguracionCodigos.FOLDER_MEDIA)) {
-			Configuracion conf = obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.FOLDER_MEDIA, null);
+                Configuracion configuracion = new Configuracion(conf.getCodigo(), conf.getDescripcion(), conf.getValor(), org, new Date(), 1);
 
-			//valor en base al organismo
-			String valor = conf.getCnfValor() + org.getOrgPk();
-			Configuracion configuracion = new Configuracion(conf.getCnfCodigo(), conf.getCnfDescripcion(), valor, org, new Date(), 1);
+                guardar(configuracion);
 
-			guardar(configuracion);
+                LOGGER.log(Level.INFO, "Se agregó la configuración {0} para el org {1}", new Object[]{configuracion.getCnfCodigo(), org.getOrgPk()});
+            }
+        }
 
-			LOGGER.log(Level.INFO, "Se agregó la configuración {0} para el org {1}", new Object[]{configuracion.getCnfCodigo(), org.getOrgPk()});
-		}
+        if (!configuracionesOrganismo.containsKey(ConfiguracionCodigos.FOLDER_MEDIA)) {
+            Configuracion conf = obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.FOLDER_MEDIA, null);
 
-	}
+            //valor en base al organismo
+            String valor = conf.getCnfValor() + org.getOrgPk();
+            Configuracion configuracion = new Configuracion(conf.getCnfCodigo(), conf.getCnfDescripcion(), valor, org, new Date(), 1);
 
-	private void controlarConfiguracionGeneral() throws GeneralException {
+            guardar(configuracion);
 
-		Configuracion[] confArrGeneral = new Configuracion[]{
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_ENABLE, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_NAME, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_FILTER, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_INITIAL_CTX_FACTORY, "Clase java que construye el initial context", "com.sun.jndi.ldap.LdapCtxFactory", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_URL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SECURITY_PRINCIPAL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SECURITY_CREDENTIAL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_USER_LOGIN_FILTER, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.DOCUMENTOS_DIR, "Directorio donde se almacenarán los documentos", "/srv/siges/docs", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.NOMBRE_ARCHIVO_MANUAL, "Nombre del archivo correspondiente al manual de usuario", "MANUAL", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO, "Tamaño máximo del archivo de manual de usuario en bytes", "10485760", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.MEDIA_MIMETYPE_REGEX, "Regex que valida el mimetype de los media que se suben", "image\\/(jpeg|png)", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.DEBUG, "Modo depuración", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.DEBUG_DESTINO, "Email destino en modo depuración", "prueba@prueba.com", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.INCLUIR_CALCULAR_FINALIZADOS, "Incluir lor pryectos finalizdos en el cáclulo de indicadores", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.URL_SISTEMA, "URL del Sistema", "https://siges.agesic.gub.uy", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.HABILITAR_MOVER_PROYECTO, "true/false: habilitar la posibilidad de mover proyectos", "false", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.MATOMO_URL, "URL del servidor Matomo", "//localhost/matomo/", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.MATOMO_ID_SITIO, "Identificador de la aplicación SIGES en Matomo", "1", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.MATOMO_ID_DIMENSION_USUARIO, "Identificador de la dimensión 'Usuario' en Matomo", "1", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.MATOMO_ID_DIMENSION_ORGANISMO, "Identificador de la dimensión 'Organismo' en Matomo", "2", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.FOLDER_MEDIA, "Carpeta donde se almacenan los archivos Multimedia", "/srv/siges/media_files/", null, new Date(), 1),
-			new Configuracion(ConfiguracionCodigos.WEKAN_SIGES_WEBHOOK, "URL utilizada por la integración en Wekan (debe ser bidireccional)", "rest/wekan/bidirectional-webhook", null, new Date(), 1),
-			new Configuracion("MOSTRAR_BOTON_AVANCE_PADRES", "Mostrar botón 'avance padres'", "false", null, new Date(), 1)
-		};
+            LOGGER.log(Level.INFO, "Se agregó la configuración {0} para el org {1}", new Object[]{configuracion.getCnfCodigo(), org.getOrgPk()});
+        }
 
-		List<Configuracion> confListGeneral = obtenerTodosPorOrg(null);
-		Map<String, Configuracion> confMapPGE = new HashMap<>();
-		if (confListGeneral != null) {
-			for (Configuracion conf : confListGeneral) {
-				confMapPGE.put(conf.getCnfCodigo(), conf);
-			}
-			for (Configuracion conf : confArrGeneral) {
-				if (!confMapPGE.containsKey(conf.getCnfCodigo())) {
-					guardar(conf);
-					LOGGER.log(Level.INFO, "Se agregó la configuración general {0}", conf.getCnfCodigo());
-				}
-			}
-		}
-	}
+    }
+
+    private void controlarConfiguracionGeneral() throws GeneralException {
+
+        Configuracion[] confArrGeneral = new Configuracion[]{
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_ENABLE, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_NAME, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_FILTER, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_INITIAL_CTX_FACTORY, "Clase java que construye el initial context", "com.sun.jndi.ldap.LdapCtxFactory", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_URL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SECURITY_PRINCIPAL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SECURITY_CREDENTIAL, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.AUTH_LDAP_SEARCH_USER_LOGIN_FILTER, "true/false: habilitar configuración de período de proyecto en entregables", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.DOCUMENTOS_DIR, "Directorio donde se almacenarán los documentos", "/srv/siges/docs", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.NOMBRE_ARCHIVO_MANUAL, "Nombre del archivo correspondiente al manual de usuario", "MANUAL", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MANUAL_USUARIO, "Tamaño máximo del archivo de manual de usuario en bytes", "10485760", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.MEDIA_MIMETYPE_REGEX, "Regex que valida el mimetype de los media que se suben", "image\\/(jpeg|png)", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.DEBUG, "Modo depuración", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.DEBUG_DESTINO, "Email destino en modo depuración", "prueba@prueba.com", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.INCLUIR_CALCULAR_FINALIZADOS, "Incluir lor pryectos finalizdos en el cáclulo de indicadores", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.URL_SISTEMA, "URL del Sistema", "https://siges.agesic.gub.uy", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.HABILITAR_MOVER_PROYECTO, "true/false: habilitar la posibilidad de mover proyectos", "false", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.FOLDER_MEDIA, "Carpeta donde se almacenan los archivos Multimedia", "/srv/siges/media_files/", null, new Date(), 1),
+            new Configuracion(ConfiguracionCodigos.WEKAN_SIGES_WEBHOOK, "URL utilizada por la integración en Wekan (debe ser bidireccional)", "rest/wekan/bidirectional-webhook", null, new Date(), 1),
+            new Configuracion("MOSTRAR_BOTON_AVANCE_PADRES", "Mostrar botón 'avance padres'", "false", null, new Date(), 1)
+        };
+
+        List<Configuracion> confListGeneral = obtenerTodosPorOrg(null);
+        Map<String, Configuracion> confMapPGE = new HashMap<>();
+        if (confListGeneral != null) {
+            for (Configuracion conf : confListGeneral) {
+                confMapPGE.put(conf.getCnfCodigo(), conf);
+            }
+            for (Configuracion conf : confArrGeneral) {
+                if (!confMapPGE.containsKey(conf.getCnfCodigo())) {
+                    guardar(conf);
+                    LOGGER.log(Level.INFO, "Se agregó la configuración general {0}", conf.getCnfCodigo());
+                }
+            }
+        }
+    }
+
+    public String obtenerColorPorExposicion(Double exposicionRiesgo, Integer orgPk) {
+
+        try {
+            String coloarAux =String.format("%.1f", exposicionRiesgo).replace(",", ".");
+           
+            String colorAsignado = "";
+            switch (coloarAux) {
+                case "0.4":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_0_4, orgPk);
+                    break;
+                case "0.8":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_0_8, orgPk);
+                    break;
+                case "1.2":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_1_2, orgPk);
+                    break;
+                case "1.6":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_1_6, orgPk);
+                    break;
+                case "2.0":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_2_0, orgPk);
+                    break;
+                case "2.4":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_2_4, orgPk);
+                    break;
+                case "3.2":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_3_2, orgPk);
+                    break;
+                case "3.6":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_3_6, orgPk);
+                    break;
+                case "4.0":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_4_0, orgPk);
+                    break;
+                case "4.8":
+
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_4_8, orgPk);
+
+                    break;
+                case "6.0":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_6_0, orgPk);
+                    break;
+                case "6.4":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_6_4, orgPk);
+                    break;
+                case "8.0":
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_8_0, orgPk);
+                    break;
+                default:
+                    colorAsignado = obtenerCnfValorPorCodigo(ConfiguracionCodigos.COLOR_10_0, orgPk);
+
+            }
+          
+            if (colorAsignado.equalsIgnoreCase("Verde")) {
+                return ConstantesEstandares.SEMAFORO_VERDE;
+            }
+
+            if (colorAsignado.equalsIgnoreCase("Amarillo")) {
+                return ConstantesEstandares.SEMAFORO_AMARILLO;
+            }
+            if (colorAsignado.equalsIgnoreCase("Rojo")) {
+                return ConstantesEstandares.SEMAFORO_ROJO;
+            }
+
+            if (colorAsignado.equalsIgnoreCase("Azul")) {
+                return ConstantesEstandares.SEMAFORO_AZUL;
+            }
+
+            return ConstantesEstandares.COLOR_TRANSPARENT;
+        } catch (Exception w) {
+            return ConstantesEstandares.COLOR_TRANSPARENT;
+        }
+
+    }
 
 }

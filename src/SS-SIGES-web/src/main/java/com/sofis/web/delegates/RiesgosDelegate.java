@@ -3,6 +3,8 @@ package com.sofis.web.delegates;
 import com.sofis.business.ejbs.RiesgosBean;
 import com.sofis.entities.data.Riesgos;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FiltroRiesgosTO;
+import com.sofis.entities.tipos.RiesgosTO;
 import com.sofis.exceptions.GeneralException;
 import java.util.Date;
 import java.util.List;
@@ -50,8 +52,13 @@ public class RiesgosDelegate {
         return riesgosBean.obtenerExposicionRiesgo(listRiesgos);
     }
 
+     public String obtenerExposicionRiesgoColorParaResumen(Double exposicionRiesgo, Integer orgPk) {
+         return riesgosBean.obtenerExposicionRiesgoColor(exposicionRiesgo, orgPk, null);
+     }
+    
+    
     public String obtenerExposicionRiesgoColor(Double exposicionRiesgo, Integer orgPk) {
-        return riesgosBean.obtenerExposicionRiesgoColor(exposicionRiesgo, orgPk, null);
+        return riesgosBean.obtenerExposicionRiesgoColorNuevaConfiguracion(exposicionRiesgo, orgPk, null);
     }
 
     public String obtenerFechaLimiteRiesgoColor(Date fechaLimite, Integer orgPk) {
@@ -61,13 +68,17 @@ public class RiesgosDelegate {
     public void obtenerExposicionRiesgoColor(List<Riesgos> setRiesgos, Integer orgPk) {
         if (setRiesgos != null) {
             for (Riesgos r : setRiesgos) {
-                r.setExposicionColor(riesgosBean.obtenerExposicionRiesgoColor(r.getExposicion(), orgPk, null));
+                r.setExposicionColor(riesgosBean.obtenerExposicionRiesgoColorNuevaConfiguracion(r.getExposicion(), orgPk, null));
             }
         }
     }
 
     public List<Riesgos> obtenerRiesgosPorProyecto(Integer proyPk) {
         return riesgosBean.obtenerRiesgosPorProyecto(proyPk);
+    }
+    
+     public List<RiesgosTO> buscar(FiltroRiesgosTO filtro) {
+        return riesgosBean.buscar(filtro);
     }
 
     public void eliminarRiesgo(Integer riskPk, Integer fichaFk, Integer tipoFicha, SsUsuario usuario, Integer orgPk)throws GeneralException{

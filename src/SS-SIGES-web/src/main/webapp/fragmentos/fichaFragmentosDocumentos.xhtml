@@ -130,7 +130,7 @@
                             rendered="#{fichaMB.documentoPopup.tieneArchivo}"
                             resource="#{fichaMB.downloadFile[fichaMB.documentoPopup.docsPk]}"
                             label="#{fichaMB.documentoPopup.docsNombre != null ? fichaMB.documentoPopup.docsNombre : labels.descargar_archivo}"
-                            fileName="#{fichaMB.downloadFile[fichaMB.documentoPopup.docsPk] != null ? fichaMB.downloadFile[fichaMB.documentoPopup.docsPk].docFile.docfileNombre : 'file'}"/>
+                            fileName="#{fichaMB.downloadFile[fichaMB.documentoPopup.docsPk] != null ? fichaMB.downloadFile[fichaMB.documentoPopup.docsPk].docFile.docsNombreDownloads : 'file'}"/>
                     </ice:panelGrid>
 
                     <ice:panelGroup>
@@ -197,7 +197,7 @@
 
                 <h:panelGrid columns="1">
                     <ace:pushButton value="#{labels.agregarDocumento}" 
-                                    action="#{fichaMB.abrirDocumentoAction()}"
+                                    action="#{fichaMB.abrirDocumentoAction()}"                                   
                                     styleClass="boton principal agregar"
                                     rendered="#{fichaMB.fieldRendered('btnAgregarDocumento') or fichaMB.isCoordAlgunEntregable()}" />
                 </h:panelGrid>
@@ -250,35 +250,35 @@
                                 </ace:simpleSelectOneMenu>
 
                                 <ice:outputLabel value="#{labels.fileDocumento}" styleClass="obligatorio"/>
-                                
-
-
-                                    <ice:panelGroup>
-                                        <ice:panelGrid  styleClass="formulario" columns="3">
-                                            <ace:fileEntry id="fileEntryDoc"
-                                                           label="#{labels.fileDocumento}"
-                                                           callback=""
-                                                           relativePath="/files/"
-                                                           maxFileCount="1" 
-                                                           maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
-                                                           fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
-                                                           maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
-                                                           maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}" 
-                                                           useOriginalFilename="true" 
-                                                           useSessionSubdir="true"
-                                                           immediate="true"
-
-                                                           style="width: 280px;"/>
-                                            <ace:messages for="fileEntryDoc" />
-                                            <h:commandButton id="btnSubmitLogo" type="submit"
-                                                             styleClass="iconoTabla subir" rendered = "#{fichaMB.isFirefox}"/>
-                                        </ice:panelGrid>
-                                    </ice:panelGroup>
 
 
 
+                                <ice:panelGroup>
+                                    <ice:panelGrid  styleClass="formulario" columns="3">
+                                        <ace:fileEntry id="fileEntryDoc"
+                                                       label="#{labels.fileDocumento}"
+                                                       callback=""
+                                                       relativePath="/files/"
+                                                       maxFileCount="1" 
+                                                       maxFileCountMessage="#{labels.fileDocMaxFileCount}" 
+                                                       fileEntryListener="#{fichaMB.subirArchivoDocAction}" 
+                                                       maxFileSize="#{configuracionMB.tamanioMaxArchivoDocumento.cnfValor}"
+                                                       maxFileSizeMessage="#{configuracionMB.mensajeArchivos}" 
+                                                       useOriginalFilename="true" 
+                                                       useSessionSubdir="true"
+                                                       immediate="true"
 
-                              
+                                                       style="width: 280px;"/>
+                                        <ace:messages for="fileEntryDoc" />
+                                        <h:commandButton id="btnSubmitLogo" type="submit"
+                                                         styleClass="iconoTabla subir" rendered = "#{fichaMB.isFirefox}"/>
+                                    </ice:panelGrid>
+                                </ice:panelGroup>
+
+
+
+
+
 
                             </ice:panelGrid>
 
@@ -292,11 +292,11 @@
                                                    value="#{labels.guardar}" 
                                                    styleClass="boton principal botonGuardar"   
                                                    rendered = "#{fichaMB.fieldRendered('agregarDocumento') and (fichaMB.isFirefox)}"   >
-
+                                                   
                                 </ice:commandButton>
                                 <ace:messages for="ficha:btnAgregar2"  rendered = "#{not fichaMB.isFirefox}"/>
                                 <h:commandButton id="btnAgregar2" actionListener="#{fichaMB.agregarDocumentoAction1()}"
-                                                 value="#{labels.guardar}" 
+                                                 value="#{labels.guardar}"  
                                                  styleClass="boton principal botonGuardar"   
                                                  rendered = "#{fichaMB.fieldRendered('agregarDocumento') and (not fichaMB.isFirefox)}"   >
 
@@ -357,7 +357,7 @@
                             rendered="#{doc.tieneArchivo}"
                             resource="#{fichaMB.downloadFile[doc.docsPk]}"
                             label="#{doc.docsNombre != null ? doc.docsNombre : labels.descargar_archivo}"
-                            fileName="#{fichaMB.downloadFile[doc.docsPk] != null ? fichaMB.downloadFile[doc.docsPk].docFile.docfileNombre : 'file'}"/>
+                            fileName="#{fichaMB.downloadFile[doc.docsPk] != null ? fichaMB.downloadFile[doc.docsPk].docFile.docsNombreDownloads : 'file'}"/>
                     </ace:column>
 
                     <ace:column id="docTableColFech"  headerText="#{labels.fechaDocumento}" sortAscending="false">
@@ -439,10 +439,10 @@
                                                 modal="true"
                                                 position="center">
                             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                               <ice:commandButton  value="#{labels.si}"
-                                                 styleClass="boton principal botonContinuar"
-                                                 onclick="confirmationEliminarDoc#{doc.docsPk}.hide();" 
-                                                 actionListener="#{fichaMB.eliminarDocumentoAction(doc.docsPk)}"/>
+                                <ice:commandButton  value="#{labels.si}"
+                                                    styleClass="boton principal botonContinuar"
+                                                    onclick="confirmationEliminarDoc#{doc.docsPk}.hide();" 
+                                                    actionListener="#{fichaMB.eliminarDocumentoAction(doc.docsPk)}"/>
                                 <h:commandButton value="#{labels.no}"
                                                  styleClass="boton principal botonEliminar"
                                                  onclick="confirmationEliminarDoc#{doc.docsPk}.hide();"/>

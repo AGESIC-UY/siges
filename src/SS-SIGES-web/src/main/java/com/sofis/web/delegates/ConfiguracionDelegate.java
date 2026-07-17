@@ -34,6 +34,10 @@ public class ConfiguracionDelegate implements Serializable {
     public Configuracion obtenerCnfPorCodigoYOrg(String codigo, Integer orgPk) throws GeneralException {
         return cnfBean.obtenerCnfPorCodigoYOrg(codigo, orgPk);
     }
+
+    public Configuracion obtenerCnfPorCodigoPrimerOrganismo(String codigo) throws GeneralException {
+        return cnfBean.obtenerCnfPorCodigoPrimerOrganismo(codigo);
+    }
     
     public Map<String, Configuracion> obtenerCnfPorCodigoYOrg(Integer orgPk, String... codigo) throws GeneralException {
         return cnfBean.obtenerCnfPorCodigoYOrg(orgPk, codigo);

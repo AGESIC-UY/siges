@@ -12,6 +12,7 @@ public class EntregableTO implements Serializable {
 
     private String nombre;
     private String descripcion;
+    private String descripcionReferida;
 
     private Date fechaInicio;
     private Date fechaFin;
@@ -291,6 +292,14 @@ public class EntregableTO implements Serializable {
         this.tieneVinculacionWekan = tieneVinculacionWekan;
     }
 
+    public String getDescripcionReferida() {
+        return descripcionReferida;
+    }
+
+    public void setDescripcionReferida(String descripcionReferida) {
+        this.descripcionReferida = descripcionReferida;
+    }
+
     public Boolean getEsReferenciaDesdeOtroProyecto() {
         return esReferenciaDesdeOtroProyecto;
     }
@@ -298,4 +307,10 @@ public class EntregableTO implements Serializable {
     public void setEsReferenciaDesdeOtroProyecto(Boolean esReferenciaDesdeOtroProyecto) {
         this.esReferenciaDesdeOtroProyecto = esReferenciaDesdeOtroProyecto;
     }
+
+    @Override
+    public String toString() {
+        return "EntregableTO{" + "id=" + id + ", numero=" + numero + ", nivel=" + nivel + ", esPadre=" + esPadre + ", nombre=" + nombre + ", descripcion=" + descripcion + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin + ", duracion=" + duracion + ", esfuerzo=" + esfuerzo + ", progreso=" + progreso + ", coordinador=" + coordinador + ", tieneProductos=" + tieneProductos + ", dependencias=" + dependencias + ", status=" + status + ", inicioEsHito=" + inicioEsHito + ", finEsHito=" + finEsHito + ", esRelevantePMO=" + esRelevantePMO + ", eliminable=" + eliminable + ", inicioLineaBase=" + inicioLineaBase + ", finLineaBase=" + finLineaBase + ", duracionLineaBase=" + duracionLineaBase + ", esInicioProyecto=" + esInicioProyecto + ", esFinProyecto=" + esFinProyecto + ", horasEstimadas=" + horasEstimadas + ", esReferencia=" + esReferencia + ", referido=" + referido + ", proyectoReferido=" + proyectoReferido + ", tieneVinculacionWekan=" + tieneVinculacionWekan + ", esReferenciaDesdeOtroProyecto=" + esReferenciaDesdeOtroProyecto + '}';
+    }
+    
 }

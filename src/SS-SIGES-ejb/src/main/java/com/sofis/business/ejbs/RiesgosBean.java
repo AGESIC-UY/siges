@@ -12,6 +12,8 @@ import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.Riesgos;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.FiltroRiesgosTO;
+import com.sofis.entities.tipos.RiesgosTO;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.GeneralException;
 import com.sofis.exceptions.TechnicalException;
@@ -260,8 +262,8 @@ public class RiesgosBean {
 			throw te;
 		}
 	}
-
-	public String obtenerFechaLimiteRiesgoColor(Date fechaLimite, Integer orgPk) {
+        
+        public String obtenerFechaLimiteRiesgoColor(Date fechaLimite, Integer orgPk) {
 		if (fechaLimite != null) {
 
 			Configuracion confCantDias = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_FECHA_LIMITE_CANT_DIAS, orgPk);
@@ -269,6 +271,31 @@ public class RiesgosBean {
 			int cantDias = 5;
 			if (confCantDias != null) {
 			}
+			Date nowDate = new Date();
+			Calendar nowDatec = new GregorianCalendar();
+			nowDatec.setTime(nowDate);
+			nowDatec.add(Calendar.DAY_OF_MONTH, cantDias);
+
+			if (fechaLimite.getTime() < nowDate.getTime()) {
+				return ConstantesEstandares.SEMAFORO_ROJO;
+			}
+
+			if (fechaLimite.getTime() >= nowDate.getTime() && fechaLimite.getTime() <= nowDatec.getTimeInMillis()) {
+				return ConstantesEstandares.SEMAFORO_AMARILLO;
+			}
+
+			if (fechaLimite.getTime() > nowDate.getTime()) {
+				return ConstantesEstandares.SEMAFORO_VERDE;
+			}
+		}
+
+		return ConstantesEstandares.COLOR_TRANSPARENT;
+	}
+
+	public String obtenerFechaLimiteRiesgoColorOptim(Date fechaLimite, Integer orgPk) {
+		if (fechaLimite != null) {
+			int cantDias = 5;
+			
 			Date nowDate = new Date();
 			Calendar nowDatec = new GregorianCalendar();
 			nowDatec.setTime(nowDate);
@@ -332,6 +359,52 @@ public class RiesgosBean {
 
 		return ConstantesEstandares.COLOR_TRANSPARENT;
 	}
+        
+        public String obtenerExposicionRiesgoColorOptim(Double exposicionRiesgo, Integer orgPk, Map<String, String> configs, Configuracion cConfAmarillo, Configuracion cConfRojo) {
+		if (exposicionRiesgo != null) {
+			Double confAmarillo;
+			Double confRojo;
+			if (configs != null) {
+				String sConfAmarillo = configs.get(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_AMARILLO);
+				String sConfRojo = configs.get(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO);
+				try {
+					confAmarillo = Double.valueOf(sConfAmarillo);
+					confRojo = Double.valueOf(sConfRojo);
+				} catch (Exception ex) {
+					confAmarillo = 0d;
+					confRojo = 0d;
+				}
+			} else {
+				
+				try {
+					confAmarillo = Double.valueOf(cConfAmarillo.getCnfValor());
+					confRojo = Double.valueOf(cConfRojo.getCnfValor());
+				} catch (Exception ex) {
+					confAmarillo = 0d;
+					confRojo = 0d;
+				}
+			}
+
+			Double exposicionRiesgoRound = NumbersUtils.redondearDecimales(exposicionRiesgo);
+
+			if (exposicionRiesgoRound <= confAmarillo) {
+				return ConstantesEstandares.SEMAFORO_VERDE;
+			}
+			if (exposicionRiesgoRound > confAmarillo
+					&& exposicionRiesgoRound < confRojo) {
+				return ConstantesEstandares.SEMAFORO_AMARILLO;
+			}
+			if (exposicionRiesgoRound >= confRojo) {
+				return ConstantesEstandares.SEMAFORO_ROJO;
+			}
+		}
+
+		return ConstantesEstandares.COLOR_TRANSPARENT;
+	}
+        
+        public String obtenerExposicionRiesgoColorNuevaConfiguracion(Double exposicionRiesgo, Integer orgPk, Map<String, String> configs) {
+            return configuracionBean.obtenerColorPorExposicion(exposicionRiesgo,orgPk);
+        }
 
 	public void eliminarRiesgo(Integer riskPk, Integer fichaFk, Integer tipoFicha, SsUsuario usuario, Integer orgPk) throws GeneralException {
 		
@@ -445,6 +518,7 @@ public class RiesgosBean {
 			String confRojo = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO, orgPk);
 			double semaforoRojo = Double.valueOf(confRojo);
 			for (Riesgos r : listRiesgos) {
+                            System.out.println(r.getRiskNombre());
 				if (!(r.getRiskSuperado() != null && r.getRiskSuperado())
 						&& NumbersUtils.redondearDecimales(r.getExposicion()) >= semaforoRojo) {
 					cantAltos++;
@@ -569,5 +643,81 @@ public class RiesgosBean {
 		}
 		return result;
 	}
+        
+        public List<RiesgosTO> buscar(FiltroRiesgosTO filtro) {
+            
+            RiesgosDAO dao = new RiesgosDAO(em);
+            List<Riesgos> riesgos = dao.obtenerRiesgosPorFiltro(filtro);
+            LOGGER.severe("despues del obtenerrr" + riesgos.size());
+            List<RiesgosTO> riesgostolist = new ArrayList<>();
+            riesgoListToRiesgoToList(riesgos, riesgostolist, filtro.getOrgPk());
+            LOGGER.severe("despues de setear" + riesgostolist.size());
+
+            return riesgostolist;
+        }
+
+    private void riesgoListToRiesgoToList(List<Riesgos> riesgos, List<RiesgosTO> riesgostolist, Integer orgPk) {
+        Configuracion cConfAmarillo = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_AMARILLO, orgPk);
+	Configuracion cConfRojo = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_INDICE_LIMITE_ROJO, orgPk);
+        for (Riesgos risk : riesgos) {
+            RiesgosTO riesgoTo = new RiesgosTO();
+            if (risk.getRiskProyFk() != null) {
+                riesgoTo.setProyecto(risk.getRiskProyFk().getProyPk());
+            }
+            Date fechaActual = new Date();
+            Boolean atrasado = !risk.getRiskFechaLimite().after(fechaActual);           
+            setearEstado(risk, riesgoTo, atrasado);
+            
+            if (risk.getRiskProyFk() != null && risk.getRiskProyFk().getProyOrgFk() != null) {
+                if (riesgoTo.getEstado() == null || riesgoTo.getEstado() != null && !riesgoTo.getEstado().equals("Superado")) {
+                    riesgoTo.setColorFechaLimite(
+                    obtenerFechaLimiteRiesgoColorOptim(risk.getRiskFechaLimite()
+                        , risk.getRiskProyFk().getProyOrgFk().getOrgPk()));
+                riesgoTo.setColorExposicion(
+                    obtenerExposicionRiesgoColorOptim(risk.getExposicion(), risk.getRiskProyFk().getProyOrgFk().getOrgPk(), null, cConfAmarillo, cConfRojo));
+                }
+                
+            }
+            if (risk.getRiskProyFk() != null && risk.getRiskProyFk().getProyNombre() != null) {
+                riesgoTo.setNombreProyecto(risk.getRiskProyFk().getProyNombre());            }
+            if (risk.getRiskProyFk() != null && risk.getRiskProyFk().getProyUsrGerenteFk() != null
+                    && risk.getRiskProyFk().getProyUsrGerenteFk().getNombreApellido() != null) {
+               riesgoTo.setResponsable(risk.getRiskProyFk().getProyUsrGerenteFk().getNombreApellido());
+            }
+            if (risk.getRiskTipoRiesgoFk() != null && risk.getRiskTipoRiesgoFk().getTrsNombre() != null) {
+                riesgoTo.setTipoRiesgo(risk.getRiskTipoRiesgoFk().getTrsNombre());
+            }
+            
+            double exposicionRedondeada = Math.round(risk.getExposicion() * 100.0) / 100.0;
+            riesgoTo.setExposicion(exposicionRedondeada);
+            riesgoTo.setFechaAct(risk.getRiskFechaActualizacion()); 
+            riesgoTo.setFechaLimite(risk.getRiskFechaLimite());
+            riesgoTo.setImpacto(risk.getRiskImpacto());
+           
+            riesgoTo.setNombreRiesgo(risk.getRiskNombre());
+            riesgoTo.setObservaciones(risk.getRiskObservaciones());
+            riesgoTo.setProbabilidad(risk.getRiskProbabilidad());
+            
+            riesgostolist.add(riesgoTo);
+            
+        }
+    }
+
+    private void setearEstado(Riesgos risk, RiesgosTO riesgoTo, Boolean atrasado) {
+        
+        if(risk.getRiskSuperado() == null && atrasado) {
+            riesgoTo.setEstado("Atrasado");
+            
+        } else if (risk.getRiskSuperado() == null && !atrasado){ 
+            riesgoTo.setEstado("Activo");
+        } else if (!(risk.getRiskSuperado()) && atrasado) {
+            riesgoTo.setEstado("Atrasado");
+        } else if (risk.getRiskSuperado()) {
+            riesgoTo.setEstado("Superado");
+        } else if (!(risk.getRiskSuperado()) && !(atrasado)) {
+            riesgoTo.setEstado("Activo");
+            
+        }
+    }
 
 }

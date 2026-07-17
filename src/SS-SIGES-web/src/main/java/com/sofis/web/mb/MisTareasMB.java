@@ -343,12 +343,12 @@ public class MisTareasMB implements Serializable {
 		Calendar calPrimera = new GregorianCalendar();
 		Date dPrimera = entregablesDelegate.obtenerPrimeraFecha(inicioMB.getOrganismo().getOrgPk());
 		calPrimera.setTime(dPrimera != null ? dPrimera : new Date());
-		primerAnio = calPrimera.get(Calendar.YEAR) < cal.get(Calendar.YEAR) ? calPrimera.get(Calendar.YEAR) : cal.get(Calendar.YEAR);
+		primerAnio = 2010;
 
 		Calendar calUltima = new GregorianCalendar();
 		Date dUltima = entregablesDelegate.obtenerUltimaFecha(inicioMB.getOrganismo().getOrgPk());
 		calUltima.setTime(dUltima != null ? dUltima : new Date());
-		ultimoAnio = calUltima.get(Calendar.YEAR) > cal.get(Calendar.YEAR) ? calUltima.get(Calendar.YEAR) : cal.get(Calendar.YEAR);
+		ultimoAnio = 2050;
 
 		cargarAniosCombo();
 
@@ -476,6 +476,7 @@ public class MisTareasMB implements Serializable {
 				JSFUtils.agregarMsgError(ConstantesPresentacion.MESSAGE_ID_POPUP, Labels.getValue("error_rep_hito_progreso"), null);
 
 			} else if (ent.getEntProgreso() >= 0 && ent.getEntProgreso() <= 100) {
+
 				ent.setEntProgreso(ent.getEntProgresoTmp());
                                 entregablesDelegate.actualizarAvance(ent.getProyPk(), ent.getEntPk(), ent.getEntProgreso(), inicioMB.getUsuario());
 

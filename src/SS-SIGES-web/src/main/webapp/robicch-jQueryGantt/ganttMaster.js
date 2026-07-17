@@ -38,7 +38,7 @@ function GanttMaster() {
     this.coordinadores = [];
     this.usuarioId;
     this.isPM;
-     this.isPMOEditor;
+    this.isPMOEditor;
     this.isPMO;
     this.esfuerzoTotal = 0;
     this.horasTotal;
@@ -286,13 +286,13 @@ GanttMaster.prototype.init = function (place) {
     }).bind("moveUpCurrentTask.gantt", function () {
         if (self.currentTask) {
             self.beginTransaction();
-            addReferenceTaskBelowCurrentTask
+           
             self.currentTask.moveUp();
             self.endTransaction();
         }
     }).bind("moveDownCurrentTask.gantt", function () {
         if (self.currentTask) {
-            self.beginTransaction()
+            self.beginTransaction();
             self.currentTask.moveDown();
             self.endTransaction();
         }
@@ -346,6 +346,7 @@ GanttMaster.prototype.init = function (place) {
             task.collapsed = self.currentTask.collapsed;
             task.assigs = self.currentTask.assigs;
             task.depends = self.currentTask.depends;
+            console.log("descripcion en el gantt master" + self.currentTask.description);
             task.description = self.currentTask.description;
             task.coordinador = self.currentTask.coordinador;
             task.esfuerzo = self.currentTask.esfuerzo;
@@ -381,6 +382,8 @@ GanttMaster.prototype.init = function (place) {
 //        entregableReferenciaPopup.show();
         if (self.tasks.length > 0) {
             relacionarEntregablePopup.show();
+              
+             
         } else {
             $('#ganttDialogUtilsMsgDiv').text(GanttMaster.messages["GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK"]);
             ganttDialogUtils.show();
@@ -430,7 +433,7 @@ GanttMaster.prototype.init = function (place) {
             task.endIsMilestone = taskInfo.endIsMilestone;
             task.collapsed = taskInfo.collapsed;
             task.progress = taskInfo.progress;
-
+            console.log("descripcion cargada en el gantt master 2" + taskInfo.description);
             task.description = taskInfo.description;
             task.coordinador = taskInfo.coordinador;
             task.esfuerzo = taskInfo.esfuerzo;
@@ -467,6 +470,7 @@ GanttMaster.prototype.init = function (place) {
             task.endIsMilestone = taskInfo.endIsMilestone;
             task.collapsed = taskInfo.collapsed;
             task.progress = taskInfo.progress;
+            console.log("descripcion cargada en el gant master 3" + taskInfo.description);
 
             task.description = taskInfo.description;
             task.coordinador = taskInfo.coordinador;
@@ -755,9 +759,10 @@ GanttMaster.prototype.loadProject = function (project) {
     this.resources = project.resources;
     this.roles = project.roles;
     this.canWrite = project.canWrite;
+    console.log("ganttMaster.js project.canWrite = "+project.canWrite);
     this.periodoEntregable = project.periodoEntregable;
     this.canWriteOnParent = project.canWriteOnParent;
-    this.isPMOEditor=project.isPMOEditor;
+    this.isPMOEditor = project.isPMOEditor;
 
     if (project.minEditableDate)
         this.minEditableDate = computeStart(project.minEditableDate);
@@ -780,7 +785,8 @@ GanttMaster.prototype.loadProject = function (project) {
 
     var isPM = this.isPM;
     var isGerenteOAdjunto = this.isGerenteOAdjunto;
-var isPMOEditor=this.isPMOEditor;
+    var isPMOEditor = this.isPMOEditor;
+    this.coordinadores.includes(self)
 
     if (self.estado == 4 || self.estado == 5 || (!isPM && !isPMOEditor)) {
         document.getElementById("addAboveBtn").setAttribute('disabled', 'true');

@@ -1,0 +1,11 @@
+include:
+  - project: 'k8s-kubernetes/cicd-templates'
+    ref: main
+    file:
+      - 'wildfly.gke.gitlab-ci.yaml'
+
+variables:
+  APP_NAME: siges
+  NAMESPACE: agesic-siges
+  GOOGLE_BUILDER_IMAGE: us-central1-docker.pkg.dev/test-environments-356813/base/s2i/jboss-as-s2i:7.1.1-jdk7
+  MVN_OVERRIDE_COMMAND: mvn -Dhttps.protocols=TLSv1.2 -DadditionalJOption=-Xdoclint:none -Dmaven.test.skip=true clean package

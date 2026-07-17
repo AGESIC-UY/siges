@@ -6,6 +6,7 @@ package com.sofis.web.utils;
 
 import com.icesoft.faces.context.Resource;
 import com.sofis.entities.data.DocFile;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,16 +20,6 @@ public class SofisResource implements Resource, Serializable {
     private DocFile docFile;
     private String dir;
 
-    //    private Integer docId;
-    //    private String fileName;
-    //    private String mimeType;
-    //    public SofisResource(Integer docId, String fileName, String mimeType) {
-    //        ////System.out.println("*** docId = " + docId + " - fileName = " + fileName + " - mimeType = " + mimeType + ".");
-    //
-    //    }
-    //        this.fileName = fileName;
-    //        this.mimeType = mimeType;
-    //    }
     public SofisResource(DocFile docFile, String dir) {
 	this.docFile = docFile;
 	this.dir = dir;
@@ -36,7 +27,6 @@ public class SofisResource implements Resource, Serializable {
 
     @Override
     public String calculateDigest() {
-//        return docId != null ? docId.toString() : "";
 	return docFile != null ? docFile.getDocfilePk().toString() : "";
     }
 
@@ -47,26 +37,14 @@ public class SofisResource implements Resource, Serializable {
 
     @Override
     public InputStream open() throws IOException {
-//        ArchivoContenidoLocalDelegate dd = new ArchivoContenidoLocalDelegate();
-//        byte[] content = dd.obtenerArchivoContenido(docId);
-//        return new ByteArrayInputStream(content);
-//        if (docFile != null && docFile.getDocfileFile() != null) {
-//            byte[] content = docFile.getDocfileFile();
-//            return new ByteArrayInputStream(content);
-//        }
-
+        System.out.println("rutaaa:" + dir + "/" + docFile.getDocfilePath());
+        File f = new File(dir + "/" + docFile.getDocfilePath());
+        System.out.println("name" + f.getName() + " " + "size" + f.getTotalSpace());
 	return new FileInputStream(dir + "/" + docFile.getDocfilePath());
-//        return null;
     }
 
     @Override
     public void withOptions(Options opt) throws IOException {
-//        if (fileName != null && mimeType != null) {
-//            String resultString = Normalizer.normalize(this.fileName, Normalizer.Form.NFD);
-//            resultString = resultString.replaceAll("[^\\x00-\\x7F]", "");
-//            opt.setFileName(resultString);
-//            opt.setMimeType(this.mimeType);
-//        }
     }
 
     public DocFile getDocFile() {
@@ -75,6 +53,14 @@ public class SofisResource implements Resource, Serializable {
 
     public void setDocFile(DocFile docFile) {
 	this.docFile = docFile;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
     }
 
 }

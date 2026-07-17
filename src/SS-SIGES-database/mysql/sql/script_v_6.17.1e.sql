@@ -1,0 +1,1 @@
+UPDATE ss_usu_ofi_roles SET usu_ofi_roles_oficina = 1 WHERE usu_ofi_roles_rol = 0

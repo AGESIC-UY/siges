@@ -1,14 +1,17 @@
 package com.sofis.entities.utils;
 
 import com.sofis.entities.codigueras.SsRolCodigos;
+import com.sofis.entities.data.Entregables;
 import com.sofis.entities.data.Programas;
 import com.sofis.entities.data.Proyectos;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.tipos.EntregableTO;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.entities.tipos.ItemInicioTO;
 import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.EmailValidator;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -183,8 +186,40 @@ public class SsUsuariosUtils {
         return usuAdjunto != null
                 && usuario.getUsuId().equals(usuAdjunto.getUsuId());
     }
+    
+//        /**
+//     *
+//     * @param ficha Puede ser FichaTO, ItemInicioTO, Programas o Proyectos.
+//     * @param usuario
+//     * @return
+//     */
+//    public static boolean isUsuarioCoordinadorFicha(Object ficha, SsUsuario usuario) {
+//        SsUsuario usuCoord = null;
+//
+//        if (ficha != null) {
+//         if (ficha instanceof Proyectos) {
+//             
+//              List<Entregables> entregables = new ArrayList<>(((Proyectos) ficha).getProyCroFk().getEntregablesSet());
+//       
+//
+//        for (Entregables e : entregables) {
+//           if(usuario.getUsuId().equals(e.getCoordinadorUsuFk())){
+//               
+//           }
+//            
+//         }
+//                
+//            } 
+//
+//        return usuCoord != null
+//                && usuario.getUsuId().equals(usuCoord.getUsuId());
+//    }
 
     public static boolean isUsuarioGerenteOAdjuntoFicha(Object ficha, SsUsuario usuario) {
+        return isUsuarioGerenteFicha(ficha, usuario) || isUsuarioAdjuntoFicha(ficha, usuario);
+    }
+    
+     public static boolean isUsuarioGerenteOAdjuntoOCoordinadorFicha(Object ficha, SsUsuario usuario) {
         return isUsuarioGerenteFicha(ficha, usuario) || isUsuarioAdjuntoFicha(ficha, usuario);
     }
 }

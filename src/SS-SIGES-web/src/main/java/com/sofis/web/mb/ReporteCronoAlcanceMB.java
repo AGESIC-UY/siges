@@ -24,7 +24,6 @@ import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.AreaTematicaUtils;
 import com.sofis.web.utils.JSFUtils;
-import com.sofis.web.utils.Matomo;
 import com.sofis.web.utils.SofisComboG;
 import com.sofis.web.utils.WebUtils;
 import java.io.Serializable;
@@ -162,7 +161,7 @@ public class ReporteCronoAlcanceMB implements Serializable {
 			calPrimera = new GregorianCalendar();
 			calPrimera.setTime(primeraDate);
 		}
-		int primerAnio = calPrimera != null && calPrimera.get(Calendar.YEAR) < cal.get(Calendar.YEAR) ? calPrimera.get(Calendar.YEAR) : cal.get(Calendar.YEAR);
+		int primerAnio = 2010;
 
 		Calendar calUltima = null;
 		Date ultimaDate = entregablesDelegate.obtenerUltimaFecha(inicioMB.getOrganismo().getOrgPk());
@@ -170,7 +169,7 @@ public class ReporteCronoAlcanceMB implements Serializable {
 			calUltima = new GregorianCalendar();
 			calUltima.setTime(ultimaDate);
 		}
-		int ultimoAnio = calUltima != null && calUltima.get(Calendar.YEAR) > cal.get(Calendar.YEAR) ? calUltima.get(Calendar.YEAR) : cal.get(Calendar.YEAR);
+		int ultimoAnio = 2050;
 
 		List<SelectItem> listaAnios = new ArrayList<>();
 		SelectItem itemActual = null;
@@ -270,8 +269,6 @@ public class ReporteCronoAlcanceMB implements Serializable {
 			JSFUtils.agregarMsgWarn("", "Sin datos para el reporte.", null);
 		}
 
-		Matomo.callTrackDownload(ConstantesPresentacion.REPORTE_ALCANCE);
-
 		return null;
 	}
 
@@ -344,8 +341,6 @@ public class ReporteCronoAlcanceMB implements Serializable {
 		} else {
 			JSFUtils.agregarMsgWarn("", "Sin datos para el reporte.", null);
 		}
-
-		Matomo.callTrackDownload(ConstantesPresentacion.REPORTE_CRONOGRAMA);
 
 		return null;
 	}

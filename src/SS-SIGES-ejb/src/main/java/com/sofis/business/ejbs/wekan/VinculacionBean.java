@@ -163,17 +163,19 @@ public class VinculacionBean {
             Login login = comprobarUsuario(apiClient, usuarioTablero, contraseniaTablero);
 
             apiClient.setApiKeyPrefix("Bearer");
+
             apiClient.setApiKey(login.getToken());
 
             String idUsuario = login.getId();
 
             LOGGER.log(Level.INFO, "paso Login");
-            comprobarUsuarioTablero(idTablero, idUsuario, apiClient);
-LOGGER.log(Level.INFO, "paso comprobacion tablero");
-           
-            Integer idOrganismo = cronograma.getProyecto().getProyOrgFk().getOrgPk();
 
+            Integer idOrganismo = cronograma.getProyecto().getProyOrgFk().getOrgPk();
             apiClient = wekanBean.getAdminApi(urlServidor, idOrganismo).getApiClient();
+            
+             LOGGER.log(Level.INFO, "Pasamos Login Admin");
+            comprobarUsuarioTablero(idTablero, idUsuario, apiClient);
+            LOGGER.log(Level.INFO, "paso comprobacion tablero");
 
             Tablero tablero = comprobarEstadoTablero(urlServidor, idTablero, urlTablero, apiClient, idUsuario);
 
@@ -643,7 +645,7 @@ LOGGER.log(Level.INFO, "paso comprobacion tablero");
         Board board;
         try {
             board = boardsApi.getBoard(idTablero);
-            
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ConstantesIntegracionWekan.ERROR_OBTENER_TABLERO, ex);
 
@@ -655,8 +657,11 @@ LOGGER.log(Level.INFO, "paso comprobacion tablero");
 
         // combrobar usuario wekan
         boolean esMiembro = false;
-        for (BoardMember member : board.getMembers()) {
+        LOGGER.log(Level.INFO, "idusuario - id:{0}", idUsuario);
 
+        LOGGER.log(Level.INFO, "miembros - id:{0}", board.getMembers().size());
+        for (BoardMember member : board.getMembers()) {
+            LOGGER.log(Level.INFO, "idusuario en for - id:{0}", member.getUserId());
             if (member.getUserId().equals(idUsuario)) {
 
                 esMiembro = true;
@@ -694,7 +699,7 @@ LOGGER.log(Level.INFO, "paso comprobacion tablero");
             throw be;
         }
 
-        LOGGER.log(Level.INFO, "login Wekan - userid:{0}", login.getId());
+        LOGGER.log(Level.FINE, "login Wekan - userid:{0}", login.getId());
 
         return login;
     }

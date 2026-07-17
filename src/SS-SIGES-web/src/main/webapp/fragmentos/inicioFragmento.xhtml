@@ -12,6 +12,12 @@
     <o:form id="frmCargo">
         <ice:panelGroup id="otrosProyectos" styleClass="proyectos">
 
+
+            <ice:panelGroup id="notificador" styleClass="notificador recuadro "
+                            rendered="#{not empty inicioMB.mensajeMantenimiento }" >
+
+                <ice:outputText value="#{inicioMB.mensajeMantenimiento}" style="font-weight: bold" />
+            </ice:panelGroup>
             <!-- FORMULARIO FILTRO BUSQUEDA -->
             <ui:include src="./../fragmentos/inicioFragmentoFiltro.xhtml" />
 
@@ -234,6 +240,8 @@
                 </ice:panelSeries>
             </ice:panelGroup>
         </ice:panelGroup>
+
+
     </o:form>
 
     <ui:include src="./mensajePopup.xhtml" />

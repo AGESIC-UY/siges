@@ -26,7 +26,6 @@ import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.AreaTematicaUtils;
 import com.sofis.web.utils.JSFUtils;
-import com.sofis.web.utils.Matomo;
 import com.sofis.web.utils.SofisComboG;
 import com.sofis.web.utils.WebUtils;
 import java.io.Serializable;
@@ -330,9 +329,7 @@ public class ReportePresupuestoMB implements Serializable {
 			calPrimera = new GregorianCalendar();
 			calPrimera.setTime(primeraDate);
 		}
-		int primerAnio = calPrimera != null && calPrimera.get(Calendar.YEAR) < cal.get(Calendar.YEAR)
-				? calPrimera.get(Calendar.YEAR)
-				: cal.get(Calendar.YEAR);
+		int primerAnio = 2010;
 
 		Calendar calUltima = null;
 		Date ultimaDate = presupuestoDelegate.obtenerUltimaFecha();
@@ -340,9 +337,7 @@ public class ReportePresupuestoMB implements Serializable {
 			calUltima = new GregorianCalendar();
 			calUltima.setTime(ultimaDate);
 		}
-		int ultimoAnio = calUltima != null && calUltima.get(Calendar.YEAR) > cal.get(Calendar.YEAR)
-				? calUltima.get(Calendar.YEAR)
-				: cal.get(Calendar.YEAR);
+		int ultimoAnio = 2050;
 
 		List<SelectItem> listaAnios = new ArrayList<SelectItem>();
 		SelectItem itemActual = null;
@@ -458,7 +453,6 @@ public class ReportePresupuestoMB implements Serializable {
 			JSFUtils.agregarMsgWarn("", Labels.getValue("rep_pre_datos_vacio"), null);
 		}
 
-		Matomo.callTrackDownload(ConstantesPresentacion.REPORTE_PRESUPUESTO);
 
 		return null;
 	}

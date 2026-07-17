@@ -29,9 +29,11 @@ public class FichaValidacion {
         } else {
             if (fichaTO.getOrgFk() == null) {
                 be.addError(MensajesNegocio.ERROR_FICHA_ORGANISMO);
-            }
+            }      
             if (StringsUtils.isEmpty(fichaTO.getNombre())) {
                 be.addError(MensajesNegocio.ERROR_FICHA_NOMBRE);
+            } else if (fichaTO.getNombre().length() > 100) {
+                be.addError(MensajesNegocio.ERROR_FICHA_LARGO_NOMBRE_100);
             }
             if (fichaTO.getAreaFk() == null) {
                 be.addError(MensajesNegocio.ERROR_FICHA_AREA);

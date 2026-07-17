@@ -41,7 +41,7 @@
 <!--                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}">-->
                         </ace:checkboxButton>                        
                         
-                        <ice:outputLabel value="#{labels.replan_generar_nuevo_presupuesto}:"/>
+                        <ice:outputLabel value="#{labels.replan_generar_nuevo_presupuesto}: (aplica para Adquisición y Devengado)"/>
                         <ace:checkboxButton value="#{fichaMB.replanificacion.proyreplanGenerarPresupuesto}" >
 <!--                                            disabled="#{not fichaMB.replanificacion.proyreplanGenerarLineaBase}">-->
                         </ace:checkboxButton>
@@ -59,7 +59,7 @@
                         </ace:checkboxButton> -->
                     </ice:panelGrid>
                     <ice:panelGrid styleClass="formulario" columns="2">
-                        <ice:outputLabel value="#{labels.replan_desc_popup}:" />
+                        <ice:outputLabel value="#{labels.replan_desc_popup}:*" />
                         <ice:inputTextarea value="#{fichaMB.replanificacion.proyreplanDesc}" 
                                            styleClass="textoMedioLargo" />
 <!--                                           disabled="#{fichaMB.fieldDisabled('replanDesc') or  

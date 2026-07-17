@@ -1,12 +1,10 @@
 package com.sofis.business.ejbs;
 
 import com.sofis.business.interceptors.LoggedInterceptor;
-import com.sofis.data.daos.ProcedimientoCompraDAO;
 import com.sofis.data.daos.ProcedimientoCompraInfoDAO;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
-import com.sofis.entities.data.ProcedimientoCompra;
 import com.sofis.entities.data.ProcedimientoCompraInfo;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.StringsUtils;

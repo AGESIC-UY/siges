@@ -20,18 +20,35 @@
             <ice:panelGroup styleClass="cuerpo">
 
                 <ice:panelGroup rendered="#{!LoginMB.ingresarMailParaResetearContrasenia}">
-                    <form method="post" action="j_security_check" name="frmLogin">
-                        <h:outputLabel value="#{labels.login_usuario}:" />
-                        <input type="text" name="j_username" size="25" autofocus="autofocus"/>
+                    <ice:panelGroup rendered="#{!LoginMB.bloquearFormularioLogin}">
 
-                        <h:outputLabel value="#{labels.login_password}:" />
-                        <input type="password" size="15" name="j_password"/>
+                        <form method="post" action="j_security_check" name="frmLogin" >
+                            <h:outputLabel value="#{labels.login_usuario}:" />
+                            <input type="text" name="j_username" size="25" autofocus="autofocus" />
 
-                        <ice:outputText value="#{labels.error_usuario_invalido}" />
-                        <ace:messages id="loginMsg" />
+                            <h:outputLabel value="#{labels.login_password}:" />
+                            <input type="password" size="15" name="j_password"  />
 
-                        <input type="submit" value="Ingresar" class="boton principal botonLogin"/>   
-                    </form>
+                            <ice:outputText value="#{LoginMB.mensajeErroneo}" />
+                            <ace:messages id="loginMsg" />
+
+                            <input type="submit" value="Ingresar"   class="boton principal botonLogin"/>   
+                        </form>
+                    </ice:panelGroup>
+                    <ice:panelGroup rendered="#{LoginMB.bloquearFormularioLogin}">
+
+                        <form  >
+                            <h:outputLabel value="#{labels.login_usuario}:" />
+                            <input type="text" name="j_username" size="25" autofocus="autofocus" disabled="true" />
+
+                            <h:outputLabel value="#{labels.login_password}:"  />
+                            <input type="password" size="15" name="j_password" disabled="true"  />
+
+                            <ice:outputText value="#{LoginMB.mensajeErroneo}" />
+                            <ace:messages  />
+
+                        </form>
+                    </ice:panelGroup>
                 </ice:panelGroup>
 
                 <o:form>

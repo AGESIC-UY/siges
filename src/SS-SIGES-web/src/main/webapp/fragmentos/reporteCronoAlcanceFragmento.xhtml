@@ -22,6 +22,9 @@
             <ice:panelGrid  styleClass="formulario" columns="4">
                 <ice:outputLabel value="#{labels.rep_cro_alc_filtro_proyprog}"/>
                 <ace:textEntry value="#{reporteCronoAlcanceMB.filtro.nombre}"/>
+                
+                <ice:outputLabel value="#{labels.rep_cro_alc_filtro_proyPk}" />
+                <ace:textEntry value="#{reporteCronoAlcanceMB.filtro.proyPk}"  converter="IntegerFormatConverter"/>
 
                 <ice:outputLabel value="#{labels.rep_cro_alc_filtro_area}"/>
                 <ice:selectOneMenu value="#{reporteCronoAlcanceMB.areaCombo.selected}">

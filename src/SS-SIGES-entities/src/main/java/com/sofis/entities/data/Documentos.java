@@ -115,7 +115,7 @@ public class Documentos implements Serializable {
 
 	public String getDocsNombre() {
 		return docsNombre;
-	}
+	}  
 
 	public void setDocsNombre(String docsNombre) {
 		this.docsNombre = docsNombre;

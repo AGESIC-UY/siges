@@ -1,7 +1,5 @@
 package com.sofis.web.mb;
 
-import com.sofis.entities.constantes.ConstanteApp;
-import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.TipoDocumento;
 import com.sofis.exceptions.BusinessException;

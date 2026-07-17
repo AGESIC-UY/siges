@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <o:form id="Riesgos">
+        <ice:panelGroup id="tituloPagina" styleClass="tituloPagina">
+            <h:outputText value="Gestión de Riesgos" styleClass="titulo"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="buscador" styleClass="buscador recuadro filtroProyecto margen-inf">
+
+            <ace:pushButton id="botonFiltro" styleClass="#{riesgosMB.mostrarFiltro ? 'botonDesplegable comprimir' : 'botonDesplegable'}" 
+                            action="#{riesgosMB.mostrarFiltroAction()}">
+                <ace:ajax execute="@this" render="Riesgos:botonFiltro Riesgos:FiltroRiesgos"/>
+            </ace:pushButton>
+
+            <h:outputText value="#{labels.busqueda_inicio}" styleClass="subtitulo"/>
+
+            <h:panelGroup id="FiltroRiesgos">
+                <h:panelGroup rendered="#{riesgosMB.mostrarFiltro}">
+
+                    <h:panelGrid styleClass="formulario" columns="2">
+
+                        <!-- Primera columna -->
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_proyprog}:"/>
+                            <ace:textEntry value="#{riesgosMB.filtro.nombreProyecto}"/>
+                            
+                            <h:outputLabel value="#{labels.riesgos_filtro_gerente}:"/>
+                            <h:selectOneMenu value="#{riesgosMB.gerenteAdjuntoComboFiltro.selected}">
+                                <f:selectItems value="#{riesgosMB.gerenteAdjuntoComboFiltro.items}"/>
+                            </h:selectOneMenu>
+                            
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_area}:"/>
+                            <h:selectOneMenu value="#{riesgosMB.areaFiltroCombo.selected}">
+                                <f:selectItems value="#{riesgosMB.areaFiltroCombo.items}"/>
+                            </h:selectOneMenu>
+                            
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_nombreRiesgo}:"/>
+                            <ace:textEntry value="#{riesgosMB.filtro.nombreRiesgo}"/>
+                            
+                            <ice:outputLabel value="#{labels.filtro_estado_riesgo}:"/>
+                            <ice:selectManyCheckbox value="#{riesgosMB.filtro.estados}">
+                                <f:selectItems value="#{riesgosMB.estadosItems}"/>
+                            </ice:selectManyCheckbox>
+                        
+                        </h:panelGrid>
+
+                        <!-- Segunda columna -->
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="#{labels.filtro_codigo_proyecto}:"/>
+                            <ace:textEntry value="#{riesgosMB.filtro.codigo}"/>
+                            
+                            <h:outputLabel value="#{labels.mis_adquisiciones_filtro_pmof}:"/>
+                            <h:selectOneMenu value="#{riesgosMB.pmofComboFiltro.selected}">
+                                <f:selectItems value="#{riesgosMB.pmofComboFiltro.items}"/>
+                            </h:selectOneMenu>
+
+                            <ice:outputLabel value="#{labels.filtro_fase_proyecto}:"/>
+                            <ice:selectManyCheckbox value="#{riesgosMB.filtro.estadosProyecto}">
+                                <f:selectItems value="#{riesgosMB.listaEstadosProyectoItem}"/>
+                            </ice:selectManyCheckbox>
+
+                             <h:outputLabel value="#{labels.filtro_tipo_riesgo}:"/>
+                            <h:selectOneMenu value="#{riesgosMB.tipoRiesgoCombo.selected}">
+                                <f:selectItems value="#{riesgosMB.tipoRiesgoCombo.items}"/>
+                            </h:selectOneMenu>                     
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <!-- Botones -->
+                <h:panelGroup styleClass="panelBotones" style="margin-top: 1rem;">
+                    <ace:pushButton value="#{labels.buscar}" 
+                                    styleClass="boton buscar principal" 
+                                    action="#{riesgosMB.buscar()}"/>
+
+                    <ace:linkButton value="#{labels.limpiar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{riesgosMB.limpiarFiltro()}"/>
+                </h:panelGroup>
+            </h:panelGroup>
+
+
+
+        </ice:panelGroup>
+        <ice:panelGroup id="panelRiesgos">
+            <ice:panelGroup styleClass="panelBotones" rendered="#{not empty riesgosMB.riesgosTOList}">
+                <ace:pushButton value="#{labels.exportar}" 
+                                styleClass="boton principal descargar" 
+                                action="#{riesgosMB.exportarAction()}"/>
+            </ice:panelGroup>
+            <ace:dataTable id="tablaRiesgos"
+                           value="#{riesgosMB.riesgosTOList}"
+                           var="riesgo"
+                           paginator="true"
+                           rows="10"
+                           pageCount="5"
+                           rowStyleClass="lineaNivel1"
+                           >
+
+                <ace:column headerText="Proyecto">
+                    <h:outputText value="#{riesgo.proyecto}" />
+                </ace:column>
+                <ace:column headerText="Nombre Proyecto">
+                    <h:outputText value="#{riesgo.nombreProyecto}" />
+                </ace:column>
+                <ace:column headerText="Nombre Riesgo">
+                    <h:outputText value="#{riesgo.nombreRiesgo}" />
+                </ace:column>                
+                <ace:column headerText="Fecha Act.">
+                    <h:outputText value="#{riesgo.fechaAct}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="both" />
+                    </h:outputText>
+                </ace:column>
+                <ace:column headerText="Tipo Riesgo">
+                    <h:outputText value="#{riesgo.tipoRiesgo}" />
+                </ace:column>             
+                <ace:column headerText="Exposición">
+                    <h:panelGroup style="color: #{riesgo.colorExposicion};">
+                        <h:outputText value="#{riesgo.exposicion}" />
+                    </h:panelGroup>
+                </ace:column>
+                <ace:column headerText="Estado">
+                    <h:outputText value="#{riesgo.estado}" />
+                </ace:column>
+                <ace:column headerText="Responsables">
+                    <h:outputText value="#{riesgo.responsable}" />
+                </ace:column>
+                <ace:column headerText="Fecha Límite">
+                    <h:panelGroup style="color: #{riesgo.colorFechaLimite};">
+                        <h:outputText value="#{riesgo.fechaLimite}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" type="both" />
+                        </h:outputText>
+                    </h:panelGroup>
+                </ace:column>
+                <ace:column headerText="Observaciones">
+                    <h:outputText value="#{riesgo.observaciones}" />
+                </ace:column>
+
+            </ace:dataTable>
+
+        </ice:panelGroup>
+    </o:form>
+</ui:composition>

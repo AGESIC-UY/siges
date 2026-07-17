@@ -3,13 +3,20 @@ package com.sofis.data.daos;
 import com.sofis.data.utils.DAOUtils;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Riesgos;
+import com.sofis.entities.tipos.FiltroRiesgosTO;
 import com.sofis.exceptions.TechnicalException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 public class RiesgosDAO extends HibernateJpaDAOImp<Riesgos, Integer> implements Serializable {
 
@@ -89,6 +96,136 @@ public class RiesgosDAO extends HibernateJpaDAOImp<Riesgos, Integer> implements 
         query.setParameter("superado", false);
         return (Long) query.getSingleResult();
     }
+    public List<Riesgos> obtenerRiesgosPorFiltro (FiltroRiesgosTO filtro) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Riesgos> cq = cb.createQuery(Riesgos.class);
+        Root<Riesgos> root = cq.from(Riesgos.class);
+
+        List<Predicate> predicates = new ArrayList<Predicate>();
+
+        if (filtro.getId() != null) {
+            predicates.add(cb.equal(root.get("riskPk"), filtro.getId()));
+        }
+        
+        if (filtro.getOrgPk()!= null) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            Join<Object, Object> org = proy.join("proyOrgFk");
+            predicates.add(cb.equal(org.get("orgPk"), filtro.getOrgPk()));
+        }
+
+        if (filtro.getNombreProyecto() != null && !filtro.getNombreProyecto().equals("")) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(cb.like(cb.lower(proy.<String>get("proyNombre")), "%" + filtro.getNombreProyecto().toLowerCase() + "%"));
+        }
+        
+        if (filtro.getTipoRiesgoPk()!= null) {
+            Join<Object, Object> tipo = root.join("riskTipoRiesgoFk");
+            predicates.add(cb.equal(tipo.get("trsPk"), filtro.getTipoRiesgoPk()));
+        }
+
+        if (filtro.getIdOrganismo() != null) {
+            // root -> Riesgos -> riskProyFk -> proyOrgFk -> orgPk
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(cb.equal(proy.get("proyOrgFk"), filtro.getIdOrganismo()));
+        }
+
+        if (filtro.getIdAdjunto() != null) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            
+            predicates.add(cb.or(cb.equal(proy.get("proyUsrGerenteFk").get("usuId"), filtro.getIdAdjunto()),
+                    cb.equal(proy.get("proyUsrAdjuntoFk").get("usuId"), filtro.getIdAdjunto())));
+        }
+
+        if (filtro.getIdPmof() != null) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(cb.equal(proy.get("proyUsrPmofedFk").get("usuId"), filtro.getIdPmof()));
+        }
+        
+        if (filtro.getNombreRiesgo() != null && !filtro.getNombreRiesgo().equals("")) {
+            predicates.add(cb.like(cb.lower(root.<String>get("riskNombre")), "%" + filtro.getNombreRiesgo().toLowerCase() + "%"));
+        }
+
+        if (filtro.getIdSponsor() != null) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(cb.equal(proy.get("proySponsorFk"), filtro.getIdSponsor()));
+        }
+
+        if (filtro.getIdArea() != null) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(cb.equal(proy.get("proyAreaFk").get("areaPk"), filtro.getIdArea()));
+        }
+
+        if (filtro.getEstadosProyecto() != null && filtro.getEstadosProyecto().length > 0) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            Join<Object, Object> estado = proy.join("proyEstFk");
+            predicates.add(estado.get("estPk").in(filtro.getEstadosProyecto()));
+        }
+        
+        if (filtro.getEstados()!= null && filtro.getEstados().length > 0) {
+            agregarCondicionesDeEstado(filtro, predicates, cb, root);
+        }
+        
+        if (filtro.getCodigo() != null && filtro.getCodigo() != 0) {
+            Join<Object, Object> proy = root.join("riskProyFk");
+            predicates.add(proy.get("proyPk").in(filtro.getCodigo()));        }
+
+        // Ignorar filtro.activo según lo indicado
+
+        Join<Object, Object> proy = root.join("riskProyFk");
+        predicates.add(cb.equal(proy.get("activo"), Boolean.TRUE));
+        cq.where(predicates.toArray(new Predicate[predicates.size()]));
+        cq.orderBy(
+            cb.asc(proy.get("proyPk")),
+            cb.asc(proy.get("proyNombre")),
+            cb.asc(root.get("riskNombre"))
+        );
+        
+        return em.createQuery(cq).getResultList();
+    }
+
+    private void agregarCondicionesDeEstado(FiltroRiesgosTO filtro, List<Predicate> predicates, CriteriaBuilder cb, Root<Riesgos> root) {
+        List<Predicate> condicionesPorEstado = new ArrayList<>();
+
+        Date fechaActual = new Date();
+
+        for (Integer estadoRiesgo : filtro.getEstados()) {
+            List<Predicate> subCondiciones = new ArrayList<>();
+
+            if (estadoRiesgo == 3) {
+                System.out.println("Atrasado");
+                subCondiciones.add(cb.lessThan(root.<Date>get("riskFechaLimite"), fechaActual));
+                subCondiciones.add(
+                    cb.or(
+                        cb.equal(root.get("riskSuperado"), 0),
+                        cb.isNull(root.get("riskSuperado"))
+                    )
+                );
+            }
+            if (estadoRiesgo == 2) { 
+                System.out.println("Activo");
+                subCondiciones.add(cb.greaterThanOrEqualTo(root.<Date>get("riskFechaLimite"), fechaActual));
+                subCondiciones.add(
+                    cb.or(
+                        cb.equal(root.get("riskSuperado"), 0),
+                        cb.isNull(root.get("riskSuperado"))
+                    )
+                );
+            }
+            if (estadoRiesgo == 1) { 
+                System.out.println("Superado");
+                subCondiciones.add(cb.equal(root.get("riskSuperado"), 1));
+            }
+
+            if (!subCondiciones.isEmpty()) {
+                condicionesPorEstado.add(cb.and(subCondiciones.toArray(new Predicate[0])));
+            }
+        }
+
+        if (!condicionesPorEstado.isEmpty()) {
+            predicates.add(cb.or(condicionesPorEstado.toArray(new Predicate[0])));
+        }
+    }
+
 
     public Double obtenerExposicionRiesgoPrograma(Integer progPk) {
         String queryStr = "SELECT SUM( r.exposicion * p.proyPeso)/SUM(p.proyPeso)"

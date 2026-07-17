@@ -93,7 +93,7 @@ function loadI18n() {
         "GANTT_CANNOT_ADD_PRODUCTOS_CHILDS": "No es posible ingresar hijos en actividades que tienen un producto asociado.",
         "GANTT_CANNOT_ADD_REFERENCED_CHILDS": "No es posible ingresar hijos en actividades con referencia.",
         "GANTT_CANNOT_ADD_WEKAN_CHILDS": "No es posible ingresar hijos en actividades vinculadas con Wekan.",
-        "GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK": "Debe existir al menos un entregable en el cronograma para poder referenciar",
+        "GANTT_CANNOT_ADD_REFERENCED_EMPTY_TASK": "Debe existir al menos un entregable en el cronograma para poder referenciar"
     };
 }
 
@@ -145,7 +145,9 @@ Storage.prototype.getObject = function(key) {
 var ret;
 
 function loadFromLocalStorage() {
+    console.log("gantt_config load from local storage "+ret.canWrite);
     if (ret != null && ret != 1 && ret != undefined ) {
+        
         ge.loadProject(ret);
         ge.checkpoint(); //empty the undo stack
     }
@@ -156,11 +158,16 @@ function loadGanttValues1(r1) {
 }
 function loadGanttValues2(r2) {
     ret = ret + r2;
+     console.log("gantt_config loadGanttValues2 "+r2.canWrite);
+     console.log("gantt_config loadGanttValues2 es editor "+ret.isPMOEditor);
     ge.loadProject(ret);
     ge.checkpoint(); //empty the undo stack
 }
 function loadGanttValues(r) {
     ret = r;
+    console.log("gantt_config loadGanttValues "+r.canWrite);
+     console.log("gantt_config loadGanttValues es editor "+ret.isPMOEditor);
+    
     ge.loadProject(ret);
     ge.checkpoint(); //empty the undo stack
 }

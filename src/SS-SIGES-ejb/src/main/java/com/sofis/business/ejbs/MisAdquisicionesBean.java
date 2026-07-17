@@ -2,7 +2,6 @@ package com.sofis.business.ejbs;
 
 import com.sofis.business.utils.AdquisicionUtils;
 import com.sofis.business.utils.PagoUtils;
-import com.sofis.business.utils.PagosUtils;
 import com.sofis.business.utils.SaldoUtils;
 import com.sofis.data.daos.AdquisicionDAO;
 import com.sofis.data.daos.PagosDAO;
@@ -12,8 +11,10 @@ import com.sofis.entities.constantes.ConstanteApp;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.CausalCompra;
+import com.sofis.entities.data.ComponenteProducto;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.FuenteFinanciamiento;
+import com.sofis.entities.data.IdentificadorGrpErp;
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.entities.data.Pagos;
 import com.sofis.entities.data.ProcedimientoCompra;
@@ -28,6 +29,7 @@ import com.sofis.entities.tipos.ReplanificacionTO;
 import com.sofis.entities.tipos.SaldoTO;
 import com.sofis.exceptions.BusinessException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -41,298 +43,452 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class MisAdquisicionesBean {
 
-	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-	private EntityManager em;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
 
-	@Inject
-	private DatosUsuario datosUsuario;
+    @Inject
+    private DatosUsuario datosUsuario;
 
-	@Inject
-	private SsUsuarioBean usuarioBean;
+    @Inject
+    private SsUsuarioBean usuarioBean;
 
-	@Inject
-	private AdquisicionBean adquisicionBean;
+    @Inject
+    private AdquisicionBean adquisicionBean;
 
-	@Inject
-	private PagosBean pagoBean;
+    @Inject
+    private PagosBean pagoBean;
 
-	@Inject
-	private OrganiIntProveBean organizacionBean;
+    @Inject
+    private OrganiIntProveBean organizacionBean;
 
-	@Inject
-	private FuenteFinanciamientoBean fuenteFinanciamientoBean;
+    @Inject
+    private FuenteFinanciamientoBean fuenteFinanciamientoBean;
 
-	@Inject
-	private ProcedimientoCompraBean procedimientoCompraBean;
+    @Inject
+    private ProcedimientoCompraBean procedimientoCompraBean;
 
-	@Inject
-	private CausalCompraBean causalCompraBean;
+    @Inject
+    private CausalCompraBean causalCompraBean;
 
-	@Inject
-	private ConfiguracionBean configuracionBean;
+    @Inject
+    private ConfiguracionBean configuracionBean;
 
-	@Inject
-	private ProyReplanificacionBean replanificacionBean;
+    @Inject
+    private ProyReplanificacionBean replanificacionBean;
 
-	public MisAdquisicionesTO buscar(FiltroMisAdquisicionesTO filtro) {
+    @Inject
+    private ComponenteProductoBean componenteProductoBean;
 
-		SsUsuario usuario = usuarioBean.obtenerSsUsuarioPorMail(datosUsuario.getCodigoUsuario());
+    @Inject
+    private IdentificadorGrpErpBean identificadorGrpErpBean;
 
-		if (usuario == null) {
+    public MisAdquisicionesTO buscar(FiltroMisAdquisicionesTO filtro) {
+      
+        SsUsuario usuario = usuarioBean.obtenerSsUsuarioPorMail(datosUsuario.getCodigoUsuario());
+        AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
+        PagosDAO pagoDAO = new PagosDAO(em);
 
-			BusinessException be = new BusinessException();
-			be.addError(MensajesNegocio.ERROR_USUARIO_OBTENER);
-			
-			throw be;
-		}
+        if (usuario == null) {
 
-		Integer orgPk = filtro.getOrganismo().getOrgPk();
+            BusinessException be = new BusinessException();
+            be.addError(MensajesNegocio.ERROR_USUARIO_OBTENER);
 
-		boolean usuarioEsPMOT = usuario.isUsuarioPMOT(orgPk);
-		boolean usuarioApruebaPagos = usuario.isUsuAprobFact();
+            throw be;
+        }
 
-		Boolean adjuntoModificaPresupuesto = Boolean.valueOf(configuracionBean.
-				obtenerCnfValorPorCodigo(ConfiguracionCodigos.ADJUNTO_MODIFICA_PRESUPUESTO, orgPk));
+        Integer orgPk = filtro.getOrganismo().getOrgPk();
 
-		MisAdquisicionesTO result = new MisAdquisicionesTO();
+        boolean usuarioEsPMOT = usuario.isUsuarioPMOT(orgPk);
 
-		ProyectosDAO proyectosDAO = new ProyectosDAO(em);
+        boolean usuarioApruebaPagos = usuario.isUsuAprobFact();
 
-		List<ProyectoTO> proyectos = proyectosDAO.obtenerProyectosConAdquisiciones(filtro);
+        Boolean adjuntoModificaPresupuesto = Boolean.valueOf(configuracionBean.
+                obtenerCnfValorPorCodigo(ConfiguracionCodigos.ADJUNTO_MODIFICA_PRESUPUESTO, orgPk));
 
-		result.setProyectos(proyectos);
-		result.setCantidadProyectos(proyectos.size());
+        Boolean pmofModifica = Boolean.valueOf(configuracionBean.
+                obtenerCnfValorPorCodigo(ConfiguracionCodigos.PMOF_GESTIONA_SUS_PROYECTOS, orgPk));
 
-		AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
-		PagosDAO pagoDAO = new PagosDAO(em);
+        boolean usuarioPMOF = usuario.isUsuarioPMOF(orgPk);
+        //boolean pmofGrente = pmofModifica && usuarioPMOF || pmofModifica && usuarioEsPMOT;
 
-		int cantidadAdquisiciones = 0;
-		for (ProyectoTO proyecto : proyectos) {
+        MisAdquisicionesTO result = new MisAdquisicionesTO();
 
-			List<AdquisicionTO> adquisiciones = adquisicionDAO.obtenerAdquisicionesPorPresupuesto(proyecto.getIdPresupuesto(), filtro);
-			proyecto.setAdquisiciones(adquisiciones);
+        ProyectosDAO proyectosDAO = new ProyectosDAO(em);
 
-			cantidadAdquisiciones += adquisiciones.size();
+        List<ProyectoTO> proyectos = proyectosDAO.obtenerProyectosConAdquisiciones(filtro);
+        List<ProyectoTO> proyectosFinal = new ArrayList<>();
 
-			List<SaldoTO> saldos = new ArrayList<>();
+        int cantidadAdquisiciones = 0;
+        List<PagoTO> listAux = new ArrayList<>();
+        for (ProyectoTO proyecto : proyectos) {
 
-			boolean usuarioEsGerente = proyecto.getGerente().getId().equals(usuario.getUsuId());
-			boolean usuarioEsAdjunto = proyecto.getAdjunto().getId().equals(usuario.getUsuId());
-			boolean usuarioEsPMOF = proyecto.getPmof().getId().equals(usuario.getUsuId());
+            List<AdquisicionTO> adquisiciones = adquisicionDAO.obtenerAdquisicionesPorPresupuesto(proyecto.getIdPresupuesto(), filtro);
 
-			ReplanificacionTO ultimaReplanificacion = replanificacionBean.obtenerUltimaReplanificacionPorIdProyecto(proyecto.getId());
-			boolean proyectoEnReplanificacionPresupuesto = (ultimaReplanificacion == null) || ultimaReplanificacion.getPermiteEditar();
+            List<SaldoTO> saldos = new ArrayList<>();
+            boolean pmofGrente = proyecto.getPmof().getId().equals(usuario.getUsuId()) && pmofModifica;
+            boolean usuarioEsGerente = proyecto.getGerente().getId().equals(usuario.getUsuId()) || pmofGrente;
+            boolean usuarioEsAdjunto = proyecto.getAdjunto().getId().equals(usuario.getUsuId());
+            boolean usuarioEsPMOF = proyecto.getPmof().getId().equals(usuario.getUsuId());
 
-			for (AdquisicionTO adquisicion : adquisiciones) {
+            ReplanificacionTO ultimaReplanificacion = replanificacionBean.obtenerUltimaReplanificacionPorIdProyecto(proyecto.getId());
+            boolean proyectoEnReplanificacionPresupuesto = (ultimaReplanificacion == null) || ultimaReplanificacion.getPermiteEditar();
 
-				adquisicion.setEditable(AdquisicionUtils.adquisicionEsEditable(proyecto.getEstado().getId(),
-						proyectoEnReplanificacionPresupuesto, usuarioEsGerente, usuarioEsAdjunto, adjuntoModificaPresupuesto));
+            List<AdquisicionTO> listaPosRemove = new ArrayList<>();
+            
+            
+            for (AdquisicionTO adquisicion : adquisiciones) {
 
-				List<PagoTO> pagos = pagoDAO.obtenerPorAdquisicion(adquisicion.getId(), proyecto.getEstado());
-                                
-				adquisicion.setPagos(pagos);
+                adquisicion.setEditable(AdquisicionUtils.adquisicionEsEditable(proyecto.getEstado().getId(),
+                        proyectoEnReplanificacionPresupuesto, usuarioEsGerente, usuarioEsAdjunto, adjuntoModificaPresupuesto));
 
-				adquisicion.setImportePlanificado(PagoUtils.calcularImportePlanificado(pagos));
-				adquisicion.setImporteReal(PagoUtils.calcularImporteReal(pagos));
+                List<PagoTO> pagos = pagoDAO.obtenerPorAdquisicion(adquisicion.getId(), proyecto.getEstado());
 
-				Double importeSaldo = PagoUtils.calcularImporteSaldo(pagos);
-				adquisicion.setSaldo(importeSaldo);
+                if (filtro.getAbierta() != null) {
 
-				incrementarSaldo(saldos, adquisicion, importeSaldo);
+                    if (filtro.getAbierta()) {
 
-				for (PagoTO pago : pagos) {
+                        pagos = filtrarPagosPorConfirmacion(pagos);
 
-					pago.setPuedeCambiarAprobacion(PagoUtils.pagoPuedeCambiarAprobacion(pago.getConfirmado(),
-							proyecto.getEstado().getId(), usuarioEsPMOF, usuarioEsPMOT, usuarioEsGerente, usuarioEsAdjunto,
-							usuarioApruebaPagos, adjuntoModificaPresupuesto));
+                    } else {
+                        listAux = filtrarPagosPorConfirmacion(pagos);
+                        if(!listAux.isEmpty())
+                            pagos = new ArrayList<>();
+                   
+                    }
 
-					pago.setEditable(PagoUtils.pagoEsEditable(pago.getConfirmado(),
-							proyecto.getEstado().getId(), proyectoEnReplanificacionPresupuesto,
-							usuarioEsGerente, usuarioEsAdjunto, adjuntoModificaPresupuesto));
-				}
-			}
+                }
 
-			SaldoUtils.ordenarPorMoneda(saldos);
-			proyecto.setSaldos(saldos);
-		}
+                List<PagoTO> pagosAux = new ArrayList<>();
 
-		result.setCantidadAdquisiciones(cantidadAdquisiciones);
+                if (filtro.getAnio() != null) {
 
-		return result;
-	}
+                    pagosAux = filtrarListaPagosPorAnio(pagos, filtro.getAnio());
 
-	public void actualizarAdquisicion(AdquisicionTO adquisicionTO) {
+                } else {
+                    pagosAux.addAll(pagos);
+                }
 
-		BusinessException be = new BusinessException();
+                if (pagosAux.isEmpty()) {
+                    listaPosRemove.add(adquisicion);
+                }
 
-		SsUsuario usuario = usuarioBean.obtenerSsUsuarioPorMail(datosUsuario.getCodigoUsuario());
+                adquisicion.setPagos(pagosAux);
 
-		if (usuario == null) {
+                adquisicion.setImportePlanificado(PagoUtils.calcularImportePlanificado(pagosAux));
+                adquisicion.setImporteReal(PagoUtils.calcularImporteReal(pagosAux));
 
-			be.addError(MensajesNegocio.ERROR_USUARIO_OBTENER);
-			throw be;
-		}
+                Double importeSaldo = PagoUtils.calcularImporteSaldo(pagosAux);
+                adquisicion.setSaldo(importeSaldo);
 
-		Adquisicion adquisicion = adquisicionBean.obtenerAdquisicionPorId(adquisicionTO.getId());
+                incrementarSaldo(saldos, adquisicion, importeSaldo);
 
-		if (adquisicion == null) {
+                for (PagoTO pago : pagosAux) {
 
-			be.addError(MensajesNegocio.ERROR_ADQISICION_OBTENER);
-			throw be;
-		}
+                    pago.setPuedeCambiarAprobacion(PagoUtils.pagoPuedeCambiarAprobacion(pago.getConfirmado(),
+                            proyecto.getEstado().getId(), usuarioEsPMOF, usuarioEsPMOT, usuarioEsGerente, usuarioEsAdjunto,
+                            usuarioApruebaPagos, adjuntoModificaPresupuesto));
 
-		OrganiIntProve prveedor = null;
-		if (adquisicionTO.getProveedor() != null) {
-			prveedor = organizacionBean.obtenerOrganiIntProvePorId(adquisicionTO.getProveedor().getId());
+                    pago.setEditable(PagoUtils.pagoEsEditable(pago.getConfirmado(),
+                            proyecto.getEstado().getId(), proyectoEnReplanificacionPresupuesto,
+                            usuarioEsGerente, usuarioEsAdjunto, adjuntoModificaPresupuesto));
+                }
+            }
 
-			if (prveedor == null) {
+            for (AdquisicionTO position : listaPosRemove) {
+                adquisiciones.remove(position);
+            }
 
-				be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
-				throw be;
-			}
-		}
+            SaldoUtils.ordenarPorMoneda(saldos);
+            proyecto.setSaldos(saldos);
 
-		FuenteFinanciamiento fuenteFinanciamiento = null;
-		if (adquisicionTO.getFuenteFinanciamiento() != null) {
-			fuenteFinanciamiento = fuenteFinanciamientoBean.obtenerFuentePorPk(adquisicionTO.getFuenteFinanciamiento().getId());
+            proyecto.setAdquisiciones(adquisiciones);
 
-			if (fuenteFinanciamiento == null) {
+            cantidadAdquisiciones += adquisiciones.size();
 
-				be.addError(MensajesNegocio.ERROR_FUENTE_FINANC_OBTENER);
-				throw be;
-			}
-		}
+        }
 
-		ProcedimientoCompra procedimientoCompra = null;
-		if (adquisicionTO.getProcedimientoCompra() != null) {
-			procedimientoCompra = procedimientoCompraBean.obtenerProcedimientoCompraPorPk(adquisicionTO.getProcedimientoCompra().getId());
+        for (ProyectoTO proyecto : proyectos) {
 
-			if (procedimientoCompra == null) {
+            if (!proyecto.getAdquisiciones().isEmpty()) {
+                proyectosFinal.add(proyecto);
+            }
+        }
 
-				be.addError(MensajesNegocio.ERROR_FUENTE_FINANC_OBTENER);
-				throw be;
-			}
-		}
+        result.setProyectos(proyectosFinal);
+        result.setCantidadProyectos(proyectosFinal.size());
 
-		CausalCompra causalCompra = null;
-		if (adquisicionTO.getCausalCompra() != null) {
-			causalCompra = causalCompraBean.obtenerPorId(adquisicionTO.getCausalCompra().getId());
+        result.setCantidadAdquisiciones(cantidadAdquisiciones);
 
-			if (causalCompra == null) {
+        return result;
+    }
 
-				be.addError(MensajesNegocio.ERROR_CAUSAL_COMPRA_OBTENER);
-				throw be;
-			}
-		}
+    public void actualizarAdquisicion(AdquisicionTO adquisicionTO) {
 
-		adquisicion.setAdqNombre(adquisicionTO.getNombre());
-		adquisicion.setAdqIdAdquisicion(adquisicionTO.getIdAdquisicion());
+        BusinessException be = new BusinessException();
 
-		adquisicion.setAdqProvOrga(prveedor);
-		adquisicion.setAdqProcedimientoCompra(procedimientoCompra);
-		adquisicion.setAdqFuente(fuenteFinanciamiento);
-		adquisicion.setAdqCausalCompra(causalCompra);
+        SsUsuario usuario = usuarioBean.obtenerSsUsuarioPorMail(datosUsuario.getCodigoUsuario());
 
-		Proyectos proyecto = adquisicion.getAdqPreFk().getProyecto();
+        if (usuario == null) {
 
-		adquisicionBean.guardar(adquisicion, proyecto.getProyOrgFk().getOrgPk());
-	}
+            be.addError(MensajesNegocio.ERROR_USUARIO_OBTENER);
+            throw be;
+        }
 
-	public void actualizarPago(PagoTO pagoTO) {
+        Adquisicion adquisicion = adquisicionBean.obtenerAdquisicionPorId(adquisicionTO.getId());
 
-		BusinessException be = new BusinessException();
+        if (adquisicion == null) {
 
-		Pagos pago = pagoBean.obtenerPagosPorId(pagoTO.getId());
+            be.addError(MensajesNegocio.ERROR_ADQISICION_OBTENER);
+            throw be;
+        }
 
-		if (pago == null) {
+        OrganiIntProve prveedor = null;
+        if (adquisicionTO.getProveedor() != null) {
+            prveedor = organizacionBean.obtenerOrganiIntProvePorId(adquisicionTO.getProveedor().getId());
 
-			be.addError(MensajesNegocio.ERROR_PAGO_OBTENER);
-			throw be;
-		}
+            if (prveedor == null) {
 
-		OrganiIntProve prveedor = null;
-		if (pagoTO.getProveedor() != null) {
-			prveedor = organizacionBean.obtenerOrganiIntProvePorId(pagoTO.getProveedor().getId());
+                be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
+                throw be;
+            }
+        }
 
-			if (prveedor == null) {
+        FuenteFinanciamiento fuenteFinanciamiento = null;
+        if (adquisicionTO.getFuenteFinanciamiento() != null) {
+            fuenteFinanciamiento = fuenteFinanciamientoBean.obtenerFuentePorPk(adquisicionTO.getFuenteFinanciamiento().getId());
 
-				be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
-				throw be;
-			}
-		}
+            if (fuenteFinanciamiento == null) {
 
-		OrganiIntProve cliente = null;
-		if (pagoTO.getCliente() != null) {
-			cliente = organizacionBean.obtenerOrganiIntProvePorId(pagoTO.getCliente().getId());
+                be.addError(MensajesNegocio.ERROR_FUENTE_FINANC_OBTENER);
+                throw be;
+            }
+        }
 
-			if (cliente == null) {
+        ProcedimientoCompra procedimientoCompra = null;
+        if (adquisicionTO.getProcedimientoCompra() != null) {
+            procedimientoCompra = procedimientoCompraBean.obtenerProcedimientoCompraPorPk(adquisicionTO.getProcedimientoCompra().getId());
 
-				be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
-				throw be;
-			}
-		}
+            if (procedimientoCompra == null) {
 
-		Proyectos proyecto = pago.getPagAdqFk().getAdqPreFk().getProyecto();
+                be.addError(MensajesNegocio.ERROR_FUENTE_FINANC_OBTENER);
+                throw be;
+            }
+        }
 
-		boolean proyectoEnEjecucion = proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.EJECUCION.estado_id)
-				|| proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id)
-				|| proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+        CausalCompra causalCompra = null;
+        if (adquisicionTO.getCausalCompra() != null) {
+            causalCompra = causalCompraBean.obtenerPorId(adquisicionTO.getCausalCompra().getId());
 
-		pago.setPagProveedorFk(prveedor);
-		pago.setPagContrOrganizacionFk(cliente);
+            if (causalCompra == null) {
 
-		pago.setPagTxtReferencia(pagoTO.getReferencia());
+                be.addError(MensajesNegocio.ERROR_CAUSAL_COMPRA_OBTENER);
+                throw be;
+            }
+        }
 
-		if (proyectoEnEjecucion) {
-			pago.setPagFechaReal(pagoTO.getFechaReal());
-			pago.setPagImporteReal(pagoTO.getImporteReal());
-		} else {
-			pago.setPagFechaPlanificada(pagoTO.getFechaPlanificada());
-			pago.setPagImportePlanificado(pagoTO.getImportePlanificado());
-		}
+        ComponenteProducto componenteProducto = null;
+        if (adquisicionTO.getComponenteProducto() != null) {
+            componenteProducto = componenteProductoBean.obtenerComponenteProductoPorPk(adquisicionTO.getComponenteProducto().getId());
 
-		pagoBean.guardarPago(pago, proyecto.getProyPk(), null, proyecto.getProyOrgFk().getOrgPk());
-	}
+            if (componenteProducto == null) {
 
-	private void incrementarSaldo(List<SaldoTO> saldos, AdquisicionTO adquisicion, Double importeSaldo) {
+                be.addError(MensajesNegocio.ERROR_ADQISICION_COMP_PROD);
+                throw be;
+            }
 
-		SaldoTO saldo = null;
+            adquisicion.setAdqComponenteProducto(componenteProducto);
+        }
 
-		for (SaldoTO s : saldos) {
+        IdentificadorGrpErp identificadorGrpErp = null;
+        if (adquisicionTO.getIdentificadorGrpErp() != null) {
+            identificadorGrpErp = identificadorGrpErpBean.obtenerPorId(adquisicionTO.getIdentificadorGrpErp().getId());
 
-			if (s.getMoneda().getId().equals(adquisicion.getMoneda().getId())) {
+            if (identificadorGrpErp == null) {
 
-				saldo = s;
-				break;
-			}
-		}
+                be.addError(MensajesNegocio.ERROR_ADQISICION_COMP_PROD);
+                throw be;
+            }
 
-		if (saldo == null) {
+            adquisicion.setAdqIdGrpErpFk(identificadorGrpErp);
+        }
 
-			saldo = new SaldoTO(adquisicion.getMoneda());
-			saldos.add(saldo);
-		}
+        adquisicion.setAdqNombre(adquisicionTO.getNombre());
+        adquisicion.setAdqIdAdquisicion(adquisicionTO.getIdAdquisicion());
 
-		saldo.setImporte(saldo.getImporte() + importeSaldo);
-	}
+        adquisicion.setAdqProvOrga(prveedor);
+        adquisicion.setAdqProcedimientoCompra(procedimientoCompra);
+        adquisicion.setAdqFuente(fuenteFinanciamiento);
+        adquisicion.setAdqTipoRegistro(adquisicionTO.getTipoRegistro());
+        adquisicion.setAdqCausalCompra(causalCompra);
 
-	public boolean cambiarEstadoPago(PagoTO pago) {
+        Proyectos proyecto = adquisicion.getAdqPreFk().getProyecto();
 
-		return pagoBean.confirmarPago(pago.getId());
-	}
+        adquisicionBean.guardar(adquisicion, proyecto.getProyOrgFk().getOrgPk());
+    }
 
-	public PagoTO obtenerPago(Integer id) {
+    public void actualizarPago(PagoTO pagoTO) {
 
-		PagosDAO pagoDAO = new PagosDAO(em);
+        BusinessException be = new BusinessException();
 
-		return pagoDAO.obtenerPagoTOPorId(id);
-	}
+        Pagos pago = pagoBean.obtenerPagosPorId(pagoTO.getId());
 
-	public AdquisicionTO obtenerAdquisicion(Integer id) {
+        if (pago == null) {
 
-		AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
+            be.addError(MensajesNegocio.ERROR_PAGO_OBTENER);
+            throw be;
+        }
 
-		return adquisicionDAO.obtenerAdquisicionTOPorId(id);
-	}
+        OrganiIntProve prveedor = null;
+        if (pagoTO.getProveedor() != null) {
+            prveedor = organizacionBean.obtenerOrganiIntProvePorId(pagoTO.getProveedor().getId());
 
+            if (prveedor == null) {
+
+                be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
+                throw be;
+            }
+        }
+
+        OrganiIntProve cliente = null;
+        if (pagoTO.getCliente() != null) {
+            cliente = organizacionBean.obtenerOrganiIntProvePorId(pagoTO.getCliente().getId());
+
+            if (cliente == null) {
+
+                be.addError(MensajesNegocio.ERROR_ORGANIZACION_OBTENER);
+                throw be;
+            }
+        }
+
+        Proyectos proyecto = pago.getPagAdqFk().getAdqPreFk().getProyecto();
+
+        boolean proyectoEnEjecucion = proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.EJECUCION.estado_id)
+                || proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id)
+                || proyecto.getProyEstFk().getEstPk().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+
+        pago.setPagProveedorFk(prveedor);
+        pago.setPagContrOrganizacionFk(cliente);
+
+        pago.setPagTxtReferencia(pagoTO.getReferencia());
+
+        if (proyectoEnEjecucion) {
+            pago.setPagFechaReal(pagoTO.getFechaReal());
+            pago.setPagImporteReal(pagoTO.getImporteReal());
+        } else {
+            pago.setPagFechaPlanificada(pagoTO.getFechaPlanificada());
+            pago.setPagImportePlanificado(pagoTO.getImportePlanificado());
+        }
+
+        pagoBean.guardarPago(pago, proyecto.getProyPk(), null, proyecto.getProyOrgFk().getOrgPk());
+    }
+
+    private void incrementarSaldo(List<SaldoTO> saldos, AdquisicionTO adquisicion, Double importeSaldo) {
+
+        SaldoTO saldo = null;
+
+        for (SaldoTO s : saldos) {
+
+            if (s.getMoneda().getId().equals(adquisicion.getMoneda().getId())) {
+
+                saldo = s;
+                break;
+            }
+        }
+
+        if (saldo == null) {
+
+            saldo = new SaldoTO(adquisicion.getMoneda());
+            saldos.add(saldo);
+        }
+
+        saldo.setImporte(saldo.getImporte() + importeSaldo);
+    }
+
+    public boolean cambiarEstadoPago(PagoTO pago) {
+
+        return pagoBean.confirmarPago(pago.getId());
+    }
+
+    public PagoTO obtenerPago(Integer id) {
+
+        PagosDAO pagoDAO = new PagosDAO(em);
+
+        return pagoDAO.obtenerPagoTOPorId(id);
+    }
+
+    public AdquisicionTO obtenerAdquisicion(Integer id) {
+
+        AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
+
+        return adquisicionDAO.obtenerAdquisicionTOPorId(id);
+    }
+    
+    private List<PagoTO> filtrarListaPagosPorAnio(List<PagoTO> pagos, Integer anio) {
+        List<PagoTO> pagosAux = new ArrayList<>();
+
+        for (PagoTO p : pagos) {
+            boolean agregar = false;
+
+            if (p.getFechaPlanificada() != null) {
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(p.getFechaPlanificada());
+
+                if (calendar.get(Calendar.YEAR) == anio) {
+                    agregar = true;
+                }
+
+            }
+
+            if (!agregar) {
+
+                if (p.getFechaReal() != null) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(p.getFechaReal());
+
+                    if (calendar.get(Calendar.YEAR) == anio) {
+                        agregar = true;
+                    }
+                }
+            }
+
+            if (agregar) {
+                pagosAux.add(p);
+            }
+
+        }
+
+        return pagosAux;
+    }
+/*
+    private List<PagoTO> filtrarPagosPorConfirmacion(List<PagoTO> pagos, boolean abierto) {
+
+        List<PagoTO> listaRetorno = new ArrayList<>();
+
+        for (PagoTO pago : pagos) {
+
+            if (abierto) {
+                if (!pago.getConfirmado()) {
+                    listaRetorno.add(pago);
+                }
+            } else {
+                if (pago.getConfirmado()) {
+                    listaRetorno.add(pago);
+                }
+            }
+
+        }
+        return listaRetorno;
+
+    }*/
+    
+    private List<PagoTO> filtrarPagosPorConfirmacion(List<PagoTO> pagos) {      
+        List<PagoTO> listaRetorno = new ArrayList<>();
+        for (PagoTO pago : pagos) {
+            if (!pago.getConfirmado()) {
+                return pagos;
+            }
+        }
+        return listaRetorno;
+    }
 }

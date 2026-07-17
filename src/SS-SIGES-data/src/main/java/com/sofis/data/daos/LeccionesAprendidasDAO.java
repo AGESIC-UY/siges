@@ -37,6 +37,7 @@ public class LeccionesAprendidasDAO extends HibernateJpaDAOImp<LeccionesAprendid
     }
 
     public List<LeccionesAprendidas> buscarLeccionesPorFiltro(FiltroLeccAprTO filtro, Integer orgPk) {
+        System.out.println("entre aca a hacer la busqueda");
         // Organismo
         CriteriaTO criteriaOrga = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "lecaprOrgFk.orgPk", orgPk);
         // Activos

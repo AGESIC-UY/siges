@@ -194,7 +194,7 @@ public class EntregablesBean {
         }
 
         Calendar cal = new GregorianCalendar();
-        int pesoPlanTotal = 0;
+        double pesoPlanTotal = 0;
         double avancePesoTotal = 0;
 
         for (Productos prod : listProd) {
@@ -202,14 +202,19 @@ public class EntregablesBean {
             double avanceReal = 0;
 
             for (ProdMes prodMes : prod.getProdMesList()) {
+
                 if (prodMes.getProdmesReal() != null) {
                     if (prodMes.getProdmesAnio() < cal.get(Calendar.YEAR)
                             || (prodMes.getProdmesAnio() == cal.get(Calendar.YEAR)
                             && prodMes.getProdmesMes() <= cal.get(Calendar.MONTH) + 1)) {
+
+                        //suma acumulacion real por cada producto-mes
                         avanceReal += prodMes.getProdmesReal();
+
                     }
                 }
                 totalPlan += prodMes.getProdmesPlan();
+
             }
             pesoPlanTotal += totalPlan * prod.getProdPeso();
 
@@ -217,10 +222,21 @@ public class EntregablesBean {
             // Esto es para que el porcentaje de avance de un producto no sea mayor al 100%.
             // Si el avance real es negativo, tomo 0. porque el avance acumulado real de los productos no puede ser 0.
             avanceReal = avanceReal < 0 ? 0 : avanceReal;
-            avancePesoTotal += (avanceReal > totalPlan) ? totalPlan * prod.getProdPeso() : avanceReal * prod.getProdPeso();
+            
+            if (totalPlan > 0 && avanceReal > 0) {
+                avancePesoTotal += (avanceReal > totalPlan) ? totalPlan * prod.getProdPeso() : avanceReal * prod.getProdPeso();
+//si el acumulado del plan es 0 pero el avance real es mayor que cero, el avance es 100
+            } else if (totalPlan == 0 && avanceReal > 0 ) {
+                avancePesoTotal = 100d;
+            }else{
+                //si ambos son 0 el avance es 0
+                avancePesoTotal = 0d;
+            }
         }
+        LOGGER.severe("avance totalll "+ avancePesoTotal);
+                LOGGER.severe("plan totalll "+ pesoPlanTotal);
 
-        return (pesoPlanTotal > 0) ? (avancePesoTotal * 100 / pesoPlanTotal) : 0d;
+        return (pesoPlanTotal > 0) ? (avancePesoTotal * 100 / pesoPlanTotal) : avancePesoTotal;
     }
 
     public void guardarAvanceReal(Integer entPk) {
@@ -232,12 +248,15 @@ public class EntregablesBean {
         }
 
         Double avance = calcularAvanceEntPorProd(entPk);
+            LOGGER.severe("avance prod" + avance);
         int progreso = 0;
 
         if (avance != null) {
             progreso = (int) Math.round(avance);
             progreso = progreso > 100 ? 100 : progreso;
         }
+
+                                LOGGER.severe("setprogr9");
 
         entregable.setEntProgreso(progreso);
 
@@ -298,9 +317,8 @@ public class EntregablesBean {
                     date = DatesUtils.incrementarDias(ent.getEntInicioDate(), desfasajeDias);
                     nvoEnt.setEntInicio(date.getTime());
                 }
-
+                
                 nvoEnt.setEntProductosSet(productosBean.copiarProyProductos(ent, nvoEnt, desfasajeDias));
-
                 nvoCro.getEntregablesSet().add(ent);
 
                 result.put(ent.getEntPk(), nvoEnt);
@@ -442,6 +460,8 @@ public class EntregablesBean {
             Proyectos proy = proyectosBean.obtenerProyPorId(proyPk);
             boolean isGerente = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(proy, usuario);
             if (isGerente || (ent.getCoordinadorUsuFk() != null && ent.getCoordinadorUsuFk().equals(usuario))) {
+                                        LOGGER.severe("setprogr8");
+
                 ent.setEntProgreso(avance);
 
                 ent = guardar(ent);

@@ -20,6 +20,8 @@ import com.sofis.sofisform.to.MatchCriteriaTO;
 import com.sofis.utils.CriteriaTOUtils;
 import java.io.File;
 import java.io.IOException;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,303 +42,303 @@ import org.apache.commons.lang.RandomStringUtils;
 @LocalBean
 public class MediaProyectosBean {
 
-	private static final Logger LOGGER = Logger.getLogger(MediaProyectosBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MediaProyectosBean.class.getName());
 
-	@PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
-	private EntityManager em;
+    @PersistenceContext(unitName = ConstanteApp.PERSISTENCE_CONTEXT_UNIT_NAME)
+    private EntityManager em;
 
-	@Inject
-	private DatosUsuario du;
+    @Inject
+    private DatosUsuario du;
 
-	@Inject
-	private ConfiguracionBean configuracionBean;
+    @Inject
+    private ConfiguracionBean configuracionBean;
 
-	@Inject
-	private TiposMediaBean tiposMediaBean;
+    @Inject
+    private TiposMediaBean tiposMediaBean;
 
-	@Inject
-	private ProyectosBean proyectosBean;
+    @Inject
+    private ProyectosBean proyectosBean;
 
-	@Inject
-	private SsUsuarioBean ssUsuarioBean;
+    @Inject
+    private SsUsuarioBean ssUsuarioBean;
 
-	private MediaProyectos guardar(MediaProyectos mp) {
+    private MediaProyectos guardar(MediaProyectos mp) {
 
-		if (mp == null) {
-			return null;
-		}
+        if (mp == null) {
+            return null;
+        }
 
-		MediaProyectosValidacion.validar(mp);
+        MediaProyectosValidacion.validar(mp);
+        LOGGER.info("4");
+        MediaProyectosDAO dao = new MediaProyectosDAO(em);
+        try {
+            mp = dao.update(mp, du.getCodigoUsuario(), du.getOrigen());
 
-		MediaProyectosDAO dao = new MediaProyectosDAO(em);
-		try {
-			mp = dao.update(mp, du.getCodigoUsuario(), du.getOrigen());
+            proyectosBean.actualizarFechaUltimaModificacion(mp.getMediaProyFk());
 
-			proyectosBean.actualizarFechaUltimaModificacion(mp.getMediaProyFk());
+            return mp;
 
-			return mp;
+        } catch (DAOGeneralException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            BusinessException be = new BusinessException();
+            be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
+            throw be;
+        }
+    }
 
-		} catch (DAOGeneralException ex) {
-			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-			BusinessException be = new BusinessException();
-			be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
-			throw be;
-		}
-	}
+    public MediaProyectos guardarMP(MediaProyectos mediaProy, Integer usuId, Integer orgPk) {
+        LOGGER.info("2");
+        if (mediaProy == null) {
+            return null;
+        }
 
-	public MediaProyectos guardarMP(MediaProyectos mediaProy, Integer usuId, Integer orgPk) {
+        SsUsuario usu = ssUsuarioBean.obtenerSsUsuarioPorId(usuId);
+        if (mediaProy.getMediaPk() == null) {
+            mediaProy.setMediaUsrPubFk(usu);
+            mediaProy.setMediaPubFecha(new Date());
+        }
 
-		if (mediaProy == null) {
-			return null;
-		}
+        mediaProy.setMediaUsrModFk(usu);
+        mediaProy.setMediaModFecha(new Date());
 
-		SsUsuario usu = ssUsuarioBean.obtenerSsUsuarioPorId(usuId);
-		if (mediaProy.getMediaPk() == null) {
-			mediaProy.setMediaUsrPubFk(usu);
-			mediaProy.setMediaPubFecha(new Date());
-		}
+        if (mediaProy.getMediaPublicable() == null) {
+            mediaProy.setMediaPublicable(Boolean.FALSE);
+        }
+        if (mediaProy.getMediaPrincipal() == null) {
+            mediaProy.setMediaPrincipal(Boolean.FALSE);
+        }
 
-		mediaProy.setMediaUsrModFk(usu);
-		mediaProy.setMediaModFecha(new Date());
+        mediaProy = salvarFile(mediaProy, orgPk);
+        LOGGER.info("3");
+        return guardar(mediaProy);
+    }
 
-		if (mediaProy.getMediaPublicable() == null) {
-			mediaProy.setMediaPublicable(Boolean.FALSE);
-		}
-		if (mediaProy.getMediaPrincipal() == null) {
-			mediaProy.setMediaPrincipal(Boolean.FALSE);
-		}
+    public List<MediaProyectos> obtenerPorProyId(Integer proyPk) {
+        if (proyPk != null) {
+            MediaProyectosDAO dao = new MediaProyectosDAO(em);
+            try {
+                List<MediaProyectos> result = dao.findByOneProperty(MediaProyectos.class, "mediaProyFk.proyPk", proyPk);
+                return result;
+            } catch (DAOGeneralException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
+                throw be;
+            }
+        }
+        return null;
+    }
 
-		mediaProy = salvarFile(mediaProy, orgPk);
+    public MediaProyectos obtenerImgPrincipal(Integer proyPk) {
+        if (proyPk != null) {
+            MediaProyectosDAO dao = new MediaProyectosDAO(em);
 
-		return guardar(mediaProy);
-	}
+            MatchCriteriaTO critProy = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaProyFk.proyPk", proyPk);
+            MatchCriteriaTO critPrincipal = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaPrincipal", Boolean.TRUE);
+            MatchCriteriaTO critTipo = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaTipoFk.tipCod", TiposMediaCodigos.IMG);
 
-	public List<MediaProyectos> obtenerPorProyId(Integer proyPk) {
-		if (proyPk != null) {
-			MediaProyectosDAO dao = new MediaProyectosDAO(em);
-			try {
-				List<MediaProyectos> result = dao.findByOneProperty(MediaProyectos.class, "mediaProyFk.proyPk", proyPk);
-				return result;
-			} catch (DAOGeneralException ex) {
-				LOGGER.log(Level.SEVERE, null, ex);
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
-				throw be;
-			}
-		}
-		return null;
-	}
+            CriteriaTO condicion = CriteriaTOUtils.createANDTO(critProy, critPrincipal, critTipo);
 
-	public MediaProyectos obtenerImgPrincipal(Integer proyPk) {
-		if (proyPk != null) {
-			MediaProyectosDAO dao = new MediaProyectosDAO(em);
+            try {
+                String[] orderBy = new String[]{};
+                boolean[] ascending = new boolean[]{};
+                List<MediaProyectos> result = dao.findEntityByCriteria(MediaProyectos.class, condicion, orderBy, ascending, null, null);
+                if (result != null && result.size() > 0) {
+                    return result.get(0);
+                }
+            } catch (DAOGeneralException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
+                throw be;
+            }
 
-			MatchCriteriaTO critProy = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaProyFk.proyPk", proyPk);
-			MatchCriteriaTO critPrincipal = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaPrincipal", Boolean.TRUE);
-			MatchCriteriaTO critTipo = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.EQUALS, "mediaTipoFk.tipCod", TiposMediaCodigos.IMG);
+        }
+        return null;
+    }
 
-			CriteriaTO condicion = CriteriaTOUtils.createANDTO(critProy, critPrincipal, critTipo);
+    public MediaProyectos obtenerPorId(Integer mediaPk) {
+        if (mediaPk != null) {
+            MediaProyectosDAO dao = new MediaProyectosDAO(em);
+            try {
+                MediaProyectos result = dao.findById(MediaProyectos.class, mediaPk);
+                return result;
+            } catch (DAOGeneralException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
+                throw be;
+            }
+        }
+        return null;
+    }
 
-			try {
-				String[] orderBy = new String[]{};
-				boolean[] ascending = new boolean[]{};
-				List<MediaProyectos> result = dao.findEntityByCriteria(MediaProyectos.class, condicion, orderBy, ascending, null, null);
-				if (result != null && result.size() > 0) {
-					return result.get(0);
-				}
-			} catch (DAOGeneralException ex) {
-				LOGGER.log(Level.SEVERE, null, ex);
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
-				throw be;
-			}
+    public void eliminar(Integer mediaPk) {
+        LOGGER.log(Level.INFO, "Eliminar el Multimedia con id:{0}", mediaPk);
+        MediaProyectosDAO dao = new MediaProyectosDAO(em);
+        try {
+            MediaProyectos media = this.obtenerPorId(mediaPk);
+            dao.delete(media);
 
-		}
-		return null;
-	}
+            proyectosBean.actualizarFechaUltimaModificacion(media.getMediaProyFk());
 
-	public MediaProyectos obtenerPorId(Integer mediaPk) {
-		if (mediaPk != null) {
-			MediaProyectosDAO dao = new MediaProyectosDAO(em);
-			try {
-				MediaProyectos result = dao.findById(MediaProyectos.class, mediaPk);
-				return result;
-			} catch (DAOGeneralException ex) {
-				LOGGER.log(Level.SEVERE, null, ex);
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.ERROR_MEDIA_PROY_OBTENER);
-				throw be;
-			}
-		}
-		return null;
-	}
+        } catch (BusinessException | DAOGeneralException ex) {
+            LOGGER.logp(Level.SEVERE, RiesgosBean.class.getName(), "delete", ex.getMessage(), ex);
+            BusinessException be = new BusinessException();
+            be.addError(ex.getMessage());
+            throw be;
+        }
+    }
 
-	public void eliminar(Integer mediaPk) {
-		LOGGER.log(Level.INFO, "Eliminar el Multimedia con id:{0}", mediaPk);
-		MediaProyectosDAO dao = new MediaProyectosDAO(em);
-		try {
-			MediaProyectos media = this.obtenerPorId(mediaPk);
-			dao.delete(media);
+    /**
+     * Carga los archivos(bytes[]) en la lista de media.
+     *
+     * @param listMP
+     * @param orgPk
+     * @return
+     */
+    public List<MediaProyectos> cargarArchivos(List<MediaProyectos> listMP, Integer orgPk) {
+        if (CollectionsUtils.isNotEmpty(listMP)) {
+            for (MediaProyectos mp : listMP) {
+                mp = cargarArchivo(mp, orgPk);
+            }
+        }
+        return listMP;
+    }
 
-			proyectosBean.actualizarFechaUltimaModificacion(media.getMediaProyFk());
+    public MediaProyectos cargarArchivo(MediaProyectos mp, Integer orgPk) {
+        if (mp != null) {
+            if (mp.getMediaTipoFk().isTipoMediaCod(TiposMediaCodigos.IMG)
+                    && !StringsUtils.isEmpty(mp.getMediaLink())) {
+                String folderMedia = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, orgPk);
+                File f = new File(folderMedia + File.separator + mp.getMediaLink());
+                try {
+                    mp.setMediaBytes(FileUtils.readFileToByteArray(f));
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return mp;
+    }
 
-		} catch (BusinessException | DAOGeneralException ex) {
-			LOGGER.logp(Level.SEVERE, RiesgosBean.class.getName(), "delete", ex.getMessage(), ex);
-			BusinessException be = new BusinessException();
-			be.addError(ex.getMessage());
-			throw be;
-		}
-	}
+    public List<MediaImpProyectos> crearMediaProyFromImp(List<MediaProyectos> listMP) {
+        if (CollectionsUtils.isNotEmpty(listMP)) {
+            List<MediaImpProyectos> mipList = new ArrayList<>();
+            for (MediaProyectos mp : listMP) {
+                MediaImpProyectos mip = new MediaImpProyectos();
+                mip.setMediaOrigenPk(mp.getMediaPk());
+                mip.setMediaBytes(mp.getMediaBytes());
+                mip.setMediaImpComentario(mp.getMediaComentario());
+                mip.setMediaImpContenttype(mp.getMediaContenttype());
+                mip.setMediaImpEstado(mp.getMediaEstado() == null ? EstadoMediaProyectosEnum.PENDIENTE_REVISION.cod : mp.getMediaEstado());
+                mip.setMediaImpLink(mp.getMediaLink());
+                mip.setMediaImpOrden(mp.getMediaOrden());
+                mip.setMediaImpPrincipal(mp.getMediaPrincipal() != null && mp.getMediaPrincipal() ? true : false);
+                if (mp.getMediaTipoFk() != null) {
+                    org.agesic.siges.visualizador.web.ws.TiposMedia tm = new org.agesic.siges.visualizador.web.ws.TiposMedia();
+                    tm.setTipPk(mp.getMediaTipoFk().getTipPk());
+                    tm.setTipCod(mp.getMediaTipoFk().getTipCod());
+                    mip.setMediaImpTipoFk(tm);
+                }
 
-	/**
-	 * Carga los archivos(bytes[]) en la lista de media.
-	 *
-	 * @param listMP
-	 * @param orgPk
-	 * @return
-	 */
-	public List<MediaProyectos> cargarArchivos(List<MediaProyectos> listMP, Integer orgPk) {
-		if (CollectionsUtils.isNotEmpty(listMP)) {
-			for (MediaProyectos mp : listMP) {
-				mp = cargarArchivo(mp, orgPk);
-			}
-		}
-		return listMP;
-	}
+                mipList.add(mip);
+            }
+            return mipList;
+        }
+        return null;
+    }
 
-	public MediaProyectos cargarArchivo(MediaProyectos mp, Integer orgPk) {
-		if (mp != null) {
-			if (mp.getMediaTipoFk().isTipoMediaCod(TiposMediaCodigos.IMG)
-					&& !StringsUtils.isEmpty(mp.getMediaLink())) {
-				String folderMedia = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, orgPk);
-				File f = new File(folderMedia + File.separator + mp.getMediaLink());
-				try {
-					mp.setMediaBytes(FileUtils.readFileToByteArray(f));
-				} catch (IOException ex) {
-					LOGGER.log(Level.SEVERE, null, ex);
-				}
-			}
-		}
-		return mp;
-	}
+    public MediaProyectos subirFoto(Integer proyPk, Integer usuId, byte[] mediaBytes, String comentario) {
+        if (proyPk != null && usuId != null && (mediaBytes != null && mediaBytes.length > 0)) {
+            Integer orgPk = proyectosBean.obtenerOrgPkPorProyPk(proyPk);
+            validarImageSize(mediaBytes, orgPk);
 
-	public List<MediaImpProyectos> crearMediaProyFromImp(List<MediaProyectos> listMP) {
-		if (CollectionsUtils.isNotEmpty(listMP)) {
-			List<MediaImpProyectos> mipList = new ArrayList<>();
-			for (MediaProyectos mp : listMP) {
-				MediaImpProyectos mip = new MediaImpProyectos();
-				mip.setMediaOrigenPk(mp.getMediaPk());
-				mip.setMediaBytes(mp.getMediaBytes());
-				mip.setMediaImpComentario(mp.getMediaComentario());
-				mip.setMediaImpContenttype(mp.getMediaContenttype());
-				mip.setMediaImpEstado(mp.getMediaEstado() == null ? EstadoMediaProyectosEnum.PENDIENTE_REVISION.cod : mp.getMediaEstado());
-				mip.setMediaImpLink(mp.getMediaLink());
-				mip.setMediaImpOrden(mp.getMediaOrden());
-				mip.setMediaImpPrincipal(mp.getMediaPrincipal() != null && mp.getMediaPrincipal() ? true : false);
-				if (mp.getMediaTipoFk() != null) {
-					org.agesic.siges.visualizador.web.ws.TiposMedia tm = new org.agesic.siges.visualizador.web.ws.TiposMedia();
-					tm.setTipPk(mp.getMediaTipoFk().getTipPk());
-					tm.setTipCod(mp.getMediaTipoFk().getTipCod());
-					mip.setMediaImpTipoFk(tm);
-				}
+            TiposMedia tm = tiposMediaBean.obtenerPorCodigo(TiposMediaCodigos.IMG);
+            MediaProyectos mediaProy = new MediaProyectos();
+            mediaProy.setMediaTipoFk(tm);
+            mediaProy.setMediaEstado(EstadoMediaProyectosEnum.PENDIENTE_REVISION.cod);
+            mediaProy.setMediaProyFk(new Proyectos(proyPk));
+            mediaProy.setMediaBytes(mediaBytes);
+            mediaProy.setMediaComentario(comentario);
 
-				mipList.add(mip);
-			}
-			return mipList;
-		}
-		return null;
-	}
+            try {
+                mediaProy = this.guardarMP(mediaProy, usuId, orgPk);
+                return mediaProy;
 
-	public MediaProyectos subirFoto(Integer proyPk, Integer usuId, byte[] mediaBytes, String comentario) {
-		if (proyPk != null && usuId != null && (mediaBytes != null && mediaBytes.length > 0)) {
-			Integer orgPk = proyectosBean.obtenerOrgPkPorProyPk(proyPk);
-			validarImageSize(mediaBytes, orgPk);
+            } catch (BusinessException be) {
+                LOGGER.log(Level.SEVERE, null, be);
+            }
+        }
+        return null;
+    }
 
-			TiposMedia tm = tiposMediaBean.obtenerPorCodigo(TiposMediaCodigos.IMG);
-			MediaProyectos mediaProy = new MediaProyectos();
-			mediaProy.setMediaTipoFk(tm);
-			mediaProy.setMediaEstado(EstadoMediaProyectosEnum.PENDIENTE_REVISION.cod);
-			mediaProy.setMediaProyFk(new Proyectos(proyPk));
-			mediaProy.setMediaBytes(mediaBytes);
-			mediaProy.setMediaComentario(comentario);
+    /**
+     * Dados los bytes del MediaProyectos genera el nombre del archivo y lo
+     * almacena.
+     *
+     * @param mediaProy
+     * @return MediaProyectos
+     */
+    public MediaProyectos salvarFile(MediaProyectos mediaProy, Integer orgPk) {
+        LOGGER.log(Level.INFO, "MediaProyectosBean salvarFile...");
+        if (mediaProy.getMediaBytes() != null && mediaProy.getMediaBytes().length > 0) {
+            validarImageSize(mediaProy.getMediaBytes(), orgPk);
 
-			try {
-				mediaProy = this.guardarMP(mediaProy, usuId, orgPk);
-				return mediaProy;
+            String folderMedia = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, orgPk);
+            if (StringsUtils.isEmpty(folderMedia)) {
+                LOGGER.log(Level.SEVERE, "ERROR al obtener la carpeta del archivo.");
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
+                throw be;
+            }
 
-			} catch (BusinessException be) {
-				LOGGER.log(Level.SEVERE, null, be);
-			}
-		}
-		return null;
-	}
+            File f;
+            String name = null;
+            //debe crear el media en disco y agregar el link al lugar creado
+            if (!StringsUtils.isEmpty(mediaProy.getMediaLink())) {
+                name = mediaProy.getMediaLink();
+                f = new File(folderMedia + File.separator + name);
+            } else {
+                name = RandomStringUtils.randomAlphanumeric(8);
+                f = new File(folderMedia + File.separator + name);
+                while (f.exists()) {
+                    name = RandomStringUtils.randomAlphanumeric(8);
+                    f = new File(folderMedia + File.separator + name);
+                }
+            }
 
-	/**
-	 * Dados los bytes del MediaProyectos genera el nombre del archivo y lo
-	 * almacena.
-	 *
-	 * @param mediaProy
-	 * @return MediaProyectos
-	 */
-	public MediaProyectos salvarFile(MediaProyectos mediaProy, Integer orgPk) {
-		LOGGER.log(Level.FINEST, "MediaProyectosBean salvarFile...");
-		if (mediaProy.getMediaBytes() != null && mediaProy.getMediaBytes().length > 0) {
-			validarImageSize(mediaProy.getMediaBytes(), orgPk);
+            try {
+                FileUtils.writeByteArrayToFile(f, mediaProy.getMediaBytes());
+            } catch (IOException iOException) {
+                LOGGER.log(Level.SEVERE, null, iOException);
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
+                throw be;
+            }
+            mediaProy.setMediaLink(name);
+        }
+        return mediaProy;
+    }
 
-			String folderMedia = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.FOLDER_MEDIA, orgPk);
-			if (StringsUtils.isEmpty(folderMedia)) {
-				LOGGER.log(Level.SEVERE, "ERROR al obtener la carpeta del archivo.");
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
-				throw be;
-			}
+    public boolean validarImageSize(byte[] mediaBytes, Integer orgPk) {
+        if (mediaBytes != null && orgPk != null) {
+            String tamanioArchMult = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA, orgPk);
+            Integer lenghtArchMulti = 0;
+            try {
+                lenghtArchMulti = Integer.valueOf(tamanioArchMult);
+            } catch (NumberFormatException numberFormatException) {
+                LOGGER.log(Level.WARNING, "Error al convertir la configuración " + ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA + " a número.", numberFormatException);
+            }
 
-			File f;
-			String name = null;
-			//debe crear el media en disco y agregar el link al lugar creado
-			if (!StringsUtils.isEmpty(mediaProy.getMediaLink())) {
-				name = mediaProy.getMediaLink();
-				f = new File(folderMedia + File.separator + name);
-			} else {
-				name = RandomStringUtils.randomAlphanumeric(8);
-				f = new File(folderMedia + File.separator + name);
-				while (f.exists()) {
-					name = RandomStringUtils.randomAlphanumeric(8);
-					f = new File(folderMedia + File.separator + name);
-				}
-			}
-
-			try {
-				FileUtils.writeByteArrayToFile(f, mediaProy.getMediaBytes());
-			} catch (IOException iOException) {
-				LOGGER.log(Level.SEVERE, null, iOException);
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.ERROR_MEDIA_PROY_GUARDAR);
-				throw be;
-			}
-			mediaProy.setMediaLink(name);
-		}
-		return mediaProy;
-	}
-
-	public boolean validarImageSize(byte[] mediaBytes, Integer orgPk) {
-		if (mediaBytes != null && orgPk != null) {
-			String tamanioArchMult = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA, orgPk);
-			Integer lenghtArchMulti = 0;
-			try {
-				lenghtArchMulti = Integer.valueOf(tamanioArchMult);
-			} catch (NumberFormatException numberFormatException) {
-				LOGGER.log(Level.WARNING, "Error al convertir la configuración " + ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA + " a número.", numberFormatException);
-			}
-
-			if (mediaBytes.length <= lenghtArchMulti) {
-				return true;
-			} else {
-				BusinessException be = new BusinessException();
-				be.addError(MensajesNegocio.WARN_EXP_VISUA_IMG_SIZE);
-				throw be;
-			}
-		}
-		return false;
-	}
+            if (mediaBytes.length <= lenghtArchMulti) {
+                return true;
+            } else {
+                BusinessException be = new BusinessException();
+                be.addError(MensajesNegocio.WARN_EXP_VISUA_IMG_SIZE);
+                throw be;
+            }
+        }
+        return false;
+    }
 }

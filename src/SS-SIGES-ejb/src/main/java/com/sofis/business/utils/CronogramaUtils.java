@@ -58,7 +58,7 @@ public class CronogramaUtils {
     }
 
     public static Cronogramas convert(CronogramaTO cronograma) {
-        LOGGER.log(Level.INFO, "Entrando a convert");
+        LOGGER.log(Level.FINE, "Entrando a convert");
        
         Cronogramas result = new Cronogramas();
         result.setEntregablesSet(new HashSet<Entregables>());

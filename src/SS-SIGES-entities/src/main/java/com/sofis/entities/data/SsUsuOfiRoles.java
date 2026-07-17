@@ -73,6 +73,9 @@ public class SsUsuOfiRoles implements Serializable {
     private Areas usuOfiRolesUsuArea;
     @Column(name = "usu_ofi_roles_activo")
     private Boolean usuOfiRolesActivo;
+    
+     @Column(name = "usu_ofi_roles_puede_exportar")
+    private Boolean usuOfiRolesPuedeExportar;
 
     public SsUsuOfiRoles(Integer usuOfiRolesId) {
         this.usuOfiRolesId = usuOfiRolesId;
@@ -163,6 +166,14 @@ public class SsUsuOfiRoles implements Serializable {
         return usuOfiRolesActivo != null ? usuOfiRolesActivo : false;
     }
 
+    public Boolean getUsuOfiRolesPuedeExportar() {
+        return usuOfiRolesPuedeExportar;
+    }
+
+    public void setUsuOfiRolesPuedeExportar(Boolean usuOfiRolesPuedeExportar) {
+        this.usuOfiRolesPuedeExportar = usuOfiRolesPuedeExportar;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+
+
+
+
+    <ice:panelPopup id="popupPresupuestoAdqFormCopia"
+                    rendered="#{fichaMB.formPreRendered == 7}"
+                    draggable="true" 
+                    positionOnLoadOnly="true"
+                    modal="true">
+        <f:facet name="header">
+            <ice:panelGroup styleClass="cabezalPopup">
+                <ice:outputText value="#{labels.copiarAdqTooltip}"/>
+                <ice:commandButton styleClass="botonCerrar" alt="#{labels.cerrar}" title="#{labels.cerrar}" 
+                                   action="#{fichaMB.cerrarFormPreCollapsable()}" immediate="true"/>
+            </ice:panelGroup>
+        </f:facet>
+        <f:facet name="body">
+            <ice:panelGroup id="presupuestoAdqFormCopia" rendered="#{fichaMB.formPreRendered == 7}">
+                <p>
+                        Sólo se listan los proyectos con los siguientes criterios: 
+                    </p>
+                    <p>
+                        - En fase de Inicio o Planificación. 
+                    </p>
+                    <p>
+                        - Proyectos en los cuales tiene permisos de edición.
+                    </p>
+                <p>
+                        - En caso de Replanificación, debe estar habilitado el modo de edición de presupuesto.
+                    </p>
+                 <p>
+                        - Proyectos con al menos un entregable en el cronograma.
+                    </p>
+                
+                <ice:panelGrid id="grillaCopia" styleClass="formulario" columns="3" style="padding-top: 10px;">
+                    <ice:outputLabel value="#{labels.copia_proyecto}" styleClass="obligatorio"/>
+                    <ace:simpleSelectOneMenu id="comboProyectosCopiar" 
+                                             value="#{fichaMB.listaProyectosCombo.selected}" 
+                                       styleClass="col-sm-8">
+                        <f:selectItems value="#{fichaMB.listaProyectosCombo.items}" />
+                        
+                    </ace:simpleSelectOneMenu>
+                    <ice:outputLabel />
+
+                </ice:panelGrid>
+
+                <ice:panelGroup styleClass="recordatorioContrasenia" style="padding-top: 10px;border-top: solid black 1px !important;" 
+                                >
+                     <h:outputText value="#{labels.info_copia_proyecto} " style="color: black" />
+
+                </ice:panelGroup>
+                 
+
+                <ice:panelGroup styleClass="panelBotones">
+                    <ace:messages id="formAdqMsgCopia"/>
+                    <ace:pushButton  id="btnGuardarAdqCopia" value="#{labels.guardar}" 
+                                     styleClass="boton principal guardar" 
+                                     action="#{fichaMB.copiarAdquisicionAction()}" />
+                    <ace:linkButton  value="#{labels.cerrar}" styleClass="boton secundario" 
+                                     action="#{fichaMB.cerrarFormPreCollapsable()}" immediate="true"/>
+                </ice:panelGroup>
+            </ice:panelGroup>
+        </f:facet>
+    </ice:panelPopup>
+</ui:composition>

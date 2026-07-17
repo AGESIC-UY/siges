@@ -52,7 +52,7 @@ public abstract class CronogramaUtils {
     }
 
     public static CronogramaTO jsonToCronograma(JSONObject json) throws JSONException {
-        LOGGER.log(Level.INFO, "Entrando a jsonToCronograma");
+        LOGGER.log(Level.FINE, "Entrando a jsonToCronograma");
 
         if (json == null) {
             return null;
@@ -339,7 +339,9 @@ public abstract class CronogramaUtils {
                 .put(ConstantesCronograma.TASK_ES_REFERENCIA, ent.getEsReferencia())
                 .put(ConstantesCronograma.TASK_REFERIDO, entregableToJSON(ent.getReferido()))
                 .put(ConstantesCronograma.TASK_PROYECTO_REFERIDO, proyectoToJSON(ent.getProyectoReferido()))
-                .put(ConstantesCronograma.TASK_ES_REFERIDO_DESDE_OTRO_PROYECTO, ent.getEsReferenciaDesdeOtroProyecto());
+                .put(ConstantesCronograma.TASK_ES_REFERIDO_DESDE_OTRO_PROYECTO, ent.getEsReferenciaDesdeOtroProyecto())
+                .put(ConstantesCronograma.TASK_OBSERVACION_REFERIDA, StringsUtils.toCleanString(ent.getDescripcionReferida()));
+
 
         return task;
     }

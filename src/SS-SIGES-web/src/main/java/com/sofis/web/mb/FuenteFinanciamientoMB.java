@@ -118,15 +118,14 @@ public class FuenteFinanciamientoMB implements Serializable {
 
     @PostConstruct
     public void init() {
-        
+
         /*
         *   30-05-2018 Nico: Se sacan las variables que se inicializan del constructor y se pasan al PostConstruct
-        */
-        
+         */
         filtroNombre = "";
         listaResultado = new ArrayList<FuenteFinanciamiento>();
         fuenteEnEdicion = new FuenteFinanciamiento();
-        
+
         inicioMB.cargarOrganismoSeleccionado();
 
         buscar();
@@ -163,17 +162,15 @@ public class FuenteFinanciamientoMB implements Serializable {
                 }
             } catch (BusinessException e) {
                 logger.log(Level.SEVERE, null, e);
-                
+
                 /*
                 *  18-06-2018 Inspección de código.
-                */
-
+                 */
                 //JSFUtils.agregarMsgs(BUSQUEDA_MSG, e.getErrores());
+                for (String iterStr : e.getErrores()) {
+                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+                }
 
-                for(String iterStr : e.getErrores()){
-                    JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-                }                
-                
                 inicioMB.setRenderPopupMensajes(Boolean.TRUE);
             }
         }
@@ -226,24 +223,24 @@ public class FuenteFinanciamientoMB implements Serializable {
     public void fuenteHabilitadaChange(FuenteFinanciamiento fuenteFinanciamiento) {
 
         try {
-            fuenteFinanciamiento.setFueHabilitada(!fuenteFinanciamiento.getFueHabilitada());
+            fuenteFinanciamiento.setFueHabilitada(fuenteFinanciamiento.getFueHabilitada() != null ? !fuenteFinanciamiento.getFueHabilitada() : false);
             fuenteFinanciamientoDelegate.guardarFuente(fuenteFinanciamiento);
 
             buscar();
-            
+
             JSFUtils.agregarMsgInfo(Labels.getValue("general_form_success"));
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
 
         } catch (GeneralException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
 
-            for(String iterStr : ex.getErrores()){
-                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);                
-            }            
+            for (String iterStr : ex.getErrores()) {
+                JSFUtils.agregarMsgError("", Labels.getValue(iterStr), null);
+            }
             inicioMB.setRenderPopupMensajes(Boolean.TRUE);
         }
-	}
-	
+    }
+
     public void cancelar() {
         renderPopupEdicion.cerrar();
     }

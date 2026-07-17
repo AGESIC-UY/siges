@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./../templates/loginTemplate.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:icecore="http://www.icefaces.org/icefaces/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ui:define name="content">
+        <ice:panelGroup id="panelSegundoFactor" styleClass="cuadro panelLogin">
+
+            <ice:panelGroup styleClass="cabezal">
+                <ice:outputText value="Segundo factor de autenticación" />
+            </ice:panelGroup>
+
+            <ice:panelGroup styleClass="cuerpo">
+                <o:form id="formSegundoFactor">
+
+                    <ice:panelGrid columns="1"
+                                   styleClass="formSegundoFactor"
+                                   style="text-align:center;">
+
+                        <!-- 🔔 Leyenda introductoria -->
+                        <ice:outputText
+                            value="Se ha enviado un código de acceso a su casilla de email. Verifique y colóquelo aquí."
+                            style="font-size:13px;
+                            color:#555;
+                            margin-bottom:12px;
+                            display:block;" />
+
+                        <!-- 🟦 Título del input -->
+                        <ice:outputText
+                            value="Ingrese el código de verificación"
+                            style="color:#1e5fa3;
+                            font-weight:bold;
+                            margin-bottom:6px;
+                            display:block;" />
+
+                        <!-- Input -->
+                        <ice:inputText value="#{SegundoFactorMB.codigo}"
+                                       size="10"
+                                       maxlength="6"
+                                       disabled="#{SegundoFactorMB.tiempoVencido}"
+                                       style="text-align:center;
+                                       font-size:18px;
+                                       letter-spacing:3px;
+                                       margin-bottom:10px;" />
+
+                        <ice:messages id="segundoFactorMsg"
+                                      errorStyle="color:#c62828;font-weight:bold;"
+                                      warnStyle="color:#f57c00;font-weight:bold;"
+                                      infoStyle="color:#1565c0;"
+                                      style="margin-top:8px;" />
+
+
+                        <!-- Botón -->
+                        <ice:commandButton value="Validar"
+                                           action="#{SegundoFactorMB.validarCodigo}"
+                                           partialSubmit="true"
+                                           disabled="#{SegundoFactorMB.tiempoVencido}"
+                                           styleClass="boton principal botonLogin"
+                                           style="margin-top:8px;" />
+
+                        <!-- ⏱ Contador en amarillo -->
+                        <span id="contadorTxt"
+                              style="display:block;
+                              margin-top:12px;
+                              font-weight:bold;
+                              color:#f1b800;">
+                            Tiempo restante:
+                            #{SegundoFactorMB.devolverSigesPrincipal().token.tiempoVencimiento} s
+                        </span>
+
+                        <!-- Botón oculto timeout -->
+                        <ice:commandButton id="btnTiempoExpirado"
+                                           action="#{SegundoFactorMB.logout}"
+                                           style="display:none"/>
+
+                    </ice:panelGrid>
+
+                    <!-- SCRIPT -->
+                    <script type="text/javascript">
+                        var contadorInterval = null;
+
+                        function iniciarContador() {
+                            var lbl = document.getElementById("contadorTxt");
+                            if (!lbl || contadorInterval !== null) {
+                                return;
+                            }
+
+                            var tiempo = #{SegundoFactorMB.devolverSigesPrincipal().token.tiempoVencimiento};
+
+                            contadorInterval = window.setInterval(function () {
+                                if (tiempo === 0) {
+                                    clearInterval(contadorInterval);
+                                    contadorInterval = null;
+                                    console.log("volvi atras");
+                                    document.getElementById("#{component.findComponent('btnTiempoExpirado').clientId}").click();
+                                } else {
+                                    lbl.innerHTML = "Tiempo restante: " + tiempo + " s";
+                                    tiempo--;
+                                }
+                            }, 1000);
+                        }
+
+                        window.onload = iniciarContador;
+
+                        if (window.ice) {
+                            ice.onAfterUpdate(function () {
+                                iniciarContador();
+                            });
+                        }
+                    </script>
+
+                </o:form>
+            </ice:panelGroup>
+
+        </ice:panelGroup>
+    </ui:define>
+
+
+
+</ui:composition>

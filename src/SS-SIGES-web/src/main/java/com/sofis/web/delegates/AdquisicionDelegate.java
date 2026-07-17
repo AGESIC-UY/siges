@@ -7,6 +7,7 @@ import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.tipos.AdqPagosTO;
 import com.sofis.exceptions.GeneralException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -80,6 +81,10 @@ public class AdquisicionDelegate {
 
     public List<Adquisicion> obtenerProOrganisacionYIdAdquisicion(Integer orgaPk, Integer idAdquisicion) {
         return adquisicionBean.obtenerProOrganisacionYIdAdquisicion(orgaPk, idAdquisicion);
+    }
+
+    public void actualizacionMasiva(String ids, Integer selected, Integer selected0, Integer selected1, Integer selected2, Integer selected3, Integer selected4, Integer selected5, Integer selected6, String nombreUsuario, HashMap<String, String> valores) {
+        adquisicionBean.actualizacionMasiva(ids, selected, selected0, selected1, selected2, selected3, selected4, selected5, selected6, nombreUsuario,valores);
     }
 
 }

@@ -140,7 +140,7 @@ public class PlantillaCronogramaMB implements Serializable {
 		 */
 		
 		final Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-		plantillaCronograma.setOrgFk(new Organismos(orgPk));
+		plantillaCronograma.setOrgFk(new Organismos(orgPk));             
 		try {
 			plantillaCronograma = this.plantillaCroDelegate.guardarPlantillaCronograma(plantillaCronograma);
 			JSFUtils.agregarMsg("Plantilla de cronograma guardada con éxito");

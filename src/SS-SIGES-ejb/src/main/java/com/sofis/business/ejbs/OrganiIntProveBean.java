@@ -47,6 +47,7 @@ public class OrganiIntProveBean {
 
 		OrganiIntProveDAO dao = new OrganiIntProveDAO(em);
 		try {
+                      orga.setOrgaHabilitado(orga.getOrgaHabilitado() == null ? false : orga.getOrgaHabilitado());
 			return dao.update(orga);
 		} catch (DAOGeneralException ex) {
 			logger.log(Level.SEVERE, null, ex);

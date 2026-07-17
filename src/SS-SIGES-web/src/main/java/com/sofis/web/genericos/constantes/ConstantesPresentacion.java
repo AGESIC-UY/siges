@@ -94,6 +94,8 @@ public class ConstantesPresentacion {
     
     public static final String PROG_PROY_ID = "programaProyectoId";
     
+     public static final String GRUPO_ID = "grupoId";
+    
     public static final String MIS_TAREAS = "misTareasNav";
 	
 	public static final String REPORTE_PRESUPUESTO = "reporte-presupuesto";
@@ -101,6 +103,8 @@ public class ConstantesPresentacion {
 	public static final String REPORTE_ALCANCE = "reporte-alcance";
 	
     public static final String CALENDAR_PATTERN = "dd/MM/yyyy";
+    
+     public static final String USUARIO_HASH = "hashParam";
     public static final String CALENDAR_TIME_ZONE = TimeZone.getDefault().getID();
 
 	public static final Locale LOCALE_SISTEMA = new Locale(ConstantesEstandares.CURRENT_LOCALE_LANGUAGE, ConstantesEstandares.CURRENT_LOCALE_COUNTRY);

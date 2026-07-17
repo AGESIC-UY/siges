@@ -75,6 +75,7 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
         Join<Adquisicion, CausalCompra> causalCompra = root.join("adqCausalCompra", JoinType.LEFT);
         Join<Adquisicion, Moneda> moneda = root.join("adqMoneda", JoinType.LEFT);
         Join<Adquisicion, Pagos> pagos = root.join("pagosSet", JoinType.LEFT);
+        Join<Adquisicion, CentroCosto> centroCosto = root.join("adqCentroCosto", JoinType.LEFT);
 
         cq.select(cb.construct(AdquisicionTO.class,
                 root.get("adqPk"),
@@ -91,13 +92,26 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                 moneda.get("monPk"),
                 moneda.get("monNombre"),
                 moneda.get("monSigno"),
-                cb.count(pagos)));
+                cb.count(pagos),
+                centroCosto.get("cenCosPk"),
+                centroCosto.get("cenCosNombre"),
+                root.get("adqTipoRegistro")));
 
         Predicate predicate;
 
         List<Predicate> predicates = new ArrayList<>();
 
         predicates.add(cb.equal(root.get("adqPreFk").get("prePk"), prePk));
+
+        if (filtro.getNombreAdquisicion() != null && !filtro.getNombreAdquisicion().isEmpty()) {
+            predicate = cb.like(
+                cb.lower(root.<String>get("adqNombre")), 
+                "%" + filtro.getNombreAdquisicion().toLowerCase() + "%"
+            );
+
+            predicates.add(predicate);
+}
+
 
         if (filtro.getFuenteFinanciamiento() != null) {
 
@@ -112,7 +126,7 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
 
             predicates.add(predicate);
         }
-
+        
         if (filtro.getProveedor() != null) {
 
             predicate = cb.or(cb.equal(root.get("adqProvOrga").get("orgaPk"), filtro.getProveedor().getOrgaPk()),
@@ -120,7 +134,15 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
 
             predicates.add(predicate);
         }
+        
+        if (filtro.getOrganizacion()!= null) {
 
+            predicate = cb.or(cb.equal(root.get("adqProvOrga").get("orgaPk"), filtro.getOrganizacion().getOrgaPk()),
+                    cb.equal(pagos.get("pagContrOrganizacionFk").get("orgaPk"), filtro.getOrganizacion().getOrgaPk()));
+
+            predicates.add(predicate);
+        }
+        
         if (filtro.getMoneda() != null) {
 
             predicate = cb.equal(root.get("adqMoneda").get("monPk"), filtro.getMoneda().getMonPk());
@@ -132,6 +154,11 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
 
             predicate = cb.equal(root.get("adqIdAdquisicion"), filtro.getIdAdquisicion());
 
+            predicates.add(predicate);
+        }
+
+        if (filtro.getTipoRegistroCompra() != null) {
+            predicate = cb.equal(root.get("adqTipoRegistro"), filtro.getTipoRegistroCompra());
             predicates.add(predicate);
         }
 
@@ -327,11 +354,130 @@ public class AdquisicionDAO extends HibernateJpaDAOImp<Adquisicion, Integer> imp
                 + "SET adq_procedimiento_compra_fk =  " + procCompPk + " \n"
                 + "where proy_activo = 1 and proy_org_fk in (" + orgPk + ") \n"
                 + "and adq_id_adquisicion = " + procAdquisicionId;
-              
-        System.out.println(queryStr);
 
         Query query = super.getEm().createNativeQuery(queryStr);
         query.executeUpdate();
+    }
+
+    public void actualizacionMasiva(String ids, Integer selected, Integer selected0, Integer selected1, Integer selected2, Integer selected3, Integer selected4, Integer selected5, Integer selected6) {
+
+        String setS = " set ";
+
+        boolean hasUser = false;
+
+        if (selected != null && selected > 0) {
+
+            setS = setS + " adq_fuente_fk=" + selected;
+            hasUser = true;
+
+        }
+
+        if (selected0 != null && selected0 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_id_grp_erp_fk=" + selected0;
+            } else {
+                setS = setS + " adq_id_grp_erp_fk=" + selected0;
+            }
+
+            hasUser = true;
+
+        }
+
+        if (selected1 != null && selected1 > 0) {
+
+            String tipoRegistroAux = "";
+
+            switch (selected1) {
+                case 1:
+                    tipoRegistroAux = "'COMPRA_ORIGINAL'";
+                    break;
+                case 2:
+                    tipoRegistroAux = "'IVA_COMPRA_ORIGINAL'";
+                    break;
+                case 3:
+                    tipoRegistroAux = "'AJUSTE_COMPRA_ORIGINAL'";
+                    break;
+                default:
+                    tipoRegistroAux = "'IVA_AJUSTE_COMPRA'";
+
+            }
+
+            if (hasUser) {
+                setS = setS + " ,adq_tipo_registro=" + tipoRegistroAux;
+            } else {
+                setS = setS + " adq_tipo_registro=" + tipoRegistroAux;
+            }
+
+            hasUser = true;
+
+        }
+
+        if (selected2 != null && selected2 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_centro_costo_fk=" + selected2;
+            } else {
+                setS = setS + " adq_centro_costo_fk=" + selected2;
+            }
+
+            hasUser = true;
+
+        }
+
+        if (selected3 != null && selected3 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_procedimiento_compra_fk=" + selected3;
+            } else {
+                setS = setS + " adq_procedimiento_compra_fk=" + selected3;
+            }
+
+            hasUser = true;
+
+        }
+
+        if (selected4 != null && selected4 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_componente_producto_fk=" + selected4;
+            } else {
+                setS = setS + " adq_componente_producto_fk=" + selected4;
+            }
+
+            hasUser = true;
+
+        }
+
+        if (selected5 != null && selected5 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_tipo_adquisicion_fk=" + selected5;
+            } else {
+                setS = setS + " adq_tipo_adquisicion_fk=" + selected5;
+            }
+
+            hasUser = true;
+
+        }
+        
+        if (selected6 != null && selected6 > 0) {
+
+            if (hasUser) {
+                setS = setS + " ,adq_moneda_fk=" + selected6;
+            } else {
+                setS = setS + " adq_moneda_fk=" + selected6;
+            }
+
+            hasUser = true;
+
+        }
+
+        String queryStr = "UPDATE Adquisicion" + setS + " WHERE adqPk in (" + ids + ")";
+
+        Query query = getEm().createQuery(queryStr);
+        query.executeUpdate();
+
     }
 
 }

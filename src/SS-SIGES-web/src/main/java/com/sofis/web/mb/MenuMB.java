@@ -1,5 +1,6 @@
 package com.sofis.web.mb;
 
+import com.sofis.web.genericos.constantes.ConstantesPresentacion;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -7,6 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 @ManagedBean(name = "menuMB")
 @SessionScoped
@@ -17,6 +20,7 @@ public class MenuMB implements Serializable {
     
     @ManagedProperty("#{inicioMB}")
     private InicioMB inicioMB;
+    
     
     @PostConstruct
     public void init() {
@@ -33,6 +37,13 @@ public class MenuMB implements Serializable {
         if(codigo.equals("IR_A_INICIO")){
             inicioMB.cargarCombosFiltro();
             inicioMB.inicializarFiltro();
+        }
+        
+
+        if(codigo.equals("IR_A_NUEVA_FICHA")){
+            	HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		request.getSession().setAttribute(ConstantesPresentacion.PROG_PROY_ID, null);
+               // fichaMB.setFichaTO(null);
         }
         
         return codigo;

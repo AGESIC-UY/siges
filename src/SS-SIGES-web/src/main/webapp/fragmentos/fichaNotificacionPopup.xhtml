@@ -30,7 +30,8 @@
             </f:facet>
 
             <f:facet name="body">
-                <ice:panelGroup id="tablaNotifInst">
+                <!-- panelGroup con scroll (scrollHeight) -->
+                <ice:panelGroup id="tablaNotifInst" scrollHeight="450px">
                     <ace:dataTable id="tblNotificaciones" 
                            value="#{fichaNotificacionesMB.notifInstList}"
                            var="notif" 

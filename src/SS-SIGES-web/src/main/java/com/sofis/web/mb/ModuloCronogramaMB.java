@@ -153,6 +153,7 @@ public class ModuloCronogramaMB implements Serializable {
 
     @PostConstruct
     public void init() {
+
     }
 
     public String guardarEntregableReferencia(Integer estadoCronograma) {
@@ -169,14 +170,14 @@ public class ModuloCronogramaMB implements Serializable {
             return null;
         }
 
-        if (entregablesProyectoCombo.getSelectedObject() != null) {
+        if (entregablesProyectoCombo.getSelectedObject() != null) { 
+
             entregableARemplazar = EntregablesUtils.convert((Entregables) entregablesProyectoCombo.getSelectedObject());
             entregable.setDependencias(null);
         }
 
         entregable.setId(remplazarEntrgable ? entregableARemplazar.getId() : null);
         entregable.setNombre(remplazarEntrgable ? entregableARemplazar.getNombre() : entregable.getNombre());
-        entregable.setDescripcion(remplazarEntrgable ? entregableARemplazar.getDescripcion() : entregable.getNombre());
         entregable.setNivel(null);
         entregable.setEsfuerzo(0);
         entregable.setEsReferencia(true);
@@ -193,14 +194,14 @@ public class ModuloCronogramaMB implements Serializable {
             } else {
                 js = "triggerAddReferenceTaskBelowCurrentTaskGantt(" + entregableJSON + ")";
             }
-
+            overriteFiltro();
             JavaScriptRunner.runScript(FacesContext.getCurrentInstance(), js);
 
         } catch (JSONException ex) {
             LOGGER.log(Level.SEVERE, "crono_error_entregable_referencia_crear_json", ex);
             JSFUtils.agregarMsg("ganttForm", "crono_error_entregable_referencia_crear_json", null);
         }
-        limpiarFiltroEntregables();
+
         return null;
     }
 
@@ -265,16 +266,30 @@ public class ModuloCronogramaMB implements Serializable {
         Set<Entregables> setEntAvance = null;
         ProyOtrosDatos pod = fichaTO.getOtrosDatos();
         if (fichaTO.getCroFk() != null) {
+            LOGGER.info("********************************** tiene cronograma");
             if (pod != null && pod.getProyOtrEntFk() != null) {
+                LOGGER.info("********************************** tiene otros datos");
+
                 List<Entregables> entHijos = EntregablesUtils.obtenerHijos(new ArrayList<>(fichaTO.getCroFk().getEntregablesSet()), pod.getProyOtrEntFk(), Boolean.TRUE);
                 setEntAvance = new HashSet<>(entHijos);
             } else {
                 setEntAvance = fichaTO.getCroFk().getEntregablesSet();
             }
+
         }
+
         indiceAvanceProd = cronogramaDelegate.calcularAvanceCronoParcial(setEntAvance);
         Integer porcAvance = proyectoDelegate.porcentajeAvanceEnTiempoLBase(setEntAvance);
         indiceAvanceTiempo = porcAvance != null ? new int[]{porcAvance, (100 - porcAvance), 0} : null;
+    }
+
+    public void limpiarAvances() {
+        indiceAvanceProd = null;
+        indiceAvanceTiempo = null;
+        indiceAvanceFinalizado = null;
+        indiceAvanceParcial = null;
+        cronograma = null;
+        listaEntregablesResumen = null;
     }
 
     public void cargarEntregablesEditablesPorUsuario(FichaTO fichaTO, SsUsuario usuario) {
@@ -303,7 +318,7 @@ public class ModuloCronogramaMB implements Serializable {
         // Si no lo es le paso el Mapa que tiene la información de a cual entregable  esta asociado el usuario.
         boolean isGerente = SsUsuariosUtils.isUsuarioGerenteFicha(fichaTO, usuario);
         boolean isAdjunto = SsUsuariosUtils.isUsuarioAdjuntoFicha(fichaTO, usuario);
-        boolean isPmof=SsUsuariosUtils.isUsuarioPMOF(fichaTO, usuario, fichaTO.getOrgFk().getOrgPk());
+        boolean isPmof = SsUsuariosUtils.isUsuarioPMOF(fichaTO, usuario, fichaTO.getOrgFk().getOrgPk());
         Boolean isPmofEditor = Boolean.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PMOF_GESTIONA_SUS_PROYECTOS, fichaTO.getOrgFk().getOrgPk()).getCnfValor());
         fichaTO.setIsPmofEditor(isPmof && isPmofEditor);
         boolean isGerenteOAdjunto = isGerente || isAdjunto || isPmofEditor;
@@ -460,6 +475,7 @@ public class ModuloCronogramaMB implements Serializable {
             List<SsUsuario> usuarios = ssUsuarioDelegate.obtenerTodosPorOrganismo(orgPk, true);
 
             Boolean isPmofEditor = Boolean.valueOf(configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.PMOF_GESTIONA_SUS_PROYECTOS, orgPk).getCnfValor());
+            LOGGER.info("el valor de pmo editor es " + isPmofEditor);
             fichaTO.setIsPmofEditor(isPmof && isPmofEditor);
             try {
                 JSONObject dataCrono = CronogramaUtils.cronogramaToJSON(cronograma, usuario, usuarios, fichaTO);
@@ -695,6 +711,8 @@ public class ModuloCronogramaMB implements Serializable {
             }
             //Columna 4: avance
             try {
+                                        LOGGER.severe("setprogr3");
+
                 entregable.setEntProgreso((Double.valueOf(fila.getCell(4).toString().trim())).intValue());
             } catch (Exception ex) {
                 throw new BusinessException("El campo 'avance' en la fila " + nroFila + " no es correcto", ex);
@@ -1077,6 +1095,7 @@ public class ModuloCronogramaMB implements Serializable {
                 throw new BusinessException("El campo 'esfuerzo' en la fila " + nroFila + " no es correcto");
             }
             try {
+                                        LOGGER.severe("setprogr2");
                 entregable.setEntProgreso((Double.valueOf(entregableCargaPorFormulario.getProgreso())).intValue());
             } catch (Exception ex) {
                 throw new BusinessException("El campo 'progreso' en la fila " + nroFila + " no es correcto", ex);
@@ -1200,7 +1219,7 @@ public class ModuloCronogramaMB implements Serializable {
 
         JSONObject json = new JSONObject(dataCron);
 
-        LOGGER.log(Level.INFO, "Entrando a Guardar Cronograma en modulo");
+        LOGGER.log(Level.FINE, "Entrando a Guardar Cronograma en modulo");
         CronogramaTO cronogramaTO = CronogramaUtils.jsonToCronograma(json);
 //                            Cronogramas cro = jsonToCronograma(json);
         Cronogramas cro = com.sofis.business.utils.CronogramaUtils.convert(cronogramaTO);
@@ -1222,19 +1241,37 @@ public class ModuloCronogramaMB implements Serializable {
 
                 if (!setEntregablesString.contains(e.getReferido().getId())) {
 //					entregable.setEntDescripcion(null);
-                    entregable.setEntDuracion(null);
-                    entregable.setEntInicioEsHito(null);
-//					entregable.setEntFinEsHito(null);
-                    entregable.setEntRelevante(null);
-                    entregable.setEntInicioLineaBase(null);
-                    entregable.setEntFinLineaBase(null);
-                    entregable.setEntDuracionLineaBase(null);
-                    entregable.setEntInicioProyecto(false);
-                    entregable.setEntFinProyecto(false);
-                    entregable.setEntHorasEstimadas(null);
-                    entregable.setCoordinadorUsuFk(null);
+//                    entregable.setEntDuracion(null);
+//                    entregable.setEntInicioEsHito(null);
+////					entregable.setEntFinEsHito(null);
+//                    entregable.setEntRelevante(null);
+//                    entregable.setEntInicioLineaBase(null);
+//                    entregable.setEntFinLineaBase(null);
+//                    entregable.setEntDuracionLineaBase(null);
+//                    entregable.setEntInicioProyecto(false);
+//                    entregable.setEntFinProyecto(false);
+//                    entregable.setEntHorasEstimadas(null);
+//                    entregable.setCoordinadorUsuFk(null);
 
                     if (e.getReferido() != null) {
+
+                        if (fichaTO.getEstado().getEstCodigo().equals("PLANIFICACION")) {
+                            entregable.setEntInicioLineaBase(e.getReferido().getInicioLineaBase() != null ? e.getReferido().getInicioLineaBase().getTime() : null);
+                            entregable.setEntFinLineaBase(e.getReferido().getFinLineaBase() != null ? e.getReferido().getFinLineaBase().getTime() : null);
+                            entregable.setEntInicio(e.getReferido().getFechaInicio() != null ? e.getReferido().getFechaInicio().getTime() : null);
+                            entregable.setEntFin(e.getReferido().getFechaFin() != null ? e.getReferido().getFechaFin().getTime() : null);
+
+                            entregable.setEntDuracion(e.getReferido().getDuracion());
+                            entregable.setEntDuracionLineaBase(e.getReferido().getDuracionLineaBase());
+                        }
+
+                        if (fichaTO.getEstado().getEstCodigo().equals("EJECUCION")) {
+                            entregable.setEntInicio(e.getReferido().getFechaInicio() != null ? e.getReferido().getFechaInicio().getTime() : null);
+                            entregable.setEntFin(e.getReferido().getFechaFin() != null ? e.getReferido().getFechaFin().getTime() : null);
+
+                            entregable.setEntDuracion(e.getReferido().getDuracion());
+                        }
+
                         Entregables referido = EntregablesUtils.convert(e.getReferido());
                         entregable.setReferido(referido);
                         entregable.setCoordinadorUsuFk(new SsUsuario(e.getCoordinador().getId()));
@@ -1442,6 +1479,7 @@ public class ModuloCronogramaMB implements Serializable {
                         }
                     }
                     if (task.has(ConstantesPresentacion.TASK_PROGRESS)) {
+                        LOGGER.severe("setprogr1");
                         e.setEntProgreso(task.getInt(ConstantesPresentacion.TASK_PROGRESS));
                     }
 
@@ -1735,7 +1773,7 @@ public class ModuloCronogramaMB implements Serializable {
 
             entregables = EntregablesUtils.cargarNivelStr(entregablesDelegate.obtenerEntSinReferenciaPorProyPk(this.proyectoCodigoSeleccionado));
 
-        } else if (proyectoCodigoSeleccionado == -1) {
+        } else if (proyectoCodigoSeleccionado.equals(-1)) {
             cargarProyectos();
         }
         entregablesCombo = new SofisCombo((List) entregables, null);
@@ -1745,19 +1783,18 @@ public class ModuloCronogramaMB implements Serializable {
 
     public void limpiarFiltroEntregables() {
 
+        filtroRender = false;
         proyectoCodigoFiltro = 0;
         proyectoNombreFiltro = "";
         entregableNombreFiltro = "";
-        proyectoCodigoSeleccionado = -1;
         remplazarEntrgable = null;
-        cambiarProyectoPorId(proyectoCodigoSeleccionado);
-        cargarProyectos();
+        System.out.println(proyectosCombo.getSelected());
 
     }
 
     public void overriteFiltro() {
-
         proyectoCodigoSeleccionado = -1;
+        limpiarFiltroEntregables();
         cambiarProyectoPorId(proyectoCodigoSeleccionado);
         cargarProyectos();
 

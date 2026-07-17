@@ -11,7 +11,6 @@ import com.sofis.generico.utils.generalutils.CollectionsUtils;
 import com.sofis.generico.utils.generalutils.StringsUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -202,6 +201,18 @@ public class SsUsuario implements Serializable {
 
     @Transient
     private SsRol usuRolUsuario;
+
+    @Column(name = "usu_fin_bloqueo")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date usuFinBloqueo;
+    
+    
+    @Column(name = "usu_fin_hash_token")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date usuFinHashToen;
+    
+    @Column(name = "usu_hash_token")
+    private String usuHashToken;
 
     public SsUsuario(Integer usuId) {
         this.usuId = usuId;
@@ -574,9 +585,8 @@ public class SsUsuario implements Serializable {
 
     public SsUsuOfiRoles getSsUsuOfiRoles(Integer orgPk, Boolean activo) {
         if (orgPk != null) {
-            for (SsUsuOfiRoles uor : ssUsuOfiRolesCollection) {
-                if (uor.getUsuOfiRolesOficina().getOfiId().equals(orgPk)
-                        && uor.getUsuOfiRolesRol().isRolTipoUsuario()) {
+            for (SsUsuOfiRoles uor : ssUsuOfiRolesCollection) {            
+                if (uor.getUsuOfiRolesOficina().getOfiId().equals(orgPk) /* && uor.getUsuOfiRolesRol().isRolTipoUsuario()*/) {
                     if (activo != null) {
                         return uor.isUsuOfiRolesActivo() == activo ? uor : null;
                     } else {
@@ -716,7 +726,7 @@ public class SsUsuario implements Serializable {
                         && roles.isUsuOfiRolesActivo()
                         && roles.getUsuOfiRolesRol().getRolTipoUsuario()
                         && (orgPk != null && roles.getUsuOfiRolesOficina().getOfiId().equals(orgPk))) {
-                    usuRolUsuario=roles.getUsuOfiRolesRol();
+                    usuRolUsuario = roles.getUsuOfiRolesRol();
                     return roles.getUsuOfiRolesRol();
                 }
             }
@@ -804,6 +814,46 @@ public class SsUsuario implements Serializable {
         this.usuRolUsuario = usuRolUsuario;
     }
 
-   
+    public Date getUsuFinBloqueo() {
+        return usuFinBloqueo;
+    }
 
+    public void setUsuFinBloqueo(Date usuFinBloqueo) {
+        this.usuFinBloqueo = usuFinBloqueo;
+    }
+
+    public Boolean puedeExportar(Integer orgPk) {
+        if (this.getSsUsuOfiRolesCollection() != null
+                && !this.getSsUsuOfiRolesCollection().isEmpty()) {
+            for (SsUsuOfiRoles roles : this.getSsUsuOfiRolesCollection()) {
+                if (roles.getUsuOfiRolesRol().getRolTipoUsuario() != null
+                        && roles.isUsuOfiRolesActivo()
+                        && roles.getUsuOfiRolesRol().getRolTipoUsuario()
+                        && (orgPk != null && roles.getUsuOfiRolesOficina().getOfiId().equals(orgPk))) {
+
+                    return roles.getUsuOfiRolesPuedeExportar();
+                }
+            }
+        }
+        return false;
+    }
+
+    public Date getUsuFinHashToen() {
+        return usuFinHashToen;
+    }
+
+    public void setUsuFinHashToen(Date usuFinHashToen) {
+        this.usuFinHashToen = usuFinHashToen;
+    }
+
+    public String getUsuHashToken() {
+        return usuHashToken;
+    }
+
+    public void setUsuHashToken(String usuHashToken) {
+        this.usuHashToken = usuHashToken;
+    }
+
+    
+   
 }

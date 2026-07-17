@@ -10,16 +10,15 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
 
-    <p:remoteCommand id="myremote" update=" relacionarEntregablePopup "   action="#{moduloCronogramaMB.limpiarFiltroEntregables()}" />
+    <p:remoteCommand id="myremote" update=" relacionarEntregablePopup "    />
 
-    <ace:dialog widgetVar="relacionarEntregablePopup" closable="true" modal="true" onHide="#{moduloCronogramaMB.overriteFiltro()}" header="#{labels.crono_entregable_referencia_agregar}"  onShow="myremote"  >
+    <ace:dialog widgetVar="relacionarEntregablePopup" closable="true" modal="true" onHide="#{moduloCronogramaMB.overriteFiltro()}" header="#{labels.crono_entregable_referencia_agregar}">
 
         <o:form id="relacionarEntregablePopup">
             <ice:panelGroup id="form">
 
                 <script type="text/javascript">
                     function triggerAddReferenceTaskBelowCurrentTaskGantt(entregable) {
-
 
                         jQuery('#workSpace').trigger('addReferenceTaskBelowCurrentTask.gantt', [entregable, true]);
                         relacionarEntregablePopup.hide();
@@ -29,7 +28,29 @@
 
                         jQuery('#workSpace').trigger('addReferenceTaskBelowCurrentTask.gantt', [entregable, false]);
                         relacionarEntregablePopup.hide();
+                    } 
+
+                    function disableEnterKey(e)
+                    {
+                        var k;
+                        if (window.event)
+                            k = window.event.keyCode; //IE
+                        else
+                            k = e.which; //FF
+
+                        return (k != 13);
                     }
+
+                    function disableEnterKey2(e)
+                    {
+                        // alert(e.keyCode);
+                        if (e.keyCode == 13) {
+                            console.log('retorna false');
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+
                 </script>
 
                 <ice:outputText value="#{labels.crono_entregable_referencia_agregar_texto}" style="margin-bottom: 20px !important;"/>
@@ -51,18 +72,18 @@
                             <ice:panelGrid styleClass="formulario" style="margin-top: 20px" columns="2">
                                 <ice:outputLabel value="#{labels.codigo_filtro}" />
 
-                                <h:inputText value="#{moduloCronogramaMB.proyectoCodigoFiltro}" >
+                                <h:inputText  id="codigoFiltroProyecto" value="#{moduloCronogramaMB.proyectoCodigoFiltro}"   onkeypress="disableEnterKey2(event)" onkeyup="disableEnterKey2(event)" onkeydown="disableEnterKey2(event)"> 
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="change"  render="comboProyectoReferencia" />
 
-                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="keyup"  render="comboProyectoReferencia" />
                                 </h:inputText>
 
                                 <ice:outputLabel value="#{labels.nombre_filtro}" />
-                                <h:inputText value="#{moduloCronogramaMB.proyectoNombreFiltro}">
-                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="keyup"  render="comboProyectoReferencia" />
+                                <h:inputText value="#{moduloCronogramaMB.proyectoNombreFiltro}" onkeypress="disableEnterKey2(event)" onkeyup="disableEnterKey2(event)" onkeydown="disableEnterKey2(event)">
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarProyectos()}" event="change"  render="comboProyectoReferencia" />
                                 </h:inputText> 
                                 <ice:outputLabel value="#{labels.wekan_entregable_nombre_filtro}" />
-                                <h:inputText value="#{moduloCronogramaMB.entregableNombreFiltro}">
-                                    <f:ajax  listener="#{moduloCronogramaMB.cargarEntregableFiltrado()}" event="keyup"  render="comboEntregablesReferencia" />
+                                <h:inputText value="#{moduloCronogramaMB.entregableNombreFiltro}" onkeypress="disableEnterKey2(event)" onkeyup="disableEnterKey2(event)" onkeydown="disableEnterKey2(event)">
+                                    <f:ajax  listener="#{moduloCronogramaMB.cargarEntregableFiltrado()}" event="change"  render="comboEntregablesReferencia" />
                                 </h:inputText> 
 
                             </ice:panelGrid>
@@ -78,12 +99,16 @@
 
 
                     <ice:outputLabel value="#{labels.proyecto}" styleClass="obligatorio"/>
-                    <ace:simpleSelectOneMenu  id="comboProyectoReferencia"  value="#{moduloCronogramaMB.proyectosCombo.selected}"
-                                              valueChangeListener="#{moduloCronogramaMB.cambioProyecto}"
-                                              immediate="true">
-                        <f:selectItems value="#{moduloCronogramaMB.proyectosCombo.items}"/>
+                    <h:selectOneMenu id="comboProyectoReferencia"  value="#{moduloCronogramaMB.proyectosCombo.selected}"
+                                              valueChangeListener="#{moduloCronogramaMB.cambioProyecto}" 
+                                              immediate="true" 
+                                              onkeypress="disableEnterKey2(event)"
+                                              onkeyup="disableEnterKey2(event)"
+                                              onkeydown="disableEnterKey2(event)">   
+                        <f:selectItems  value="#{moduloCronogramaMB.proyectosCombo.items}" />
+                    
                         <ace:ajax render="labelEntregablesReferencia comboEntregablesReferencia"/>
-                    </ace:simpleSelectOneMenu>
+                    </h:selectOneMenu>
 
 
 
@@ -92,9 +117,13 @@
                     </h:panelGroup>
 
                     <h:panelGroup id="comboEntregablesReferencia">
-                        <ice:selectOneMenu value="#{moduloCronogramaMB.entregablesCombo.selected}">
+                        <h:selectOneMenu id="comboEntregablesReferenciaSelect" value="#{moduloCronogramaMB.entregablesCombo.selected}"
+                                          onkeypress="disableEnterKey2(event)"
+                                              onkeyup="disableEnterKey2(event)"
+                                              onkeydown="disableEnterKey2(event)"
+                                         >
                             <f:selectItems value="#{moduloCronogramaMB.entregablesCombo.items}"/>
-                        </ice:selectOneMenu>
+                        </h:selectOneMenu>
                     </h:panelGroup>
 
                 </ice:panelGrid>
@@ -112,7 +141,7 @@
 
                     <ice:outputLabel/>
 
-                    <h:selectBooleanCheckbox   dir="ltr" value="#{moduloCronogramaMB.remplazarEntrgable}"  
+                    <h:selectBooleanCheckbox   dir="ltr" value="#{moduloCronogramaMB.remplazarEntrgable}" onkeypress="disableEnterKey2(event)" onkeyup="disableEnterKey2(event)" onkeydown="disableEnterKey2(event)"  
                                                >
                         <ace:ajax  listener="#{moduloCronogramaMB.cargarEntregables()}" execute="@this" render="panel_entregables panel_entregables2 panel_entregables3" />
                     </h:selectBooleanCheckbox>
@@ -128,7 +157,7 @@
 
                     <h:panelGroup id="panel_entregables2">
                         <h:panelGroup  rendered="#{moduloCronogramaMB.remplazarEntrgable}">
-                            <ice:selectOneMenu  value="#{moduloCronogramaMB.entregablesProyectoCombo.selected}">
+                            <ice:selectOneMenu  value="#{moduloCronogramaMB.entregablesProyectoCombo.selected}" onkeypress="disableEnterKey2(event)" onkeyup="disableEnterKey2(event)" onkeydown="disableEnterKey2(event)">
                                 <f:selectItems value="#{moduloCronogramaMB.entregablesProyectoCombo.items}"/>
                             </ice:selectOneMenu>
                         </h:panelGroup>
@@ -156,7 +185,6 @@
                 </ice:panelGrid>
 
                 <ice:panelGroup styleClass="panelBotones">
-                    <ace:messages />
                     <h:commandButton id="guardarEntregableReferenciaBtn" value="#{labels.guardar}" 
                                      action="#{fichaMB.guardarEntregableReferencia()}" 
                                      styleClass="boton principal guardar">

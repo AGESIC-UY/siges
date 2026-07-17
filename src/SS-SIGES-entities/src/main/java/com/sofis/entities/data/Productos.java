@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -203,20 +204,64 @@ public class Productos implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (prodPk != null ? prodPk.hashCode() : 0);
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.prodPk);
+        hash = 31 * hash + this.prodPeso;
+        hash = 31 * hash + Objects.hashCode(this.prodUndMedida);
+        hash = 31 * hash + Objects.hashCode(this.prodMesList);
+        hash = 31 * hash + Objects.hashCode(this.prodAcumulado);
+        hash = 31 * hash + Objects.hashCode(this.prodDesc);
+        hash = 31 * hash + Objects.hashCode(this.prodEntregableFk);
+        hash = 31 * hash + Objects.hashCode(this.prodFechaCrea);
+        hash = 31 * hash + Objects.hashCode(this.prodUltMod);
+        hash = 31 * hash + Objects.hashCode(this.prodMesAuxList);
+        hash = 31 * hash + Objects.hashCode(this.anio);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        
-        if (!(object instanceof Productos)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Productos other = (Productos) object;
-        if ((this.prodPk == null && other.prodPk != null)
-                || (this.prodPk != null && !this.prodPk.equals(other.prodPk))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Productos other = (Productos) obj;
+        if (this.prodPeso != other.prodPeso) {
+            return false;
+        }
+        if (!Objects.equals(this.prodUndMedida, other.prodUndMedida)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodDesc, other.prodDesc)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodPk, other.prodPk)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodMesList, other.prodMesList)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodAcumulado, other.prodAcumulado)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodEntregableFk, other.prodEntregableFk)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodFechaCrea, other.prodFechaCrea)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodUltMod, other.prodUltMod)) {
+            return false;
+        }
+        if (!Objects.equals(this.prodMesAuxList, other.prodMesAuxList)) {
+            return false;
+        }
+        if (!Objects.equals(this.anio, other.anio)) {
             return false;
         }
         return true;
@@ -224,7 +269,7 @@ public class Productos implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sofis.entities.data.Productos[ prodPk=" + prodPk + " ]";
+        return "Productos{" + "prodPk=" + prodPk + ", prodPeso=" + prodPeso + ", prodUndMedida=" + prodUndMedida + ", prodMesList=" + prodMesList + ", prodAcumulado=" + prodAcumulado + ", prodDesc=" + prodDesc + ", prodEntregableFk=" + prodEntregableFk + ", prodFechaCrea=" + prodFechaCrea + ", prodUltMod=" + prodUltMod + ", prodMesAuxList=" + prodMesAuxList + ", anio=" + anio + '}';
     }
 
     public boolean contieneProdMesAnioMayor(Integer anio) {

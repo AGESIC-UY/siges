@@ -1,13 +1,13 @@
 package com.sofis.business.validations;
 
-import com.sofis.entities.constantes.ConstanteApp;
+import com.sofis.business.ejbs.ConfiguracionBean;
+import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.MensajesNegocio;
 import com.sofis.entities.data.Riesgos;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.DatesUtils;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class RiesgosValidaciones {
 
     private static final Logger logger = Logger.getLogger(RiesgosValidaciones.class.getName());
+    
 
     public static boolean validar(List<Riesgos> riesgos) throws BusinessException {
         boolean result = true;
@@ -36,7 +37,8 @@ public class RiesgosValidaciones {
     public static boolean validar(Riesgos riesgo) throws BusinessException {
         logger.finest("Validar Riesgos.");
         BusinessException be = new BusinessException();
-
+        
+ 
         if (riesgo == null) {
             be.addError(MensajesNegocio.ERROR_RIESGOS_NULL);
         } else {

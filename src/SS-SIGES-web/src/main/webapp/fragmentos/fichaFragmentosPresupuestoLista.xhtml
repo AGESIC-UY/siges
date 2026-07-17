@@ -66,9 +66,9 @@
                                       type="xls" fileName="#{labels.exportarPlanillaPresupuesto}"
                                       includeHeaders="true" />
                 </ice:panelGroup>-->
-        
-        <!--value="#{fichaMB.listaAdqPagosFrame}"-->
-        
+
+<!--value="#{fichaMB.listaAdqPagosFrame}"-->
+
         <h:panelGroup id="padreTable">
             <ace:dataTable id="preTable"
                            value="#{fichaMB.obtenerPagosVisibles()}"
@@ -198,9 +198,9 @@
 
                     <h:panelGroup rendered="#{adq.tipo eq 1 and fichaMB.fieldRendered('editarAdquisicion', adq.confirmado)}">
                         <ice:commandButton id="btnEditarAdq"
-                                         styleClass="botonEditar iconoTabla" 
-                                         title="#{labels.editarAdqTooltip}"
-                                         action="#{fichaMB.verFormAdquisicionAction(adq.adqPk)}" immediate="true"/>
+                                           styleClass="botonEditar iconoTabla" 
+                                           title="#{labels.editarAdqTooltip}"
+                                           action="#{fichaMB.verFormAdquisicionAction(adq.adqPk)}" immediate="true"/>
                     </h:panelGroup>  
                     <h:panelGroup rendered="#{adq.tipo eq 1 and not fichaMB.fieldRendered('editarAdquisicion', adq.confirmado)}">
                         <h:commandButton id="btnVerAdq"
@@ -215,47 +215,71 @@
                             rendered="#{fichaMB.fieldRendered('agregarAdquisicion') and adq.tipo eq 1}"
                             styleClass="rowAdquisicion columnaBoton colAdquisicion">
                     <ice:commandButton id="btnDuplicarAdquisicion"
-                                     styleClass="botonDuplicar iconoTabla"
-                                     title="#{adq.tienePagos ? labels.duplicarAdquisicion : labels.duplicarAdquisicionSinPagos}"    
-                                     action="#{fichaMB.duplicarAdquisicionAction(adq.adqPk)}"
-                                     disabled="#{not adq.tienePagos}"/>
+                                       styleClass="botonDuplicar iconoTabla"
+                                       title="#{adq.tienePagos ? labels.duplicarAdquisicion : labels.duplicarAdquisicionSinPagos}"    
+                                       action="#{fichaMB.duplicarAdquisicionAction(adq.adqPk)}"
+                                       disabled="#{not adq.tienePagos}"/>
                 </ace:column>
 
                 <ace:column headerText=""
                             rendered="#{fichaMB.fieldRendered('eliminarAdquisicion') and adq.tipo eq 1}"
                             styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} columnaBoton colAdquisicion">
                     <ice:commandButton id="btnEliminarAdq"
-                                     styleClass="botonEliminar iconoTabla" 
-                                     title="#{labels.eliminarAdqTooltip}"
-                                     action="#{fichaMB.eliminarAdquisicionAction(adq.adqPk)}"
-                                     onclick="confirmationEliminarAdq.show();" />
+                                       styleClass="botonEliminar iconoTabla" 
+                                       title="#{labels.eliminarAdqTooltip}"
+                                       action="#{fichaMB.eliminarAdquisicionAction(adq.adqPk)}"
+                                       onclick="confirmationEliminarAdq.show();" />
                 </ace:column>
 
                 <ace:column headerText=""
                             rendered="#{fichaMB.fieldRendered('agregarPago') and adq.tipo eq 1}"
                             styleClass="rowAdquisicion columnaBoton colAdquisicion">
                     <ice:commandButton id="btnAgregarPag"
-                                     styleClass="botonAgregar iconoTabla"
-                                     title="#{labels.agregarPagoTooltip}"    
-                                     action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
+                                       styleClass="botonAgregar iconoTabla"
+                                       title="#{labels.agregarPagoTooltip}"    
+                                       action="#{fichaMB.verFormPagoAction(null, adq.adqPk)}"/>
                 </ace:column>
 
+
+                <ace:column headerText=""
+                            rendered="#{fichaMB.fieldRendered('agregarAdquisicion') and adq.tipo eq 1}"
+                            styleClass="rowAdquisicion columnaBoton colAdquisicion">
+
+                    <h:panelGroup rendered="#{adq.tipo eq 1 and fichaMB.fieldRendered('editarAdquisicion', adq.confirmado)}">
+                        <ice:commandButton id="btnEditarCop"
+                                           styleClass="botonEnviar iconoTabla" 
+                                           title="#{labels.copiarAdqTooltip}"
+                                           action="#{fichaMB.copiarAdquisicionEnOtroProyecto(adq.adqPk,true)}" immediate="true"/>
+                    </h:panelGroup>  
+                </ace:column>
+                
+                 <ace:column headerText=""
+                            rendered="#{fichaMB.fieldRendered('agregarAdquisicion') and adq.tipo eq 1}"
+                            styleClass="rowAdquisicion columnaBoton colAdquisicion">
+
+                    <h:panelGroup rendered="#{adq.tipo eq 1 and fichaMB.fieldRendered('editarAdquisicion', adq.confirmado)}">
+                        <ice:commandButton id="btnEditarMov"
+                                           styleClass="botonMover iconoTabla" 
+                                           title="#{labels.moverAdqTooltip}"
+                                           action="#{fichaMB.copiarAdquisicionEnOtroProyecto(adq.adqPk,false)}" immediate="true"/>
+                    </h:panelGroup>  
+                </ace:column>
                 <!-- Botones Pagos -->
                 <ace:column headerText=""
                             styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
 
                     <h:panelGroup rendered="#{adq.tipo eq 2 and fichaMB.fieldRendered('editarPago', adq.confirmado)}">
                         <ice:commandButton id="btnEditarPag"
-                                         styleClass="botonEditar iconoTabla" 
-                                         title="#{labels.editarPagoTooltip}"   
-                                         action="#{fichaMB.verFormPagoAction(adq.pagPk, adq.adqPk)}"/>
+                                           styleClass="botonEditar iconoTabla" 
+                                           title="#{labels.editarPagoTooltip}"   
+                                           action="#{fichaMB.verFormPagoAction(adq.pagPk, adq.adqPk)}"/>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{adq.tipo eq 2 and not fichaMB.fieldRendered('editarPago', adq.confirmado)}">
                         <ice:commandButton id="btnVerPago"
-                                         styleClass="botonVer iconoTabla" 
-                                         title="#{labels.verPagoTooltip}"   
-                                         action="#{fichaMB.verFormPagoReadOnlyAction(adq.pagPk, adq.adqPk)}"/>
+                                           styleClass="botonVer iconoTabla" 
+                                           title="#{labels.verPagoTooltip}"   
+                                           action="#{fichaMB.verFormPagoReadOnlyAction(adq.pagPk, adq.adqPk)}"/>
                     </h:panelGroup>
 
                 </ace:column>
@@ -265,9 +289,9 @@
                             styleClass="#{adq.tipo eq 1 ? 'rowAdquisicion' : 'rowPagos'} colPago columnaBoton">
 
                     <ice:commandButton id="btnClonePag"
-                                     styleClass="botonDuplicar iconoTabla" 
-                                     title="#{labels.duplicarPagoTooltip}"                              
-                                     action="#{fichaMB.copiarPagoAction(adq.pagPk)}"/>
+                                       styleClass="botonDuplicar iconoTabla" 
+                                       title="#{labels.duplicarPagoTooltip}"                              
+                                       action="#{fichaMB.copiarPagoAction(adq.pagPk)}"/>
                 </ace:column>
 
                 <ace:column headerText=""
@@ -294,10 +318,10 @@
                                 position="center">
             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                 <ice:commandButton id="yesConfPag"
-                                 value="#{labels.si}"
-                                 styleClass="boton principal botonContinuar"
-                                 onclick="confirmationPago.hide();" 
-                                 actionListener="#{fichaMB.confirmarPago()}"/>
+                                   value="#{labels.si}"
+                                   styleClass="boton principal botonContinuar"
+                                   onclick="confirmationPago.hide();" 
+                                   actionListener="#{fichaMB.confirmarPago()}"/>
                 <h:commandButton id="noConfPag"
                                  value="#{labels.no}"
                                  styleClass="boton principal botonEliminar"
@@ -315,11 +339,11 @@
                                 modal="true"
                                 position="center">
             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
-                <h:commandButton id="yesDelAdq"
-                                 value="#{labels.si}"
-                                 styleClass="boton principal botonContinuar"
-                                 onclick="confirmationEliminarAdq.hide();" 
-                                 actionListener="#{fichaMB.eliminarAdquisicionAction()}"/>
+                <ice:commandButton id="yesDelAdq"
+                                   value="#{labels.si}"
+                                   styleClass="boton principal botonContinuar"
+                                   onclick="confirmationEliminarAdq.hide();" 
+                                   actionListener="#{fichaMB.eliminarAdquisicionAction()}"/>
                 <h:commandButton id="noDelAdq"
                                  value="#{labels.no}"
                                  styleClass="boton principal botonEliminar"
@@ -338,9 +362,9 @@
                                 position="center">
             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                 <ice:commandButton value="#{labels.si}"
-                                 styleClass="boton principal botonContinuar"
-                                 onclick="confirmationEliminarPago.hide();" 
-                                 actionListener="#{fichaMB.eliminarPagoAction()}"/>
+                                   styleClass="boton principal botonContinuar" 
+                                   onclick="confirmationEliminarPago.hide();" 
+                                   actionListener="#{fichaMB.eliminarPagoAction()}"/>
                 <h:commandButton value="#{labels.no}"
                                  styleClass="boton principal botonEliminar"
                                  onclick="confirmationEliminarPago.hide();"  />

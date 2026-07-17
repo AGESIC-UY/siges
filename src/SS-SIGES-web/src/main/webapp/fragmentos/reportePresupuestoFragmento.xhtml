@@ -22,6 +22,9 @@
             <ice:panelGrid  styleClass="formulario" columns="4">
                 <ice:outputLabel value="#{labels.rep_pre_filtro_proyprog}"/>
                 <ace:textEntry value="#{reportePresupuestoMB.filtro.nombre}"/>
+                
+                <ice:outputLabel value="#{labels.rep_pre_filtro_proypk}" />
+                <ace:textEntry value="#{reportePresupuestoMB.filtro.proyPk}"  converter="IntegerFormatConverter" />
 
                 <ice:outputLabel value="#{labels.rep_pre_filtro_area}"/>
                 <ice:selectOneMenu value="#{reportePresupuestoMB.areaCombo.selected}">

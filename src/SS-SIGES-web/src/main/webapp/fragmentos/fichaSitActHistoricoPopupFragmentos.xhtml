@@ -20,6 +20,7 @@
                         rendered="#{fichaMB.renderPopupHistoricoSitAct}">
 
             <f:facet name="header">
+
                 <ice:panelGroup styleClass="cabezalPopup">
                     <ice:outputText value="#{labels.hSitActHistoricoPopup}"/>
                     <ice:commandButton styleClass="botonCerrar" title ="#{labels.cerrar}" 
@@ -27,9 +28,19 @@
                 </ice:panelGroup>
             </f:facet>
 
+
+
             <f:facet name="body">
+                <div style="width:100%; text-align:right; margin-bottom:10px;">
+                    <ice:commandLink value="#{labels.ficha_historico_sitact_export}" 
+                                     action="#{fichaMB.exportarSituacionActualAction()}"
+                                     style="margin-left:10px; color:blue;"/>
+                </div>
+
+
                 <ice:panelGroup scrollHeight="450px">
-                    <ace:dataTable emptyMessage="#{labels.sitact_vacio}"
+                    <ace:dataTable id="resultsSitAct"
+                                   emptyMessage="#{labels.sitact_vacio}"
                                    value="#{fichaMB.historicoSitAct}"
                                    var="sitAct">
                         <ace:column headerText="#{labels.sitact_fecha}">

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -109,6 +110,7 @@ public class ProductosBean {
 	}
 
 	public Productos guardarProducto(Productos prod, Boolean actualizarPrograma) {
+            LOGGER.severe("producto guardado " );
 		if (prod != null) {
 			if (prod.getProdMesList() != null) {
 				for (ProdMes prodMes : prod.getProdMesList()) {
@@ -120,9 +122,7 @@ public class ProductosBean {
 					}
 				}
 			}
-
-			prod = agregarProdMes(prod);
-
+			prod = agregarProdMes(prod, null);
 			if (prod.getProdFechaCrea() == null) {
 				prod.setProdFechaCrea(new Date());
 			}
@@ -142,7 +142,7 @@ public class ProductosBean {
 	 * @param prod
 	 * @return
 	 */
-	private Productos agregarProdMes(Productos prod) {
+	private Productos agregarProdMes(Productos prod, List<ProdMes> prodmeslistoriginal) {
 		if (prod != null && prod.getProdEntregableFk() != null) {
 			Entregables ent = prod.getProdEntregableFk();
 			Calendar calInicio = GregorianCalendar.getInstance();
@@ -192,24 +192,44 @@ public class ProductosBean {
 			}
 
 			//Agrega los meses faltantes
+                        int iterator = 0;
 			while (calInicio.get(Calendar.YEAR) < calFin.get(Calendar.YEAR)
 					|| (calInicio.get(Calendar.YEAR) == calFin.get(Calendar.YEAR)
-					&& calInicio.get(Calendar.MONTH) <= calFin.get(Calendar.MONTH))) {
+					&& calInicio.get(Calendar.MONTH) <= calFin.get(Calendar.MONTH))) {                                 
 				boolean agregar = !contieneMesAnio(prod.getProdMesList(), calInicio.get(Calendar.MONTH) + 1, calInicio.get(Calendar.YEAR));
-
-				if (agregar) {
+                                ProdMes pmesOriginal;
+                                if (prodmeslistoriginal != null) {
+                                    if (iterator >= prodmeslistoriginal.size()) {
+                                    pmesOriginal = null;
+                                } else {
+                                    pmesOriginal = prodmeslistoriginal.get(iterator);
+                                }
+				if (agregar && pmesOriginal != null) {
 					ProdMes prodMes = new ProdMes();
 					prodMes.setProdmesMes((short) (calInicio.get(Calendar.MONTH) + 1));
-					prodMes.setProdmesAnio((short) calInicio.get(Calendar.YEAR));
-					prodMes.setProdmesPlan(0d);
-					prodMes.setProdmesReal(0d);
-					prodMes.setProdmesAcuPlan(0d);
+					prodMes.setProdmesAnio((short) calInicio.get(Calendar.YEAR));                                       
+                                        prodMes.setProdmesPlan(pmesOriginal.getProdmesPlan());                                      	
+					prodMes.setProdmesReal(0d);					
+                                        prodMes.setProdmesAcuPlan(pmesOriginal.getProdmesAcuPlan());                                      
 					prodMes.setProdmesAcuReal(0d);
 					prodMes.setProdmesProdFk(prod);
 					prod.getProdMesList().add(prodMes);
-				}
-
+                                    }
+                                } else {
+                                    if (agregar) {
+                                        ProdMes prodMes = new ProdMes();
+					prodMes.setProdmesMes((short) (calInicio.get(Calendar.MONTH) + 1));
+					prodMes.setProdmesAnio((short) calInicio.get(Calendar.YEAR));                                       
+                                        prodMes.setProdmesPlan(0d);                                      	
+					prodMes.setProdmesReal(0d);					
+                                        prodMes.setProdmesAcuPlan(0d);                                      
+					prodMes.setProdmesAcuReal(0d);
+					prodMes.setProdmesProdFk(prod);
+					prod.getProdMesList().add(prodMes);
+                                    }
+                                }
 				calInicio.add(Calendar.MONTH, 1);
+                                iterator ++;
 			}
 		}
 		return prod;
@@ -224,7 +244,7 @@ public class ProductosBean {
 			}
 		}
 		return false;
-	}
+	}       
 
 	/**
 	 * Carga el acumulado para cada mes del producto.
@@ -404,9 +424,8 @@ public class ProductosBean {
 
 	public Set<Productos> copiarProyProductos(Entregables ent, Entregables nvoEnt, int desfasajeDias) {
 		if (ent != null && nvoEnt != null) {
-			Set<Productos> result = new HashSet<>();
+			Set<Productos> result = new LinkedHashSet<>();
 			List<Productos> prodList = obtenerProdPorEnt(ent.getEntPk());
-
 			if (CollectionsUtils.isNotEmpty(prodList)) {
 				for (Productos prod : prodList) {
 					Productos nvoProd = new Productos();
@@ -418,13 +437,12 @@ public class ProductosBean {
 					nvoProd.setProdPeso(prod.getProdPeso());
 					nvoProd.setProdUltMod(null);
 					nvoProd.setProdUndMedida(prod.getProdUndMedida());
-
+                                        
 					// No se copia el desglose por mes, en su lugar se crean nuevos sin valores
-					agregarProdMes(nvoProd);
-
+					agregarProdMes(nvoProd, prod.getProdMesList());
 					result.add(nvoProd);
 				}
-			}
+			}                                           
 			return result;
 		}
 		return null;

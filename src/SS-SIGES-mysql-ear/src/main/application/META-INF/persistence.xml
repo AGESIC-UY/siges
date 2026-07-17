@@ -44,6 +44,7 @@
     <class>com.sofis.entities.data.NotificacionDefecto</class>
     <class>com.sofis.entities.data.NotificacionInstancia</class>
     <class>com.sofis.entities.data.OrganiIntProve</class>
+    <class>com.sofis.entities.data.CmiOrganismo</class>
     <class>com.sofis.entities.data.Organismos</class>
     <class>com.sofis.entities.data.Pagos</class>
     <class>com.sofis.entities.data.Participantes</class>
@@ -102,6 +103,11 @@
     <class>com.sofis.entities.data.AdquisicionRango</class>
     <class>com.sofis.entities.data.TipoRiesgo</class>
     <class>com.sofis.entities.data.ProcedimientoCompraInfo</class>
+    <class>com.sofis.entities.data.GrupoTrabajo</class>
+    <class>com.sofis.entities.data.GrupoTrabajoUsuario</class>
+    <class>com.sofis.entities.data.GrupoTrabajoOperacionDetalle</class>
+    <class>com.sofis.entities.data.OperacionDetalle</class>
+    <class>com.sofis.entities.data.LogAdquisicion</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="org.hibernate.envers.audit_table_prefix" value="aud_"/>

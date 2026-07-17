@@ -11,6 +11,7 @@ public class MensajesNegocio {
 
     // FICHA (PROGRAMAS/PROYECTOS)
     public final static String ERROR_ELIMINAR_PROYECTO = "error_eliminar_proyecto";
+    public final static String ERROR_OBSERVACIONES_1500_LARGO_MAX = "Error el campo observaciones no puede superar los 1500 caracteres.";
     public final static String ERROR_ELIMINAR_PROGRAMA = "error_eliminar_programa";
     public final static String ERROR_ELIMINAR_PROG_PROY_ACTIVOS = "error_eliminar_prog_proy_activos";
     public final static String ERROR_RETROCEDER_ESTADO = "error_retroceder_estado";
@@ -24,6 +25,7 @@ public class MensajesNegocio {
     public final static String ERROR_FICHA_PROG_HABILITADO = "error_ficha_prog_habilitado";
     public final static String ERROR_FICHA_ORGANISMO = "error_ficha_organismo";
     public final static String ERROR_FICHA_NOMBRE = "error_ficha_nombre";
+    public final static String ERROR_FICHA_LARGO_NOMBRE_100 = "error_ficha_largo_nombre_100";
     public final static String ERROR_FICHA_OBJETIVO = "error_ficha_objetivo";
     public final static String ERROR_FICHA_PUBLICO_OBJ = "error_ficha_publico_obj";
     public final static String ERROR_FICHA_SITUACION_ACT = "error_ficha_situacion_act";
@@ -115,7 +117,9 @@ public class MensajesNegocio {
     public final static String ERROR_ADQUISICION_SIN_PROVEEDOR = "error_adquisicion_sin_proveedor";
     public final static String ERROR_ADQUISICION_SIN_CAUSAL = "error_adquisicion_sin_causal";
     public static String ERROR_ADQUISICION_ORDEN = "error_adquisicion_orden";
-
+    public final static String ERROR_ADQUISICION_SIN_FECHA_INICIO_ESTIMADA = "error_adquisicion_sin_fecha_estimada_inicio";
+    public final static String ERROR_ADQUISICION_SIN_FECHA_INICIO_ESPERADA = "error_adquisicion_sin_fecha_esperada_inicio";
+    public final static String ERROR_ADQUISICION_SIN_TIPO_REGISTRO_COMPRA = "error_adquisicion_sin_tipo_registro_compra";
     // DEVENGADO
     public final static String ERROR_DEVENGADO_ELIMINAR = "error_devengado_eliminar";
     public final static String ERROR_DEVENGADO_OBTENER = "error_devengado_obtener";
@@ -219,6 +223,9 @@ public class MensajesNegocio {
     public final static String ERROR_USUARIO_PASSWORD_REINGRESO = "error_usuario_password_reingreso";
     public final static String ERROR_USUARIO_NOMBRE = "error_usuario_nombre";
     public final static String ERROR_USUARIO_APELLIDO = "error_usuario_apellido";
+    public final static String ERROR_USUARIO_NOMBRE_INVALIDO = "error_usuario_nombre_invalido";
+    public final static String ERROR_USUARIO_APELLIDO_INVALIDO = "error_usuario_apellido_invalido";
+    
     public final static String ERROR_USUARIO_ROL = "error_usuario_rol";
     public final static String ERROR_USUARIO_APROB_FACT_TIPO_USU = "error_usuario_aprob_fact_tipo_usu";
     public final static String ERROR_USUARIO_AREA = "error_usuario_area";
@@ -643,6 +650,6 @@ public class MensajesNegocio {
      public final static String ERROR_TIPO_RIESGO_ELIMINAR = "error_tipo_riesgo_eliminar";
        public final static String ERROR_TIPO_RIESGO_CONST_VIOLATION = "error_tipo_riesgo_const_violation";
        public final static String ERROR_TIPO_RIESGO_NOMBRE_100 = "error_tipo_riesgo_nombre_100";
-     
+      public final static String ERROR_USUARIO_HASH_INVALIDO = "error_usuario_hash_invalido";
 
 }

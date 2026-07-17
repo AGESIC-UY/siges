@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    
+
     <!--    <context-param>
-        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name> 
+        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name>
         <param-value>true</param-value>
     </context-param>-->
-    
+
     <context-param>
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
-    <context-param>  
-        <param-name>com.sun.faces.numberOfViewsInSession</param-name>  
-        <param-value>5</param-value>  
-    </context-param>  
-    <context-param>  
-        <param-name>com.sun.faces.numberOfLogicalViews</param-name>  
-        <param-value>5</param-value>  
-    </context-param>  
+    <context-param>
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+        <param-value>5</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.numberOfLogicalViews</param-name>
+        <param-value>5</param-value>
+    </context-param>
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>server</param-value>
@@ -31,54 +31,54 @@
         <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
         <param-value>true</param-value>
     </context-param>
-     <context-param>
-       <param-name>org.icefaces.mandatoryResourceConfiguration</param-name>
-       <param-value>fileEntry</param-value>
+    <context-param>
+        <param-name>org.icefaces.mandatoryResourceConfiguration</param-name>
+        <param-value>fileEntry</param-value>
     </context-param>
-    
-<!--    <context-param>
+
+    <!--    <context-param>
         <param-name>org.icefaces.compressDOM</param-name>
         <param-value>true</param-value>
     </context-param>-->
-    
+
     <!--    <context-param>
         <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
         <param-value>false</param-value>
     </context-param>-->
-        
+
     <!--<context-param>
         <param-name>com.icesoft.faces.connectionLostRedirectURI</param-name>
         <param-value>http://www.sofis-solutions.com</param-value>
     </context-param>-->
-    
+
     <!-- BRUNO 03-04-17: Para corregir timeout de sesión -->
     <!--    <context-param>
         <param-name>com.icesoft.faces.synchronousUpdate</param-name>
         <param-value>true</param-value>
     </context-param>-->
-    
+
     <context-param>
         <description>
             The default value of false for org.icefaces.strictSessionTimeout indicates that ICEfaces should
             not interfere with container-managed control of session timeout. In this case, each user request
             and each Ajax Push request will extend the session. Setting org.icefaces.strictSessionTimeout to
-            true indicates that ICEfaces should attempt to enforce the configured session timeout by 
+            true indicates that ICEfaces should attempt to enforce the configured session timeout by
             ignoring any Ajax Push activity so that only user-triggered requests will extend the session.
         </description>
         <param-name>org.icefaces.strictSessionTimeout</param-name>
         <param-value>false</param-value>
     </context-param>
-    
+
     <context-param>
         <param-name>org.icesoft.faces.sessionExpiredRedirectURI</param-name>
         <param-value>/paginasPrivadas/paginaInicioCliente.jsf</param-value>
     </context-param>
-    
+
     <context-param>
         <param-name>org.icefaces.connectionLostRedirectURI</param-name>
         <param-value>/paginasPrivadas/paginaInicioCliente.jsf</param-value>
     </context-param>
-    
+
     <session-config>
         <session-timeout>120</session-timeout>
         <cookie-config>
@@ -87,10 +87,10 @@
         </cookie-config>
     </session-config>
     <!-- BRUNO 03-04-17: Para corregir timeout de sesión -->
-    
-    
+
+
     <!-- Multimedia WS -->
-<!--    <context-param>
+    <!--    <context-param>
         <param-name>resteasy.resources</param-name>
         <param-value>com.sofis.web.ws.MultimediaUpload</param-value>
     </context-param>
@@ -109,11 +109,11 @@
         <mime-type>application/json</mime-type>
     </mime-mapping>-->
     <!-- Multimedia WS Fin-->
-    
+
     <listener>
         <listener-class>com.sofis.web.listener.SessionCounterListener</listener-class>
     </listener>
-    
+
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -144,7 +144,7 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>descargar</servlet-name>
         <servlet-class>com.sofis.web.servlet.DescargarPlantilla</servlet-class>
@@ -153,12 +153,12 @@
         <servlet-name>descargar</servlet-name>
         <url-pattern>/servlet/descargar</url-pattern>
     </servlet-mapping>
-    
-    
+
+
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
-    
+
     <!-- SEGURIDAD -->
     <security-constraint>
         <display-name>Recursos privados</display-name>
@@ -176,6 +176,15 @@
             <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>reset de password</web-resource-name>
+            <url-pattern>/paginasPublicas/cambioContrasenia</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <!-- OMIT auth-constraint -->
+    </security-constraint>
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
@@ -184,7 +193,7 @@
         </form-login-config>
     </login-config>
     <!-- PAGINAS DE ERROR -->
-     
+
     <!--BRUNO 03-04-17 -->
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
@@ -213,26 +222,26 @@
     <error-page>
         <location>/general-error.xhtml</location>
     </error-page>
-    
-    
-    <!-- omnifaces -->  
-    
+
+
+    <!-- omnifaces -->
+
     <!--<distributable/>-->
-    
+
     <!-- Consumo de memoria -->
     <!--    <context-param>
         <param-name>com.icesoft.faces.compressDOM</param-name>
         <param-value>true</param-value>
     </context-param>-->
-    
+
     <!-- 23-06-17: Agregado para arreglar el error 404 al acceder a la página de login de jaas j_security_check -->
-     <filter>
+    <filter>
         <filter-name>j_security_fix</filter-name>
         <filter-class>com.sofis.web.filtros.JAASFixFilter</filter-class>
     </filter>
-    
-    
-<!--    <filter>
+
+
+    <!--    <filter>
         <filter-name>noCache</filter-name>
         <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
     </filter>
@@ -260,8 +269,8 @@
             <param-value>1d</param-value>
         </init-param>
     </filter>-->
-    
-<!--    <filter-mapping>
+
+    <!--    <filter-mapping>
         <filter-name>noCache</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
@@ -273,54 +282,59 @@
         <filter-name>cache12hours</filter-name>
         <url-pattern>*.css</url-pattern>
     </filter-mapping>-->
-    
+
     <!-- 23-06-17: Agregado para arreglar el error 404 al acceder a la página de login de jaas j_security_check -->
     <filter-mapping>
         <filter-name>j_security_fix</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-    
-<!--    <context-param>
+
+
+    <!--    <context-param>
         <description>http://www.icesoft.org/wiki/display/ICE/blockUIOnSubmit</description>
         <param-name>org.icefaces.blockUIOnSubmit</param-name>
         <param-value>true</param-value>
     </context-param>
-    
+
     <context-param>
         <description>http://www.icesoft.org/wiki/display/ICE/disableDefaultErrorPopups</description>
         <param-name>org.icefaces.disableDefaultErrorPopups</param-name>
         <param-value>false</param-value>
     </context-param>
-    
+
     <context-param>
         <description>http://www.icesoft.org/wiki/display/ICE/deltaSubmit</description>
         <param-name>org.icefaces.deltaSubmit</param-name>
         <param-value>true</param-value>
     </context-param>
-    
-    -->    
-<!--    <context-param>
+
+    -->
+    <!--    <context-param>
         <description>http://www.icesoft.org/wiki/display/ICE/render.auto</description>
         <param-name>org.icefaces.render.auto</param-name>
         <param-value>true</param-value>
     </context-param>-->
-    
-    
+
+
     <context-param>
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>
     
-<!--    <context-param>
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+
+    <!--    <context-param>
         <param-name>org.omnifaces.HTML5_RENDER_KIT_PASSTHROUGH_ATTRIBUTES</param-name>
         <param-value>
             javax.faces.component.UIInput=x-webkit-speech,x-webkit-grammar;
             javax.faces.component.UIComponent=contenteditable,draggable
         </param-value>
     </context-param>-->
-    
-<!--    <filter>
+
+    <!--    <filter>
         <filter-name>gzipResponseFilter</filter-name>
         <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
     </filter>
@@ -330,8 +344,14 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>-->
-    
-    
-    
-    
+
+    <filter>
+        <filter-name>segundoFactor</filter-name>
+        <filter-class>com.sofis.web.filtros.SegundoFactorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>segundoFactor</filter-name>
+        <url-pattern>/paginasPrivadas/*</url-pattern>
+    </filter-mapping>
+
 </web-app>

@@ -77,6 +77,8 @@ public class MailBean {
     private SsUsuarioBean ssUsuarioBean;
 
     private Session mailSession = null;
+    
+    private static final String paginaReset="/SS-SIGES-web/paginasPublicas/cambioContrasenia.xhtml?hashParam=";
 
     public MailBean() {
     }
@@ -114,6 +116,8 @@ public class MailBean {
              * es distinto de null.
              */
             InitialContext ic = null;
+            
+         //   System.out.println(message);
 
             try {
                 ic = new InitialContext();
@@ -673,12 +677,12 @@ public class MailBean {
      * @return boolean
      * @throws GeneralException
      */
-    public boolean comunicarNuevaContrasenia(Integer orgPk, String nombre, String contrasenia, String email) throws GeneralException {
+    public boolean comunicarNuevaContrasenia(Integer orgPk, String nombre, String hash, String email) throws GeneralException {
         MailsTemplate mt = mailsTemplateBean.obtenerMailTmpPorCodigo(MailsTemplateBean.MAIL_CAMBIO_CONTRASENIA, orgPk);
         if (mt != null) {
             Map<String, String> valores = new HashMap<>();
             valores.put(MailVariables.NOMBRE, nombre);
-            valores.put(MailVariables.CONTRASENIA, contrasenia);
+           // valores.put(MailVariables.CONTRASENIA, contrasenia);
             if (orgPk != null) {
                 Organismos org = organismoBean.obtenerOrgPorId(orgPk, false);
                 valores.put(MailVariables.ORGANISMO_NOMBRE, org.getOrgNombre());
@@ -686,7 +690,7 @@ public class MailBean {
             }
 
             String urlSistema = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.URL_SISTEMA, null);
-            valores.put(MailVariables.URL_SISTEMA, urlSistema);
+            valores.put(MailVariables.URL_SISTEMA, urlSistema+paginaReset+hash);
 
             String asunto = MailsTemplateUtils.instanciarConHashMap(mt.getMailTmpAsunto(), valores);
             String mensaje = MailsTemplateUtils.instanciarConHashMap(mt.getMailTmpMensaje(), valores);

@@ -4,20 +4,27 @@ import com.sofis.business.utils.OrganiIntProveUtils;
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.codigueras.SsRolCodigos;
 import com.sofis.entities.constantes.MensajesNegocio;
+import com.sofis.entities.data.Adquisicion;
 import com.sofis.entities.data.Areas;
 import com.sofis.entities.data.CausalCompra;
+import com.sofis.entities.data.ComponenteProducto;
 import com.sofis.entities.data.Estados;
 import com.sofis.entities.data.FuenteFinanciamiento;
 import com.sofis.entities.data.FuenteProcedimientoCompra;
+import com.sofis.entities.data.IdentificadorGrpErp;
 import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.entities.data.ProcedimientoCompra;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.enums.TipoRegistroCompra;
 import com.sofis.entities.tipos.AdquisicionTO;
 import com.sofis.entities.tipos.CausalCompraTO;
+import com.sofis.entities.tipos.ComponenteProductoTO;
 import com.sofis.entities.tipos.EstadoTO;
+import com.sofis.entities.tipos.FiltroIdentificadorGrpErpTO;
 import com.sofis.entities.tipos.FiltroMisAdquisicionesTO;
 import com.sofis.entities.tipos.FuenteFinanciamientoTO;
+import com.sofis.entities.tipos.IdentificadorGrpErpTO;
 import com.sofis.entities.tipos.MisAdquisicionesTO;
 import com.sofis.entities.tipos.OrganizacionTO;
 import com.sofis.entities.tipos.PagoTO;
@@ -32,24 +39,33 @@ import com.sofis.entities.validations.FichaAdquisicionValidacion;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.exceptions.TechnicalException;
 import com.sofis.generico.utils.generalutils.StringsUtils;
+import com.sofis.web.delegates.AdquisicionDelegate;
 import com.sofis.web.delegates.AreasDelegate;
+import com.sofis.web.delegates.ComponenteProductoDelegate;
 import com.sofis.web.delegates.ConfiguracionDelegate;
 import com.sofis.web.delegates.FuenteFinanciamientoDelegate;
 import com.sofis.web.delegates.FuenteProcedimientoCompraDelegate;
+import com.sofis.web.delegates.IdentificadorGrpErpDelegate;
 import com.sofis.web.delegates.MisAdquisicionesDelegate;
 import com.sofis.web.delegates.MonedaDelegate;
 import com.sofis.web.delegates.OrganiIntProveDelegate;
+import com.sofis.web.delegates.PresupuestoDelegate;
 import com.sofis.web.delegates.ProcedimientoCompraDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import com.sofis.web.utils.PagoUtils;
 import com.sofis.web.utils.RepeatPaginator;
+import com.sofis.web.utils.SofisCombo;
 import com.sofis.web.utils.SofisComboG;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,1073 +84,1291 @@ import org.omnifaces.util.Ajax;
 @ViewScoped
 public class MisAdquisicionesMB implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOGGER = Logger.getLogger(MisAdquisicionesMB.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MisAdquisicionesMB.class.getName());
 
-	private static final String GUARDAR_ADQUISICION_MSG = "guardarAdquisicion";
-	private static final String GUARDAR_PAGO_MSG = "guardarPago";
-	private static final String CONFIRMAR_PAGO_MSG = "confirmarPago";
+    private static final String GUARDAR_ADQUISICION_MSG = "guardarAdquisicion";
+    private static final String GUARDAR_PAGO_MSG = "guardarPago";
+    private static final String CONFIRMAR_PAGO_MSG = "confirmarPago";
 
-	@ManagedProperty("#{inicioMB}")
-	private InicioMB inicioMB;
+    @ManagedProperty("#{inicioMB}")
+    private InicioMB inicioMB;
 
-	@ManagedProperty("#{aplicacionMB}")
-	private AplicacionMB aplicacionMB;
+    @ManagedProperty("#{aplicacionMB}")
+    private AplicacionMB aplicacionMB;
 
-	@Inject
-	private AreasDelegate areasDelegate;
+    @Inject
+    private AreasDelegate areasDelegate;
 
-	@Inject
-	private SsUsuarioDelegate ssUsuarioDelegate;
+    @Inject
+    private SsUsuarioDelegate ssUsuarioDelegate;
 
-	@Inject
-	private OrganiIntProveDelegate organizacionDelegate;
+    @Inject
+    private OrganiIntProveDelegate organizacionDelegate;
 
-	@Inject
-	private FuenteFinanciamientoDelegate fuenteFinanciamientoDelegate;
+    @Inject
+    private FuenteFinanciamientoDelegate fuenteFinanciamientoDelegate;
 
-	@Inject
-	private MonedaDelegate monedaDelegate;
+    @Inject
+    private MonedaDelegate monedaDelegate;
 
-	@Inject
-	private ProcedimientoCompraDelegate procedimientoCompraDelegate;
+    @Inject
+    private ProcedimientoCompraDelegate procedimientoCompraDelegate;
 
-	@Inject
-	private FuenteProcedimientoCompraDelegate fuenteProcedimientoCompraDelegate;
+    @Inject
+    private FuenteProcedimientoCompraDelegate fuenteProcedimientoCompraDelegate;
 
-	@Inject
-	private MisAdquisicionesDelegate misAdquisicionesDelegate;
+    @Inject
+    private MisAdquisicionesDelegate misAdquisicionesDelegate;
 
-	@Inject
-	private ConfiguracionDelegate configuracionDelegate;
+    @Inject
+    private ConfiguracionDelegate configuracionDelegate;
 
-	private FiltroMisAdquisicionesTO filtro;
-	private MisAdquisicionesTO misAdquisiciones;
+    @Inject
+    private ComponenteProductoDelegate componenteProductoDelegate;
 
-	private List<SelectItem> listaEstados;
+    @Inject
+    private AdquisicionDelegate adquisicionDelegate;
 
-	private SofisComboG<Areas> areaFiltroCombo;
-	private SofisComboG<SsUsuario> gerenteAdjuntoComboFiltro;
-	private SofisComboG<SsUsuario> pmofComboFiltro;
+    @Inject
+    private IdentificadorGrpErpDelegate identificadorGrpErpDelegate;
 
-	private SofisComboG<OrganiIntProve> proveedorFiltroCombo;
-	private SofisComboG<FuenteFinanciamiento> fuenteFinanciamientoFiltroCombo;
-	private SofisComboG<Moneda> monedaFiltroCombo;
-	private SofisComboG<ProcedimientoCompra> procedimientoCompraFiltroCombo;
+    @Inject
+    private PresupuestoDelegate presupuestoDelegate;
 
-	private Map<Integer, Boolean> proyectosExpandidos;
-	private Map<Integer, Map<Integer, Boolean>> adquisicionesExpandidas;
+    private FiltroMisAdquisicionesTO filtro;
+    private MisAdquisicionesTO misAdquisiciones;
 
-	private PagoTO pagoEnEdicion;
-	private PagoTO pagoAConfirmar;
-	private PagoTO pagoEnVisualizacion;
+    private List<SelectItem> listaEstados;
 
-	private AdquisicionTO adquisicionEnEdicion;
-	private AdquisicionTO adquisicionEnVisualizacion;
+    private SofisComboG<Areas> areaFiltroCombo;
+    private SofisComboG<SsUsuario> gerenteAdjuntoComboFiltro;
+    private SofisComboG<SsUsuario> pmofComboFiltro;
 
-	private boolean mostrarFiltro;
-	private boolean ocultarPagosConfirmados;
+    private SofisComboG<OrganiIntProve> proveedorFiltroCombo;
+    private SofisComboG<OrganiIntProve> organizacionFiltroCombo;
+    private SofisComboG<FuenteFinanciamiento> fuenteFinanciamientoFiltroCombo;
+    private SofisComboG<Moneda> monedaFiltroCombo;
+    private SofisComboG<ProcedimientoCompra> procedimientoCompraFiltroCombo;
+    
+    private SofisComboG<TipoRegistroCompra> tipoRegistroCompraFiltroCombo;
+    
 
-	private SofisComboG<OrganizacionTO> proveedorAdquisicionCombo;
-	private SofisComboG<FuenteFinanciamientoTO> fuenteFinanciamientoAdquisicionCombo;
-	private SofisComboG<CausalCompraTO> causalCompraAdquisicionCombo;
-	private SofisComboG<ProcedimientoCompraTO> procedimientoCompraAdquisicionCombo;
+    private Map<Integer, Boolean> proyectosExpandidos;
+    private Map<Integer, Map<Integer, Boolean>> adquisicionesExpandidas;
 
-	private List<ProcedimientoCompraTO> procedimientosCompraHabilitados;
-	private List<FuenteFinanciamientoTO> fuentesFinanciamientoHabilitadas;
-	private List<OrganizacionTO> proveedoresHabilitados;
-	private List<CausalCompraTO> causalesCompraHabilitados;
+    private PagoTO pagoEnEdicion;
+    private PagoTO pagoAConfirmar;
+    private PagoTO pagoEnVisualizacion;
 
-	private SofisComboG<OrganizacionTO> proveedorPagoCombo;
-	private SofisComboG<OrganizacionTO> clientePagoCombo;
+    private AdquisicionTO adquisicionEnEdicion;
+    private AdquisicionTO adquisicionEnVisualizacion;
 
-	private List<OrganizacionTO> clientesHabilitados;
+    private boolean mostrarFiltro;
+    private boolean ocultarPagosConfirmados;
 
-	private boolean exigeProveedorEnCompra;
-	private boolean camposExigidosEnAdquisicion;
-	private int largoMaximoIdAdquisicion;
-	private boolean exigeProveedorEnPago;
-	private boolean exigeClienteEnPago;
+    private SofisComboG<OrganizacionTO> proveedorAdquisicionCombo;
+    private SofisComboG<FuenteFinanciamientoTO> fuenteFinanciamientoAdquisicionCombo;
+    private SofisComboG<CausalCompraTO> causalCompraAdquisicionCombo;
+    private SofisComboG<ProcedimientoCompraTO> procedimientoCompraAdquisicionCombo;
 
-	private boolean mostrarMensajesConfirmacion;
+    private List<ProcedimientoCompraTO> procedimientosCompraHabilitados;
+    private List<FuenteFinanciamientoTO> fuentesFinanciamientoHabilitadas;
+    private List<OrganizacionTO> proveedoresHabilitados;
+    private List<CausalCompraTO> causalesCompraHabilitados;
 
-	private RepeatPaginator paginator;
+    private SofisComboG<OrganizacionTO> proveedorPagoCombo;
+    private SofisComboG<OrganizacionTO> clientePagoCombo;
+    private SofisCombo listaComponenteProductoCombo = new SofisCombo();
+    private SofisComboG<IdentificadorGrpErp> listaIdentificadorGrpErpCombo = new SofisComboG();
+    private SofisComboG<TipoRegistroCompra> listaTipoRegistroCompraCombo = new SofisComboG();
+    private SofisComboG<SelectItem> anioCombo;
+
+    private List<OrganizacionTO> clientesHabilitados;
+
+    private boolean exigeProveedorEnCompra;
+    private boolean camposExigidosEnAdquisicion;
+    private int largoMaximoIdAdquisicion;
+    private boolean exigeProveedorEnPago;
+    private boolean exigeClienteEnPago;
+
+    private boolean mostrarMensajesConfirmacion;
+
+    private RepeatPaginator paginator;
+
+    private String estadoAdquisicion = "";
+
+    /**
+     * Compara en primer lugar por fecha de planificacion y luego por fecha real
+     */
+    private static final Comparator<PagoTO> COMPARADOR_PLANIFICACION = new Comparator<PagoTO>() {
+        @Override
+        public int compare(PagoTO o1, PagoTO o2) {
+
+            int comparacionPlanificada = o1.getFechaPlanificada().compareTo(o2.getFechaPlanificada());
+
+            if (comparacionPlanificada != 0) {
+
+                return comparacionPlanificada;
+            }
+
+            int result;
+
+            if (o1.getFechaReal() != null) {
+                result = (o2.getFechaReal() != null) ? o1.getFechaReal().compareTo(o2.getFechaReal()) : -1;
+
+            } else {
+                result = (o2.getFechaReal() != null) ? 1 : 0;
+            }
+
+            return result;
+        }
+    };
+
+    /**
+     * Compara en primer lugar por fecha real y luego por fecha de planificacion
+     */
+    private static final Comparator<PagoTO> COMPARADOR_EJECUCION = new Comparator<PagoTO>() {
+        @Override
+        public int compare(PagoTO o1, PagoTO o2) {
+
+            int result;
+
+            if (o1.getFechaReal() != null) {
+                result = (o2.getFechaReal() != null) ? o1.getFechaReal().compareTo(o2.getFechaReal()) : -1;
+
+            } else {
+                result = (o2.getFechaReal() != null) ? 1 : 0;
+            }
+
+            return (result != 0) ? result : o1.getFechaPlanificada().compareTo(o2.getFechaPlanificada());
+        }
+    };
+
+    @PostConstruct
+    public void init() {
+
+        inicioMB.cargarOrganismoSeleccionado();
+
+        filtro = new FiltroMisAdquisicionesTO();
+
+        cargarConfiguracion();
+        cargarCombosFiltro();
+
+        limpiarFiltro();
+
+        cargarCombosAdquisicionPagos();
+
+        buscar(false);
+
+        ocultarPagosConfirmados = false;
+    }
+
+    private void cargarConfiguracion() {
+
+        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+
+        exigeProveedorEnCompra = Boolean.valueOf(configuracionDelegate
+                .obtenerCnfValorPorCodigo(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_COMPRA, orgPk));
+
+        camposExigidosEnAdquisicion = Boolean.valueOf(configuracionDelegate
+                .obtenerCnfValorPorCodigo(ConfiguracionCodigos.ID_ADQUISICION_REQUERIDO, orgPk));
+
+        largoMaximoIdAdquisicion = Integer.valueOf(configuracionDelegate
+                .obtenerCnfValorPorCodigo(ConfiguracionCodigos.LARGO_MAXIMO_ID_ADQUISICION, orgPk));
+
+        exigeProveedorEnPago = Boolean.valueOf(configuracionDelegate
+                .obtenerCnfValorPorCodigo(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_PAGO, orgPk));
+
+        exigeClienteEnPago = Boolean.valueOf(configuracionDelegate
+                .obtenerCnfValorPorCodigo(ConfiguracionCodigos.CLIENTE_ES_EXIGIDO_EN_PAGO, orgPk));
+    }
+
+    private void cargarCombosFiltro() {
+
+        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+
+        // areas
+        List<Areas> areas = areasDelegate.obtenerAreasPorOrganismo(orgPk, false);
+        areaFiltroCombo = new SofisComboG<>(areas, "areaNombre");
+        areaFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
+
+        // gerente/adjunto
+        List<SsUsuario> usuarios = new ArrayList<>(aplicacionMB.obtenerTodosPorOrganismoActivos(orgPk));
+        usuarios.addAll(ssUsuarioDelegate.obtenerInactivosPorOrganismo(orgPk));
+
+        usuarios = SsUsuariosUtils.sortByNombreApellido(usuarios);
+
+        gerenteAdjuntoComboFiltro = new SofisComboG<>(usuarios, "usuNombreApellido");
+        gerenteAdjuntoComboFiltro.addEmptyItem(Labels.getValue("comboTodos"));
+
+        // PMOF
+        String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"};
+        boolean[] ascUsuarios = new boolean[]{true, true, true, true};
+
+        String[] rolCodArr = new String[]{SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL};
+        List<SsUsuario> pmofs = ssUsuarioDelegate.obtenerUsuariosPorRol(rolCodArr, orgPk, ordenUsuarios, ascUsuarios);
+        pmofs = SsUsuariosUtils.sortByNombreApellido(pmofs);
+
+        pmofComboFiltro = new SofisComboG<>(pmofs, "usuNombreApellido");
+        pmofComboFiltro.addEmptyItem(Labels.getValue("comboTodos"));
+
+        // estados
+        listaEstados = new ArrayList<>();
+        listaEstados.add(new SelectItem(Estados.ESTADOS.INICIO.estado_id, Labels.getValue("estado_Inicio")));
+        listaEstados.add(new SelectItem(Estados.ESTADOS.PLANIFICACION.estado_id, Labels.getValue("estado_Planificacion")));
+        listaEstados.add(new SelectItem(Estados.ESTADOS.EJECUCION.estado_id, Labels.getValue("estado_Ejecucion")));
+        listaEstados.add(new SelectItem(Estados.ESTADOS.FINALIZADO.estado_id, Labels.getValue("estado_Finalizado")));
+
+        // Proveedor
+        List<OrganiIntProve> organizacionesProveedoras = organizacionDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, true);
+        organizacionesProveedoras = OrganiIntProveUtils.sortByNombre(organizacionesProveedoras);
+
+        proveedorFiltroCombo = new SofisComboG<>(organizacionesProveedoras, "orgaNombre");
+        proveedorFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
         
-        /**
-	 * Compara en primer lugar por fecha de planificacion y luego por fecha real
-	 */
-	private static final Comparator<PagoTO> COMPARADOR_PLANIFICACION = new Comparator<PagoTO>() {
-		@Override
-		public int compare(PagoTO o1, PagoTO o2) {
+        // Organizaciones
+        List<OrganiIntProve> organizaciones = organizacionDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, false);
+        organizacionesProveedoras = OrganiIntProveUtils.sortByNombre(organizaciones);
 
-			int comparacionPlanificada = o1.getFechaPlanificada().compareTo(o2.getFechaPlanificada());
+        organizacionFiltroCombo = new SofisComboG<>(organizacionesProveedoras, "orgaNombre");
+        organizacionFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        
+        // Fuente financiamiento
+        List<FuenteFinanciamiento> fuentesFinanciamiento = fuenteFinanciamientoDelegate.obtenerFuentesPorOrgId(orgPk);
+        fuenteFinanciamientoFiltroCombo = new SofisComboG<>(fuentesFinanciamiento, "fueNombre");
+        fuenteFinanciamientoFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
 
-			if (comparacionPlanificada != 0) {
+        // Moneda
+        List<Moneda> monedas = monedaDelegate.obtenerMonedas();
+        monedaFiltroCombo = new SofisComboG<>(monedas, "monNombre");
+        monedaFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
 
-				return comparacionPlanificada;
-			}
+        //Procedimimiento Compra
+        List<ProcedimientoCompra> procedimientosCompra = procedimientoCompraDelegate.obtenerProcedimientosComprasPorOrgId(orgPk);
+        procedimientoCompraFiltroCombo = new SofisComboG<>(procedimientosCompra, "procCompNombre");
+        procedimientoCompraFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
+        
+        //Tipo Registro Compra
+        List<TipoRegistroCompra> tipoRegistroCompra = Arrays.asList(TipoRegistroCompra.values());
+        tipoRegistroCompraFiltroCombo = new SofisComboG(tipoRegistroCompra, "text");
+        tipoRegistroCompraFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
+      
 
-			int result;
+    }
 
-			if (o1.getFechaReal()!= null) {
-				result = (o2.getFechaReal() != null) ? o1.getFechaReal().compareTo(o2.getFechaReal()) : -1;
+    private void cargarCombosAdquisicionPagos() {
 
-			} else {
-				result = (o2.getFechaReal() != null) ? 1 : 0;
-			}
+        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
 
-			return result;
-		}
-	};
+        procedimientosCompraHabilitados = new ArrayList<>();
+        for (ProcedimientoCompra pc : procedimientoCompraDelegate.obtenerProcedimientosComprasHabilitadosPorOrgId(orgPk)) {
+            procedimientosCompraHabilitados.add(new ProcedimientoCompraTO(pc.getProcCompPk(), pc.getProcCompNombre()));
+        }
 
-	/**
-	 * Compara en primer lugar por fecha real y luego por fecha de planificacion
-	 */
-	private static final Comparator<PagoTO> COMPARADOR_EJECUCION = new Comparator<PagoTO>() {
-		@Override
-		public int compare(PagoTO o1, PagoTO o2) {
+        fuentesFinanciamientoHabilitadas = new ArrayList<>();
+        for (FuenteFinanciamiento ff : fuenteFinanciamientoDelegate.obtenerFuentesHabilitadasPorOrgId(orgPk)) {
+            fuentesFinanciamientoHabilitadas.add(new FuenteFinanciamientoTO(ff.getFuePk(), ff.getFueNombre()));
+        }
 
-			int result;
+        proveedoresHabilitados = new ArrayList<>();
+        for (OrganiIntProve p : organizacionDelegate.obtenerOrganiIntProveHabilitadosPorOrgPk(orgPk, true)) {
+            proveedoresHabilitados.add(new OrganizacionTO(p.getOrgaPk(), p.getOrgaNombre()));
+        }
 
-			if (o1.getFechaReal() != null) {
-				result = (o2.getFechaReal() != null) ? o1.getFechaReal().compareTo(o2.getFechaReal()) : -1;
+        clientesHabilitados = new ArrayList<>();
+        for (OrganiIntProve p : organizacionDelegate.obtenerOrganiIntProveHabilitadosPorOrgPk(orgPk, false)) {
+            clientesHabilitados.add(new OrganizacionTO(p.getOrgaPk(), p.getOrgaNombre()));
+        }
+        Calendar cal = new GregorianCalendar();
+        Calendar calPrimera = null;
+        Date primeraDate = presupuestoDelegate.obtenerPrimeraFecha();
+        if (primeraDate != null) {
+            calPrimera = new GregorianCalendar();
+            calPrimera.setTime(primeraDate);
+        }
+        int primerAnio = 2010;
 
-			} else {
-				result = (o2.getFechaReal() != null) ? 1 : 0;
-			}
+        Calendar calUltima = null;
+        Date ultimaDate = presupuestoDelegate.obtenerUltimaFecha();
+        if (ultimaDate != null) {
+            calUltima = new GregorianCalendar();
+            calUltima.setTime(ultimaDate);
+        }
+        int ultimoAnio = 2050;
 
-			return (result != 0) ? result : o1.getFechaPlanificada().compareTo(o2.getFechaPlanificada());
-		}
-	};
+        List<SelectItem> listaAnios = new ArrayList<SelectItem>();
+        SelectItem itemActual = null;
+        for (int i = primerAnio; i <= ultimoAnio; i++) {
+            SelectItem item = new SelectItem(i, "" + i);
+            listaAnios.add(item);
+            if (i == cal.get(Calendar.YEAR)) {
+                itemActual = item;
+            }
+        }
+
+        anioCombo = new SofisComboG<>(listaAnios, "label");
+        anioCombo.setSelectedT(itemActual);
+        anioCombo.addEmptyItem(Labels.getValue("comboTodos"));
+
+    }
+
+    public boolean busquedaHabilitada() {
+
+        return !StringsUtils.isEmpty(filtro.getNombreProyectoPrograma())
+                || (gerenteAdjuntoComboFiltro.getSelectedT() != null)
+                || (pmofComboFiltro.getSelectedT() != null)
+                || (organizacionFiltroCombo.getSelectedT() != null)
+                || (areaFiltroCombo.getSelectedT() != null)
+                || (filtro.getIdAdquisicion() != null && filtro.getIdAdquisicion() > 0)
+                || (proveedorFiltroCombo.getSelectedT() != null)
+                || (fuenteFinanciamientoFiltroCombo.getSelectedT() != null)
+                || (procedimientoCompraFiltroCombo.getSelectedT() != null)
+                || (tipoRegistroCompraFiltroCombo.getSelected() != null)
+                || (monedaFiltroCombo.getSelectedT() != null);
+    }
+
+    public String limpiarFiltro() {
+        areaFiltroCombo.setSelected(-1);
+        proveedorFiltroCombo.setSelected(-1);
+        organizacionFiltroCombo.setSelected(-1);
+        fuenteFinanciamientoFiltroCombo.setSelected(-1);
+        monedaFiltroCombo.setSelected(-1);
+        procedimientoCompraFiltroCombo.setSelected(-1);
+        tipoRegistroCompraFiltroCombo.setSelected(-1);
         
 
-	@PostConstruct
-	public void init() {
+        gerenteAdjuntoComboFiltro.setSelectedT(inicioMB.getUsuario());
 
-		inicioMB.cargarOrganismoSeleccionado();
+        Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+        SsUsuario usuarioLogeado = inicioMB.getUsuario();
+        String rolUsuario = usuarioLogeado.getRolUsuario(orgPk).getRolCod();
 
-		filtro = new FiltroMisAdquisicionesTO();
+        if (rolUsuario.equals(SsRolCodigos.PMO_FEDERADA) || rolUsuario.equals(SsRolCodigos.PMO_TRANSVERSAL)) {
 
-		cargarConfiguracion();
-		cargarCombosFiltro();
+            gerenteAdjuntoComboFiltro.setSelected(-1);
+            pmofComboFiltro.setSelectedT(inicioMB.getUsuario());
+        } else {
+            gerenteAdjuntoComboFiltro.setSelectedT(inicioMB.getUsuario());
+            pmofComboFiltro.setSelected(-1);
+        }
 
-		limpiarFiltro();
+        filtro = new FiltroMisAdquisicionesTO();
 
-		cargarCombosAdquisicionPagos();
+        List<Integer> estados = filtro.getEstados();
+        estados.add(Estados.ESTADOS.INICIO.estado_id);
+        estados.add(Estados.ESTADOS.PLANIFICACION.estado_id);
+        estados.add(Estados.ESTADOS.EJECUCION.estado_id);
 
-		buscar(false);
+        misAdquisiciones = null;
 
-		ocultarPagosConfirmados = false;
-	}
+        return null;
+    }
 
-	private void cargarConfiguracion() {
+    public String buscar() {
 
-		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+        return buscar(false);
+    }
 
-		exigeProveedorEnCompra = Boolean.valueOf(configuracionDelegate
-				.obtenerCnfValorPorCodigo(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_COMPRA, orgPk));
+    private String buscar(boolean mantenerEstadoElementos) {
 
-		camposExigidosEnAdquisicion = Boolean.valueOf(configuracionDelegate
-				.obtenerCnfValorPorCodigo(ConfiguracionCodigos.ID_ADQUISICION_REQUERIDO, orgPk));
+        if (!busquedaHabilitada()) {
 
-		largoMaximoIdAdquisicion = Integer.valueOf(configuracionDelegate
-				.obtenerCnfValorPorCodigo(ConfiguracionCodigos.LARGO_MAXIMO_ID_ADQUISICION, orgPk));
+            return null;
+        }
 
-		exigeProveedorEnPago = Boolean.valueOf(configuracionDelegate
-				.obtenerCnfValorPorCodigo(ConfiguracionCodigos.PROVEEDOR_ES_EXIGIDO_EN_PAGO, orgPk));
+        cargarCombosSeleccionados();
 
-		exigeClienteEnPago = Boolean.valueOf(configuracionDelegate
-				.obtenerCnfValorPorCodigo(ConfiguracionCodigos.CLIENTE_ES_EXIGIDO_EN_PAGO, orgPk));
-	}
+        if (!estadoAdquisicion.isEmpty()) {
+            filtro.setAbierta(estadoAdquisicion.equalsIgnoreCase("1"));
+        } else {
+            filtro.setAbierta(null);
+        }
 
-	private void cargarCombosFiltro() {
+        misAdquisiciones = misAdquisicionesDelegate.buscar(filtro);
 
-		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
+        adquisicionEnEdicion = null;
+        adquisicionEnVisualizacion = null;
+        pagoEnEdicion = null;
+        pagoEnVisualizacion = null;
 
-		// areas
-		List<Areas> areas = areasDelegate.obtenerAreasPorOrganismo(orgPk, false);
-		areaFiltroCombo = new SofisComboG<>(areas, "areaNombre");
-		areaFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
+        if (mantenerEstadoElementos) {
+            paginator.changeModel(misAdquisiciones.getProyectos());
 
-		// gerente/adjunto
-		List<SsUsuario> usuarios = new ArrayList<>(aplicacionMB.obtenerTodosPorOrganismoActivos(orgPk));
-		usuarios.addAll(ssUsuarioDelegate.obtenerInactivosPorOrganismo(orgPk));
+        } else {
 
-		usuarios = SsUsuariosUtils.sortByNombreApellido(usuarios);
+            proyectosExpandidos = new HashMap<>();
+            adquisicionesExpandidas = new HashMap<>();
 
-		gerenteAdjuntoComboFiltro = new SofisComboG<>(usuarios, "usuNombreApellido");
-		gerenteAdjuntoComboFiltro.addEmptyItem(Labels.getValue("comboTodos"));
+            for (ProyectoTO proyecto : misAdquisiciones.getProyectos()) {
+                proyectosExpandidos.put(proyecto.getId(), false);
 
-		// PMOF
-		String[] ordenUsuarios = new String[]{"usuPrimerNombre", "usuSegundoNombre", "usuPrimerApellido", "usuSegundoApellido"};
-		boolean[] ascUsuarios = new boolean[]{true, true, true, true};
+                Map<Integer, Boolean> adquisicionesExpandidasProyecto = new HashMap<>();
 
-		String[] rolCodArr = new String[]{SsRolCodigos.PMO_FEDERADA, SsRolCodigos.PMO_TRANSVERSAL};
-		List<SsUsuario> pmofs = ssUsuarioDelegate.obtenerUsuariosPorRol(rolCodArr, orgPk, ordenUsuarios, ascUsuarios);
-		pmofs = SsUsuariosUtils.sortByNombreApellido(pmofs);
-
-		pmofComboFiltro = new SofisComboG<>(pmofs, "usuNombreApellido");
-		pmofComboFiltro.addEmptyItem(Labels.getValue("comboTodos"));
-
-		// estados
-		listaEstados = new ArrayList<>();
-		listaEstados.add(new SelectItem(Estados.ESTADOS.INICIO.estado_id, Labels.getValue("estado_Inicio")));
-		listaEstados.add(new SelectItem(Estados.ESTADOS.PLANIFICACION.estado_id, Labels.getValue("estado_Planificacion")));
-		listaEstados.add(new SelectItem(Estados.ESTADOS.EJECUCION.estado_id, Labels.getValue("estado_Ejecucion")));
-		listaEstados.add(new SelectItem(Estados.ESTADOS.FINALIZADO.estado_id, Labels.getValue("estado_Finalizado")));
-
-		// Proveedor
-		List<OrganiIntProve> organizacionesProveedoras = organizacionDelegate.obtenerOrganiIntProvePorOrgPk(orgPk, true);
-		organizacionesProveedoras = OrganiIntProveUtils.sortByNombre(organizacionesProveedoras);
-
-		proveedorFiltroCombo = new SofisComboG<>(organizacionesProveedoras, "orgaNombre");
-		proveedorFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
-
-		// Fuente financiamiento
-		List<FuenteFinanciamiento> fuentesFinanciamiento = fuenteFinanciamientoDelegate.obtenerFuentesPorOrgId(orgPk);
-		fuenteFinanciamientoFiltroCombo = new SofisComboG<>(fuentesFinanciamiento, "fueNombre");
-		fuenteFinanciamientoFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
-
-		// Moneda
-		List<Moneda> monedas = monedaDelegate.obtenerMonedas();
-		monedaFiltroCombo = new SofisComboG<>(monedas, "monNombre");
-		monedaFiltroCombo.addEmptyItem(Labels.getValue("comboTodas"));
-
-		//Procedimimiento Compra
-		List<ProcedimientoCompra> procedimientosCompra = procedimientoCompraDelegate.obtenerProcedimientosComprasPorOrgId(orgPk);
-		procedimientoCompraFiltroCombo = new SofisComboG<>(procedimientosCompra, "procCompNombre");
-		procedimientoCompraFiltroCombo.addEmptyItem(Labels.getValue("comboTodos"));
-	}
-
-	private void cargarCombosAdquisicionPagos() {
-
-		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-
-		procedimientosCompraHabilitados = new ArrayList<>();
-		for (ProcedimientoCompra pc : procedimientoCompraDelegate.obtenerProcedimientosComprasHabilitadosPorOrgId(orgPk)) {
-			procedimientosCompraHabilitados.add(new ProcedimientoCompraTO(pc.getProcCompPk(), pc.getProcCompNombre()));
-		}
-
-		fuentesFinanciamientoHabilitadas = new ArrayList<>();
-		for (FuenteFinanciamiento ff : fuenteFinanciamientoDelegate.obtenerFuentesHabilitadasPorOrgId(orgPk)) {
-			fuentesFinanciamientoHabilitadas.add(new FuenteFinanciamientoTO(ff.getFuePk(), ff.getFueNombre()));
-		}
-
-		proveedoresHabilitados = new ArrayList<>();
-		for (OrganiIntProve p : organizacionDelegate.obtenerOrganiIntProveHabilitadosPorOrgPk(orgPk, true)) {
-			proveedoresHabilitados.add(new OrganizacionTO(p.getOrgaPk(), p.getOrgaNombre()));
-		}
-
-		clientesHabilitados = new ArrayList<>();
-		for (OrganiIntProve p : organizacionDelegate.obtenerOrganiIntProveHabilitadosPorOrgPk(orgPk, false)) {
-			clientesHabilitados.add(new OrganizacionTO(p.getOrgaPk(), p.getOrgaNombre()));
-		}
-	}
-
-	public boolean busquedaHabilitada() {
-
-		return !StringsUtils.isEmpty(filtro.getNombreProyectoPrograma())
-				|| (gerenteAdjuntoComboFiltro.getSelectedT() != null)
-				|| (pmofComboFiltro.getSelectedT() != null)
-				|| (areaFiltroCombo.getSelectedT() != null)
-				|| (filtro.getIdAdquisicion() != null && filtro.getIdAdquisicion() > 0)
-				|| (proveedorFiltroCombo.getSelectedT() != null)
-				|| (fuenteFinanciamientoFiltroCombo.getSelectedT() != null)
-				|| (procedimientoCompraFiltroCombo.getSelectedT() != null)
-				|| (monedaFiltroCombo.getSelectedT() != null);
-	}
-
-	public String limpiarFiltro() {
-		areaFiltroCombo.setSelected(-1);
-		proveedorFiltroCombo.setSelected(-1);
-		fuenteFinanciamientoFiltroCombo.setSelected(-1);
-		monedaFiltroCombo.setSelected(-1);
-		procedimientoCompraFiltroCombo.setSelected(-1);
-
-		gerenteAdjuntoComboFiltro.setSelectedT(inicioMB.getUsuario());
-
-		Integer orgPk = inicioMB.getOrganismo().getOrgPk();
-		SsUsuario usuarioLogeado = inicioMB.getUsuario();
-		String rolUsuario = usuarioLogeado.getRolUsuario(orgPk).getRolCod();
-
-		if (rolUsuario.equals(SsRolCodigos.PMO_FEDERADA) || rolUsuario.equals(SsRolCodigos.PMO_TRANSVERSAL)) {
-
-			gerenteAdjuntoComboFiltro.setSelected(-1);
-			pmofComboFiltro.setSelectedT(inicioMB.getUsuario());
-		} else {
-			gerenteAdjuntoComboFiltro.setSelectedT(inicioMB.getUsuario());
-			pmofComboFiltro.setSelected(-1);
-		}
-
-		filtro = new FiltroMisAdquisicionesTO();
-
-		List<Integer> estados = filtro.getEstados();
-		estados.add(Estados.ESTADOS.INICIO.estado_id);
-		estados.add(Estados.ESTADOS.PLANIFICACION.estado_id);
-		estados.add(Estados.ESTADOS.EJECUCION.estado_id);
-
-		misAdquisiciones = null;
-
-		return null;
-	}
-
-	public String buscar() {
-
-		return buscar(false);
-	}
-
-	private String buscar(boolean mantenerEstadoElementos) {
-
-		if (!busquedaHabilitada()) {
-
-			return null;
-		}
-
-		cargarCombosSeleccionados();
-
-		misAdquisiciones = misAdquisicionesDelegate.buscar(filtro);
-
-		adquisicionEnEdicion = null;
-		adquisicionEnVisualizacion = null;
-		pagoEnEdicion = null;
-		pagoEnVisualizacion = null;
-
-		if (mantenerEstadoElementos) {
-			paginator.changeModel(misAdquisiciones.getProyectos());
-
-		} else {
-
-			proyectosExpandidos = new HashMap<>();
-			adquisicionesExpandidas = new HashMap<>();
-
-			for (ProyectoTO proyecto : misAdquisiciones.getProyectos()) {
-				proyectosExpandidos.put(proyecto.getId(), false);
-
-				Map<Integer, Boolean> adquisicionesExpandidasProyecto = new HashMap<>();
-
-				for (AdquisicionTO adquisicion : proyecto.getAdquisiciones()) {
-					adquisicionesExpandidasProyecto.put(adquisicion.getId(), true);
-				}
-
-				adquisicionesExpandidas.put(proyecto.getId(), adquisicionesExpandidasProyecto);
-			}
-
-			paginator = new RepeatPaginator(misAdquisiciones.getProyectos());
-		}
-
-		return null;
-	}
-
-	private void cargarCombosSeleccionados() {
-
-		filtro.setArea(areaFiltroCombo.getSelectedT());
-		filtro.setGerenteAdjunto(gerenteAdjuntoComboFiltro.getSelectedT());
-		filtro.setPmof(pmofComboFiltro.getSelectedT());
-		filtro.setProveedor(proveedorFiltroCombo.getSelectedT());
-		filtro.setFuenteFinanciamiento(fuenteFinanciamientoFiltroCombo.getSelectedT());
-		filtro.setMoneda(monedaFiltroCombo.getSelectedT());
-		filtro.setProcedimientoCompra(procedimientoCompraFiltroCombo.getSelectedT());
-		filtro.setOrganismo(inicioMB.getOrganismo());
-	}
-
-	public void ocultarPagosConfirmadosCheckboxListener(ValueChangeEvent event) {
-
-		Ajax.updateAll();
-	}
-
-	public List<PagoTO> obtenerPagosVisibles(AdquisicionTO adquisicion, EstadoTO proyEstado) {
-
-		List<PagoTO> pagos = new ArrayList<>();
-		for (PagoTO pago : adquisicion.getPagos()) {
-			if (!pago.getConfirmado() || !ocultarPagosConfirmados) {
-				pagos.add(pago);
-			}
-		}
-                if (proyEstado.getId() == Estados.ESTADOS.INICIO.estado_id
-						|| proyEstado.getId() == Estados.ESTADOS.PLANIFICACION.estado_id) {
-                        Collections.sort(pagos, COMPARADOR_PLANIFICACION);
-
-                } else {
-                        Collections.sort(pagos, COMPARADOR_EJECUCION);
+                for (AdquisicionTO adquisicion : proyecto.getAdquisiciones()) {
+                    adquisicionesExpandidasProyecto.put(adquisicion.getId(), true);
                 }
 
-		return pagos;
-	}
+                adquisicionesExpandidas.put(proyecto.getId(), adquisicionesExpandidasProyecto);
+            }
 
-	public Integer cantidadPagosVisibles(AdquisicionTO adquisicion) {
+            paginator = new RepeatPaginator(misAdquisiciones.getProyectos());
+        }
 
-		if (!ocultarPagosConfirmados) {
-			return adquisicion.getPagos().size();
-		}
+        return null;
+    }
 
-		Integer result = 0;
+    private void cargarCombosSeleccionados() {
 
-		for (PagoTO pago : adquisicion.getPagos()) {
+        filtro.setArea(areaFiltroCombo.getSelectedT());
+        filtro.setGerenteAdjunto(gerenteAdjuntoComboFiltro.getSelectedT());
+        filtro.setPmof(pmofComboFiltro.getSelectedT());
+        filtro.setProveedor(proveedorFiltroCombo.getSelectedT());
+        filtro.setOrganizacion(organizacionFiltroCombo.getSelectedT());
+        filtro.setFuenteFinanciamiento(fuenteFinanciamientoFiltroCombo.getSelectedT());
+        filtro.setMoneda(monedaFiltroCombo.getSelectedT());
+        filtro.setProcedimientoCompra(procedimientoCompraFiltroCombo.getSelectedT());
+        filtro.setOrganismo(inicioMB.getOrganismo());
+        filtro.setTipoRegistroCompra(tipoRegistroCompraFiltroCombo.getSelectedT());  
+        if (anioCombo != null) {
+            try {
+                filtro.setAnio((Integer) anioCombo.getSelectedT().getValue());
+            } catch (Exception e) {
+                filtro.setAnio(null);
+            }
+        }else{
+            filtro.setAnio(null);
+        }
 
-			if (!pago.getConfirmado()) {
+    }
 
-				result++;
-			}
-		}
+    public void ocultarPagosConfirmadosCheckboxListener(ValueChangeEvent event) {
 
-		return result;
-	}
+        Ajax.updateAll();
+    }
 
-	public void mostrarFiltroAction() {
+    public List<PagoTO> obtenerPagosVisibles(AdquisicionTO adquisicion, EstadoTO proyEstado) {
 
-		mostrarFiltro = !mostrarFiltro;
-	}
+        List<PagoTO> pagos = new ArrayList<>();
+        for (PagoTO pago : adquisicion.getPagos()) {
+            if (!pago.getConfirmado() || !ocultarPagosConfirmados) {
+                pagos.add(pago);
+            }
+        }
+        if (proyEstado.getId() == Estados.ESTADOS.INICIO.estado_id
+                || proyEstado.getId() == Estados.ESTADOS.PLANIFICACION.estado_id) {
+            Collections.sort(pagos, COMPARADOR_PLANIFICACION);
 
-	public void expandirProyecto(ProyectoTO proyecto) {
+        } else {
+            Collections.sort(pagos, COMPARADOR_EJECUCION);
+        }
 
-		proyectosExpandidos.put(proyecto.getId(), true);
-	}
+        return pagos;
+    }
 
-	public void colapsarProyecto(ProyectoTO proyecto) {
+    public Integer cantidadPagosVisibles(AdquisicionTO adquisicion) {
 
-		proyectosExpandidos.put(proyecto.getId(), false);
-	}
+        if (!ocultarPagosConfirmados) {
+            return adquisicion.getPagos().size();
+        }
 
-	public void expandirAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
+        Integer result = 0;
 
-		adquisicionesExpandidas.get(proyecto.getId()).put(adquisicion.getId(), true);
-	}
+        for (PagoTO pago : adquisicion.getPagos()) {
 
-	public void colapsarAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
+            if (!pago.getConfirmado()) {
 
-		adquisicionesExpandidas.get(proyecto.getId()).put(adquisicion.getId(), false);
-	}
+                result++;
+            }
+        }
 
-	public void expandirColapsarProyectos() {
+        return result;
+    }
 
-		boolean expandir = !proyectosExpandidos.values().contains(true);
+    public void mostrarFiltroAction() {
 
-		for (Integer idProyecto : proyectosExpandidos.keySet()) {
-			proyectosExpandidos.put(idProyecto, expandir);
-		}
-	}
+        mostrarFiltro = !mostrarFiltro;
+    }
 
-	public void expandirColapsarAdquisiciones(ProyectoTO proyecto) {
+    public void expandirProyecto(ProyectoTO proyecto) {
 
-		Map<Integer, Boolean> adquisicionesExpandidasProyecto = adquisicionesExpandidas.get(proyecto.getId());
+        proyectosExpandidos.put(proyecto.getId(), true);
+    }
 
-		boolean expandir = !adquisicionesExpandidasProyecto.values().contains(true);
+    public void colapsarProyecto(ProyectoTO proyecto) {
 
-		for (Integer idAdquisicion : adquisicionesExpandidasProyecto.keySet()) {
-			adquisicionesExpandidasProyecto.put(idAdquisicion, expandir);
-		}
-	}
+        proyectosExpandidos.put(proyecto.getId(), false);
+    }
 
-	public void verAdquisicion(AdquisicionTO adquisicion) {
+    public void expandirAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
 
-		adquisicionEnVisualizacion = misAdquisicionesDelegate.obtenerAdquisicion(adquisicion.getId());
-	}
+        adquisicionesExpandidas.get(proyecto.getId()).put(adquisicion.getId(), true);
+    }
 
-	public void cerrarPopupVerAdquisicion() {
-		adquisicionEnVisualizacion = null;
-	}
+    public void colapsarAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
 
-	public void editarAdquisicion(AdquisicionTO adquisicion) {
+        adquisicionesExpandidas.get(proyecto.getId()).put(adquisicion.getId(), false);
+    }
 
-		try {
-			adquisicionEnEdicion = (AdquisicionTO) adquisicion.clone();
-		} catch (CloneNotSupportedException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-		}
+    public void expandirColapsarProyectos() {
 
-		cargarComboProveedorAdquisicion(adquisicion);
+        boolean expandir = !proyectosExpandidos.values().contains(true);
 
-		ProcedimientoCompraTO procedimientoCompra = cargarComboProcedimientoCompraAdquisicion(adquisicion);
+        for (Integer idProyecto : proyectosExpandidos.keySet()) {
+            proyectosExpandidos.put(idProyecto, expandir);
+        }
+    }
 
-		FuenteFinanciamientoTO fuenteFinanciamiento = cargarComboFuenteFinanciamientoAdquisicion(adquisicion);
+    public void expandirColapsarAdquisiciones(ProyectoTO proyecto) {
 
-		cargarComboCausalCompraAdquisicion(adquisicion, fuenteFinanciamiento, procedimientoCompra);
-	}
+        Map<Integer, Boolean> adquisicionesExpandidasProyecto = adquisicionesExpandidas.get(proyecto.getId());
 
-	public void guardarAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
+        boolean expandir = !adquisicionesExpandidasProyecto.values().contains(true);
 
-		try {
-			adquisicionEnEdicion.setProveedor(proveedorAdquisicionCombo.getSelectedT());
-			adquisicionEnEdicion.setProcedimientoCompra(procedimientoCompraAdquisicionCombo.getSelectedT());
-			adquisicionEnEdicion.setFuenteFinanciamiento(fuenteFinanciamientoAdquisicionCombo.getSelectedT());
-			adquisicionEnEdicion.setCausalCompra(causalCompraAdquisicionCombo.getSelectedT());
+        for (Integer idAdquisicion : adquisicionesExpandidasProyecto.keySet()) {
+            adquisicionesExpandidasProyecto.put(idAdquisicion, expandir);
+        }
+    }
 
-			validar(adquisicionEnEdicion);
+    public void verAdquisicion(AdquisicionTO adquisicion) {
 
-			misAdquisicionesDelegate.actualizarAdquisicion(adquisicionEnEdicion);
+        adquisicionEnVisualizacion = misAdquisicionesDelegate.obtenerAdquisicion(adquisicion.getId());
+    }
 
-			Collections.replaceAll(proyecto.getAdquisiciones(), adquisicion, adquisicionEnEdicion);
+    public void cerrarPopupVerAdquisicion() {
+        adquisicionEnVisualizacion = null;
+    }
 
-			adquisicionEnEdicion = null;
+    public void editarAdquisicion(AdquisicionTO adquisicion) {
 
-		} catch (BusinessException | TechnicalException e) {
+        try {
+            adquisicionEnEdicion = (AdquisicionTO) adquisicion.clone();
+        } catch (CloneNotSupportedException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
 
-			for (String iterStr : e.getErrores()) {
-				JSFUtils.agregarMsgError(GUARDAR_ADQUISICION_MSG, Labels.getValue(iterStr), null);
-			}
+        cargarComboProveedorAdquisicion(adquisicion);
 
-		} catch (Exception e) {
+        ProcedimientoCompraTO procedimientoCompra = cargarComboProcedimientoCompraAdquisicion(adquisicion);
 
-			JSFUtils.agregarMsgError(GUARDAR_ADQUISICION_MSG, "Error al guardar Adquisicion", null);
+        FuenteFinanciamientoTO fuenteFinanciamiento = cargarComboFuenteFinanciamientoAdquisicion(adquisicion);
 
-			LOGGER.log(Level.SEVERE, null, e);
-		}
-	}
+        cargarComboCausalCompraAdquisicion(adquisicion, fuenteFinanciamiento, procedimientoCompra);
 
-	public void cancelarEdicionAdquisicion(AdquisicionTO adquisicion) {
+        Adquisicion adquisicionFromBase = adquisicionDelegate.obtenerAdquisicionPorId(adquisicion.getId());
 
-		adquisicionEnEdicion = null;
-	}
+        cargarComboComponenteProducto(adquisicionFromBase);
 
-	public String obtenerColorPago(PagoTO pago) {
+        cargaComboConvenioMarco(adquisicionFromBase);
+        cargarComboTipoCompra(adquisicionFromBase);
+    }
 
-		return PagoUtils.obtenerColorFechaReal(pago);
-	}
+    public void guardarAdquisicion(AdquisicionTO adquisicion, ProyectoTO proyecto) {
 
-	public void verPago(PagoTO pago) {
+        try {
+            adquisicionEnEdicion.setProveedor(proveedorAdquisicionCombo.getSelectedT());
+            adquisicionEnEdicion.setProcedimientoCompra(procedimientoCompraAdquisicionCombo.getSelectedT());
+            adquisicionEnEdicion.setFuenteFinanciamiento(fuenteFinanciamientoAdquisicionCombo.getSelectedT());
+            adquisicionEnEdicion.setCausalCompra(causalCompraAdquisicionCombo.getSelectedT());
+            adquisicionEnEdicion.setTipoRegistro(tipoRegistroCompraFiltroCombo.getSelectedT());
+            ComponenteProducto componenteProducto = (ComponenteProducto) listaComponenteProductoCombo.getSelectedObject();
+            if (componenteProducto != null) {
 
-		pagoEnVisualizacion = misAdquisicionesDelegate.obtenerPago(pago.getId());
-	}
+                ComponenteProductoTO componenteProductoTO = new ComponenteProductoTO(componenteProducto.getComPk(), componenteProducto.getComNombre());
+                adquisicionEnEdicion.setComponenteProducto(componenteProductoTO);
 
-	public void cerrarPopupVerPago() {
-		pagoEnVisualizacion = null;
-	}
+            }
 
-	public void editarPago(PagoTO pago) {
+            IdentificadorGrpErp identificadorGrpErp = (IdentificadorGrpErp) listaIdentificadorGrpErpCombo.getSelectedT();
+            if (identificadorGrpErp != null) {
 
-		try {
-			pagoEnEdicion = (PagoTO) pago.clone();
-		} catch (CloneNotSupportedException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-		}
+                IdentificadorGrpErpTO identificadorGrpErpTO = new IdentificadorGrpErpTO(identificadorGrpErp.getIdGrpErpPk(), identificadorGrpErp.getIdGrpErpNombre());
+                adquisicionEnEdicion.setIdentificadorGrpErp(identificadorGrpErpTO);
 
-		cargarComboProveedorPago(pago);
-		cargarComboClientePago(pago);
-	}
+            }
 
-	public void guardarPago(PagoTO pago, AdquisicionTO adquisicion, ProyectoTO proyecto) {
+            adquisicionEnEdicion.setTipoRegistro((TipoRegistroCompra) listaTipoRegistroCompraCombo.getSelectedT());
 
-		try {
-			pagoEnEdicion.setProveedor(proveedorPagoCombo.getSelectedT());
-			pagoEnEdicion.setCliente(clientePagoCombo.getSelectedT());
+            validar(adquisicionEnEdicion);
 
-			boolean proyectoEnEjecucion = proyecto.getEstado().getId().equals(Estados.ESTADOS.EJECUCION.estado_id)
-					|| proyecto.getEstado().getId().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id)
-					|| proyecto.getEstado().getId().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
+            misAdquisicionesDelegate.actualizarAdquisicion(adquisicionEnEdicion);
 
-			validar(pagoEnEdicion, proyectoEnEjecucion, exigeProveedorEnPago, exigeClienteEnPago);
+            Collections.replaceAll(proyecto.getAdquisiciones(), adquisicion, adquisicionEnEdicion);
 
-			misAdquisicionesDelegate.actualizarPago(pagoEnEdicion);
+            adquisicionEnEdicion = null;
 
-			buscar(true);
+        } catch (BusinessException | TechnicalException e) {
 
-			pagoEnEdicion = null;
+            for (String iterStr : e.getErrores()) {
+                JSFUtils.agregarMsgError(GUARDAR_ADQUISICION_MSG, Labels.getValue(iterStr), null);
+            }
 
-		} catch (BusinessException | TechnicalException e) {
+        } catch (Exception e) {
 
-			for (String codigoError : e.getErrores()) {
+            JSFUtils.agregarMsgError(GUARDAR_ADQUISICION_MSG, "Error al guardar Adquisicion", null);
 
-				JSFUtils.agregarMsgError(GUARDAR_PAGO_MSG, Labels.getValue(codigoError), null);
-			}
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
 
-		} catch (Exception e) {
+    public void cancelarEdicionAdquisicion(AdquisicionTO adquisicion) {
 
-			JSFUtils.agregarMsgError(GUARDAR_PAGO_MSG, "Error al guardar Pago", null);
+        adquisicionEnEdicion = null;
+    }
 
-			LOGGER.log(Level.SEVERE, null, e);
-		}
-	}
+    public String obtenerColorPago(PagoTO pago) {
 
-	public void cancelarEdicionPago(PagoTO pago) {
+        return PagoUtils.obtenerColorFechaReal(pago);
+    }
 
-		pagoEnEdicion = null;
-	}
+    public void verPago(PagoTO pago) {
 
-	public void cambiarEstadoPago(PagoTO pago) {
+        pagoEnVisualizacion = misAdquisicionesDelegate.obtenerPago(pago.getId());
+    }
 
-		pagoAConfirmar = pago;
-	}
+    public void cerrarPopupVerPago() {
+        pagoEnVisualizacion = null;
+    }
 
-	public void cancelarCambioEstadoPago() {
+    public void editarPago(PagoTO pago) {
 
-		pagoAConfirmar = null;
-		mostrarMensajesConfirmacion = false;
-	}
+        try {
+            pagoEnEdicion = (PagoTO) pago.clone();
+        } catch (CloneNotSupportedException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
 
-	public String cambiarEstadoPago() {
+        cargarComboProveedorPago(pago);
+        cargarComboClientePago(pago);
+    }
 
-		try {
+    public void guardarPago(PagoTO pago, AdquisicionTO adquisicion, ProyectoTO proyecto) {
 
-			boolean estado = misAdquisicionesDelegate.cambiarEstadoPago(pagoAConfirmar);
+        try {
+            pagoEnEdicion.setProveedor(proveedorPagoCombo.getSelectedT());
+            pagoEnEdicion.setCliente(clientePagoCombo.getSelectedT());
 
-			pagoAConfirmar.setConfirmado(estado);
-			pagoAConfirmar = null;
+            boolean proyectoEnEjecucion = proyecto.getEstado().getId().equals(Estados.ESTADOS.EJECUCION.estado_id)
+                    || proyecto.getEstado().getId().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOF.estado_id)
+                    || proyecto.getEstado().getId().equals(Estados.ESTADOS.SOLICITUD_FINALIZADO_PMOT.estado_id);
 
-			buscar(true);
+            validar(pagoEnEdicion, proyectoEnEjecucion, exigeProveedorEnPago, exigeClienteEnPago);
 
-		} catch (BusinessException | TechnicalException e) {
+            misAdquisicionesDelegate.actualizarPago(pagoEnEdicion);
 
-			mostrarMensajesConfirmacion = true;
+            buscar(true);
 
-			for (String codigoError : e.getErrores()) {
+            pagoEnEdicion = null;
 
-				JSFUtils.agregarMsgError(CONFIRMAR_PAGO_MSG, Labels.getValue(codigoError), null);
-			}
+        } catch (BusinessException | TechnicalException e) {
 
-		} catch (Exception e) {
+            for (String codigoError : e.getErrores()) {
 
-			mostrarMensajesConfirmacion = true;
+                JSFUtils.agregarMsgError(GUARDAR_PAGO_MSG, Labels.getValue(codigoError), null);
+            }
 
-			JSFUtils.agregarMsgError(CONFIRMAR_PAGO_MSG, "Error al cambiar el estado del Pago", null);
+        } catch (Exception e) {
 
-			LOGGER.log(Level.SEVERE, null, e);
-		}
+            JSFUtils.agregarMsgError(GUARDAR_PAGO_MSG, "Error al guardar Pago", null);
 
-		return null;
-	}
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
 
-	public void irAEditarProyecto(Integer id) {
+    public void cancelarEdicionPago(PagoTO pago) {
 
-		inicioMB.irEditarProgramaProyecto(2, id, true);
-	}
+        pagoEnEdicion = null;
+    }
 
-	private OrganizacionTO cargarComboProveedorAdquisicion(AdquisicionTO adquisicion) {
+    public void cambiarEstadoPago(PagoTO pago) {
 
-		List<OrganizacionTO> proveedores = new ArrayList<>(proveedoresHabilitados);
+        pagoAConfirmar = pago;
+    }
 
-		OrganizacionTO proveedor = adquisicion.getProveedor();
+    public void cancelarCambioEstadoPago() {
 
-		if (proveedor != null) {
+        pagoAConfirmar = null;
+        mostrarMensajesConfirmacion = false;
+    }
 
-			if (!proveedores.contains(proveedor)) {
+    public String cambiarEstadoPago() {
 
-				proveedores.add(proveedor);
-			}
-		}
+        try {
 
-		OrganizacionTOUtils.sortByNombre(proveedores);
+            boolean estado = misAdquisicionesDelegate.cambiarEstadoPago(pagoAConfirmar);
 
-		proveedorAdquisicionCombo = new SofisComboG<>(proveedores, "nombre");
-		proveedorAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            pagoAConfirmar.setConfirmado(estado);
+            pagoAConfirmar = null;
 
-		if (proveedor != null) {
-			proveedorAdquisicionCombo.setSelectedT(proveedor);
-		} else {
-			proveedorAdquisicionCombo.setSelected(-1);
-		}
+            buscar(true);
 
-		return proveedor;
-	}
+        } catch (BusinessException | TechnicalException e) {
 
-	private ProcedimientoCompraTO cargarComboProcedimientoCompraAdquisicion(AdquisicionTO adquisicion) {
+            mostrarMensajesConfirmacion = true;
 
-		List<ProcedimientoCompraTO> procedimientosCompra = new ArrayList<>(procedimientosCompraHabilitados);
-		ProcedimientoCompraTO procedimientoCompra = adquisicion.getProcedimientoCompra();
+            for (String codigoError : e.getErrores()) {
 
-		if (procedimientoCompra != null && !procedimientosCompra.contains(procedimientoCompra)) {
+                JSFUtils.agregarMsgError(CONFIRMAR_PAGO_MSG, Labels.getValue(codigoError), null);
+            }
 
-			procedimientosCompra.add(procedimientoCompra);
-		}
+        } catch (Exception e) {
 
-		ProcedimientoCompraTOUtils.sortByNombre(procedimientosCompra);
-		procedimientoCompraAdquisicionCombo = new SofisComboG<>(procedimientosCompra, "nombre");
-		procedimientoCompraAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            mostrarMensajesConfirmacion = true;
 
-		if (procedimientoCompra != null) {
-			procedimientoCompraAdquisicionCombo.setSelectedT(procedimientoCompra);
-		} else {
-			procedimientoCompraAdquisicionCombo.setSelected(-1);
-		}
+            JSFUtils.agregarMsgError(CONFIRMAR_PAGO_MSG, "Error al cambiar el estado del Pago", null);
 
-		return procedimientoCompra;
-	}
+            LOGGER.log(Level.SEVERE, null, e);
+        }
 
-	private FuenteFinanciamientoTO cargarComboFuenteFinanciamientoAdquisicion(AdquisicionTO adquisicion) {
+        return null;
+    }
 
-		List<FuenteFinanciamientoTO> fuentesFinanciamiento = new ArrayList<>(fuentesFinanciamientoHabilitadas);
-		FuenteFinanciamientoTO fuenteFinanciamiento = adquisicion.getFuenteFinanciamiento();
+    public void irAEditarProyecto(Integer id) {
 
-		if (fuenteFinanciamiento != null && !fuentesFinanciamiento.contains(fuenteFinanciamiento)) {
+        inicioMB.irEditarProgramaProyecto(2, id, true);
+    }
 
-			fuentesFinanciamiento.add(fuenteFinanciamiento);
-		}
+    private OrganizacionTO cargarComboProveedorAdquisicion(AdquisicionTO adquisicion) {
 
-		FuenteFinanciamientoTOUtils.sortByNombre(fuentesFinanciamiento);
-		fuenteFinanciamientoAdquisicionCombo = new SofisComboG<>(fuentesFinanciamiento, "nombre");
-		fuenteFinanciamientoAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        List<OrganizacionTO> proveedores = new ArrayList<>(proveedoresHabilitados);
 
-		if (fuenteFinanciamiento != null) {
-			fuenteFinanciamientoAdquisicionCombo.setSelectedT(fuenteFinanciamiento);
-		} else {
-			fuenteFinanciamientoAdquisicionCombo.setSelected(-1);
-		}
+        OrganizacionTO proveedor = adquisicion.getProveedor();
 
-		return fuenteFinanciamiento;
-	}
+        if (proveedor != null) {
 
-	private void cargarComboCausalCompraAdquisicion(AdquisicionTO adquisicion, FuenteFinanciamientoTO fuenteFinanciamiento,
-			ProcedimientoCompraTO procedimientoCompra) {
+            if (!proveedores.contains(proveedor)) {
 
-		causalesCompraHabilitados = new ArrayList();
+                proveedores.add(proveedor);
+            }
+        }
 
-		if (fuenteFinanciamiento != null && procedimientoCompra != null) {
+        OrganizacionTOUtils.sortByNombre(proveedores);
 
-			FuenteProcedimientoCompra fuenteProcedimientoCompra = fuenteProcedimientoCompraDelegate
-					.obtenerPorFuenteProcedimientoCompra(fuenteFinanciamiento.getNombre(), procedimientoCompra.getNombre(),
-							inicioMB.getOrganismo().getOrgPk());
+        proveedorAdquisicionCombo = new SofisComboG<>(proveedores, "nombre");
+        proveedorAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-			if (fuenteProcedimientoCompra != null) {
-				causalesCompraHabilitados = new ArrayList<>();
+        if (proveedor != null) {
+            proveedorAdquisicionCombo.setSelectedT(proveedor);
+        } else {
+            proveedorAdquisicionCombo.setSelected(-1);
+        }
 
-				for (CausalCompra cc : fuenteProcedimientoCompra.getFueProComCausalesCompra()) {
-					causalesCompraHabilitados.add(new CausalCompraTO(cc.getCauComPk(), cc.getCauComNombre()));
-				}
-			}
-		}
+        return proveedor;
+    }
 
-		CausalCompraTO causalCompra = adquisicion.getCausalCompra();
+    private ProcedimientoCompraTO cargarComboProcedimientoCompraAdquisicion(AdquisicionTO adquisicion) {
 
-		if (causalCompra != null && !causalesCompraHabilitados.contains(causalCompra)) {
-			causalesCompraHabilitados.add(causalCompra);
-		}
+        List<ProcedimientoCompraTO> procedimientosCompra = new ArrayList<>(procedimientosCompraHabilitados);
+        ProcedimientoCompraTO procedimientoCompra = adquisicion.getProcedimientoCompra();
 
-		CausalCompraTOUtils.sortByNombre(causalesCompraHabilitados);
-		causalCompraAdquisicionCombo = new SofisComboG<>(causalesCompraHabilitados, "nombre");
-		causalCompraAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        if (procedimientoCompra != null && !procedimientosCompra.contains(procedimientoCompra)) {
 
-		if (causalCompra != null) {
-			causalCompraAdquisicionCombo.setSelectedT(causalCompra);
-		} else {
-			causalCompraAdquisicionCombo.setSelected(-1);
-		}
-	}
+            procedimientosCompra.add(procedimientoCompra);
+        }
 
-	private OrganizacionTO cargarComboProveedorPago(PagoTO pago) {
+        ProcedimientoCompraTOUtils.sortByNombre(procedimientosCompra);
+        procedimientoCompraAdquisicionCombo = new SofisComboG<>(procedimientosCompra, "nombre");
+        procedimientoCompraAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-		List<OrganizacionTO> proveedores = new ArrayList<>(proveedoresHabilitados);
+        if (procedimientoCompra != null) {
+            procedimientoCompraAdquisicionCombo.setSelectedT(procedimientoCompra);
+        } else {
+            procedimientoCompraAdquisicionCombo.setSelected(-1);
+        }
 
-		OrganizacionTO proveedor = pago.getProveedor();
+        return procedimientoCompra;
+    }
 
-		if (proveedor != null && !proveedores.contains(proveedor)) {
+    private FuenteFinanciamientoTO cargarComboFuenteFinanciamientoAdquisicion(AdquisicionTO adquisicion) {
 
-			proveedores.add(proveedor);
-		}
+        List<FuenteFinanciamientoTO> fuentesFinanciamiento = new ArrayList<>(fuentesFinanciamientoHabilitadas);
+        FuenteFinanciamientoTO fuenteFinanciamiento = adquisicion.getFuenteFinanciamiento();
 
-		OrganizacionTOUtils.sortByNombre(proveedores);
+        if (fuenteFinanciamiento != null && !fuentesFinanciamiento.contains(fuenteFinanciamiento)) {
 
-		proveedorPagoCombo = new SofisComboG<>(proveedores, "nombre");
-		proveedorPagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+            fuentesFinanciamiento.add(fuenteFinanciamiento);
+        }
 
-		if (proveedor != null) {
-			proveedorPagoCombo.setSelectedT(proveedor);
-		} else {
-			proveedorPagoCombo.setSelected(-1);
-		}
+        FuenteFinanciamientoTOUtils.sortByNombre(fuentesFinanciamiento);
+        fuenteFinanciamientoAdquisicionCombo = new SofisComboG<>(fuentesFinanciamiento, "nombre");
+        fuenteFinanciamientoAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-		return proveedor;
-	}
+        if (fuenteFinanciamiento != null) {
+            fuenteFinanciamientoAdquisicionCombo.setSelectedT(fuenteFinanciamiento);
+        } else {
+            fuenteFinanciamientoAdquisicionCombo.setSelected(-1);
+        }
 
-	private OrganizacionTO cargarComboClientePago(PagoTO pago) {
+        return fuenteFinanciamiento;
+    }
 
-		List<OrganizacionTO> proveedores = new ArrayList<>(clientesHabilitados);
+    private void cargarComboCausalCompraAdquisicion(AdquisicionTO adquisicion, FuenteFinanciamientoTO fuenteFinanciamiento,
+            ProcedimientoCompraTO procedimientoCompra) {
 
-		OrganizacionTO cliente = pago.getCliente();
+        causalesCompraHabilitados = new ArrayList();
 
-		if (cliente != null && !proveedores.contains(cliente)) {
+        if (fuenteFinanciamiento != null && procedimientoCompra != null) {
 
-			proveedores.add(cliente);
-		}
+            FuenteProcedimientoCompra fuenteProcedimientoCompra = fuenteProcedimientoCompraDelegate
+                    .obtenerPorFuenteProcedimientoCompra(fuenteFinanciamiento.getNombre(), procedimientoCompra.getNombre(),
+                            inicioMB.getOrganismo().getOrgPk());
 
-		OrganizacionTOUtils.sortByNombre(proveedores);
+            if (fuenteProcedimientoCompra != null) {
+                causalesCompraHabilitados = new ArrayList<>();
 
-		clientePagoCombo = new SofisComboG<>(proveedores, "nombre");
-		clientePagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+                for (CausalCompra cc : fuenteProcedimientoCompra.getFueProComCausalesCompra()) {
+                    causalesCompraHabilitados.add(new CausalCompraTO(cc.getCauComPk(), cc.getCauComNombre()));
+                }
+            }
+        }
 
-		if (cliente != null) {
-			clientePagoCombo.setSelectedT(cliente);
-		} else {
-			clientePagoCombo.setSelected(-1);
-		}
+        CausalCompraTO causalCompra = adquisicion.getCausalCompra();
 
-		return cliente;
-	}
+        if (causalCompra != null && !causalesCompraHabilitados.contains(causalCompra)) {
+            causalesCompraHabilitados.add(causalCompra);
+        }
 
-	private void validar(AdquisicionTO adquisicion) {
+        CausalCompraTOUtils.sortByNombre(causalesCompraHabilitados);
+        causalCompraAdquisicionCombo = new SofisComboG<>(causalesCompraHabilitados, "nombre");
+        causalCompraAdquisicionCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-		boolean existeFuenteFinanciamiento = adquisicion.getFuenteFinanciamiento() != null;
-		boolean existeProcedimientoCompra = adquisicion.getProcedimientoCompra() != null;
-		boolean existeProveedor = adquisicion.getProveedor() != null;
-		boolean existeCausalCompra = adquisicion.getCausalCompra() != null;
+        if (causalCompra != null) {
+            causalCompraAdquisicionCombo.setSelectedT(causalCompra);
+        } else {
+            causalCompraAdquisicionCombo.setSelected(-1);
+        }
+    }
 
-		Boolean existeFuenteProcedimientoCompra = existeFuenteFinanciamiento
-				&& existeProcedimientoCompra
-				&& !causalesCompraHabilitados.isEmpty();
+    private OrganizacionTO cargarComboProveedorPago(PagoTO pago) {
 
-		BusinessException be = new BusinessException();
+        List<OrganizacionTO> proveedores = new ArrayList<>(proveedoresHabilitados);
 
-		if (StringsUtils.isEmpty(adquisicion.getNombre())) {
-			be.addError(MensajesNegocio.ERROR_ADQISICION_NOMBRE);
-		}
+        OrganizacionTO proveedor = pago.getProveedor();
 
-		if (!existeFuenteFinanciamiento) {
-			be.addError(MensajesNegocio.ERROR_ADQISICION_FUENTE);
-		}
+        if (proveedor != null && !proveedores.contains(proveedor)) {
 
-		if (existeFuenteProcedimientoCompra && adquisicion.getCausalCompra() == null) {
-			be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_CAUSAL);
-		}
+            proveedores.add(proveedor);
+        }
 
-		FichaAdquisicionValidacion.validarProveedor(exigeProveedorEnCompra, existeFuenteProcedimientoCompra,
-				existeProveedor, existeFuenteProcedimientoCompra, existeCausalCompra, be);
+        OrganizacionTOUtils.sortByNombre(proveedores);
 
-		FichaAdquisicionValidacion.validarIdAdquisicion(be, camposExigidosEnAdquisicion, adquisicion.getIdAdquisicion(), largoMaximoIdAdquisicion);
+        proveedorPagoCombo = new SofisComboG<>(proveedores, "nombre");
+        proveedorPagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-		if (be.getErrores().size() > 0) {
+        if (proveedor != null) {
+            proveedorPagoCombo.setSelectedT(proveedor);
+        } else {
+            proveedorPagoCombo.setSelected(-1);
+        }
 
-			throw be;
-		}
-	}
+        return proveedor;
+    }
 
-	private void validar(PagoTO pago, boolean proyectoEnEjecucion, boolean exigeProveedorEnPago, boolean exigeClienteEnPago) {
+    private OrganizacionTO cargarComboClientePago(PagoTO pago) {
 
-		BusinessException be = new BusinessException();
+        List<OrganizacionTO> proveedores = new ArrayList<>(clientesHabilitados);
 
-		if (pago.getFechaPlanificada() == null && !proyectoEnEjecucion) {
-			be.addError(MensajesNegocio.ERROR_PAGO_FECHA_PLANIFICADA);
-		}
-		if (pago.getImportePlanificado() == null && !proyectoEnEjecucion) {
-			be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_PLANIFICADO);
-		}
-		if (pago.getFechaReal() == null && proyectoEnEjecucion) {
-			be.addError(MensajesNegocio.ERROR_PAGO_FECHA_REAL);
-		}
-		if (pago.getImporteReal() == null && proyectoEnEjecucion) {
-			be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_REAL);
-		}
-		if (exigeProveedorEnPago && pago.getConfirmado() && pago.getProveedor() == null) {
-			be.addError(MensajesNegocio.ERROR_PAGO_SIN_PROVEEDOR);
-		}
-		if (exigeClienteEnPago && pago.getConfirmado() && pago.getCliente() == null) {
-			be.addError(MensajesNegocio.ERROR_PAGO_SIN_CLIENTE);
-		}
+        OrganizacionTO cliente = pago.getCliente();
 
-		if (be.getErrores().size() > 0) {
-			throw be;
-		}
-	}
+        if (cliente != null && !proveedores.contains(cliente)) {
 
-	public void cambioProcedimientoCompra(ValueChangeEvent ev) {
+            proveedores.add(cliente);
+        }
 
-		adquisicionEnEdicion.setCausalCompra(null);
+        OrganizacionTOUtils.sortByNombre(proveedores);
 
-		ProcedimientoCompraTO procedimientoCompra = null;
-		Integer id = (Integer) ev.getNewValue();
+        clientePagoCombo = new SofisComboG<>(proveedores, "nombre");
+        clientePagoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
 
-		for (ProcedimientoCompraTO pc : procedimientosCompraHabilitados) {
+        if (cliente != null) {
+            clientePagoCombo.setSelectedT(cliente);
+        } else {
+            clientePagoCombo.setSelected(-1);
+        }
 
-			if (pc.getId().equals(id)) {
-				procedimientoCompra = pc;
-				break;
-			}
-		}
+        return cliente;
+    }
 
-		cargarComboCausalCompraAdquisicion(adquisicionEnEdicion,
-				fuenteFinanciamientoAdquisicionCombo.getSelectedT(), procedimientoCompra);
-	}
+    private void validar(AdquisicionTO adquisicion) {
 
-	public void cambioFuenteFinanciamiento(ValueChangeEvent ev) {
+        boolean existeFuenteFinanciamiento = adquisicion.getFuenteFinanciamiento() != null;
+        boolean existeProcedimientoCompra = adquisicion.getProcedimientoCompra() != null;
+        boolean existeProveedor = adquisicion.getProveedor() != null;
+        boolean existeCausalCompra = adquisicion.getCausalCompra() != null;
+        boolean existeTipoRegistroCompra = adquisicion.getTipoRegistro() != null;
+        
+        Boolean existeFuenteProcedimientoCompra = existeFuenteFinanciamiento
+                && existeProcedimientoCompra
+                && !causalesCompraHabilitados.isEmpty();
 
-		adquisicionEnEdicion.setCausalCompra(null);
+        BusinessException be = new BusinessException();
 
-		FuenteFinanciamientoTO fuenteFinanciamiento = null;
-		Integer id = (Integer) ev.getNewValue();
+        if (StringsUtils.isEmpty(adquisicion.getNombre())) {
+            be.addError(MensajesNegocio.ERROR_ADQISICION_NOMBRE);
+        }
 
-		for (FuenteFinanciamientoTO ff : fuentesFinanciamientoHabilitadas) {
+        if (!existeFuenteFinanciamiento) {
+            be.addError(MensajesNegocio.ERROR_ADQISICION_FUENTE);
+        }
 
-			if (ff.getId().equals(id)) {
-				fuenteFinanciamiento = ff;
-				break;
-			}
-		}
+        if (existeFuenteProcedimientoCompra && adquisicion.getCausalCompra() == null) {
+            be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_CAUSAL);
+        }
+        if(adquisicion.getTipoRegistro() == null){
+            be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_TIPO_REGISTRO_COMPRA);
+        }
+        
+        FichaAdquisicionValidacion.validarProveedor(exigeProveedorEnCompra, existeFuenteProcedimientoCompra,
+                existeProveedor, existeFuenteProcedimientoCompra, existeCausalCompra, be);
 
-		cargarComboCausalCompraAdquisicion(adquisicionEnEdicion,
-				fuenteFinanciamiento, procedimientoCompraAdquisicionCombo.getSelectedT());
-	}
+        FichaAdquisicionValidacion.validarIdAdquisicion(be, camposExigidosEnAdquisicion, adquisicion.getIdAdquisicion(), largoMaximoIdAdquisicion);
 
-	public boolean esEditableAdquisicion(AdquisicionTO adquisicion) {
+        if (be.getErrores().size() > 0) {
 
-		return adquisicion.getEditable()
-				&& (adquisicionEnEdicion == null || adquisicionEnEdicion.getId().equals(adquisicion.getId()))
-				&& pagoEnEdicion == null;
-	}
+            throw be;
+        }
+    }
 
-	public boolean esEditablePago(PagoTO pago) {
+    private void validar(PagoTO pago, boolean proyectoEnEjecucion, boolean exigeProveedorEnPago, boolean exigeClienteEnPago) {
 
-		return pago.getEditable()
-				&& (pagoEnEdicion == null || pagoEnEdicion.getId().equals(pago.getId()))
-				&& adquisicionEnEdicion == null;
-	}
+        BusinessException be = new BusinessException();
 
-	public boolean puedeCambiarAprobacion(PagoTO pago) {
+        if (pago.getFechaPlanificada() == null && !proyectoEnEjecucion) {
+            be.addError(MensajesNegocio.ERROR_PAGO_FECHA_PLANIFICADA);
+        }
+        if (pago.getImportePlanificado() == null && !proyectoEnEjecucion) {
+            be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_PLANIFICADO);
+        }
+        if (pago.getFechaReal() == null && proyectoEnEjecucion) {
+            be.addError(MensajesNegocio.ERROR_PAGO_FECHA_REAL);
+        }
+        if (pago.getImporteReal() == null && proyectoEnEjecucion) {
+            be.addError(MensajesNegocio.ERROR_PAGO_IMPORTE_REAL);
+        }
+        if (exigeProveedorEnPago && pago.getConfirmado() && pago.getProveedor() == null) {
+            be.addError(MensajesNegocio.ERROR_PAGO_SIN_PROVEEDOR);
+        }
+        if (exigeClienteEnPago && pago.getConfirmado() && pago.getCliente() == null) {
+            be.addError(MensajesNegocio.ERROR_PAGO_SIN_CLIENTE);
+        }
 
-		return pago.getPuedeCambiarAprobacion()
-				&& pagoEnEdicion == null
-				&& adquisicionEnEdicion == null;
-	}
+        if (be.getErrores().size() > 0) {
+            throw be;
+        }
+    }
 
-	public boolean valorPlanificadoEditable(PagoTO pago, ProyectoTO proyecto) {
+    public void cambioProcedimientoCompra(ValueChangeEvent ev) {
 
-		return pagoEnEdicion != null
-				&& pagoEnEdicion.getId().equals(pago.getId())
-				&& proyecto.getEstado().getId().equals(Estados.ESTADOS.PLANIFICACION.estado_id);
-	}
+        adquisicionEnEdicion.setCausalCompra(null);
 
-	public boolean valorRealEditable(PagoTO pago, ProyectoTO proyecto) {
+        ProcedimientoCompraTO procedimientoCompra = null;
+        Integer id = (Integer) ev.getNewValue();
 
-		return pagoEnEdicion != null
-				&& pagoEnEdicion.getId().equals(pago.getId())
-				&& proyecto.getEstado().getId().equals(Estados.ESTADOS.EJECUCION.estado_id);
-	}
+        for (ProcedimientoCompraTO pc : procedimientosCompraHabilitados) {
 
-	public void setInicioMB(InicioMB inicioMB) {
-		this.inicioMB = inicioMB;
-	}
+            if (pc.getId().equals(id)) {
+                procedimientoCompra = pc;
+                break;
+            }
+        }
 
-	public InicioMB getInicioMB() {
-		return inicioMB;
-	}
+        cargarComboCausalCompraAdquisicion(adquisicionEnEdicion,
+                fuenteFinanciamientoAdquisicionCombo.getSelectedT(), procedimientoCompra);
+    }
 
-	public SsUsuarioDelegate getSsUsuarioDelegate() {
-		return ssUsuarioDelegate;
-	}
+    public void cambioFuenteFinanciamiento(ValueChangeEvent ev) {
 
-	public OrganiIntProveDelegate getOrganizacionDelegate() {
-		return organizacionDelegate;
-	}
+        adquisicionEnEdicion.setCausalCompra(null);
 
-	public FiltroMisAdquisicionesTO getFiltro() {
-		return filtro;
-	}
+        FuenteFinanciamientoTO fuenteFinanciamiento = null;
+        Integer id = (Integer) ev.getNewValue();
 
-	public List<SelectItem> getListaEstados() {
-		return listaEstados;
-	}
+        for (FuenteFinanciamientoTO ff : fuentesFinanciamientoHabilitadas) {
 
-	public SofisComboG<Areas> getAreaFiltroCombo() {
-		return areaFiltroCombo;
-	}
+            if (ff.getId().equals(id)) {
+                fuenteFinanciamiento = ff;
+                break;
+            }
+        }
 
-	public SofisComboG<SsUsuario> getGerenteAdjuntoComboFiltro() {
-		return gerenteAdjuntoComboFiltro;
-	}
+        cargarComboCausalCompraAdquisicion(adquisicionEnEdicion,
+                fuenteFinanciamiento, procedimientoCompraAdquisicionCombo.getSelectedT());
+    }
 
-	public SofisComboG<SsUsuario> getPmofComboFiltro() {
-		return pmofComboFiltro;
-	}
+    public boolean esEditableAdquisicion(AdquisicionTO adquisicion) {
 
-	public SofisComboG<OrganiIntProve> getProveedorFiltroCombo() {
-		return proveedorFiltroCombo;
-	}
+        return adquisicion.getEditable()
+                && (adquisicionEnEdicion == null || adquisicionEnEdicion.getId().equals(adquisicion.getId()))
+                && pagoEnEdicion == null;
+    }
 
-	public SofisComboG<FuenteFinanciamiento> getFuenteFinanciamientoFiltroCombo() {
-		return fuenteFinanciamientoFiltroCombo;
-	}
+    public boolean esEditablePago(PagoTO pago) {
 
-	public SofisComboG<Moneda> getMonedaFiltroCombo() {
-		return monedaFiltroCombo;
-	}
+        return pago.getEditable()
+                && (pagoEnEdicion == null || pagoEnEdicion.getId().equals(pago.getId()))
+                && adquisicionEnEdicion == null;
+    }
 
-	public SofisComboG<ProcedimientoCompra> getProcedimientoCompraFiltroCombo() {
-		return procedimientoCompraFiltroCombo;
-	}
+    public boolean puedeCambiarAprobacion(PagoTO pago) {
 
-	public MisAdquisicionesTO getMisAdquisiciones() {
-		return misAdquisiciones;
-	}
+        return pago.getPuedeCambiarAprobacion()
+                && pagoEnEdicion == null
+                && adquisicionEnEdicion == null;
+    }
 
-	public Map<Integer, Boolean> getProyectosExpandidos() {
-		return proyectosExpandidos;
-	}
+    public boolean valorPlanificadoEditable(PagoTO pago, ProyectoTO proyecto) {
 
-	public Map<Integer, Map<Integer, Boolean>> getAdquisicionesExpandidas() {
-		return adquisicionesExpandidas;
-	}
+        return pagoEnEdicion != null
+                && pagoEnEdicion.getId().equals(pago.getId())
+                && proyecto.getEstado().getId().equals(Estados.ESTADOS.PLANIFICACION.estado_id);
+    }
 
-	public PagoTO getPagoEnEdicion() {
-		return pagoEnEdicion;
-	}
+    public boolean valorRealEditable(PagoTO pago, ProyectoTO proyecto) {
 
-	public AdquisicionTO getAdquisicionEnEdicion() {
-		return adquisicionEnEdicion;
-	}
+        return pagoEnEdicion != null
+                && pagoEnEdicion.getId().equals(pago.getId())
+                && proyecto.getEstado().getId().equals(Estados.ESTADOS.EJECUCION.estado_id);
+    }
 
-	public void setAplicacionMB(AplicacionMB aplicacionMB) {
-		this.aplicacionMB = aplicacionMB;
-	}
+    public void setInicioMB(InicioMB inicioMB) {
+        this.inicioMB = inicioMB;
+    }
 
-	public AplicacionMB getAplicacionMB() {
-		return aplicacionMB;
-	}
+    public InicioMB getInicioMB() {
+        return inicioMB;
+    }
 
-	public boolean isMostrarFiltro() {
-		return mostrarFiltro;
-	}
+    public SsUsuarioDelegate getSsUsuarioDelegate() {
+        return ssUsuarioDelegate;
+    }
 
-	public boolean isOcultarPagosConfirmados() {
-		return ocultarPagosConfirmados;
-	}
+    public OrganiIntProveDelegate getOrganizacionDelegate() {
+        return organizacionDelegate;
+    }
 
-	public void setOcultarPagosConfirmados(boolean ocultarPagosConfirmados) {
-		this.ocultarPagosConfirmados = ocultarPagosConfirmados;
-	}
+    public FiltroMisAdquisicionesTO getFiltro() {
+        return filtro;
+    }
 
-	public SofisComboG<OrganizacionTO> getProveedorAdquisicionCombo() {
-		return proveedorAdquisicionCombo;
-	}
+    public List<SelectItem> getListaEstados() {
+        return listaEstados;
+    }
 
-	public SofisComboG<FuenteFinanciamientoTO> getFuenteFinanciamientoAdquisicionCombo() {
-		return fuenteFinanciamientoAdquisicionCombo;
-	}
+    public SofisComboG<Areas> getAreaFiltroCombo() {
+        return areaFiltroCombo;
+    }
 
-	public SofisComboG<CausalCompraTO> getCausalCompraAdquisicionCombo() {
-		return causalCompraAdquisicionCombo;
-	}
+    public SofisComboG<SsUsuario> getGerenteAdjuntoComboFiltro() {
+        return gerenteAdjuntoComboFiltro;
+    }
 
-	public SofisComboG<ProcedimientoCompraTO> getProcedimientoCompraAdquisicionCombo() {
-		return procedimientoCompraAdquisicionCombo;
-	}
+    public SofisComboG<SsUsuario> getPmofComboFiltro() {
+        return pmofComboFiltro;
+    }
 
-	public SofisComboG<OrganizacionTO> getProveedorPagoCombo() {
-		return proveedorPagoCombo;
-	}
+    public SofisComboG<OrganiIntProve> getProveedorFiltroCombo() {
+        return proveedorFiltroCombo;
+    }
 
-	public SofisComboG<OrganizacionTO> getClientePagoCombo() {
-		return clientePagoCombo;
-	}
+    public SofisComboG<FuenteFinanciamiento> getFuenteFinanciamientoFiltroCombo() {
+        return fuenteFinanciamientoFiltroCombo;
+    }
 
-	public PagoTO getPagoAConfirmar() {
-		return pagoAConfirmar;
-	}
+    public SofisComboG<Moneda> getMonedaFiltroCombo() {
+        return monedaFiltroCombo;
+    }
 
-	public PagoTO getPagoEnVisualizacion() {
-		return pagoEnVisualizacion;
-	}
+    public SofisComboG<ProcedimientoCompra> getProcedimientoCompraFiltroCombo() {
+        return procedimientoCompraFiltroCombo;
+    }
 
-	public AdquisicionTO getAdquisicionEnVisualizacion() {
-		return adquisicionEnVisualizacion;
-	}
+    public MisAdquisicionesTO getMisAdquisiciones() {
+        return misAdquisiciones;
+    }
 
-	public boolean getCamposExigidosEnAdquisicion() {
+    public Map<Integer, Boolean> getProyectosExpandidos() {
+        return proyectosExpandidos;
+    }
 
-		return camposExigidosEnAdquisicion;
-	}
+    public Map<Integer, Map<Integer, Boolean>> getAdquisicionesExpandidas() {
+        return adquisicionesExpandidas;
+    }
 
-	public boolean getMostrarMensajesConfirmacion() {
-		return mostrarMensajesConfirmacion;
-	}
+    public PagoTO getPagoEnEdicion() {
+        return pagoEnEdicion;
+    }
 
-	public RepeatPaginator getPaginator() {
-		return paginator;
-	}
+    public AdquisicionTO getAdquisicionEnEdicion() {
+        return adquisicionEnEdicion;
+    }
+
+    public void setAplicacionMB(AplicacionMB aplicacionMB) {
+        this.aplicacionMB = aplicacionMB;
+    }
+
+    public AplicacionMB getAplicacionMB() {
+        return aplicacionMB;
+    }
+
+    public boolean isMostrarFiltro() {
+        return mostrarFiltro;
+    }
+
+    public boolean isOcultarPagosConfirmados() {
+        return ocultarPagosConfirmados;
+    }
+
+    public void setOcultarPagosConfirmados(boolean ocultarPagosConfirmados) {
+        this.ocultarPagosConfirmados = ocultarPagosConfirmados;
+    }
+
+    public SofisComboG<OrganizacionTO> getProveedorAdquisicionCombo() {
+        return proveedorAdquisicionCombo;
+    }
+
+    public SofisComboG<FuenteFinanciamientoTO> getFuenteFinanciamientoAdquisicionCombo() {
+        return fuenteFinanciamientoAdquisicionCombo;
+    }
+
+    public SofisComboG<CausalCompraTO> getCausalCompraAdquisicionCombo() {
+        return causalCompraAdquisicionCombo;
+    }
+
+    public SofisComboG<ProcedimientoCompraTO> getProcedimientoCompraAdquisicionCombo() {
+        return procedimientoCompraAdquisicionCombo;
+    }
+
+    public SofisComboG<OrganizacionTO> getProveedorPagoCombo() {
+        return proveedorPagoCombo;
+    }
+
+    public SofisComboG<OrganizacionTO> getClientePagoCombo() {
+        return clientePagoCombo;
+    }
+
+    public PagoTO getPagoAConfirmar() {
+        return pagoAConfirmar;
+    }
+
+    public PagoTO getPagoEnVisualizacion() {
+        return pagoEnVisualizacion;
+    }
+
+    public AdquisicionTO getAdquisicionEnVisualizacion() {
+        return adquisicionEnVisualizacion;
+    }
+
+    public boolean getCamposExigidosEnAdquisicion() {
+
+        return camposExigidosEnAdquisicion;
+    }
+
+    public boolean getMostrarMensajesConfirmacion() {
+        return mostrarMensajesConfirmacion;
+    }
+
+    public RepeatPaginator getPaginator() {
+        return paginator;
+    }
+
+    public SofisCombo getListaComponenteProductoCombo() {
+        return listaComponenteProductoCombo;
+    }
+
+    public void setListaComponenteProductoCombo(SofisCombo listaComponenteProductoCombo) {
+        this.listaComponenteProductoCombo = listaComponenteProductoCombo;
+    }
+
+    public SofisComboG<IdentificadorGrpErp> getListaIdentificadorGrpErpCombo() {
+        return listaIdentificadorGrpErpCombo;
+    }
+
+    public void setListaIdentificadorGrpErpCombo(SofisComboG<IdentificadorGrpErp> listaIdentificadorGrpErpCombo) {
+        this.listaIdentificadorGrpErpCombo = listaIdentificadorGrpErpCombo;
+    }
+
+    public SofisComboG<TipoRegistroCompra> getListaTipoRegistroCompraCombo() {
+        return listaTipoRegistroCompraCombo;
+    }
+
+    public void setListaTipoRegistroCompraCombo(SofisComboG<TipoRegistroCompra> listaTipoRegistroCompraCombo) {
+        this.listaTipoRegistroCompraCombo = listaTipoRegistroCompraCombo;
+    }
+    
+        public SofisComboG<TipoRegistroCompra> getTipoRegistroCompraFiltroCombo() {
+        return tipoRegistroCompraFiltroCombo;
+    }
+
+    public void setTipoRegistroCompraFiltroCombo(SofisComboG<TipoRegistroCompra> tipoRegistroCompraFiltroCombo) {
+        this.tipoRegistroCompraFiltroCombo = tipoRegistroCompraFiltroCombo;
+    }
+    
+
+    public String getEstadoAdquisicion() {
+        return estadoAdquisicion;
+    }
+
+    public void setEstadoAdquisicion(String estadoAdquisicion) {
+        this.estadoAdquisicion = estadoAdquisicion;
+    }
+
+    public SofisComboG<SelectItem> getAnioCombo() {
+        return anioCombo;
+    }
+
+    public void setAnioCombo(SofisComboG<SelectItem> anioCombo) {
+        this.anioCombo = anioCombo;
+    }
+
+    public SofisComboG<OrganiIntProve> getOrganizacionFiltroCombo() {
+        return organizacionFiltroCombo;
+    }
+
+    public void setOrganizacionFiltroCombo(SofisComboG<OrganiIntProve> organizacionFiltroCombo) {
+        this.organizacionFiltroCombo = organizacionFiltroCombo;
+    }
+
+    private void cargarComboComponenteProducto(Adquisicion adquisicion) {
+
+        Map<String, Object> filtroCompoProduc = new HashMap<>();
+        filtroCompoProduc.put("habilitada", true);
+
+        List<ComponenteProducto> listaComponenteProducto = componenteProductoDelegate.busquedaComponenteProductoFiltro(inicioMB.getOrganismo().getOrgPk(), filtroCompoProduc, "comNombre", 1);
+
+        if (listaComponenteProducto != null && !listaComponenteProducto.isEmpty()) {
+            listaComponenteProductoCombo = new SofisCombo((List) listaComponenteProducto, "comNombre");
+            listaComponenteProductoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        listaComponenteProductoCombo.setSelectedObject(adquisicion.getAdqComponenteProducto());
+    }
+
+    private void cargaComboConvenioMarco(Adquisicion adquisicionFromBase) {
+
+        FiltroIdentificadorGrpErpTO filtroIdentificadorGrpErpTO = new FiltroIdentificadorGrpErpTO();
+        filtroIdentificadorGrpErpTO.setOrganismo(this.getInicioMB().getOrganismo());
+        filtroIdentificadorGrpErpTO.setHabilitado(true);
+        List<IdentificadorGrpErp> listaIdentificadorGrpErp = identificadorGrpErpDelegate.obtenerPorFiltro(filtroIdentificadorGrpErpTO);
+        if (listaIdentificadorGrpErp != null && !listaIdentificadorGrpErp.isEmpty()) {
+            listaIdentificadorGrpErpCombo = new SofisComboG((List) listaIdentificadorGrpErp, "idGrpErpNombre");
+            listaIdentificadorGrpErpCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        }
+
+        listaIdentificadorGrpErpCombo.setSelectedT(adquisicionFromBase.getAdqIdGrpErpFk());
+
+    }
+
+    private void cargarComboTipoCompra(Adquisicion adquisicionFromBase) {
+
+        List<TipoRegistroCompra> tipoRegistroCompra = Arrays.asList(TipoRegistroCompra.values());
+        listaTipoRegistroCompraCombo = new SofisComboG(tipoRegistroCompra, "text");
+        listaTipoRegistroCompraCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
+        listaTipoRegistroCompraCombo.setSelectedT(TipoRegistroCompra.COMPRA_ORIGINAL); // default COMPRA_ORIGINAL
+
+        listaTipoRegistroCompraCombo.setSelectedT(adquisicionFromBase.getAdqTipoRegistro());
+
+    }
+
+
 }

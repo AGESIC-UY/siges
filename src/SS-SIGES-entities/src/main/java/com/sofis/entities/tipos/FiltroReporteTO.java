@@ -44,6 +44,8 @@ public class FiltroReporteTO implements Serializable {
     private FuenteFinanciamiento fuenteFinanc;
     private Moneda moneda;
     private Boolean acumulado;
+    private Integer proyPk;
+
     
 
     public FiltroReporteTO() {
@@ -226,6 +228,14 @@ public class FiltroReporteTO implements Serializable {
 
     public void setMoneda(Moneda moneda) {
         this.moneda = moneda;
+    }
+
+    public Integer getProyPk() {
+        return proyPk;
+    }
+
+    public void setProyPk(Integer proyPk) {
+        this.proyPk = proyPk;
     }
 
     public Boolean getAcumulado() {

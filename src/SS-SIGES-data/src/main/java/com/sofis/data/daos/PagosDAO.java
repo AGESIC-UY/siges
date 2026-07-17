@@ -235,5 +235,29 @@ public class PagosDAO extends HibernateJpaDAOImp<Pagos, Integer> implements Seri
 				.setParameter("idPago", idPago)
 				.getSingleResult();
 	}
+        
+        
+        /**
+	 * Retorna los pagos pendientes por adquisicion.
+	 *
+	 * @param adkPk
+	 * @return
+	 */
+	public List<Pagos> obtenerPagosPendientes(Integer adkPk) {
+		String queryStr
+				= "SELECT p "
+				+ "FROM Pagos p "
+				+ "WHERE p.pagAdqFk.adqPk = :pagPk AND (p.pagConfirmar IS NULL OR p.pagConfirmar = :confirmar)";
+
+		Query query = super.getEm().createQuery(queryStr);
+		query.setParameter("pagPk", adkPk);
+               query.setParameter("confirmar", Boolean.FALSE);
+                
+
+		
+
+		List<Pagos> resultado = query.getResultList();
+		return resultado;
+	}
 
 }

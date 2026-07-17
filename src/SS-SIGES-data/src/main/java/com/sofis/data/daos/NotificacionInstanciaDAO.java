@@ -22,7 +22,7 @@ import javax.persistence.Query;
 public class NotificacionInstanciaDAO extends HibernateJpaDAOImp<NotificacionInstancia, Integer> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(NotificacionInstanciaDAO.class.getName());    
+    private static final Logger logger = Logger.getLogger(NotificacionInstanciaDAO.class.getName());
 
     public NotificacionInstanciaDAO(EntityManager em) {
         super(em);
@@ -49,7 +49,33 @@ public class NotificacionInstanciaDAO extends HibernateJpaDAOImp<NotificacionIns
         return null;
     }
 
-    public NotificacionInstancia obtenerNotificacionInstPorCod(String cod, Integer proyPk) {
+    public NotificacionInstancia obtenerNotificacionInstPorCod(String cod, Integer proyPk, Boolean ignoarDuplicadas) {
+        if (proyPk != null) {
+            try {
+                String query = "SELECT ni FROM NotificacionInstancia ni "
+                        + " WHERE ni.notinstProyFk.proyPk = :proyPk"
+                        + " AND ni.notinstNotFk.notCod = :cod";
+                Query q = super.getEm().createQuery(query);
+                q.setParameter("proyPk", proyPk);
+                q.setParameter("cod", cod);
+
+                List<NotificacionInstancia> result = q.getResultList();
+
+                if (ignoarDuplicadas != null) {
+                    return result.get(result.size() - 1);
+                }
+
+                return (NotificacionInstancia) DAOUtils.obtenerSingleResult(result);
+            } catch (Exception ex) {
+                TechnicalException te = new TechnicalException(ex);
+                te.addError(MensajesNegocio.ERROR_NOTIFICACION_INST_OBTENER);
+                throw te;
+            }
+        }
+        return null;
+    }
+
+    public NotificacionInstancia obtenerNotificacionInstPorCodIgnorandoDuplicadas(String cod, Integer proyPk) {
         if (proyPk != null) {
             try {
                 String query = "SELECT ni FROM NotificacionInstancia ni "

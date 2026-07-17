@@ -6,6 +6,7 @@ import com.sofis.entities.data.Documentos;
 import com.sofis.persistence.dao.exceptions.DAOGeneralException;
 import com.sofis.persistence.dao.imp.hibernate.HibernateJpaDAOImp;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements 
 //                + " group by df.docfile_path\n"
 //                + " order by df.docfile_ult_mod desc";
 
+            logger.severe("dentro del dao de historico antes de ejecutar la query");
         String queryString = "select \n"
                 + "	df.docfile_pk,\n"
                 + "	df.docfile_nombre,\n"
@@ -72,11 +74,12 @@ public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements 
                 + "    )\n"
                 + "order by df.docfile_ult_mod desc";
         
-        
+       
         Query q = this.getEm().createNativeQuery(queryString);
         q.setParameter("doc_pk", d.getDocsPk());
         List<Object[]> queryResult = q.getResultList();
-        List<DocFile> res = new LinkedList<>();
+         logger.severe("estoy en el obtener historico doc file" + queryResult.size());
+        List<DocFile> res = new ArrayList<>();
         DocFile dfAux = null;
         String filename;
         String[] aux = new String[2];
@@ -95,7 +98,10 @@ public class DocFileDao extends HibernateJpaDAOImp<DocFile, Integer> implements 
                  * Seteo el nombre con la version
                  */
                 aux = dfAux.getDocfileFileNameExtension();
+                logger.severe("anes del aux" + aux);
                 filename = aux[0] + "_" + version + "." + aux[1];
+                System.out.println("despues de aux");
+
                 dfAux.setDocfileNombreHist(filename);
 
                 res.add(dfAux);

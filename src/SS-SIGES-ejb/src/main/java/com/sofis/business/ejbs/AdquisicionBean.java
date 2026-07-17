@@ -28,10 +28,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,13 +45,11 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.jboss.ejb3.annotation.TransactionTimeout;
+import javax.persistence.Query;
 
 @Named
 @Stateless(name = "AdquisicionBean")
@@ -75,8 +75,8 @@ public class AdquisicionBean {
 
     @EJB
     private ProyectosBean proyectosBean;
-    
-     private static final long TRANSACTION_TIMEOUT_MINUTES = 120;
+
+    private static final long TRANSACTION_TIMEOUT_MINUTES = 120;
 
     /**
      * Compara en primer lugar por fecha de planificacion y luego por fecha real
@@ -901,7 +901,120 @@ public class AdquisicionBean {
 
     public void actualizarPorCargaMasiva(Integer procAdquisicionId, Integer procCompPk, Integer orgPk) {
         AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
-        adquisicionDAO.actualizarAdquisiciones(procAdquisicionId,procCompPk,orgPk);
+        adquisicionDAO.actualizarAdquisiciones(procAdquisicionId, procCompPk, orgPk);
+    }
+
+    public void actualizacionMasiva(String ids, Integer selected, Integer selected0,
+            Integer selected1, Integer selected2, Integer selected3, Integer selected4, Integer selected5, Integer selected6, String nombreUsuario, HashMap<String, String> valores) {
+
+        AdquisicionDAO adquisicionDAO = new AdquisicionDAO(em);
+        adquisicionDAO.actualizacionMasiva(ids, selected, selected0, selected1, 
+                selected2, selected3, selected4, selected5, selected6);
+        List<String> listAdquisiciones = Arrays.asList(ids.split(","));
+
+        String detalle = "";
+        boolean hasValor = false;
+
+        if (selected != null && selected > 0) {
+
+            detalle = detalle + " "+ valores.get("FUENTE_FINANCIAMIENTO");
+            hasValor = true;
+
+        }
+
+        if (selected0 != null && selected0 > 0) {
+
+            if (hasValor) {
+                detalle = detalle +" ,"+valores.get("CONVENIO_MARCO");
+            } else {
+                detalle = detalle + valores.get("CONVENIO_MARCO");
+            }
+
+            hasValor = true;
+
+        }
+
+        if (selected1 != null && selected1 > 0) {
+
+            if (hasValor) {
+                detalle = detalle +" ,"+valores.get("TIPO_REGISTRO_COMPRA");
+            } else {
+                detalle = detalle +valores.get("TIPO_REGISTRO_COMPRA");
+            }
+
+            hasValor = true;
+
+        }
+
+        if (selected2 != null && selected2 > 0) {
+            if (hasValor) {
+                detalle = detalle +" ,"+valores.get("CATEGORIA");
+            } else {
+                detalle = detalle +valores.get("CATEGORIA");
+            }
+
+            hasValor = true;
+
+        }
+
+        if (selected3 != null && selected3 > 0) {
+
+            if (hasValor) {
+                 detalle = detalle +" ,"+valores.get("PROCEDIMIENTO_COMPRA");
+            } else {
+                detalle = detalle +valores.get("PROCEDIMIENTO_COMPRA");
+            }
+
+            hasValor = true;
+
+        }
+
+        if (selected4 != null && selected4 > 0) {
+
+            if (hasValor) {
+                detalle = detalle +" ,"+valores.get("COMPONENTE_PRODUCTO");
+            } else {
+                 detalle = detalle +valores.get("COMPONENTE_PRODUCTO");
+            }
+
+            hasValor = true;
+
+        }
+
+        if (selected5 != null && selected5 > 0) {
+
+            if (hasValor) {
+                 detalle = detalle +" ,"+valores.get("TIPO_ADQUISICION");
+            } else {
+               detalle = detalle +valores.get("TIPO_ADQUISICION");
+            }
+
+            hasValor = true;
+
+        }
+        
+        if (selected6 != null && selected6 > 0) {
+
+            if (hasValor) {
+                 detalle = detalle +" ,"+valores.get("MONEDA");
+            } else {
+               detalle = detalle +valores.get("MONEDA");
+            }
+
+            hasValor = true;
+
+        }
+
+        for (String adqPk : listAdquisiciones) {
+            String queryStr = "INSERT INTO siges.log_adquisiciones\n"
+                    + "(lad_adquisicion_fk, lad_fecha, lad_usuario, lad_detalle)\n"
+                    + "VALUES(" + adqPk + ", now(), '" + nombreUsuario + "', '" + detalle + "')";
+
+            System.out.println(queryStr + "esta es la queryy");
+            Query query = em.createNativeQuery(queryStr);
+            int result = query.executeUpdate();
+        }
+
     }
 
 }

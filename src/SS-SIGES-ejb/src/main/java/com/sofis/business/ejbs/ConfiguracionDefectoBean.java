@@ -168,7 +168,29 @@ public class ConfiguracionDefectoBean {
             new ConfiguracionDefecto(ConfiguracionCodigos.PMOF_GESTIONA_SUS_PROYECTOS, "Esta configuración permite que él PMO F de un proyecto, también pueda tener los mismos privilegios que el gerente y adjunto.", "false"),
             new ConfiguracionDefecto(ConfiguracionCodigos.TIPO_ADQUISICION_REQUERIDO, "Indica si el tipo adquisicion es requerido", "false"),
             new ConfiguracionDefecto(ConfiguracionCodigos.ID_ADQUISICION_REQUERIDO, "Indica si el id adquisición es requerido", "false"),
-            new ConfiguracionDefecto(ConfiguracionCodigos.ACTIVAR_RANGOS_ID_ADQUISICION, "Activar Rango de adquisición", "false")
+            new ConfiguracionDefecto(ConfiguracionCodigos.FECHAS_COMPRA_REQUERIDO, "Indica si son requeridas las fechas en adquisición", "false"),
+            new ConfiguracionDefecto(ConfiguracionCodigos.ACTIVAR_RANGOS_ID_ADQUISICION, "Activar Rango de adquisición", "false"),
+            new ConfiguracionDefecto(ConfiguracionCodigos.MENSAJE_ERROR_LOGEO, "Indica mensaje de error de logeo", "false"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_0_4, "", "Verde"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_0_8, "", "Verde"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_1_2, "", "Verde"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_1_6, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_2_0, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_2_4, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_3_2, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_3_6, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_4_0, "", "Amarillo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_4_8, "", "Rojo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_6_0, "", "Rojo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_6_4, "", "Rojo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_8_0, "", "Rojo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.COLOR_10_0, "", "Rojo"),
+new ConfiguracionDefecto(ConfiguracionCodigos.RIESGO_TITULO_EJE_X, "", "Probabilidad"),
+new ConfiguracionDefecto(ConfiguracionCodigos.RIESGO_TITULO_EJE_Y, "", "Impacto"),
+new ConfiguracionDefecto(ConfiguracionCodigos.RIESGO_VALORES_EJE_X, "", "20%,40%,60%,80%,100%"),
+new ConfiguracionDefecto(ConfiguracionCodigos.RIESGO_VALORES_EJE_Y, "", "2,4,6,8,10")
+                
+                
 
         };
 

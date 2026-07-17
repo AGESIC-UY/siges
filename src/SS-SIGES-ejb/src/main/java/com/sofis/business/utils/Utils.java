@@ -83,6 +83,17 @@ public class Utils {
 		}
 		return ret.toString();
 	}
+        
+        public static String generarContraseniaConParam(String param ) {
+            String md5 = md5(param);
+		StringBuilder ret = new StringBuilder(md5);
+		String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		Random rand = new Random((new Date()).getTime());
+		for (int i = 0; i < 20; i++) {
+			ret.append(caracteres.charAt(rand.nextInt(caracteres.length())));
+		}
+		return ret.toString();
+	}
 
 	public static String md5(String txt) {
 		try {

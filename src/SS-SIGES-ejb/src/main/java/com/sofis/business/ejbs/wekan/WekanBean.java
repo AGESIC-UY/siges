@@ -76,11 +76,42 @@ public class WekanBean {
     public WekanApiClientWrapper getAdminApi(String urlServidor, Integer idOrganismo) throws BusinessException {
 
         WekanApiClientWrapper result = new WekanApiClientWrapper();
+        String propiedadUsuarioWekan = "wekan_user_" + idOrganismo;
+        String propiedadPasswordWekan = "wekan_password_" + idOrganismo;
+        String adminWekanUsuario, adminWekanContrasenia;
 
-        String adminWekanUsuario = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_USUARIO, idOrganismo);
-        String adminWekanContrasenia = obtenerContraseniaAdmin(idOrganismo);
 
-        LOGGER.log(Level.INFO, "Contraseña " + adminWekanContrasenia);
+        if (configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_USUARIO, idOrganismo).isEmpty()) {
+            LOGGER.info("Usuario Admin de api wekan tomado de standalone");
+            adminWekanUsuario = "S/D";
+            if (System.getProperty(propiedadUsuarioWekan) != null) {
+                adminWekanUsuario = System.getProperty(propiedadUsuarioWekan);
+            } else {
+                LOGGER.info("Usuario Admin de api wekan no configurado standalone");
+            }
+
+        } else {
+            LOGGER.info("Usuario Admin de api wekan tomado de config");
+            adminWekanUsuario = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_USUARIO, idOrganismo);
+
+        }
+
+        if (configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_CONTRASENIA, idOrganismo).isEmpty()) {
+            LOGGER.info("Password Admin de api wekan tomado de standalone");
+            adminWekanContrasenia = "S/D";
+            if (System.getProperty(propiedadPasswordWekan) != null) {
+                adminWekanContrasenia = System.getProperty(propiedadPasswordWekan);
+            }else{
+                 LOGGER.info("Password Admin de api wekan no configurado standalone");
+            }
+
+        } else {
+            LOGGER.info("Password Admin de api wekan tomado de config");
+            adminWekanContrasenia = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_CONTRASENIA, idOrganismo);
+
+        }
+        
+        String passwordPlana = new String(DatatypeConverter.parseBase64Binary(adminWekanContrasenia));
 
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath(urlServidor);
@@ -90,8 +121,8 @@ public class WekanBean {
             LoginApi loginApi = new LoginApi(apiClient);
 
             login = EmailValidator.validateEmail(adminWekanUsuario)
-                    ? loginApi.login(adminWekanContrasenia, null, adminWekanUsuario)
-                    : loginApi.login(adminWekanContrasenia, adminWekanUsuario, null);
+                    ? loginApi.login(passwordPlana, null, adminWekanUsuario)
+                    : loginApi.login(passwordPlana, adminWekanUsuario, null);
 
             apiClient.setApiKeyPrefix("Bearer");
             apiClient.setApiKey(login.getToken());
@@ -116,7 +147,7 @@ public class WekanBean {
 
         String adminWekanContraseniaBase64 = configuracionBean.obtenerCnfValorPorCodigo(ConfiguracionCodigos.WEKAN_ADMIN_CONTRASENIA, idOrganismo);
 
-		return new String(DatatypeConverter.parseBase64Binary(adminWekanContraseniaBase64));
+        return new String(DatatypeConverter.parseBase64Binary(adminWekanContraseniaBase64));
     }
 
 }

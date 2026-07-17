@@ -46,6 +46,10 @@ public class EntregablesValidacion {
 						entIdMap.put(en.getEntId(), en);
 					}
 				}
+                                if (en.getEntDescripcion() != null && en.getEntDescripcion().length() > 1500) {                                  
+                                    be.addError(MensajesNegocio.ERROR_OBSERVACIONES_1500_LARGO_MAX);
+                                    break;
+                                }
 				if (en.getEntNivel() != null && en.getEntNivel().equals(0)) {
 					entregablesNivel0++;
 					if (entregablesNivel0 > 1) {

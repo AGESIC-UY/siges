@@ -8,6 +8,7 @@ import com.sofis.entities.data.SsUsuario;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.BooleanUtils;
 import com.sofis.generico.utils.generalutils.StringsUtils;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -33,9 +34,25 @@ public class SsUsuarioValidacion {
 
             if (StringsUtils.isEmpty(usu.getUsuPrimerNombre())) {
                 ge.addError(MensajesNegocio.ERROR_USUARIO_NOMBRE);
+            } else {
+                String aux = usu.getUsuPrimerNombre().replaceAll("\\s", "");
+                aux = removerAcentos(aux);
+                aux=aux.replace("'", "");
+                if (!Pattern.matches("[a-zA-Z]+", aux)) {
+                    ge.addError(MensajesNegocio.ERROR_USUARIO_NOMBRE_INVALIDO);
+                }
+
             }
             if (StringsUtils.isEmpty(usu.getUsuPrimerApellido())) {
                 ge.addError(MensajesNegocio.ERROR_USUARIO_APELLIDO);
+            } else {
+
+                String aux = usu.getUsuPrimerApellido().replaceAll("\\s", "");
+                aux = removerAcentos(aux);
+                 aux=aux.replace("'", "");
+                if (!Pattern.matches("[a-zA-Z]+", aux)) {
+                    ge.addError(MensajesNegocio.ERROR_USUARIO_APELLIDO_INVALIDO);
+                }
             }
 
             if (orgPk != null) {
@@ -115,6 +132,63 @@ public class SsUsuarioValidacion {
         return true;
     }
 
+    
+    
+    public static boolean validarCambioPassNuevoProcedimiento(SsUsuario usu, String nuevaContrasenia, String confirmacionContrasenia) throws BusinessException {
+        BusinessException ge = new BusinessException();
+
+        
+        if (nuevaContrasenia == null) {
+            ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_NUEVA);
+        }
+        if (confirmacionContrasenia == null) {
+            ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_REINGRESO);
+        }
+
+       
+        if (nuevaContrasenia != null && confirmacionContrasenia != null
+                && !nuevaContrasenia.equals(confirmacionContrasenia)) {
+            ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_DIF_REINGRESO);
+        }
+
+        if (nuevaContrasenia != null && (nuevaContrasenia.length() > 12 || nuevaContrasenia.length() < 8)) {
+            ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_LONGITUD);
+        } else if (nuevaContrasenia != null) {
+
+            int cantidadMayusculas = 0;
+            int cantidadMinusculas = 0;
+            int cantidadNumeros = 0;
+
+            for (int i = 0; i < nuevaContrasenia.length(); i++) {
+                if (Character.isUpperCase(nuevaContrasenia.charAt(i))) {
+                    cantidadMayusculas = cantidadMayusculas + 1;
+                } else if (Character.isLowerCase(nuevaContrasenia.charAt(i))) {
+                    cantidadMinusculas = cantidadMinusculas + 1;
+                } else if (Character.isDigit(nuevaContrasenia.charAt(i))) {
+                    cantidadNumeros = cantidadNumeros + 1;
+                }
+            }
+
+            if (cantidadMayusculas < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_MAYUSUCLAS);
+            }
+
+            if (cantidadMinusculas < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_MINUSCULAS);
+            }
+            if (cantidadNumeros < 2) {
+                ge.addError(MensajesNegocio.ERROR_USUARIO_PASSWORD_NUMEROS);
+            }
+
+        }
+
+        if (ge.getErrores().size() > 0) {
+            throw ge;
+        }
+        return true;
+    }
+    
+    
     public static boolean compararParaGrabar(SsUsuario c1, SsUsuario c2) {
         boolean respuesta = true;
         if (c1 != null) {
@@ -128,4 +202,21 @@ public class SsUsuarioValidacion {
         }
         return respuesta;
     }
+
+    private static String removerAcentos(String origen) {
+        String ConAcento = "ÀÁ ÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆć"
+                + "ĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġȑȒȓȔȕȗȘș";
+        String SinAcento = "AAAAAAACEEEEIIIIDNOOOOOOUUUUYBaaaaaaaceeeeiiiionoooooouuuuybyAaAaAaCc"
+                + "CcCcCcDdDdEeEeEeEeEeGgGgGgrRrUuuSs";
+        if (ConAcento.length() != SinAcento.length()) {
+            throw new RuntimeException("Revise las cadenas para la sustitución de acentos, longitudes diferentes");
+        }
+        int ejemplares = ConAcento.length();
+        String retorno = origen;
+        for (int i = 0; i < ejemplares; i++) {
+            retorno = retorno.replace(ConAcento.charAt(i), SinAcento.charAt(i));
+        }
+        return retorno;
+    }
+
 }

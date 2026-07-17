@@ -161,6 +161,15 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>componenteProducto2</from-outcome>
+            <to-view-id>/paginasPrivadas/componenteProducto2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
@@ -170,12 +179,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionRiesgos2</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionRiesgosCliente2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>configuracionDocumentos</from-outcome>
             <to-view-id>/paginasPrivadas/configuracionDocumentosCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>configuracionDocumentos2</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionDocumentosCliente2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -269,6 +296,25 @@
         </navigation-case>
     </navigation-rule>
 
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_CONFIGURACION_GRUPO_TRABAJO</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionGrupoTrabajo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_IMPORTAR_ADQUISICION</from-outcome>
+            <to-view-id>/paginasPrivadas/importarAdquisicion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
@@ -308,6 +354,15 @@
         <navigation-case>
             <from-outcome>IR_A_EDITAR_FICHA</from-outcome>
             <to-view-id>/paginasPrivadas/ficha.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_EDITAR_GRUPO_TRABAJO</from-outcome>
+            <to-view-id>/paginasPrivadas/configuracionGrupoTrabajoEdicion.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -375,11 +430,20 @@
         </navigation-case>
     </navigation-rule>
     
-      <navigation-rule>
+    <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_MIS_ADQUISICIONES</from-outcome>
             <to-view-id>/paginasPrivadas/misAdquisiciones.xtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_RIESGOS</from-outcome>
+            <to-view-id>/paginasPrivadas/riesgos.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -411,7 +475,7 @@
         </navigation-case>
     </navigation-rule>
     
-      <navigation-rule>
+    <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_SsUsuario_Proyecto</from-outcome>
@@ -420,7 +484,7 @@
         </navigation-case>
     </navigation-rule>
     
-     <navigation-rule>
+    <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_SsAdquisicion_Rango</from-outcome>
@@ -428,8 +492,38 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsAdquisicion_Gestion</from-outcome>
+            <to-view-id>/paginasPrivadas/ssAdquisicionGestion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsAdquisicion_Gestion2</from-outcome>
+            <to-view-id>/paginasPrivadas/ssAdquisicionGestion2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsAdquisicion_Info</from-outcome>
+            <to-view-id>/paginasPrivadas/ssAdquisicionInfo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    
 
-<navigation-rule>
+    <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_ProcedimientoCompraInfo</from-outcome>
@@ -439,7 +533,7 @@
     </navigation-rule>
 
 
- <navigation-rule>
+    <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_SsTipo_Riesgo</from-outcome>
@@ -447,7 +541,23 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
-    
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsTipo_Riesgo2</from-outcome>
+            <to-view-id>/paginasPrivadas/ssTipoRiesgo2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_IMPORTAR_ADQUISICION2</from-outcome>
+            <to-view-id>/paginasPrivadas/importarAdquisicion2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
@@ -484,12 +594,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PLANTILLAS2</from-outcome>
+            <to-view-id>/paginasPrivadas/plantillaCronograma2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
 	
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_PERSONAS</from-outcome>
             <to-view-id>/paginasPrivadas/personas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PERSONAS2</from-outcome>
+            <to-view-id>/paginasPrivadas/personas2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -502,12 +630,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TIPO_DOCUMENTO2</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoDocumento2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_ABM_AREAS_TEMATICAS</from-outcome>
             <to-view-id>/paginasPrivadas/areaTematica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AREAS_TEMATICAS2</from-outcome>
+            <to-view-id>/paginasPrivadas/areaTematica2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -520,12 +666,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AMBITO2</from-outcome>
+            <to-view-id>/paginasPrivadas/ambito2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_ABM_ORGANIZACION</from-outcome>
             <to-view-id>/paginasPrivadas/organiIntProve.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_ORGANIZACION2</from-outcome>
+            <to-view-id>/paginasPrivadas/organiIntProve2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -542,8 +706,26 @@
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
+            <from-outcome>IR_ABM_AREA_CONOCIMIENTO2</from-outcome>
+            <to-view-id>/paginasPrivadas/areaConocimiento2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
             <from-outcome>IR_ABM_AREAS</from-outcome>
             <to-view-id>/paginasPrivadas/areas.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_AREAS2</from-outcome>
+            <to-view-id>/paginasPrivadas/areas2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -556,12 +738,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_FUENTE_FINANCIAMIENTO2</from-outcome>
+            <to-view-id>/paginasPrivadas/fuenteFinanciamiento2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_ABM_MAILS_TEMPLATE</from-outcome>
             <to-view-id>/paginasPrivadas/mailsTemplate.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_MAILS_TEMPLATE2</from-outcome>
+            <to-view-id>/paginasPrivadas/mailsTemplate2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -574,12 +774,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_MONEDA2</from-outcome>
+            <to-view-id>/paginasPrivadas/moneda2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_ABM_NOTIFICACION</from-outcome>
             <to-view-id>/paginasPrivadas/notificacion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_NOTIFICACION2</from-outcome>
+            <to-view-id>/paginasPrivadas/notificacion2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -592,6 +810,15 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_ROLES_INTERESADOS2</from-outcome>
+            <to-view-id>/paginasPrivadas/rolesInteresados2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
@@ -601,12 +828,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TEMAS_CALIDAD2</from-outcome>
+            <to-view-id>/paginasPrivadas/temasCalidad2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_ABM_TIPO_GASTO</from-outcome>
             <to-view-id>/paginasPrivadas/tipoGasto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_ABM_TIPO_GASTO2</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoGasto2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -633,8 +878,26 @@
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
+            <from-outcome>IR_A_OBJETIVOS_ESTRATEGICOS2</from-outcome>
+            <to-view-id>/paginasPrivadas/objetivosEstrategicos2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
             <from-outcome>IR_A_PROCEDIMIENTO_COMPRA</from-outcome>
             <to-view-id>/paginasPrivadas/procedimientoCompra.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_PROCEDIMIENTO_COMPRA2</from-outcome>
+            <to-view-id>/paginasPrivadas/procedimientoCompra2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -656,12 +919,39 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_GESTION_PROGRAMAS2</from-outcome>
+            <to-view-id>/paginasPrivadas/gestionProgramasCliente2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_GESTION_PROYECTOS2</from-outcome>
+            <to-view-id>/paginasPrivadas/gestionProyectos2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
     
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_TIPO_ADQUISICION</from-outcome>
             <to-view-id>/paginasPrivadas/tipoAdquisicion.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_TIPO_ADQUISICION2</from-outcome>
+            <to-view-id>/paginasPrivadas/tipoAdquisicion2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -678,8 +968,28 @@
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
+            <from-outcome>IR_A_CENTRO_COSTO2</from-outcome>
+            <to-view-id>/paginasPrivadas/centroCosto2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
             <from-outcome>IR_A_FUENTE_PROCEDIMIENTO_COMPRA</from-outcome>
             <to-view-id>/paginasPrivadas/fuenteProcedimientoCompra.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_FUENTE_PROCEDIMIENTO_COMPRA2</from-outcome>
+            <to-view-id>/paginasPrivadas/fuenteProcedimientoCompra2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -693,11 +1003,38 @@
         </navigation-case>
     </navigation-rule>
 
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_CAUSAL_COMPRA2</from-outcome>
+            <to-view-id>/paginasPrivadas/causalCompra2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
     <navigation-rule>
         <from-view-id>*</from-view-id>
         <navigation-case>
             <from-outcome>IR_A_IDENTIFICADOR_GRP_ERP</from-outcome>
             <to-view-id>/paginasPrivadas/identificadorGrpErp.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_IDENTIFICADOR_GRP_ERP2</from-outcome>
+            <to-view-id>/paginasPrivadas/identificadorGrpErp2.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+     <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>IR_A_SsAdquisicion_Info2</from-outcome>
+            <to-view-id>/paginasPrivadas/ssAdquisicionInfo2.jsf</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>

@@ -13,7 +13,7 @@ public class FichaAdquisicionValidacion {
 
 	public static boolean validar(Adquisicion adq, Boolean proveedorExigidoEnCompra,
 			Boolean existeFuenteProcedimientoCompra, Boolean tipoAdquisicionRequerido,
-			Integer largoMaximoIdAdquisicion,Boolean centroCostoExigido, Boolean idAdquisicionRequerido) throws BusinessException {
+			Integer largoMaximoIdAdquisicion,Boolean centroCostoExigido, Boolean idAdquisicionRequerido,Boolean fechasExigidas) throws BusinessException {
 
 		BusinessException be = new BusinessException();
 
@@ -47,6 +47,21 @@ public class FichaAdquisicionValidacion {
 					be.addError(MensajesNegocio.ERROR_ADQUISICION_FECHA_INICIO_MAYOR_FECHA_EJECUCION);
 				}
 			}
+                        
+                        
+                        if(fechasExigidas ){ 
+                            
+                            if (adq.getAdqFechaEstimadaInicioCompra()== null ) {
+                                	be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_FECHA_INICIO_ESTIMADA);
+                            }
+                            
+                            
+                            if (adq.getAdqFechaEsperadaInicioEjecucion()== null ) {
+                                	be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_FECHA_INICIO_ESPERADA);
+                            }
+			
+                            
+                        }
 
 			validarIdAdquisicion(be, idAdquisicionRequerido, adq.getAdqIdAdquisicion(), largoMaximoIdAdquisicion);
 
@@ -69,7 +84,7 @@ public class FichaAdquisicionValidacion {
 
 	public static boolean validarDuplicado(Adquisicion adq, Boolean proveedorExigidoEnCompra,
 			Boolean existeFuenteProcedimientoCompra, Boolean camposExigidos,
-			Integer largoMaximoIdAdquisicion, Date fechaPrimerPago, Double porcentajeImporte) throws BusinessException {
+			Integer largoMaximoIdAdquisicion, Date fechaPrimerPago, Double porcentajeImporte,Boolean fechasExigidas) throws BusinessException {
 
 		BusinessException be = new BusinessException();
 
@@ -102,6 +117,18 @@ public class FichaAdquisicionValidacion {
 
 			if (existeFuenteProcedimientoCompra && adq.getAdqCausalCompra() == null) {
 				be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_CAUSAL);
+			}
+                        
+                         if(fechasExigidas ){ 
+                            
+                            if (adq.getAdqFechaEstimadaInicioCompra()== null ) {
+                                	be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_FECHA_INICIO_ESTIMADA);
+                            }
+                            
+                            
+                            if (adq.getAdqFechaEsperadaInicioEjecucion()== null ) {
+                                	be.addError(MensajesNegocio.ERROR_ADQUISICION_SIN_FECHA_INICIO_ESPERADA);
+                            }
 			}
 		}
 

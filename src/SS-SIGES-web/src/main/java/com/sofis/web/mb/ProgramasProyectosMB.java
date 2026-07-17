@@ -80,7 +80,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.icefaces.ace.event.ExpansionChangeEvent;
-import org.icefaces.ace.model.table.RowStateMap;
 import org.icefaces.util.JavaScriptRunner;
 
 @ManagedBean(name = "ProgramasProyectosMB")

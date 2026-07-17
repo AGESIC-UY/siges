@@ -30,11 +30,14 @@
                     <ice:outputLabel value="#{labels.rep_tareas_filtro_proy}"/>
                     <ace:textEntry value="#{misTareasMB.filtro.proyNombre}"/>
 
+                    <ice:outputLabel value="#{labels.rep_pre_filtro_proypk}" />
+                    <ace:textEntry value="#{misTareasMB.filtro.proyectoCodigo}" converter="IntegerFormatConverter" />
+                                        
                     <ice:outputLabel value="#{labels.rep_tareas_filtro_usuario}"/>
                     <ice:selectOneMenu value="#{misTareasMB.usuarioCombo.selected}"
                                        valueChangeListener="#{misTareasMB.usuarioComboValueChange}"
                                        partialSubmit="true"
-				       disabled="#{misTareasMB.esUsuarioExterno()}">
+                                       disabled="#{misTareasMB.esUsuarioExterno()}">
                         <f:selectItems value="#{misTareasMB.usuarioCombo.items}"/>
                         <ace:ajax/>
                     </ice:selectOneMenu>
@@ -64,7 +67,7 @@
             </ice:panelGroup>
 
             <ice:panelGroup styleClass="panelBotones">
-<!--                <ace:messages id="misTareasMsg"/>-->
+                <!--                <ace:messages id="misTareasMsg"/>-->
                 <ace:pushButton value="#{labels.buscar}" 
                                 styleClass="boton buscar principal" 
                                 action="#{misTareasMB.buscarTareasAction()}"/>
@@ -78,7 +81,7 @@
             <ui:include src="./../fragmentos/misTareasReporteFragmento.xhtml" />
         </ice:panelGroup>
 
-        
+
     </o:form>
 
 </ui:composition>

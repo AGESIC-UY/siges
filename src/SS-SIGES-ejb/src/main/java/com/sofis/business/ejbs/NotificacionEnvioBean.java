@@ -213,7 +213,7 @@ public class NotificacionEnvioBean {
 
         if (riesgoColor.equals(ConstantesEstandares.SEMAFORO_AMARILLO)
                 || riesgoColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_RIESGOS_1, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_RIESGOS_1, proy, orgPk, null, null);
         } else if (riesgoColor.equals(ConstantesEstandares.SEMAFORO_VERDE)) {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_RIESGOS_1, proy.getProyPk());
         }
@@ -228,7 +228,7 @@ public class NotificacionEnvioBean {
         if (proy.getProyEstFk().isEstado(Estados.ESTADOS.INICIO.estado_id)) {
             String estColor = estadosBean.obtenerEstadoColor(proy.getProyEstFk(), proy.getProyIndices().getProyindPeriodoInicio(), proy.getProyIndices().getProyindPeriodoFin(), null, null, null, null, orgPk);
             if (estColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
-                enviarNotificacion(ConstantesNotificaciones.NOT_COD_INICIO, proy, orgPk, null);
+                enviarNotificacion(ConstantesNotificaciones.NOT_COD_INICIO, proy, orgPk, null, null);
             } else if (!estColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
                 notificacionSuperada(ConstantesNotificaciones.NOT_COD_INICIO, proy.getProyPk());
             }
@@ -246,7 +246,7 @@ public class NotificacionEnvioBean {
         if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
             String estColor = estadosBean.obtenerEstadoColor(proy.getProyEstFk(), proy.getProyIndices().getProyindPeriodoInicio(), proy.getProyIndices().getProyindPeriodoFin(), null, null, null, null, orgPk);
             if (estColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
-                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PLANIFICACION, proy, orgPk, null);
+                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PLANIFICACION, proy, orgPk, null, null);
             } else if (!estColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
                 notificacionSuperada(ConstantesNotificaciones.NOT_COD_PLANIFICACION, proy.getProyPk());
             }
@@ -263,7 +263,7 @@ public class NotificacionEnvioBean {
         String actColor = proyectosBean.obtenerUltimaActualizacionColor(proy.getProyEstFk(), proy.getProyFechaAct(), proy.getProySemaforoAmarillo(), proy.getProySemaforoRojo());
 
         if (actColor.equals(ConstantesEstandares.SEMAFORO_AMARILLO)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, proy, orgPk, null, null);
         } else if (!actColor.equals(ConstantesEstandares.SEMAFORO_AMARILLO)) {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_1, proy.getProyPk());
         }
@@ -277,7 +277,7 @@ public class NotificacionEnvioBean {
         String actColor = proyectosBean.obtenerUltimaActualizacionColor(proy.getProyEstFk(), proy.getProyFechaAct(), proy.getProySemaforoAmarillo(), proy.getProySemaforoRojo());
 
         if (actColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, proy, orgPk, null, null);
         } else if (!actColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_ACTUALIZACION_2, proy.getProyPk());
         }
@@ -298,7 +298,7 @@ public class NotificacionEnvioBean {
                     for (Pagos pago : adq.getPagosSet()) {
                         if (!pago.isPagConfirmado()
                                 && DatesUtils.esMayor(new Date(), pago.getPagFechaReal())) {
-                            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_1, proy, orgPk, null);
+                            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_1, proy, orgPk, null, null);
                             notificado = true;
                             break outerloop;
                         }
@@ -335,7 +335,7 @@ public class NotificacionEnvioBean {
                 }
             }
             if (hasDevengado) {
-                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, proy, orgPk, null);
+                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, proy, orgPk, null, null);
             }
         } else {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_2, proy.getProyPk());
@@ -353,7 +353,7 @@ public class NotificacionEnvioBean {
     private void entPagoPrimerAviso(Proyectos proy, Integer orgPk) {
         List<Pagos> listPagos = pagosBean.obtenerPagosDiasVenc(proy.getProyPk(), 5);
         if (CollectionsUtils.isNotEmpty(listPagos)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, proy, orgPk, null, null);
         } else {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_3, proy.getProyPk());
         }
@@ -371,7 +371,7 @@ public class NotificacionEnvioBean {
     private void entPagoSegundoAviso(Proyectos proy, Integer orgPk) {
         List<Pagos> listPagos = pagosBean.obtenerPagosDiasVenc(proy.getProyPk(), 10);
         if (CollectionsUtils.isNotEmpty(listPagos)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, proy, orgPk, null, null);
         } else {
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_4, proy.getProyPk());
         }
@@ -398,9 +398,13 @@ public class NotificacionEnvioBean {
         boolean proxAnio = calReal.get(Calendar.YEAR) > cal.get(Calendar.YEAR);
 
         if (ultimaQuincena || proxAnio) {
+
+            System.out.println("notificacion envio  1");
             Proyectos proy = proyectosBean.obtenerProyPorId(proyPk);
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, proy, orgPk, null, true);
         } else {
+
+            System.out.println("notificacion envio  2");
             notificacionSuperada(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_5, proyPk);
         }
     }
@@ -434,7 +438,7 @@ public class NotificacionEnvioBean {
             }
 
             if (enviar) {
-                enviarNotificacion(ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, proy, orgPk, null);
+                enviarNotificacion(ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, proy, orgPk, null, null);
             } else {
                 notificacionSuperada(ConstantesNotificaciones.NOT_COD_CRONOGRAMA_1, proy.getProyPk());
             }
@@ -451,7 +455,7 @@ public class NotificacionEnvioBean {
         String riesgoColor = riesgosBean.obtenerExposicionRiesgoColor(proy.getProyIndices().getProyindRiesgoExpo(), orgPk, confMap);
 
         if (riesgoColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
-            enviarNotificacion(ConstantesNotificaciones.NOT_COD_RIESGOS_2, proy, orgPk, null);
+            enviarNotificacion(ConstantesNotificaciones.NOT_COD_RIESGOS_2, proy, orgPk, null, null);
         } else if (!riesgoColor.equals(ConstantesEstandares.SEMAFORO_ROJO)) {
             if (!StringsUtils.isEmpty(ConstantesNotificaciones.NOT_COD_RIESGOS_2) && proy.getProyPk() != null) {
                 notificacionSuperada(ConstantesNotificaciones.NOT_COD_RIESGOS_2, proy.getProyPk(), true);
@@ -489,10 +493,17 @@ public class NotificacionEnvioBean {
      * @param proy
      * @param orgPk
      */
-    public void enviarNotificacion(String codNot, Proyectos proy, Integer orgPk, String aux) {
+    public void enviarNotificacion(String codNot, Proyectos proy, Integer orgPk, String aux, Boolean ignorarDuplicados) {
         if (!fueNotificado(codNot, proy.getProyPk())) {
-            NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk);
+            NotificacionInstancia ni;
+            if(ignorarDuplicados!=null){
+                 ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk, ignorarDuplicados);
 
+            }else{
+             ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk, null);
+    
+            }
+            
             if (ni != null) {
 
                 List<SsUsuario> usuariosDest = new ArrayList<>();
@@ -531,7 +542,7 @@ public class NotificacionEnvioBean {
 
                 if (aux != null) {
                     mensaje = mensaje.replace("#ID_ADQUISICION#", aux);
-                    //logger.log(Level.INFO, mensaje);
+                    logger.log(Level.INFO, mensaje);
                 }
 
                 final String subjectThread = subject;
@@ -621,14 +632,16 @@ public class NotificacionEnvioBean {
 
                 if (next.getAdqFechaEstimadaInicioCompra() != null && next.getAdqFechaEstimadaInicioCompra().compareTo(fechaCalculada) == 0) {
 
-                    adquisiciones = adquisiciones + separadorI + next.getAdqIdAdquisicion() + "-" + next.getAdqNombre() + separadorF;
+                    String fechaAux = new SimpleDateFormat("dd/MM/yyyy").format(next.getAdqFechaEstimadaInicioCompra());
+
+                    adquisiciones = adquisiciones + separadorI + next.getAdqIdAdquisicion() + " - " + next.getAdqNombre() + " - " + fechaAux + separadorF;
 
                 }
             }
 
             if (adquisiciones.contains("</p>")) {
                 //String msj = adquisiciones.substring(0, adquisiciones.length() - 3);
-                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_6, proy, orgPk, adquisiciones);
+                enviarNotificacion(ConstantesNotificaciones.NOT_COD_PRESUPUESTO_6, proy, orgPk, adquisiciones, null);
             }
 
         } catch (ParseException ex) {

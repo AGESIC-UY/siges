@@ -87,4 +87,44 @@ public class DAOUtils {
 	be.addError("Error al crear Match Criteria, propiedad vacía.");
 	throw be;
     }
+    
+     /**
+     * Crea un MatchCriteriaTO en el cual todas las palabras aportadas en el
+     * valor deben de coincidir en la property aportada. No separa palabras
+
+     *
+     * @param property
+     * @param valor
+     * @return MatchCriteriaTO
+     */
+    public static CriteriaTO createMatchCriteriaTOStringCargaMasiva(String property, String valor) {
+	if (!StringsUtils.isEmpty(property)) {
+	    if (!StringsUtils.isEmpty(valor)) {
+		//String[] valorParse = valor.split(" ");
+
+		CriteriaTO criteria;
+		List<MatchCriteriaTO> criterios = new ArrayList<>();
+		//for (String word : valorParse) {
+
+                    if (!StringsUtils.isEmpty(valor)) {
+                        MatchCriteriaTO matchWord = CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, property, valor.trim());
+                        criterios.add(matchWord);
+                    }
+		
+
+		if (criterios.size() == 1) {
+		    criteria = criterios.get(0);
+		} else {
+		    criteria = CriteriaTOUtils.createANDTO(criterios.toArray(new CriteriaTO[0]));
+		}
+
+		return criteria;
+	    } else {
+		return CriteriaTOUtils.createMatchCriteriaTO(MatchCriteriaTO.types.CONTAINS, property, valor);
+	    }
+	}
+	BusinessException be = new BusinessException();
+	be.addError("Error al crear Match Criteria, propiedad vacía.");
+	throw be;
+    }
 }

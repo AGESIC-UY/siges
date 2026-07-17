@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./../templates/loginTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ui:define name="content">
+           <ice:form id="frmCambioPass" action="#{cambioContraseniaPublicoMB.guardar()}">
+        <ice:panelGroup id="tituloPaginaCargo" styleClass="tituloPagina">
+            <ice:outputLabel value="#{labels.tituloCambioContrasenia}"/>
+        </ice:panelGroup>
+
+        <ice:panelGroup id="buscador" styleClass="buscador recuadro">
+
+            <ice:panelGrid  styleClass="formulario " columns="2">
+                
+
+                <ice:outputLabel value="#{labels.nuevaContrasenia}"/>
+                <ice:inputSecret  value="#{cambioContraseniaPublicoMB.nuevaContrasenia}"/>
+
+                <ice:outputLabel value="#{labels.confirmacionContrasenia}"/>
+                <ice:inputSecret value="#{cambioContraseniaPublicoMB.confirmacionContrasenia}" />
+
+                <ice:panelGrid />
+                <ice:panelGroup  styleClass="panelBotones"  >
+                    <ace:messages />
+                    <ace:pushButton value="#{labels.confirmar}" id="guardarCambioPass"
+                                    styleClass="boton principal guardar" 
+                                    action="#{cambioContraseniaPublicoMB.guardar()}"/>
+                    <ace:linkButton value="#{labels.cancelar}" 
+                                    styleClass="boton secundario" 
+                                    action="#{cambioContraseniaPublicoMB.cancelar}"/>
+                </ice:panelGroup>
+            </ice:panelGrid>
+            <ice:panelGroup styleClass="recordatorioContrasenia" 
+                            >
+                <h:outputText value="#{labels.info_contrasenia} " />
+              
+            </ice:panelGroup>
+        </ice:panelGroup>
+
+
+
+
+
+    </ice:form>
+    </ui:define>
+ 
+
+
+
+
+</ui:composition>

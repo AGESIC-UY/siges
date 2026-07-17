@@ -418,6 +418,11 @@ public class EntregablesDAO extends HibernateJpaDAOImp<Entregables, Integer> imp
 				queryStr = StringsUtils.concat(queryStr, " AND p.proyNombre LIKE :proyNombre");
 				parameterMap.put("proyNombre", StringsUtils.concat("%", filtro.getProyNombre(), "%"));
 			}
+                        
+                        if (filtro.getProyectoCodigo() != null && filtro.getProyectoCodigo() != 0) {
+				queryStr = StringsUtils.concat(queryStr, " AND p.proyPk = :proyPk");
+				parameterMap.put("proyPk",  filtro.getProyectoCodigo());
+			}
 
 			if (filtro.getUsuCoordPk() != null) {
 				queryStr = StringsUtils.concat(queryStr, " AND e.coordinadorUsuFk.usuId = :usuCoordId");

@@ -104,7 +104,11 @@ public class SsUsuarioMB implements Serializable {
     private boolean disableInputPopupForm = true;
 
     private Boolean authLdapEnable = false;
-    private String filtroHabilitado="";
+    private String filtroHabilitado = "";
+    private Boolean puedeExportar = false;
+      private Boolean puedeModificarCorreo = false;
+    
+    
 
     /**
      * Creates a new instance of SsUsuarioMB
@@ -136,23 +140,22 @@ public class SsUsuarioMB implements Serializable {
         authLdapEnable = authLdapEnableString != null && "true".equals(authLdapEnableString.toLowerCase());
         cargarRoles(true);
         buscar();
+        puedeModificarCorreo=inicioMB.isUsuarioAdmin();
     }
 
     // <editor-fold defaultstate="collapsed" desc="eventos">
     public String buscar() {
 
         SsRol ssRol = (SsRol) listaRolUsuarioCombo.getSelectedObject();
-        
-        
-        if(filtroHabilitado.isEmpty()){
-        listaResultado = ssUsuarioDelegate.busquedaUsuFiltro(inicioMB.getOrganismo(), inicioMB.getUsuario(), bMail, bNombre, bApellido, null, ssRol, elementoOrdenacion, ascendente);
-    
-        }else{
-        listaResultado = ssUsuarioDelegate.busquedaUsuFiltro(inicioMB.getOrganismo(), inicioMB.getUsuario(), bMail, bNombre, bApellido, filtroHabilitado.equalsIgnoreCase("1"), ssRol, elementoOrdenacion, ascendente);
-        
+
+        if (filtroHabilitado.isEmpty()) {
+            listaResultado = ssUsuarioDelegate.busquedaUsuFiltro(inicioMB.getOrganismo(), inicioMB.getUsuario(), bMail, bNombre, bApellido, null, ssRol, elementoOrdenacion, ascendente);
+
+        } else {
+            listaResultado = ssUsuarioDelegate.busquedaUsuFiltro(inicioMB.getOrganismo(), inicioMB.getUsuario(), bMail, bNombre, bApellido, filtroHabilitado.equalsIgnoreCase("1"), ssRol, elementoOrdenacion, ascendente);
+
         }
-        
-        
+
         renderResultado = true;
 
         return null;
@@ -164,6 +167,7 @@ public class SsUsuarioMB implements Serializable {
     }
 
     public String agregar() {
+        puedeModificarCorreo=true;
         usuarioEnEdicion = new SsUsuario();
         cargarCombos();
         usuarioEnEdicion.setUsuVigente(true);
@@ -174,6 +178,7 @@ public class SsUsuarioMB implements Serializable {
 
     public String editar(Integer id) {
         try {
+            puedeModificarCorreo=inicioMB.isUsuarioAdmin();
             usuarioEnEdicion = usuarioDelegate.obtenerSsUsuarioPorId(id);
             usuarioEnEdicion.setUsuRePassword(usuarioEnEdicion.getUsuPassword());
             cargarCombos();
@@ -254,6 +259,8 @@ public class SsUsuarioMB implements Serializable {
                 listaRolUsuarioCombo.setSelected(rolUsu.getRolId());
             }
         }
+        
+        puedeExportar=usuarioEnEdicion.puedeExportar(orgPk);
     }
 
     public String consultarHistorial(Integer id) {
@@ -278,6 +285,7 @@ public class SsUsuarioMB implements Serializable {
         if (ssRol != null) {
             ssUsuarioDelegate.cargarRolUsuario(usuarioEnEdicion, ssRol, org);
         }
+
         cargarCombosSeleccionados();
 
         Integer orgPk = inicioMB.getOrganismo().getOrgPk();
@@ -285,6 +293,7 @@ public class SsUsuarioMB implements Serializable {
             FormUsuarioValidacion.validar(usuarioEnEdicion, orgPk, (listaAreas != null));
 
             usuarioEnEdicion = usuarioDelegate.guardarUsuario(usuarioEnEdicion, orgPk);
+            usuarioDelegate.actualizarExportacionUsuario(puedeExportar ? 1 : 0, usuarioEnEdicion.getUsuId(), orgPk);
 
             aplicacionMB.cargarUsuariosPorOrganismo(orgPk);
 
@@ -554,5 +563,22 @@ public class SsUsuarioMB implements Serializable {
         this.filtroHabilitado = filtroHabilitado;
     }
 
+    public Boolean getPuedeExportar() {
+        return puedeExportar;
+    }
+
+    public void setPuedeExportar(Boolean puedeExportar) {
+        this.puedeExportar = puedeExportar;
+    }
+
+    public Boolean getPuedeModificarCorreo() {
+        return puedeModificarCorreo;
+    }
+
+    public void setPuedeModificarCorreo(Boolean puedeModificarCorreo) {
+        this.puedeModificarCorreo = puedeModificarCorreo;
+    }
+    
+    
 
 }

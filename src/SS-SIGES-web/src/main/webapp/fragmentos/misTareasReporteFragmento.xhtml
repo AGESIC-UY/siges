@@ -263,10 +263,10 @@
                                         <ice:outputText value="#{prodMes.prodmesPlan}"
                                                         styleClass="alinearDerecha"
                                                         rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3))) and prodMes.prodmesPk > 0}"
-                                                        converter="ImporteFormatConverter">
+                                                        converter="decimalFormatConverter">
                                         </ice:outputText>
                                         <ace:textEntry value="#{prodMes.prodmesPlan}"
-                                                       converter="ImporteFormatConverter"
+                                                       converter="decimalFormatConverter"
                                                        rendered="#{misTareasMB.editarProdMap[prod.prodPk] and (ent.proyEstado.isEstado(2) or ent.proyEstado.isEstado(3)) and prodMes.prodmesPk > 0}"
                                                        styleClass="textoCorto alinearDerecha"
                                                        style="width: 60px !important;"/>
@@ -274,22 +274,22 @@
                                         <ice:outputText value="#{prodMes.prodmesReal}"
                                                         styleClass="alinearDerecha"
                                                         rendered="#{!(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4)) and prodMes.prodmesPk > 0}"
-                                                        converter="ImporteFormatConverter"/>
+                                                        converter="decimalFormatConverter"/>
                                         <ace:textEntry value="#{prodMes.prodmesReal}" 
-                                                       converter="ImporteFormatConverter"
+                                                       converter="decimalFormatConverter"
                                                        rendered="#{(misTareasMB.editarProdMap[prod.prodPk] and ent.proyEstado.isEstado(4) and prodMes.prodmesPk > 0)}"
                                                        styleClass="textoCorto alinearDerecha"
                                                        style="width: 60px !important;"/>
 
                                         <ice:outputText value="#{prodMes.prodmesAcuPlan}"
                                                         styleClass="alinearDerecha"
-                                                        converter="ImporteFormatConverter"
+                                                        converter="decimalFormatConverter"
                                                         rendered="#{prodMes.prodmesPk>0}"/>
 
                                         <ice:outputText value="#{prodMes.prodmesAcuReal}"
                                                         styleClass="alinearDerecha"
                                                         style="border-bottom: 6px solid #{misTareasMB.getProdMesAcuRealColor(prodMes)}"
-                                                        converter="ImporteFormatConverter"
+                                                        converter="decimalFormatConverter"
                                                         rendered="#{prodMes.prodmesPk>0}"/>
 
                                         <ice:outputText value="&nbsp;" rendered="#{prodMes.prodmesPk == null}"/>

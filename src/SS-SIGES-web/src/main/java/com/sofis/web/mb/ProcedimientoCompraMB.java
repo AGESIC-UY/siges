@@ -12,7 +12,12 @@ import com.sofis.web.delegates.ProcedimientoCompraInfoDelegate;
 import com.sofis.web.properties.Labels;
 import com.sofis.web.utils.JSFUtils;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,12 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -56,10 +64,9 @@ public class ProcedimientoCompraMB implements Serializable {
     private SofisPopupUI renderPopupEdicion;
     @Inject
     private ProcedimientoCompraDelegate procedimientoCompraDelegate;
-    
+
     @Inject
     private ProcedimientoCompraInfoDelegate procedimientoCompraInfoDelegate;
-
 
     @Inject
     private AdquisicionDelegate adquisiconDelegate;
@@ -77,6 +84,9 @@ public class ProcedimientoCompraMB implements Serializable {
     private ProcedimientoCompra procedimientoCompraEnEdicion;
 
     private File exelCargaMasiva;
+
+    private boolean errorEnTipoArchivo = false;
+    boolean isFirefox = false;
 
     public ProcedimientoCompraMB() {
     }
@@ -171,6 +181,8 @@ public class ProcedimientoCompraMB implements Serializable {
 
         inicioMB.cargarOrganismoSeleccionado();
         buscar();
+        String browser = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getHeader("User-Agent");
+        isFirefox = browser.contains("Firefox");
     }
 
     /**
@@ -261,20 +273,20 @@ public class ProcedimientoCompraMB implements Serializable {
 
         try {
             logger.log(Level.INFO, "2");
-            
+
             procedimientoCompraEnEdicion = procedimientoCompraDelegate.guardarProcedimientoCompra(procedimientoCompraEnEdicion);
 
             if (procedimientoCompraEnEdicion != null) {
                 logger.log(Level.INFO, "3");
                 renderPopupEdicion.cerrar();
                 buscar();
-            }else{
+            } else {
                 logger.log(Level.INFO, "3.1");
             }
         } catch (BusinessException be) {
             logger.log(Level.SEVERE, be.getMessage(), be);
-            
-             logger.log(Level.INFO, "4");
+
+            logger.log(Level.INFO, "4");
 
             /*
                 *  18-06-2018 Inspección de código.
@@ -283,7 +295,7 @@ public class ProcedimientoCompraMB implements Serializable {
             for (String iterStr : be.getErrores()) {
                 JSFUtils.agregarMsgError(POPUP_MSG, Labels.getValue(iterStr), null);
             }
-             logger.log(Level.INFO, "5");
+            logger.log(Level.INFO, "5");
         }
         return null;
     }
@@ -291,11 +303,13 @@ public class ProcedimientoCompraMB implements Serializable {
     public void subirArchivo(FileEntryEvent event) {
         JSFUtils.removerMensages();
         exelCargaMasiva = null;
+        errorEnTipoArchivo = false;
         logger.info("[subirArchivoAction] Subiendo archivo...");
 
         if (event != null && event.getComponent() != null) {
             FileEntry archEntry = (FileEntry) event.getComponent();
             FileEntryResults results = archEntry.getResults();
+
             File archivo = results.getFiles() != null ? results.getFiles().get(0).getFile() : null;
             if (archivo == null) {
                 /*
@@ -307,8 +321,58 @@ public class ProcedimientoCompraMB implements Serializable {
             }
             try {
                 if (archivo.getName().contains(".csv")) {
-                    exelCargaMasiva = archivo;
-                    JSFUtils.agregarMsg("popupMsgMasiva", "upload_file_carga_masiva_archivo_cargado", null);
+                    Path path = archivo.toPath();
+                    String mimeType = Files.probeContentType(path);
+                    URLConnection connection = archivo.toURL().openConnection();
+                    mimeType = connection.getContentType();
+                    logger.log(Level.INFO, mimeType);
+
+                    if (mimeType != null) {
+
+                        if (mimeType.contains("csv")) {
+                            exelCargaMasiva = archivo;
+                        } else if (mimeType.contains("unknown")) {
+                            CSVParser csvParser = null;
+                            try {
+                                csvParser = new CSVParser(ReaderFactory.createBufferedReader(archivo), CSVFormat.DEFAULT);
+                                if (csvParser != null && csvParser.getRecords().size() > 1) {
+                                    exelCargaMasiva = archivo;
+
+                                } else {
+                                    if (!isFirefox) {
+                                        JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva_tipo_archivo"), null);
+
+                                    }
+                                    errorEnTipoArchivo = true;
+                                }
+                            } catch (IOException iOException) {
+                                if (!isFirefox) {
+                                    JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva_tipo_archivo"), null);
+
+                                }
+                                errorEnTipoArchivo = true;
+                            }
+
+                        } else {
+                            errorEnTipoArchivo = true;
+                            if (!isFirefox) {
+                                JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva_tipo_archivo"), null);
+
+                            }
+                        }
+
+                    } else {
+                        errorEnTipoArchivo = true;
+                        if (!isFirefox) {
+                            JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva_tipo_archivo"), null);
+
+                        }
+                    }
+
+                    if (!errorEnTipoArchivo) {
+                        JSFUtils.agregarMsg("popupMsgMasiva", "upload_file_carga_masiva_archivo_cargado", null);
+                    }
+
                 } else {
                     /*
                         *  18-06-2018 Inspección de código.
@@ -336,7 +400,6 @@ public class ProcedimientoCompraMB implements Serializable {
         if (exelCargaMasiva != null) {
             try {
                 CSVParser csvParser = new CSVParser(ReaderFactory.createBufferedReader(exelCargaMasiva), CSVFormat.DEFAULT);
-
                 for (CSVRecord csvRecord : csvParser) {
                     if ((csvRecord.get(1) != null) && (csvRecord.get(2) != null) && (csvRecord.get(3) != null)) {
                         ProcedimientoCompra data = new ProcedimientoCompra();
@@ -416,7 +479,20 @@ public class ProcedimientoCompraMB implements Serializable {
                 *  18-06-2018 Inspección de código.
              */
             //JSFUtils.agregarMsg("popupMsgMasiva", "error_upload_file_carga_masiva", null);
-            JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva"), null);
+
+            if (isFirefox) {
+
+                if (errorEnTipoArchivo) {
+                    JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva_tipo_archivo"), null);
+                    errorEnTipoArchivo = false;
+                } else {
+                    JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva"), null);
+                }
+
+            } else {
+                JSFUtils.agregarMsgError("popupMsgMasiva", Labels.getValue("error_upload_file_carga_masiva"), null);
+            }
+
         }
 
         return null;

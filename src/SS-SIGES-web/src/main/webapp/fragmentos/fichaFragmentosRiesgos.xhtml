@@ -115,13 +115,13 @@
                                                    renderAsPopup="true" navigator="true"
                                                    timeZone="#{inicioMB.calendarTimeZone}"/>
 
-                                <ice:outputLabel value="#{labels.riesgo_probabilidad}" styleClass="obligatorio"/>
+                                <ice:outputLabel value="#{configuracionMB.confTituloRiesgoX.cnfValor}" styleClass="obligatorio"/>
                                 <ace:simpleSelectOneMenu id="comboProbabilidad"
                                                          value="#{fichaMB.listaRiskProbabilidadCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaRiskProbabilidadCombo.items}"/>
                                 </ace:simpleSelectOneMenu>
 
-                                <ice:outputLabel value="#{labels.riesgo_impacto}" styleClass="obligatorio"/>
+                                <ice:outputLabel value="#{configuracionMB.confTituloRiesgoY.cnfValor}" styleClass="obligatorio"/>
                                 <ace:simpleSelectOneMenu id="comboImpacto"
                                                          value="#{fichaMB.listaRiskImpactoCombo.selected}">
                                     <f:selectItems value="#{fichaMB.listaRiskImpactoCombo.items}"/>
@@ -182,25 +182,29 @@
                                    paginator="true" 
                                    pageCount="5" 
                                    rows="#{configuracionMB.cantElementosPorPagina}">
-                        <ace:column styleClass="columnaImpacto">
-                            <h:outputText value="#{risk.impacto}"/>
+                        <ace:column styleClass="columnaImpacto" style="#{risk.impacto gt 0 ? 'text-align: right !important;' : 'text-align: left !important;font-weight: bold;color: darkgray !important'}">
+                            <h:outputText value="#{configuracionMB.impactoNuevaConfiguracion(risk.impacto)}" />
                         </ace:column>
-                        <ace:column footerText="20%" style="background-color: #{configuracionMB.riesgoColor(risk.val1)}">
-                            <h:outputText value="#{risk.cant1}" style="#{risk.cant1 gt 0 ? styleNo0 : ''}"/>
+                        <ace:column footerText="#{configuracionMB.obtenerValorX(1)}"  style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val1,risk.impacto)}">
+                            <h:outputText value="#{risk.impacto gt 0 ?risk.cant1 :''}" style="#{risk.cant1 gt 0 ? styleNo0 : ''}"/>
                         </ace:column>
-                        <ace:column footerText="40%" style="background-color: #{configuracionMB.riesgoColor(risk.val2)}" >
-                            <h:outputText value="#{risk.cant2}" style="#{risk.cant2 gt 0 ? styleNo0 : ''}"/>
+                        <ace:column footerText="#{configuracionMB.obtenerValorX(2)}"  style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val2,risk.impacto)}" >
+                            <h:outputText value="#{risk.impacto gt 0 ?risk.cant2 :''}" style="#{risk.cant2 gt 0 ? styleNo0 : ''}"/>
                         </ace:column>
-                        <ace:column footerText="60%" style="background-color: #{configuracionMB.riesgoColor(risk.val3)}">
-                            <h:outputText value="#{risk.cant3}" style="#{risk.cant3 gt 0 ? styleNo0 : ''}"/>
+                        <ace:column  footerText="#{configuracionMB.obtenerValorX(3)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val3,risk.impacto)}">
+                            <h:outputText value="#{risk.impacto gt 0 ?risk.cant3 :''}" style="#{risk.cant3 gt 0 ? styleNo0 : ''}"/>
                         </ace:column>
-                        <ace:column footerText="80%" style="background-color: #{configuracionMB.riesgoColor(risk.val4)}" >
-                            <h:outputText value="#{risk.cant4}" style="#{risk.cant4 gt 0 ? styleNo0 : ''}"/>
+                        <ace:column footerText="#{configuracionMB.obtenerValorX(4)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val4,risk.impacto)}" >
+                            <h:outputText value="#{risk.impacto gt 0 ? risk.cant4 :''}" style="#{risk.cant4 gt 0 ? styleNo0 : ''}"/>
                         </ace:column>
-                        <ace:column footerText="100%"  style="background-color: #{configuracionMB.riesgoColor(risk.val5)}">
-                            <h:outputText value="#{risk.cant5}" style="#{risk.cant5 gt 0 ? styleNo0 : ''}"
-                                          styleClass="filaProbabilidad"/>
-                        </ace:column>
+                        <ace:column footerText="#{configuracionMB.obtenerValorX(5)}"  style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val5,risk.impacto)}">
+                            <h:outputText value="#{risk.impacto gt 0 ?risk.cant5 :''}" style="#{risk.cant5 gt 0 ? styleNo0 : ''}"
+                                          />
+ </ace:column>
+                            <ace:column footerText="#{configuracionMB.confTituloRiesgoX.cnfValor}"  style="background-color: transparent ;text-align: right;font-weight: bold">
+                                <h:outputText value="" 
+                                              />
+                            </ace:column>
                     </ace:dataTable>
                 </ice:panelGroup>
 
@@ -263,13 +267,13 @@
                                             value="#{risk.riskFechaActualizacion != null ?  risk.riskFechaActualizacion : ''}" 
                                             converter="fechaConverter"/>
                         </ace:column>
-                        <ace:column headerText="#{labels.riesgo_probabilidad}">
+                        <ace:column headerText="#{configuracionMB.confTituloRiesgoX.cnfValor}">
                             <h:outputText   styleClass="#{styleRisk}" 
-                                            value="#{risk.riskProbabilidad != null ?  risk.riskProbabilidadStr : ''}"/>
+                                            value="#{risk.riskProbabilidad != null ?   configuracionMB.probabilidadNuevaConfiguracion(risk.riskProbabilidad ) : ''}"/>
                         </ace:column>
-                        <ace:column headerText="#{labels.riesgo_impacto}">
+                        <ace:column headerText="#{configuracionMB.confTituloRiesgoY.cnfValor}">
                             <h:outputText   styleClass="#{styleRisk}" 
-                                            value="#{risk.riskImpacto != null ?  risk.riskImpacto : ''}"/>
+                                            value="#{risk.riskImpacto != null ?  configuracionMB.impactoNuevaConfiguracion(risk.riskImpacto ) : ''}"/>
                         </ace:column>
                         <ace:column headerText="#{labels.riesgo_exposicion}">
                             <h:outputText styleClass="#{styleRisk}" 
@@ -314,9 +318,9 @@
                             <h:panelGroup rendered="#{fichaMB.fieldRendered('superarRiesgo') and not risk.riskSuperado}">
 
                                 <ice:commandButton id="btnSuperar"
-                                                 styleClass="botonSuperar iconoTabla"
-                                                 title="#{labels.riesgoSuperarTooltip}"
-                                                 onclick="confirmationSuperarRiesgo#{risk.riskPk}.show();" />
+                                                   styleClass="botonSuperar iconoTabla"
+                                                   title="#{labels.riesgoSuperarTooltip}"
+                                                   onclick="confirmationSuperarRiesgo#{risk.riskPk}.show();" />
                                 <ace:confirmationDialog widgetVar="confirmationSuperarRiesgo#{risk.riskPk}" 
                                                         message="#{labels.riesgoSuperarTooltip}: &#13;#{risk.riskNombre}"
                                                         header="#{labels.hConfirmacion}"
@@ -327,10 +331,10 @@
                                                         position="center">
                                     <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                                         <ice:commandButton id="yesDelSuperar" 
-                                                         value="#{labels.si}" 
-                                                         styleClass="boton principal botonContinuar"
-                                                         onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();" 
-                                                         actionListener="#{fichaMB.superarRiesgoAction(risk.riskPk)}"/>
+                                                           value="#{labels.si}" 
+                                                           styleClass="boton principal botonContinuar"
+                                                           onclick="confirmationSuperarRiesgo#{risk.riskPk}.hide();" 
+                                                           actionListener="#{fichaMB.superarRiesgoAction(risk.riskPk)}"/>
                                         <h:commandButton id="noDelSuperar"
                                                          value="#{labels.no}"
                                                          styleClass="boton principal botonEliminar"
@@ -355,10 +359,10 @@
                                                         position="center">
                                     <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                                         <ice:commandButton id="yesRevertir" 
-                                                         value="#{labels.si}" 
-                                                         styleClass="boton principal botonContinuar"
-                                                         onclick="confirmationRevertirSuperacionRiesgo#{risk.riskPk}.hide();" 
-                                                         actionListener="#{fichaMB.revertirSuperacionRiesgoAction(risk.riskPk)}"/>
+                                                           value="#{labels.si}" 
+                                                           styleClass="boton principal botonContinuar"
+                                                           onclick="confirmationRevertirSuperacionRiesgo#{risk.riskPk}.hide();" 
+                                                           actionListener="#{fichaMB.revertirSuperacionRiesgoAction(risk.riskPk)}"/>
                                         <h:commandButton id="noRevertir"
                                                          value="#{labels.no}"
                                                          styleClass="boton principal botonEliminar"
@@ -398,10 +402,10 @@
                                                     position="center">
                                 <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                                     <ice:commandButton id="yesDelRiesgo" 
-                                                     value="#{labels.si}" 
-                                                     styleClass="boton principal botonContinuar"
-                                                     onclick="confirmationEliminarRiesgo#{risk.riskPk}.hide();" 
-                                                     actionListener="#{fichaMB.eliminarRiesgoAction(risk.riskPk)}"/>
+                                                       value="#{labels.si}" 
+                                                       styleClass="boton principal botonContinuar"
+                                                       onclick="confirmationEliminarRiesgo#{risk.riskPk}.hide();" 
+                                                       actionListener="#{fichaMB.eliminarRiesgoAction(risk.riskPk)}"/>
                                     <h:commandButton id="noDelRiesgo"
                                                      value="#{labels.no}"
                                                      styleClass="boton principal botonEliminar"

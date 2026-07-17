@@ -426,8 +426,7 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
 
             predicates.add(predicate);
         }
-        
-        
+
         if (filtro.getIdArea() != null && filtro.getIdArea() != -1) {
 
             predicate = cb.equal(root.get("proyAreaFk").get("areaPk"), filtro.getIdArea());
@@ -435,7 +434,6 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
             predicates.add(predicate);
 
         }
-        
 
         cq.where(predicates.toArray(new Predicate[predicates.size()]));
 
@@ -638,14 +636,14 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
 
         boolean hasUser = false;
 
-        if (gerentePk != null && gerentePk >  0) {
+        if (gerentePk != null && gerentePk > 0) {
 
             setS = setS + " proy_usr_gerente_fk=" + gerentePk;
             hasUser = true;
 
         }
 
-        if (adjuntoPk != null && adjuntoPk >  0) {
+        if (adjuntoPk != null && adjuntoPk > 0) {
 
             if (hasUser) {
                 setS = setS + " ,proy_usr_adjunto_fk=" + adjuntoPk;
@@ -657,7 +655,7 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
 
         }
 
-        if (pmofPk != null && pmofPk >  0 ) {
+        if (pmofPk != null && pmofPk > 0) {
 
             if (hasUser) {
                 setS = setS + " ,proy_usr_pmofed_fk=" + pmofPk;
@@ -669,7 +667,7 @@ public class ProyectosDAO extends HibernateJpaDAOImp<Proyectos, Integer> impleme
 
         }
 
-        if (sponsorPk != null && sponsorPk >  0) {
+        if (sponsorPk != null && sponsorPk > 0) {
 
             if (hasUser) {
                 setS = setS + " ,proy_usr_sponsor_fk=" + sponsorPk;

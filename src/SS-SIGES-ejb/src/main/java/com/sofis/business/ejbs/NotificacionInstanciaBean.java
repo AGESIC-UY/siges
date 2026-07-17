@@ -55,23 +55,23 @@ public class NotificacionInstanciaBean {
         }
     }
 
-    public NotificacionInstancia obtenerNotificacionInstPorCod(String cod, Integer proyPk, Integer orgPk) {
+    public NotificacionInstancia obtenerNotificacionInstPorCod(String cod, Integer proyPk, Integer orgPk, Boolean ignorarDuplicadas) {
         if (!StringsUtils.isEmpty(cod) && proyPk != null && orgPk != null) {
             NotificacionInstanciaDAO dao = new NotificacionInstanciaDAO(em);
             try {
                 copiarNotInstFaltantes(proyPk, orgPk);
-                NotificacionInstancia notificacionInst = dao.obtenerNotificacionInstPorCod(cod, proyPk);
+                NotificacionInstancia notificacionInst = dao.obtenerNotificacionInstPorCod(cod, proyPk, ignorarDuplicadas);
                 return notificacionInst;
             } catch (TechnicalException te) {
                 logger.log(Level.SEVERE, null, te);
                 BusinessException be = new BusinessException();
-                te.addError(te.getMessage());
+            te.addError(te.getMessage());
                 throw be;
             }
         }
         return null;
     }
-
+    
     /**
      * Genera la NotificacionInstancia si no existe para dicho proyecto. En caso
      * de que exista, controla que no falte algún tipo de documento.

@@ -73,7 +73,7 @@
                         <ice:outputLabel value="#{labels.usuario_form_mail}:" styleClass="obligatorio"/>
                         <ace:textEntry value="#{ssUsuarioMB.usuarioEnEdicion.usuCorreoElectronico}"
                                        validatorMessage="#{labels.error_email_formato}" 
-                                       converter="toLowerCaseConverter">
+                                       converter="toLowerCaseConverter" disabled="#{not ssUsuarioMB.puedeModificarCorreo}">
                         </ace:textEntry>
 
                         <ace:pushButton value="#{labels.buscar}" 
@@ -137,6 +137,10 @@
 
                         <ice:outputLabel value="#{labels.usuario_form_aprob_fact}:" />
                         <ace:checkboxButton value="#{ssUsuarioMB.usuarioEnEdicion.usuAprobFacturas}"
+                                            disabled="#{ssUsuarioMB.disableInputPopupForm}"/>
+                        
+                         <ice:outputLabel value="#{labels.usuario_form_exportar_visualizador}:" />
+                         <ace:checkboxButton value="#{ssUsuarioMB.puedeExportar}"
                                             disabled="#{ssUsuarioMB.disableInputPopupForm}"/>
 
                         <ice:outputLabel value="#{labels.usuario_form_habilitado}:" 

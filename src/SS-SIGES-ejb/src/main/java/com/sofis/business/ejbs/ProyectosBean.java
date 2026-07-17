@@ -636,18 +636,38 @@ public class ProyectosBean {
             Cronogramas cro = proy.getProyCroFk();
             if (replan == null || replan.isProyreplanGenerarLineaBase()) {
                 for (Entregables ent : cro.getEntregablesSet()) {
-                    ent.setEntInicioLineaBase(ent.getEntInicio());
-                    ent.setEntFinLineaBase(ent.getEntFin());
-                    ent.setEntDuracionLineaBase(ent.getEntDuracion());
+                    if (!ent.getEsReferencia()) {
+                        ent.setEntInicioLineaBase(ent.getEntInicio());
+                        ent.setEntFinLineaBase(ent.getEntFin());
+                        ent.setEntDuracionLineaBase(ent.getEntDuracion());
+                    } else {
+                        LOGGER.info("LINEA BASE PADRE " + ent.getReferido().getEntInicioLineaBase());
+                        ent.setEntInicioLineaBase(ent.getReferido().getEntInicioLineaBase() == null ? ent.getReferido().getEntInicio() : ent.getReferido().getEntInicioLineaBase());
+                        ent.setEntFinLineaBase(ent.getReferido().getEntFinLineaBase() == null ? ent.getReferido().getEntFin() : ent.getReferido().getEntFinLineaBase());
+                        ent.setEntDuracionLineaBase(ent.getReferido().getEntInicioLineaBase() == null ? ent.getReferido().getEntDuracion() : ent.getReferido().getEntDuracionLineaBase());
+                    }
+
                 }
             } else {
                 for (Entregables ent : cro.getEntregablesSet()) {
 
                     // si es nueva la tarea
                     if (ent.getEntInicioLineaBase() == null || ent.getEntInicioLineaBase() == 0) {
-                        ent.setEntInicioLineaBase(ent.getEntInicio());
-                        ent.setEntFinLineaBase(ent.getEntFin());
-                        ent.setEntDuracionLineaBase(ent.getEntDuracion());
+                        if (!ent.getEsReferencia()) {
+                            LOGGER.info(" original " + ent.getEntPk());
+                            ent.setEntInicioLineaBase(ent.getEntInicio());
+                            ent.setEntFinLineaBase(ent.getEntFin());
+                            ent.setEntDuracionLineaBase(ent.getEntDuracion());
+                        } else {
+                            LOGGER.info(" referencia  " + ent.getEntPk());
+                            LOGGER.info(" referencia  " + ent.getEntNombre());
+//                            LOGGER.info(" inicio de antes  " + ent.getEntInicio());
+//                            LOGGER.info(" inicio de ahora  " + ent.getReferido().getEntInicio());
+                            ent.setEntInicioLineaBase(ent.getReferido().getEntInicio());
+                            ent.setEntFinLineaBase(ent.getReferido().getEntFin());
+                            ent.setEntDuracionLineaBase(ent.getReferido().getEntDuracion());
+                        }
+
                     }
                 }
             }
@@ -1017,7 +1037,7 @@ public class ProyectosBean {
             boolean indicadoresProgramasNuevaTransaccion, boolean procesarPrograma, boolean procesarProgramaParalelo) {
 
         LOGGER.log(Level.FINE, "Guardar indicadores: proyecto={0}, programas={1}, recalcular={2}, orgPk={3}, confs={4}, indicadoresProgramasNuevaTransaccion={5}, procesarPrograma={6}, procesarProgramaParalelo={7}",
-                new Object[]{p, programas, recalcular, orgPk, confs, indicadoresProgramasNuevaTransaccion, procesarPrograma, procesarProgramaParalelo});
+                new Object[]{p.getProyPk(), programas, recalcular, orgPk, confs, indicadoresProgramasNuevaTransaccion, procesarPrograma, procesarProgramaParalelo});
 
         if (p != null) {
             Integer proyPk = p.getProyPk();
@@ -1638,33 +1658,45 @@ public class ProyectosBean {
                         ent.setEntDuracionLineaBase(1);
                     }
 
+                    //no ejecuta en proceso nocturno
                     if (resetLineaBase) {
                         ent.setEntInicioLineaBase(ent.getEntInicio());
                         ent.setEntFinLineaBase(ent.getEntFin());
                         ent.setEntDuracionLineaBase(ent.getEntDuracion());
                     }
-                } else if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
+                }
+
+                // Lorena, Gean y Darwin el día 02/08/2023 determinaron no pisar más los campos de línea base. 6.15.0
+                /* 
+                else if (proy.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id)) {
                     ProyReplanificacion replanificacion = proyReplanificacionBean.obtenerUltimaSolicitud(proy.getProyPk());
                     if (replanificacion != null) {
+
                         //solo cuando generar linea de base sea igual a true
-                        if (replanificacion.isProyreplanGenerarLineaBase() == true) {
+                        
+                       
+                        
+                        if (replanificacion.isProyreplanGenerarLineaBase() == true && ent.getReferido() == null) {
+
                             ent.setEntInicioLineaBase(0l);
                             ent.setEntFinLineaBase(0l);
                             ent.setEntDuracionLineaBase(0);
                         }
                     } else {
-                        //si no existe ninguna replanificacion la linea base se limpia
+                        if (ent.getReferido() == null) {
+                            ent.setEntInicioLineaBase(0l);
+                            ent.setEntFinLineaBase(0l);
+                            ent.setEntDuracionLineaBase(0);
+                        }
+
+                    }
+                } else {
+                    if (ent.getReferido() == null) {
                         ent.setEntInicioLineaBase(0l);
                         ent.setEntFinLineaBase(0l);
                         ent.setEntDuracionLineaBase(0);
                     }
-                } else {
-                    //si esta en otros estado entonces la linea base se limpia
-                    ent.setEntInicioLineaBase(0l);
-                    ent.setEntFinLineaBase(0l);
-                    ent.setEntDuracionLineaBase(0);
-                }
-
+                 */
                 if (productosBean.tieneProdPorEnt(ent.getEntPk())) {
                     Double avance = entregablesBean.calcularAvanceEntPorProd(ent.getEntPk());
                     if (avance != null) {
@@ -1676,10 +1708,12 @@ public class ProyectosBean {
 
                 entregablesBean.guardar(ent);
             }
+
+//        }
         }
     }
 
-    public Proyectos guardarCopiaProyecto(Integer proyPk, String nombre, Date fechaComienzoProyCopia, SsUsuario usu, Integer orgPk,Boolean incluirAdquisicionesId) {
+    public Proyectos guardarCopiaProyecto(Integer proyPk, String nombre, Date fechaComienzoProyCopia, SsUsuario usu, Integer orgPk, Boolean incluirAdquisicionesId) {
         if (StringsUtils.isEmpty(nombre)) {
             BusinessException be = new BusinessException();
             be.addError(MensajesNegocio.ERROR_COPIA_PROY_NOMBRE);
@@ -1703,7 +1737,9 @@ public class ProyectosBean {
             throw be;
         }
 
-        Proyectos copiaProy = copiarProyecto(p, nombre, fechaComienzoProyCopia,incluirAdquisicionesId);
+        
+        Proyectos copiaProy = copiarProyecto(p, nombre, fechaComienzoProyCopia, incluirAdquisicionesId);
+      
         try {
             copiaProy = guardar(copiaProy, usu, orgPk, true);
 
@@ -1857,7 +1893,8 @@ public class ProyectosBean {
                          * BRUNO 06-03-2017 muevo el archivo desde el directorio
                          * del organismo orgPkOld hacia el nuevo organismo.
                          */
-                        d = documentosDao.findById(Documentos.class, doc.getDocsPk());
+                        d = documentosDao.findById(Documentos.class,
+                                doc.getDocsPk());
 
                         srcFile = dir + "/" + orgPkOld + "/" + d.getDocFile().getDocfilePath();
 
@@ -1991,7 +2028,7 @@ public class ProyectosBean {
 
     }
 
-    public Proyectos copiarProyecto(Proyectos proyOrigen, String nombre, Date fechaComienzoProyCopia,Boolean incluirAdquisicionesId) {
+    public Proyectos copiarProyecto(Proyectos proyOrigen, String nombre, Date fechaComienzoProyCopia, Boolean incluirAdquisicionesId) {
 
         int diferenciaDias = obtenerDiferenciaDiasCopia(proyOrigen, fechaComienzoProyCopia);
 
@@ -2031,7 +2068,7 @@ public class ProyectosBean {
 
         Map<Integer, Entregables> entregablesCopia = copiarCronograma(proyOrigen, nvoProy, cronogramaOriginal, diferenciaDias);
 
-        nvoProy.setProyPreFk(presupuestoBean.copiarProyPresupuesto(proyOrigen.getProyPreFk(), entregablesCopia, diferenciaDias,incluirAdquisicionesId));
+        nvoProy.setProyPreFk(presupuestoBean.copiarProyPresupuesto(proyOrigen.getProyPreFk(), entregablesCopia, diferenciaDias, incluirAdquisicionesId));
 
         nvoProy.setInteresadosList(interesadosBean.copiarProyInteresados(proyOrigen.getInteresadosList(), entregablesCopia));
         nvoProy.setRiesgosList(riesgosBean.copiarProyRiesgos(proyOrigen.getRiesgosList(), entregablesCopia, nvoProy, diferenciaDias));
@@ -2249,7 +2286,8 @@ public class ProyectosBean {
         boolean[] asc = {};
 
         try {
-            List<Proyectos> listPart = dao.findEntityByCriteria(Proyectos.class, criteria, orderBy, asc, null, null);
+            List<Proyectos> listPart = dao.findEntityByCriteria(Proyectos.class,
+                    criteria, orderBy, asc, null, null);
             return listPart;
         } catch (BusinessException be) {
             throw be;
@@ -2302,6 +2340,7 @@ public class ProyectosBean {
     }
 
     private void cargarIndPresupuesto(Integer prePk, ProyIndices ind, Integer orgPk) {
+        LOGGER.log(Level.INFO, "cargarIndPresupuesto." );
         if (ind != null) {
             List<Moneda> monedas = presupuestoBean.obtenerMonedasPresupuesto(prePk, null);
 
@@ -2575,7 +2614,7 @@ public class ProyectosBean {
         Configuracion conCorreConf = configuracionBean.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.CON_CORREO, orgPk);
         if (conCorreConf != null && conCorreConf.getCnfValor() != null && "true".equals(conCorreConf.getCnfValor().toLowerCase())) {
             if (!fueNotificado(codNot, proy.getProyPk())) {
-                NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk);
+                NotificacionInstancia ni = notificacionInstanciaBean.obtenerNotificacionInstPorCod(codNot, proy.getProyPk(), orgPk, null);
 
                 if (ni != null) {
 
@@ -2658,7 +2697,8 @@ public class ProyectosBean {
         *   26-03-18 Nico: Se cambia en la siguiente línea el true por un false.
          */
 
-        List<NotificacionEnvio> neList = dao.obtenerEntityByCriteria(NotificacionEnvio.class, criteria, new String[]{}, new boolean[]{}, null, null, false);
+        List<NotificacionEnvio> neList = dao.obtenerEntityByCriteria(NotificacionEnvio.class,
+                criteria, new String[]{}, new boolean[]{}, null, null, false);
 
         return CollectionsUtils.isNotEmpty(neList);
     }
@@ -2694,7 +2734,6 @@ public class ProyectosBean {
 
     public void postProcesarEntregablesRelacionados(Cronogramas cro, SsUsuario usuario) {
 
-        System.out.println("postProcesarEntregablesRelacionados");
 //"usuario" en guardar entregables con referencia desde Wekan viene vacio
         EntregablesDAO entregablesDAO = new EntregablesDAO(em);
         List<Entregables> listaEntregables = new ArrayList();
@@ -2753,9 +2792,8 @@ public class ProyectosBean {
                         referencia.setEntFin(entregable.getEntFin());
                     }
                 }
-                Version 6.7.1
+                Version 6.15.0
                  */
-                
                 referencia.setEntInicio(entregable.getEntInicio());
                 referencia.setEntFin(entregable.getEntFin());
                 referencia.setEntInicioEsHito(entregable.getEntInicioEsHito());
@@ -2781,6 +2819,15 @@ public class ProyectosBean {
                 actualizarIndProyProg(referencia.getEntCroFk().getProyecto().getProyPk(),
                         usuario, referencia.getEntCroFk().getProyecto().getProyOrgFk().getOrgPk(), true);
 
+                EntregablesUtils.asignarProgresoEsfuerzoPadres(referencia.getEntCroFk().getEntregablesSet());
+
+                // LOGGER.info(referencia.getEntCroFk().getProyecto().getProyProgFk() + "");
+
+                /* if(referencia.getEntCroFk().getProyecto().getProyProgFk()!=null){
+                referencia.getEntCroFk().getProyecto().setProyCroFk(referencia.getEntCroFk());
+                    guardarProyecto(referencia.getEntCroFk().getProyecto(), usuario, referencia.getEntCroFk().getProyecto().getProyOrgFk().getOrgPk());
+                }
+                 */
             }
         }
     }

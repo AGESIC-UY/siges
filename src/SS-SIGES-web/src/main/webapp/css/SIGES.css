@@ -692,6 +692,12 @@ select{
     background: #f2f2f2;
     clear:both;
 }
+.notificador {
+    overflow: hidden;
+    background: #fdc601;
+    clear:both;
+    margin-bottom: 10px;
+}
 /*.buscador.recuadro > .iconoTabla{
     float: right;
 }*/
@@ -760,6 +766,12 @@ select{
 .haciaIzquierda{/*cambiar por el checked*/
     background: url("../img/atrasar-fase.png") no-repeat center center !important;
 }
+
+.haciaDerecha{/*cambiar por el checked*/
+    background: url("../img/adelantar-fase.png") no-repeat center center !important;
+}
+
+
 .iceSelMnyCb label {
     float: left;
     color: #3d3d3d;
@@ -1352,6 +1364,10 @@ input.iconoTabla:hover, .ui-datepicker-trigger:hover {
 .botonImporte button, input.botonImporte{
     background-image: url("../img/dinero.png") !important;
 }
+.botonDuplicar button, input.botonDuplicar {
+    background-image: url("../img/duplicar.png") !important;
+}
+
 .botonDuplicar button, input.botonDuplicar {
     background-image: url("../img/duplicar.png") !important;
 }
@@ -2376,7 +2392,6 @@ th.ui-state-active, .ui-widget-content th.ui-state-active {
     width: 50%;
     margin: 0 auto 20px auto;
     padding: 0 0 30px 30px;
-    background: url("../img/riesgo.png") no-repeat center center;
     float: left;
 }
 .impacto .ui-datatable {
@@ -2396,16 +2411,15 @@ th.ui-state-active, .ui-widget-content th.ui-state-active {
     color: #000000 !important;
 }
 .columnaImpacto {
-    width: 25px;
+   
     border-bottom: 0 !important;
-    text-align: right !important;
-    font-weight: bold;
+    
 }
 .impacto .ui-datatable tfoot > tr > td{
     height: 22px;
     text-align: center;
     border-bottom: 0 !important;
-    font-weight: bold;
+    
 }
 .resumenFrameRiesgo {
     float: left;
@@ -3920,6 +3934,9 @@ form.formularioConTextarea textarea {
 
 .wekan-boton-accion > span {
     padding-left: 8px
+}
+.botonMover button, input.botonMover {
+    background-image: url("../img/salir2.png") !important;
 }
 
 .wekan-acciones-vincular-entregables {

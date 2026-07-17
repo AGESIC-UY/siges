@@ -25,7 +25,7 @@
         </ice:panelGroup>
 
         <ice:panelGroup id="limiteRiesgos">
-            <ice:panelGrid  styleClass="formulario " columns="2">
+            <ice:panelGrid  styleClass="formulario " columns="4">
                 <h:outputText value="#{labels.limiteAmarillo}"/>
                 <ace:textEntry value="#{configuracionMB.confRiesgoLimiteAmarillo.cnfValor}"
                                converter="decimalFormatConverter"/>
@@ -41,10 +41,26 @@
                 <h:outputText value="#{labels.limiteTiempoRojo}"/>
                 <ace:textEntry value="#{configuracionMB.confRiesgoTiempoLimiteRojo.cnfValor}"
                                converter="IntegerFormatConverter"/>
+                 <h:outputText value="#{labels.tituloEjeX}"/>
+                <ace:textEntry value="#{configuracionMB.confTituloRiesgoX.cnfValor}"
+                              />
+                
+                <h:outputText value="#{labels.tituloEjeY}"/>
+                <ace:textEntry value="#{configuracionMB.confTituloRiesgoY.cnfValor}"
+                               />
+                
+                 <h:outputText value="#{labels.valoresEjeX}"/>
+                <ace:textEntry value="#{configuracionMB.confValoresRiesgoX.cnfValor}"
+                              />
+                
+                <h:outputText value="#{labels.valoresEjeY}"/>
+                <ace:textEntry value="#{configuracionMB.confValoresRiesgoY.cnfValor}"
+                              />
+                
             </ice:panelGrid>
 
             <ice:panelGrid styleClass="panelBotones" >
-                <ace:messages />
+                <ace:messages id="msj1" />
                 <ace:pushButton value="Guardar" 
                                 action="#{configuracionMB.guardarRiesgoLimite}" 
                                 styleClass="guardar" />
@@ -56,24 +72,173 @@
                             paginator="true" pageCount="5" 
                             rows="#{configuracionMB.cantElementosPorPagina}">
                 <ace:column>
-                    <h:outputText value="#{risk.impacto}"/>
+                    <h:outputText value="#{configuracionMB.impactoNuevaConfiguracion(risk.impacto)}"/>
                 </ace:column>
-                <ace:column footerText="20%" style="background-color: #{configuracionMB.riesgoColor(risk.val1)}">
+                <ace:column footerText="#{configuracionMB.obtenerValorX(1)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val1,1)}">
                     <h:outputText value="#{risk.val1}"/>
                 </ace:column>
-                <ace:column footerText="40%" style="background-color: #{configuracionMB.riesgoColor(risk.val2)}" >
+                <ace:column footerText="#{configuracionMB.obtenerValorX(2)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val2,1)}" >
                     <h:outputText value="#{risk.val2}"/>
                 </ace:column>
-                <ace:column footerText="60%" style="background-color: #{configuracionMB.riesgoColor(risk.val3)}">
+                <ace:column footerText="#{configuracionMB.obtenerValorX(3)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val3,1)}">
                     <h:outputText value="#{risk.val3}"/>
                 </ace:column>
-                <ace:column footerText="80%" style="background-color: #{configuracionMB.riesgoColor(risk.val4)}" >
+                <ace:column footerText="#{configuracionMB.obtenerValorX(4)}" style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val4,1)}" >
                     <h:outputText value="#{risk.val4}"/>
                 </ace:column>
-                <ace:column footerText="100%"  style="background-color: #{configuracionMB.riesgoColor(risk.val5)}">
+                <ace:column footerText="#{configuracionMB.obtenerValorX(5)}"  style="background-color: #{configuracionMB.riesgoColorNuevaConfiguracion(risk.val5,1)}">
                     <h:outputText value="#{risk.val5}"/>
                 </ace:column>
             </ace:dataTable>
+        </ice:panelGroup>
+        
+        <ice:panelGroup id="tituloConfiguracion" style="margin-top: 20px" >
+            <ice:outputText value="#{labels.configuracionMapaCalor}" styleClass="subtitulo"/>
+        </ice:panelGroup>
+        
+        
+        <ice:panelGroup id="definicionColores">
+            <ice:panelGrid  styleClass="formulario " columns="14">
+                <h:outputText value="#{labels.configuracion0_4}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color0_4}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion0_8}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color0_8}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion1_2}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color1_2}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion1_6}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color1_6}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                
+                <h:outputText value="#{labels.configuracion2_0}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color2_0}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                 <h:outputText value="#{labels.configuracion2_4}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color2_4}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion3_2}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color3_2}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+              
+               <h:outputText value="#{labels.configuracion3_6}"/>
+               <ace:simpleSelectOneMenu value="#{configuracionMB.color3_6}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion4_0}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color4_0}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion4_8}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color4_8}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion6_0}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color6_0}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                
+                <h:outputText value="#{labels.configuracion6_4}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color6_4}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                 <h:outputText value="#{labels.configuracion8_0}"/>
+                 <ace:simpleSelectOneMenu value="#{configuracionMB.color8_0}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                
+                <h:outputText value="#{labels.configuracion10_0}"/>
+                <ace:simpleSelectOneMenu value="#{configuracionMB.color10_0}" styleClass="textoMedio">
+                    <f:selectItem itemLabel="#{labels.colorVerde}" itemValue="Verde"/>
+                    <f:selectItem itemLabel="#{labels.colorAmarillo}" itemValue="Amarillo"/>
+                    <f:selectItem itemLabel="#{labels.colorRojo}" itemValue="Rojo"/>
+                    <f:selectItem itemLabel="#{labels.colorAzul}" itemValue="Azul"/>
+                    <ace:ajax />
+                     </ace:simpleSelectOneMenu>
+                 <h:outputText/>
+                 
+                   <h:outputText/>
+               <h:outputText/>
+                
+            </ice:panelGrid>
+
+            <ice:panelGrid styleClass="panelBotones" >
+                <ace:messages id="msj2" for="guardarColores" />
+                <ace:pushButton  value="Guardar " 
+                                action="#{configuracionMB.guardarColoresExposicion}" 
+                                styleClass="guardar" />
+            </ice:panelGrid>
         </ice:panelGroup>
     </o:form>
 </ui:composition>

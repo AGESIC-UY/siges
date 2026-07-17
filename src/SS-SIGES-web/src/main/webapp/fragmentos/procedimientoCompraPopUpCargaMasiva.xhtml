@@ -11,6 +11,10 @@
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <o:form id="frmPopupCargaMasiva">
+        <script type="text/javascript">
+
+        </script>
+
         <ice:panelPopup rendered="#{procedimientoCompraMB.renderPopupCargaArchivo.isRenderPopup()}" 
                         draggable="true" 
                         autoCentre="true" 
@@ -40,11 +44,12 @@
                                        maxFileSizeMessage="#{labels.tamanioMaxArchivoDoc}"
                                        useOriginalFilename="true" 
                                        useSessionSubdir="true"
-                                       immediate="false"
+                                       immediate="false" 
                                        style="width: 400px;"/>
                         <h:commandButton id="uploadFile" type="submit" styleClass="iconoTabla subir"/>
+                      
                     </ice:panelGroup>
-                    
+
                     <ice:panelGroup style="margin-bottom: 25px">
                         <ace:messages for="popupMsgMasiva" />
                     </ice:panelGroup>
@@ -54,11 +59,11 @@
                         <ace:pushButton id="btnAgregarExel" value="#{labels.aceptar}"
                                         action="#{procedimientoCompraMB.cargaMasiva()}"
                                         styleClass="boton principal guardar"/>
-                        
+
                         <ace:linkButton value="#{labels.cancelar}" 
                                         action="#{procedimientoCompraMB.cancelar()}"
                                         styleClass="boton secundario" />
- 
+
                     </ice:panelGroup>
                 </ice:panelGroup>
             </f:facet>

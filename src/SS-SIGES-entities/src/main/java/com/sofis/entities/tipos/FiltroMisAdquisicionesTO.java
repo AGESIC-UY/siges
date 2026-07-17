@@ -7,121 +7,167 @@ import com.sofis.entities.data.OrganiIntProve;
 import com.sofis.entities.data.Organismos;
 import com.sofis.entities.data.ProcedimientoCompra;
 import com.sofis.entities.data.SsUsuario;
+import com.sofis.entities.enums.TipoRegistroCompra;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FiltroMisAdquisicionesTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String nombreProyectoPrograma;
-	private SsUsuario gerenteAdjunto;
-	private SsUsuario pmof;
-	private List<Integer> estados;
-	private Areas area;
-	private OrganiIntProve proveedor;
-	private FuenteFinanciamiento fuenteFinanciamiento;
-	private Moneda moneda;
-	private ProcedimientoCompra procedimientoCompra;
-	private Integer idAdquisicion;
-	private Organismos organismo;
+    private String nombreProyectoPrograma;
+    private String nombreAdquisicion;
+    private SsUsuario gerenteAdjunto;
+    private SsUsuario pmof;
+    private List<Integer> estados;
+    private Areas area;
+    private OrganiIntProve proveedor;
+    private FuenteFinanciamiento fuenteFinanciamiento;
+    private Moneda moneda;
+    private ProcedimientoCompra procedimientoCompra;
+    private Integer idAdquisicion;
+    private Organismos organismo;
+    private TipoRegistroCompra tipoRegistroCompra;
+    private Boolean abierta;
+    private Integer anio;
+    private OrganiIntProve organizacion;
 
-	public FiltroMisAdquisicionesTO() {
-		estados = new ArrayList<>();
-	}
+    public FiltroMisAdquisicionesTO() {
+        estados = new ArrayList<>();
+    }
 
-	public String getNombreProyectoPrograma() {
-		return nombreProyectoPrograma;
-	}
+    public String getNombreProyectoPrograma() {
+        return nombreProyectoPrograma;
+    }
 
-	public void setNombreProyectoPrograma(String nombreProyectoPrograma) {
-		this.nombreProyectoPrograma = nombreProyectoPrograma;
-	}
+    public void setNombreProyectoPrograma(String nombreProyectoPrograma) {
+        this.nombreProyectoPrograma = nombreProyectoPrograma;
+    }
 
-	public SsUsuario getGerenteAdjunto() {
-		return gerenteAdjunto;
-	}
+    public String getNombreAdquisicion() {
+        return nombreAdquisicion;
+    }
 
-	public void setGerenteAdjunto(SsUsuario gerenteAdjunto) {
-		this.gerenteAdjunto = gerenteAdjunto;
-	}
+    public void setNombreAdquisicion(String nombreAdquisicion) {
+        this.nombreAdquisicion = nombreAdquisicion;
+    }
 
-	public SsUsuario getPmof() {
-		return pmof;
-	}
+    public SsUsuario getGerenteAdjunto() {
+        return gerenteAdjunto;
+    }
 
-	public void setPmof(SsUsuario pmof) {
-		this.pmof = pmof;
-	}
+    public void setGerenteAdjunto(SsUsuario gerenteAdjunto) {
+        this.gerenteAdjunto = gerenteAdjunto;
+    }
 
-	public List<Integer> getEstados() {
-		return estados;
-	}
+    public OrganiIntProve getOrganizacion() {
+        return organizacion;
+    }
 
-	public void setEstados(List<Integer> estados) {
-		this.estados = estados;
-	}
+    public void setOrganizacion(OrganiIntProve organizacion) {
+        this.organizacion = organizacion;
+    }
 
-	public OrganiIntProve getProveedor() {
-		return proveedor;
-	}
+    public SsUsuario getPmof() {
+        return pmof;
+    }
 
-	public void setProveedor(OrganiIntProve proveedor) {
-		this.proveedor = proveedor;
-	}
+    public void setPmof(SsUsuario pmof) {
+        this.pmof = pmof;
+    }
 
-	public FuenteFinanciamiento getFuenteFinanciamiento() {
-		return fuenteFinanciamiento;
-	}
+    public List<Integer> getEstados() {
+        return estados;
+    }
 
-	public void setFuenteFinanciamiento(FuenteFinanciamiento fuenteFinanciamiento) {
-		this.fuenteFinanciamiento = fuenteFinanciamiento;
-	}
+    public void setEstados(List<Integer> estados) {
+        this.estados = estados;
+    }
 
-	public Moneda getMoneda() {
-		return moneda;
-	}
+    public OrganiIntProve getProveedor() {
+        return proveedor;
+    }
 
-	public void setMoneda(Moneda moneda) {
-		this.moneda = moneda;
-	}
+    public void setProveedor(OrganiIntProve proveedor) {
+        this.proveedor = proveedor;
+    }
 
-	public ProcedimientoCompra getProcedimientoCompra() {
-		return procedimientoCompra;
-	}
+    public FuenteFinanciamiento getFuenteFinanciamiento() {
+        return fuenteFinanciamiento;
+    }
 
-	public void setProcedimientoCompra(ProcedimientoCompra procedimientoCompra) {
-		this.procedimientoCompra = procedimientoCompra;
-	}
+    public void setFuenteFinanciamiento(FuenteFinanciamiento fuenteFinanciamiento) {
+        this.fuenteFinanciamiento = fuenteFinanciamiento;
+    }
 
-	public Integer getIdAdquisicion() {
-		return idAdquisicion;
-	}
+    public Moneda getMoneda() {
+        return moneda;
+    }
 
-	public void setIdAdquisicion(Integer idAdquisicion) {
-		this.idAdquisicion = idAdquisicion;
-	}
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
+    }
 
-	public Areas getArea() {
-		return area;
-	}
+    public ProcedimientoCompra getProcedimientoCompra() {
+        return procedimientoCompra;
+    }
 
-	public void setArea(Areas area) {
-		this.area = area;
-	}
+    public void setProcedimientoCompra(ProcedimientoCompra procedimientoCompra) {
+        this.procedimientoCompra = procedimientoCompra;
+    }
 
-	public Organismos getOrganismo() {
-		return organismo;
-	}
+    public Integer getIdAdquisicion() {
+        return idAdquisicion;
+    }
 
-	public void setOrganismo(Organismos organismo) {
-		this.organismo = organismo;
-	}
+    public void setIdAdquisicion(Integer idAdquisicion) {
+        this.idAdquisicion = idAdquisicion;
+    }
 
-	@Override
-	public String toString() {
-		return "FiltroMisAdquisicionesTO{" + "nombreProyectoPrograma=" + nombreProyectoPrograma + ", gerenteAdjunto=" + gerenteAdjunto + ", pmof=" + pmof + ", estados=" + estados + ", area=" + area + ", proveedor=" + proveedor + ", fuenteFinanciamiento=" + fuenteFinanciamiento + ", moneda=" + moneda + ", procedimientoCompra=" + procedimientoCompra + ", idAdquisicion=" + idAdquisicion + ", organismo=" + organismo + '}';
-	}
+    public Areas getArea() {
+        return area;
+    }
+
+    public void setArea(Areas area) {
+        this.area = area;
+    }
+
+    public Organismos getOrganismo() {
+        return organismo;
+    }
+
+    public void setOrganismo(Organismos organismo) {
+        this.organismo = organismo;
+    }
+
+    public TipoRegistroCompra getTipoRegistroCompra() {
+        return tipoRegistroCompra;
+    }
+
+    public void setTipoRegistroCompra(TipoRegistroCompra tipoRegistroCompra) {
+        this.tipoRegistroCompra = tipoRegistroCompra;
+    }
+
+    public Boolean getAbierta() {
+        return abierta;
+    }
+
+    public void setAbierta(Boolean abierta) {
+        this.abierta = abierta;
+    }
+
+    public Integer getAnio() {
+        return anio;
+    }
+
+    public void setAnio(Integer anio) {
+        this.anio = anio;
+    }
+
+    @Override
+    public String toString() {
+        return "FiltroMisAdquisicionesTO{" + "nombreProyectoPrograma=" + nombreProyectoPrograma + ", gerenteAdjunto=" + gerenteAdjunto + ", pmof=" + pmof + ", estados=" + estados + ", area=" + area + ", proveedor=" + proveedor + ", fuenteFinanciamiento=" + fuenteFinanciamiento + ", moneda=" + moneda + ", procedimientoCompra=" + procedimientoCompra + ", idAdquisicion=" + idAdquisicion + ", organismo=" + organismo + '}';
+    }
 
 }

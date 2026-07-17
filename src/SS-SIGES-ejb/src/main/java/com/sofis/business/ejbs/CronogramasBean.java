@@ -393,7 +393,8 @@ public class CronogramasBean {
         }
 
         Proyectos proyecto = proyectosBean.obtenerProyPorId(proyPk);
-
+        
+       
         if (proyecto == null) {
 
             BusinessException be = new BusinessException();
@@ -404,6 +405,7 @@ public class CronogramasBean {
 
         CronogramasDAO cronogramaDAO = new CronogramasDAO(em);
         Cronogramas cro = cronogramaDAO.obtenerCronogramaProProy(proyPk);
+       // System.out.println("proyecto "+proyPk);
 
         if (cro == null) {
 
@@ -414,11 +416,16 @@ public class CronogramasBean {
             cro.setCroPermisoEscrituraPadre(true);
             cro.setEntregablesSet(new HashSet<Entregables>());
 
+           
             cro.setProyecto(proyecto);
 
             proyecto.setProyCroFk(cro);
+        }else{
+           // System.out.println("cronograma "+cro.getCroPk());
         }
 
+        
+      
         OrganismoDAO organismoDAO = new OrganismoDAO(em);
         Organismos organismo = organismoDAO.obtenerOrganismoPorIdProyecto(proyPk);
 
@@ -433,9 +440,12 @@ public class CronogramasBean {
 
         boolean isPmoFederadaFicha = usuario.getUsuId().equals(proyecto.getProyUsrPmofedFk().getUsuId());
         boolean isPMO = SsUsuariosUtils.isUsuarioPMO(proyecto, usuario, organismo.getOrgPk()) || isPmoFederadaFicha;
+        
+        
 
-        boolean isUsuPermitido = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(proyecto, usuario) || pmofEdita;
+        boolean isUsuPermitido = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(proyecto, usuario) || (pmofEdita && isPmoFederadaFicha);
 
+        
         boolean admiteNuevosEntregables = ((proyecto.getProyEstFk().isEstado(Estados.ESTADOS.INICIO.estado_id)
                 || proyecto.getProyEstFk().isEstado(Estados.ESTADOS.PLANIFICACION.estado_id))
                 && isUsuPermitido);
@@ -808,7 +818,7 @@ public class CronogramasBean {
 
     private void eliminarEntregablesBorrados(Cronogramas cro) {
 
-          LOGGER.info("CronogramasBean.eliminarEntregablesBorrados");
+          LOGGER.fine("CronogramasBean.eliminarEntregablesBorrados");
         
         if (cro == null || StringsUtils.isEmpty(cro.getCroEntBorrados())) {
             return;

@@ -2,11 +2,12 @@ package com.sofis.business.validations;
 
 import com.sofis.entities.codigueras.ConfiguracionCodigos;
 import com.sofis.entities.constantes.ConstantesErrores;
-import com.sofis.entities.constantes.ConstantesEstandares;
 import com.sofis.entities.data.Configuracion;
 import com.sofis.exceptions.BusinessException;
 import com.sofis.generico.utils.generalutils.BooleanUtils;
 import com.sofis.generico.utils.generalutils.StringsUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,9 +25,16 @@ public class ConfiguracionValidacion {
                 ge.addError(ConstantesErrores.ERROR_CODIGO_VACIO);
             }
             
+            List<String> listaConfigVacias = new ArrayList<String>();
+            listaConfigVacias.add(ConfiguracionCodigos.PAGO_FILTRO_PROCEDIMIENTO_COMPRA);
+            listaConfigVacias.add(ConfiguracionCodigos.WEKAN_ADMIN_USUARIO);
+            listaConfigVacias.add(ConfiguracionCodigos.WEKAN_ADMIN_CONTRASENIA);
+                    listaConfigVacias.add(ConfiguracionCodigos.MENSAJE_ADMINISTRACION);
+            
+            
             
             if (StringsUtils.isEmpty(cnf.getCnfValor()) && !StringsUtils.isEmpty(cnf.getCnfCodigo()) &&
-                    !ConfiguracionCodigos.PAGO_FILTRO_PROCEDIMIENTO_COMPRA.equalsIgnoreCase(cnf.getCnfCodigo().trim())
+                    !listaConfigVacias.contains(cnf.getCnfCodigo().trim())
                     ) {
                 ge.addError(ConstantesErrores.ERROR_DATO_VACIO);
             }

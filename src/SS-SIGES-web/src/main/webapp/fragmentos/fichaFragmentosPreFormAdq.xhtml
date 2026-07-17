@@ -165,7 +165,7 @@
                     </ace:checkboxButton>
                     <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}"/>
+                    <ice:outputLabel value="#{labels.fechaEstimadaInicioCompraAdquisicion}" styleClass="#{fichaMB.fechaAdquisicionRequerida ? 'obligatorio' : ''}"/>
                     <ice:panelGroup styleClass="col-sm-9">
                         <ace:dateTimeEntry value="#{fichaMB.adquisicion.adqFechaEstimadaInicioCompra}"
                                            pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
@@ -173,7 +173,7 @@
                     </ice:panelGroup>
                     <ice:outputLabel />
 
-                    <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}"/>
+                    <ice:outputLabel value="#{labels.fechaEsperadaInicioEjecucionAdquisicion}" styleClass="#{fichaMB.fechaAdquisicionRequerida ? 'obligatorio' : ''}"/>
                     <ice:panelGroup styleClass="col-sm-9">
                         <ace:dateTimeEntry value="#{fichaMB.adquisicion.adqFechaEsperadaInicioEjecucion}"
                                            pattern="#{inicioMB.calendarPattern}" renderAsPopup="true" navigator="true"
@@ -285,6 +285,7 @@
                     <ice:outputLabel value="#{labels.centroCosto}"    styleClass="#{fichaMB.centroCostoExigido ? 'obligatorio' : ''}"/>
                     <ace:simpleSelectOneMenu id="comboCentroCosto" 
                                              value="#{fichaMB.listaCentroCostoCombo.selected}" 
+                                             disabled="#{fichaMB.centroCostoLectura}" 
                                              rendered="true">
                         <f:selectItems value="#{fichaMB.listaCentroCostoCombo.items}"/>
                     </ace:simpleSelectOneMenu>

@@ -102,18 +102,17 @@ public class ConfiguracionCodigos {
 
     public static String APROBACION_PMOF = "APROBACION_PMOF";
     public static String APROBACION_REPLANIFICACION_PMOF = "APROBACION_REPLANIFICACION_PMOF";
-    
+
     public static String PERMITIR_REFERENCIAR_ENTREGABLES = "PERMITIR_REFERENCIAR_ENTREGABLES";
 
     public static String PROVEEDOR_ES_EXIGIDO_EN_PAGO = "PROVEEDOR_ES_EXIGIDO_EN_PAGO";
 
     public static String PROVEEDOR_ES_EXIGIDO_EN_COMPRA = "PROVEEDOR_ES_EXIGIDO_EN_COMPRA";
 
-
     public static String HABILITAR_MOVER_PROYECTO = "HABILITAR_MOVER_PROYECTO";
-    
+
     public static String CLIENTE_ES_EXIGIDO_EN_PAGO = "CLIENTE_ES_EXIGIDO_EN_PAGO";
-    
+
     public static String SHOW_MODULO_RIESGOS = "SHOW_MODULO_RIESGOS";
     public static String SHOW_MODULO_PRODUCTOS = "SHOW_MODULO_PRODUCTOS";
     public static String SHOW_MODULO_PRESUPUESTO = "SHOW_MODULO_PRESUPUESTO";
@@ -126,38 +125,61 @@ public class ConfiguracionCodigos {
     public static String SHOW_MODULO_WEKAN = "SHOW_MODULO_WEKAN";
     public static String SHOW_MENU_EXPORTAR = "SHOW_MENU_EXPORTAR";
     public static String SHOW_MENU_HORAS_GASTOS_CALIDAD = "SHOW_MENU_HORAS_GASTOS_CALIDAD";
-    
+
     public static String INCLUIR_CALCULAR_FINALIZADOS = "INCLUIR_CALCULAR_FINALIZADOS";
     public static String GERENTES_ASIGNAN_AREAS_TEMATICAS = "GERENTES_ASIGNAN_AREAS_TEMATICAS";
     public static String LARGO_MAXIMO_ID_ADQUISICION = "LARGO_MAXIMO_ID_ADQUISICION";
 
     public static String URL_SISTEMA = "URL_SISTEMA";
+    public static String MENSAJE_ADMINISTRACION = "MENSAJE_ADMINISTRACION";
 
-	public static String MATOMO_URL = "MATOMO_URL";
-	public static String MATOMO_ID_SITIO = "MATOMO_ID_SITIO";
-	public static String MATOMO_ID_DIMENSION_USUARIO = "MATOMO_ID_DIMENSION_USUARIO";
-	public static String MATOMO_ID_DIMENSION_ORGANISMO = "MATOMO_ID_DIMENSION_ORGANISMO";
-	
-	public static final String WEKAN_ADMIN_USUARIO = "WEKAN_ADMIN_USUARIO";
-	public static final String WEKAN_ADMIN_CONTRASENIA = "WEKAN_ADMIN_CONTRASENIA";
-	public static final String WEKAN_SIGES_WEBHOOK = "WEKAN_SIGES_WEBHOOK";
-	
-	public static final String PMOF_COPIA_PROYECTOS = "PMOF_COPIA_PROYECTOS";
-	public static final String PMOF_MODIFICA_METADATOS_PROYECTO = "PMOF_MODIFICA_METADATOS_PROYECTO";
-	
-	public static final String OCULTAR_IDENTIFICADORES_INICIO = "OCULTAR_IDENTIFICADORES_INICIO";
-        
-        public static final String PAGO_FILTRO_PROCEDIMIENTO_COMPRA="PAGO_FILTRO_PROCEDIMIENTO_COMPRA";
-        public static final String CENTRO_DE_COSTO_EXIGIDO="CENTRO_DE_COSTO_EXIGIDO";
-        public static final String PMOT_OMITIR_APROBACION_INICIAL="PMOT_OMITIR_APROBACION_INICIAL";
-        public static final String PMOF_GESTIONA_SUS_PROYECTOS ="PMOF_GESTIONA_SUS_PROYECTOS";
-        
-         public static final String TIPO_ADQUISICION_REQUERIDO ="TIPO_ADQUISICION_REQUERIDO";
-          public static final String ID_ADQUISICION_REQUERIDO ="ID_ADQUISICION_REQUERIDO";
-           public static final String ACTIVAR_RANGOS_ID_ADQUISICION ="ACTIVAR_RANGOS_ID_ADQUISICION";
-           
-           public static final String PRIMERA_NOTIFICACION_INICIO_COMPRA="PRIMERA_NOTIFICACION_INICIO_COMPRA";
-           public static final String SEGUNDA_NOTIFICACION_INICIO_COMPRA="SEGUNDA_NOTIFICACION_INICIO_COMPRA";
-        
-	
+    public static final String WEKAN_ADMIN_USUARIO = "WEKAN_ADMIN_USUARIO";
+    public static final String WEKAN_ADMIN_CONTRASENIA = "WEKAN_ADMIN_CONTRASENIA";
+    public static final String WEKAN_SIGES_WEBHOOK = "WEKAN_SIGES_WEBHOOK";
+
+    public static final String PMOF_COPIA_PROYECTOS = "PMOF_COPIA_PROYECTOS";
+    public static final String PMOF_MODIFICA_METADATOS_PROYECTO = "PMOF_MODIFICA_METADATOS_PROYECTO";
+
+    public static final String OCULTAR_IDENTIFICADORES_INICIO = "OCULTAR_IDENTIFICADORES_INICIO";
+
+    public static final String PAGO_FILTRO_PROCEDIMIENTO_COMPRA = "PAGO_FILTRO_PROCEDIMIENTO_COMPRA";
+    public static final String CENTRO_DE_COSTO_EXIGIDO = "CENTRO_DE_COSTO_EXIGIDO";
+    public static final String PMOT_OMITIR_APROBACION_INICIAL = "PMOT_OMITIR_APROBACION_INICIAL";
+    public static final String PMOF_GESTIONA_SUS_PROYECTOS = "PMOF_GESTIONA_SUS_PROYECTOS";
+
+    public static final String TIPO_ADQUISICION_REQUERIDO = "TIPO_ADQUISICION_REQUERIDO";
+    public static final String ID_ADQUISICION_REQUERIDO = "ID_ADQUISICION_REQUERIDO";
+    public static final String ACTIVAR_RANGOS_ID_ADQUISICION = "ACTIVAR_RANGOS_ID_ADQUISICION";
+
+    public static final String PRIMERA_NOTIFICACION_INICIO_COMPRA = "PRIMERA_NOTIFICACION_INICIO_COMPRA";
+    public static final String SEGUNDA_NOTIFICACION_INICIO_COMPRA = "SEGUNDA_NOTIFICACION_INICIO_COMPRA";
+    public static final String FECHAS_COMPRA_REQUERIDO = "FECHAS_COMPRA_REQUERIDO";
+    public static final String MENSAJE_ERROR_LOGEO = "MENSAJE_ERROR_LOGEO";
+    public static final String CENTRO_DE_COSTO_LECTURA = "CENTRO_DE_COSTO_LECTURA";
+
+    public static String COLOR_0_4 = "COLOR_0_4";
+    public static String COLOR_0_8 = "COLOR_0_8";
+
+    public static String COLOR_1_2 = "COLOR_1_2";
+    public static String COLOR_1_6 = "COLOR_1_6";
+
+    public static String COLOR_2_0 = "COLOR_2_0";
+    public static String COLOR_2_4 = "COLOR_2_4";
+
+    public static String COLOR_3_2 = "COLOR_3_2";
+    public static String COLOR_3_6 = "COLOR_3_6";
+
+    public static String COLOR_4_0 = "COLOR_4_0";
+    public static String COLOR_4_8 = "COLOR_4_8";
+
+    public static String COLOR_6_0 = "COLOR_6_0";
+    public static String COLOR_6_4 = "COLOR_6_4";
+
+    public static String COLOR_8_0 = "COLOR_8_0";
+    public static String COLOR_10_0 = "COLOR_10_0";
+    public static String RIESGO_TITULO_EJE_X = "RIESGO_TITULO_EJE_X";
+    public static String RIESGO_TITULO_EJE_Y = "RIESGO_TITULO_EJE_Y";
+    public static String RIESGO_VALORES_EJE_X = "RIESGO_VALORES_EJE_X";
+    public static String RIESGO_VALORES_EJE_Y = "RIESGO_VALORES_EJE_Y";
+
 }

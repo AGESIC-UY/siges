@@ -105,6 +105,7 @@
                 <ace:dataTable id="locTable"
                                value="#{fichaMB.fichaTO.latLngProyList}"
                                var="loc" 
+                               rowIndexVar="i"
                                binding="#{fichaMB.latLngProyListDataTable}"
                                emptyMessage="#{label.noHayLocalizaciones}">
 
@@ -138,19 +139,22 @@
                         <ace:tooltip id="tooltipEditar" for="btnEditar">
                             <ice:outputText value="#{labels.editarTooltip}" />
                         </ace:tooltip>
-                        <ace:pushButton id="btnEditar" styleClass="botonEditar iconoTabla" 
+                        <ace:pushButton id="btnEditar" 
+                                        styleClass="botonEditar iconoTabla" 
                                         action="#{fichaMB.editarLocalizacionAction(loc)}"/>
                     </ace:column>
+                    
 
                     <ace:column styleClass="columnaBoton"
                                 rendered="#{loc.latlngPk != null and loc.latlngPk gt 0 and fichaMB.fieldRendered('eliminarLocalizacion')}">
-                        <h:commandButton id="btnEliminarLoc"
+                        <h:commandButton id="btnEliminarLoc_#{i}"
                                          styleClass="botonEliminar iconoTabla"
                                          title="#{labels.eliminarTooltip}:&#13;#{loc.latlngPk}"
                                          rendered="#{fichaMB.fieldRendered('editarLocalizacion')}"
-                                         onclick="confirmationEliminarLoc#{loc.latlngPk}.show();" 
+                                         onclick="confirmationEliminarLoc#{i}.show();" 
                                          type="button"/>
-                        <ace:confirmationDialog widgetVar="confirmationEliminarLoc#{loc.latlngPk}" 
+                        <ace:confirmationDialog widgetVar="confirmationEliminarLoc#{i}" 
+                                                id="confirmDialog_#{i}"
                                                 message="#{labels.eliminar}: &#13;#{loc.latlngPk}"
                                                 header="#{labels.hConfirmacion}"
                                                 closable="true"
@@ -161,11 +165,11 @@
                             <h:panelGrid columns="2" styleClass="centeredPanelGrid">
                                 <ice:commandButton value="#{labels.si}"
                                                  styleClass="boton principal botonContinuar"
-                                                 onclick="confirmationEliminarLoc#{loc.latlngPk}.hide();" 
+                                                 onclick="confirmationEliminarLoc#{i}.hide();" 
                                                  actionListener="#{fichaMB.eliminarLocalizacionAction(loc)}"/>
                                 <h:commandButton value="#{labels.no}"
                                                  styleClass="boton principal botonEliminar"
-                                                 onclick="confirmationEliminarLoc#{loc.latlngPk}.hide();"/>
+                                                 onclick="confirmationEliminarLoc#{i}.hide();"/>
                             </h:panelGrid>
                         </ace:confirmationDialog>
                     </ace:column>

@@ -25,6 +25,7 @@ public class ConstantesNavegacion {
     public static final String IR_A_REPORTE_CRONOGRAMA_ALCANCE = "IR_A_REPORTE_CRONOGRAMA_ALCANCE";
     public static final String IR_A_REPORTE_MIS_TAREAS = "IR_A_REPORTE_MIS_TAREAS";
     public static final String IR_A_MIS_ADQUISICIONES = "IR_A_MIS_ADQUISICIONES";
+    public static final String IR_A_RIESGOS = "IR_A_RIESGOS";
     
     public static final String IR_A_AYUDA = "IR_A_AYUDA";
     public static final String IR_A_INICIO_PUBLICO = "IR_A_INICIO_PUBLICO";
@@ -33,5 +34,7 @@ public class ConstantesNavegacion {
     public static final String IR_A_EXP_VISUALIZADOR = "IR_A_EXP_VISUALIZADOR";
     
     public static final String CAMBIAR_CONTRASENIA = "CAMBIAR_CONTRASENIA";
+    
+      public static final String IR_CONFIGURACION_GRUPO_TRABAJO = "IR_CONFIGURACION_GRUPO_TRABAJO";
     
 }

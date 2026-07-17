@@ -1,0 +1,2 @@
+ALTER TABLE entregables
+MODIFY COLUMN ent_descripcion VARCHAR(1500) DEFAULT NULL;

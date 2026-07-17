@@ -22,6 +22,7 @@
             <ace:menuItem id="nuevoProyecto"
                           value="#{labels.menu_nuevoProyectoPrograma}"
                           action="#{menuMB.fireAction('IR_A_NUEVA_FICHA')}"
+                          
                           rendered="#{menuMB.permisos['ADMIN_NUEVOFICHA']}">
             </ace:menuItem>
 
@@ -53,6 +54,10 @@
                               value="#{labels.menu_mis_adquisiciones}"
                               action="#{menuMB.fireAction('IR_A_MIS_ADQUISICIONES')}"
                               rendered="#{menuMB.permisos['MIS_ADQUISICIONES']}">
+                </ace:menuItem>
+                 <ace:menuItem id="Riesgos"  
+                              value="#{labels.menu_reporte_riesgos}"
+                              action="#{menuMB.fireAction('IR_A_RIESGOS')}">
                 </ace:menuItem>
             </ace:submenu>
 
@@ -263,12 +268,6 @@
                         <ace:ajax event="activate" execute="@this"   />
                     </ace:menuItem>
 
-                    <ace:menuItem id="configuracionOrganizacion"
-                                  value="#{labels.configuracionOrganizaciones}"
-                                  action="#{menuMB.fireAction('IR_ABM_ORGANIZACION')}"
-                                  rendered="#{menuMB.permisos['ADMIN_ORGANIZACION']}" >
-                        <ace:ajax event="activate" execute="@this" />
-                    </ace:menuItem>
 
                     <ace:menuItem id="configuracionMailsTemplate"
                                   value="#{labels.configuracionMailsTemplate}"
@@ -281,6 +280,13 @@
                                   value="#{labels.procedimientoCompra}"
                                   action="#{menuMB.fireAction('IR_A_PROCEDIMIENTO_COMPRA')}"
                                   rendered="#{menuMB.permisos['ADMIN_FUENTE_FINANC']}" >
+                        <ace:ajax event="activate" execute="@this" />
+                    </ace:menuItem>
+                    
+                     <ace:menuItem id="configuracionOrganizacion"
+                                  value="#{labels.configuracionOrganizaciones}"
+                                  action="#{menuMB.fireAction('IR_ABM_ORGANIZACION')}"
+                                  rendered="#{menuMB.permisos['ADMIN_ORGANIZACION']}" >
                         <ace:ajax event="activate" execute="@this" />
                     </ace:menuItem>
 
@@ -325,13 +331,13 @@
                                   rendered="#{menuMB.permisos['ADMIN_TIPO_GASTOS']}" >
                         <ace:ajax event="activate" execute="@this" />
                     </ace:menuItem>
-                    
-                     <ace:menuItem id="idSsTipoRiesgo"
-                              value="#{labels.tipoRiesgo}"
-                              action="#{menuMB.fireAction('IR_A_SsTipo_Riesgo')}"
-                              rendered="#{menuMB.permisos['ADMIN_USU']}">
-                    <ace:ajax event="activate" execute="@this" />    
-                </ace:menuItem>
+
+                    <ace:menuItem id="idSsTipoRiesgo"
+                                  value="#{labels.tipoRiesgo}"
+                                  action="#{menuMB.fireAction('IR_A_SsTipo_Riesgo')}"
+                                  rendered="#{menuMB.permisos['ADMIN_USU']}">
+                        <ace:ajax event="activate" execute="@this" />    
+                    </ace:menuItem>
 
                 </ace:submenu>
 
@@ -342,8 +348,8 @@
                               rendered="#{menuMB.permisos['ADMIN_USU']}">
                     <ace:ajax event="activate" execute="@this" />    
                 </ace:menuItem>
-                
-                
+
+
 
                 <ace:menuItem id="personas"  
                               value="#{labels.personas}"
@@ -388,30 +394,59 @@
                               rendered="#{menuMB.permisos['MIGRA_CALC_INDICA']}" >
                     <ace:ajax event="activate" execute="@this"   />
                 </ace:menuItem>
-                
-                 <ace:menuItem id="idSsUsuarioProyecto"
+
+                <ace:menuItem id="idSsUsuarioProyecto"
                               value="#{labels.resignarUsuario}"
                               action="#{menuMB.fireAction('IR_A_SsUsuario_Proyecto')}"
                               rendered="#{menuMB.permisos['ADMIN_USU']}">
                     <ace:ajax event="activate" execute="@this" />    
                 </ace:menuItem>
-                
-                 <ace:menuItem id="idSsAdquisiconRango"
+
+                <ace:menuItem id="idSsAdquisiconRango"
                               value="#{labels.adquisicionRango}"
                               action="#{menuMB.fireAction('IR_A_SsAdquisicion_Rango')}"
                               rendered="#{menuMB.permisos['ADMIN_USU']}">
                     <ace:ajax event="activate" execute="@this" />    
                 </ace:menuItem>
                 
+                  <ace:menuItem id="idSsAdquisiconGestion"
+                              value="#{labels.adquisicionGestion}"
+                              action="#{menuMB.fireAction('IR_A_SsAdquisicion_Gestion')}"
+                              rendered="#{menuMB.permisos['ADMIN_USU']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
                 
+                 <ace:menuItem id="idSsAdquisiconLog"
+                              value="#{labels.adquisicion_log}"
+                              action="#{menuMB.fireAction('IR_A_SsAdquisicion_Info')}"
+                              rendered="#{menuMB.permisos['ADMIN_USU']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+
+
                 <ace:menuItem id="idProcedimeintoCompraInfo"
                               value="#{labels.procedimeinto_compra_info}"
                               action="#{menuMB.fireAction('IR_A_ProcedimientoCompraInfo')}"
                               rendered="#{menuMB.permisos['ADMIN_USU']}">
                     <ace:ajax event="activate" execute="@this" />    
                 </ace:menuItem>
+
+
+                <ace:menuItem id="idGrupoTrabajoConfiguracion"
+                              value="#{labels.grupo_trabajo_info}"
+                              action="#{menuMB.fireAction('IR_CONFIGURACION_GRUPO_TRABAJO')}"
+                              rendered="#{menuMB.permisos['ADMIN_USU']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
                 
-                 
+                  <ace:menuItem id="idImportarAdquisicion"
+                              value="#{labels.importarAdquisicion}"
+                              action="#{menuMB.fireAction('IR_IMPORTAR_ADQUISICION')}"
+                              rendered="#{menuMB.permisos['ADMIN_USU']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+
+
 
                 <ace:menuItem id="configuracionPGE"  
                               value="#{labels.configuracionPGE}"
@@ -442,7 +477,234 @@
                           rendered="#{menuMB.permisos['ADMINISTRADOR']}">
             </ace:menuItem>
 
+            <ace:submenu id="configuracion2" 
+                         label="#{labels.configuracion}"
+                         rendered="#{menuMB.permisos['ADM_GTB']}">
 
+                
+                 <ace:menuItem id="idSsAdquisiconGestion2"
+                              value="#{labels.adquisicionGestion}"
+                              action="#{menuMB.fireAction('IR_A_SsAdquisicion_Gestion2')}"
+                              rendered="#{menuMB.permisos['ADQ_GES']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+                
+                  <ace:menuItem id="idSsAdquisiconLog2"
+                              value="#{labels.adquisicion_log}"
+                              action="#{menuMB.fireAction('IR_A_SsAdquisicion_Info2')}"
+                              rendered="#{menuMB.permisos['INFO_ADQ']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionAmbito2"
+                              value="#{labels.configuracionAmbito}"
+                              action="#{menuMB.fireAction('IR_ABM_AMBITO2')}"
+                              rendered="#{menuMB.permisos['AMB_INT']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionAreaConocimiento2"
+                              value="#{labels.configuracionAreasConoc}"
+                              action="#{menuMB.fireAction('IR_ABM_AREA_CONOCIMIENTO2')}"
+                              rendered="#{menuMB.permisos['ARE_CON']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionAreasOrg2"
+                              value="#{labels.configuracionAreas}"
+                              action="#{menuMB.fireAction('IR_ABM_AREAS2')}"
+                              rendered="#{menuMB.permisos['ARE_ORG']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="area2"
+                              value="#{labels.configuracionAreaTematica}"
+                              action="#{menuMB.fireAction('IR_ABM_AREAS_TEMATICAS2')}"
+                              rendered="#{menuMB.permisos['ARE_TEM']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracion_causal_compra2"  
+                              value="#{labels.causalCompra}"
+                              action="#{menuMB.fireAction('IR_A_CAUSAL_COMPRA2')}"
+                              rendered="#{menuMB.permisos['CAU_COM']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+
+                <ace:menuItem id="configuracion_centro_costo2"  
+                              value="#{labels.centroCosto}"
+                              action="#{menuMB.fireAction('IR_A_CENTRO_COSTO2')}"
+                              rendered="#{menuMB.permisos['CEN_COS']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="componenteProducto2"
+                              value="#{labels.componenteProducto}"
+                              action="#{menuMB.fireAction('componenteProducto2')}"
+                              rendered="#{menuMB.permisos['COM_PRO']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionDocumentos2"
+                              value="#{labels.configuracionDocumentos}"
+                              action="#{menuMB.fireAction('configuracionDocumentos2')}"
+                              rendered="#{menuMB.permisos['DOC']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionFuenteFinanc2"
+                              value="#{labels.configuracionFuenteFinanc}"
+                              action="#{menuMB.fireAction('IR_ABM_FUENTE_FINANCIAMIENTO2')}"
+                              rendered="#{menuMB.permisos['FUE_FIN']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracion_fuente_x_procedimiento2"  
+                              value="#{labels.fuenteProcedimientoCompra}"
+                              action="#{menuMB.fireAction('IR_A_FUENTE_PROCEDIMIENTO_COMPRA2')}"
+                              rendered="#{menuMB.permisos['FUE_PRO']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracion_identificador_grp_erp2"  
+                              value="#{labels.identificador_grp_erp}"
+                              action="#{menuMB.fireAction('IR_A_IDENTIFICADOR_GRP_ERP2')}"
+                              rendered="#{menuMB.permisos['IDE_GRP']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+
+                <ace:menuItem id="configuracionMonedas2"
+                              value="#{labels.configuracionMonedas}"
+                              action="#{menuMB.fireAction('IR_ABM_MONEDA2')}"
+                              rendered="#{menuMB.permisos['MON']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionNotificaciones2"
+                              value="#{labels.configuracionNotificaciones}"
+                              action="#{menuMB.fireAction('IR_ABM_NOTIFICACION2')}"
+                              rendered="#{menuMB.permisos['NOT']}" >
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="objetivos_estrategicos2"  
+                              value="#{labels.objetivosEstrategicos}"
+                              action="#{menuMB.fireAction('IR_A_OBJETIVOS_ESTRATEGICOS2')}"
+                              rendered="#{menuMB.permisos['OBJ_EST']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+
+
+                <ace:menuItem id="configuracionOrganizacion2"
+                              value="#{labels.configuracionOrganizaciones}"
+                              action="#{menuMB.fireAction('IR_ABM_ORGANIZACION2')}"
+                              rendered="#{menuMB.permisos['ORG']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+
+                <ace:menuItem id="personas2"  
+                              value="#{labels.personas}"
+                              action="#{menuMB.fireAction('IR_A_PERSONAS2')}"
+                              rendered="#{menuMB.permisos['PER']}">
+                </ace:menuItem>
+
+                <ace:menuItem id="plantillaCronograma2"  
+                              value="#{labels.plantillaCronograma}"
+                              rendered="#{menuMB.permisos['PLA_CRO']}"
+                              action="#{menuMB.fireAction('IR_A_PLANTILLAS2')}">
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionMailsTemplate2"
+                              value="#{labels.configuracionMailsTemplate}"
+                              action="#{menuMB.fireAction('IR_ABM_MAILS_TEMPLATE2')}"
+                              rendered="#{menuMB.permisos['PLA_MAI']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="procedimientoCompra2"
+                              value="#{labels.procedimientoCompra}"
+                              action="#{menuMB.fireAction('IR_A_PROCEDIMIENTO_COMPRA2')}"
+                              rendered="#{menuMB.permisos['PRO_COM']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                 <ace:menuItem id="gestion_programas2"  
+                              value="#{labels.menu_gestion_programas}"
+                              action="#{menuMB.fireAction('IR_GESTION_PROGRAMAS2')}"
+                              rendered="#{menuMB.permisos['PROG']}">
+                </ace:menuItem>
+                
+                
+                <ace:menuItem id="gestion_proyectos2"  
+                              value="#{labels.menu_gestion_proyectos}"
+                              action="#{menuMB.fireAction('IR_GESTION_PROYECTOS2')}"
+                              rendered="#{menuMB.permisos['PROY']}">
+                </ace:menuItem>
+
+               
+
+
+                <ace:menuItem id="configuracionRiesgos2"
+                              value="#{labels.configuracionRiesgos}"
+                              action="#{menuMB.fireAction('configuracionRiesgos2')}"
+                              rendered="#{menuMB.permisos['RIE']}" >
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionRolesInteresados2"
+                              value="#{labels.configuracionRolesInteresados}"
+                              action="#{menuMB.fireAction('IR_ABM_ROLES_INTERESADOS2')}"
+                              rendered="#{menuMB.permisos['ROL_INT']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionTemaCalidad2"
+                              value="#{labels.configuracionTemaCalidad}"
+                              action="#{menuMB.fireAction('IR_ABM_TEMAS_CALIDAD2')}"
+                              rendered="#{menuMB.permisos['TEM_CAL']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracion_tipo_adquisicion2"  
+                              value="#{labels.tiposAdquisicion}"
+                              action="#{menuMB.fireAction('IR_A_TIPO_ADQUISICION2')}"
+                              rendered="#{menuMB.permisos['TIP_ADQ']}">
+                    <ace:ajax event="activate" execute="@this"   />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionTiposDocumentos2"
+                              value="#{labels.configuracionTiposDocumentos}"
+                              action="#{menuMB.fireAction('IR_ABM_TIPO_DOCUMENTO2')}"
+                              rendered="#{menuMB.permisos['TIP_DOC']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="configuracionTipoGastos2"
+                              value="#{labels.configuracionTipoGastos}"
+                              action="#{menuMB.fireAction('IR_ABM_TIPO_GASTO2')}"
+                              rendered="#{menuMB.permisos['TIP_GAS']}" >
+                    <ace:ajax event="activate" execute="@this" />
+                </ace:menuItem>
+
+                <ace:menuItem id="idSsTipoRiesgo2"
+                              value="#{labels.tipoRiesgo}"
+                              action="#{menuMB.fireAction('IR_A_SsTipo_Riesgo2')}"
+                              rendered="#{menuMB.permisos['TIP_RIE']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+                
+                   <ace:menuItem id="idImportarAdquisicion2"
+                              value="#{labels.importarAdquisicion}"
+                              action="#{menuMB.fireAction('IR_IMPORTAR_ADQUISICION2')}"
+                              rendered="#{menuMB.permisos['IMP_ADQ']}">
+                    <ace:ajax event="activate" execute="@this" />    
+                </ace:menuItem>
+
+            </ace:submenu>
 
 
 

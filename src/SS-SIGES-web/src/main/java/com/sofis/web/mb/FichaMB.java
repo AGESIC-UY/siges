@@ -41,6 +41,7 @@ import com.sofis.entities.data.FuenteProcedimientoCompra;
 import com.sofis.entities.data.IdentificadorGrpErp;
 import com.sofis.entities.data.Interesados;
 import com.sofis.entities.data.LatlngProyectos;
+import com.sofis.entities.data.LogAdquisicion;
 import com.sofis.entities.data.MediaProyectos;
 import com.sofis.entities.data.Moneda;
 import com.sofis.entities.data.Notificacion;
@@ -66,6 +67,7 @@ import com.sofis.entities.data.Riesgos;
 import com.sofis.entities.data.RolesInteresados;
 import com.sofis.entities.data.SsUsuario;
 import com.sofis.entities.data.TipoAdquisicion;
+import com.sofis.entities.data.TipoDocumento;
 import com.sofis.entities.data.TipoDocumentoInstancia;
 import com.sofis.entities.data.TipoRiesgo;
 import com.sofis.entities.data.TiposMedia;
@@ -74,13 +76,18 @@ import com.sofis.entities.enums.TipoInteresado;
 import com.sofis.entities.enums.TipoRegistroCompra;
 import com.sofis.entities.tipos.AdqPagosTO;
 import com.sofis.entities.tipos.ComboItemTO;
+import com.sofis.entities.tipos.CronogramaTO;
+import com.sofis.entities.tipos.EntregableTO;
 import com.sofis.entities.tipos.FichaTO;
 import com.sofis.entities.tipos.FiltroCentroCostoTO;
 import com.sofis.entities.tipos.FiltroIdentificadorGrpErpTO;
 import com.sofis.entities.tipos.FiltroObjectivoEstategicoTO;
+import com.sofis.entities.tipos.FiltroProyectoTO;
 import com.sofis.entities.tipos.FiltroTipoAdquisicionTO;
 import com.sofis.entities.tipos.MonedaImporteResumenTO;
 import com.sofis.entities.tipos.MonedaImporteTO;
+import com.sofis.entities.tipos.ProyectoTO;
+import com.sofis.entities.tipos.RiesgosTO;
 import com.sofis.entities.tipos.TablaDinamicaPresupuestoTO;
 import com.sofis.entities.utils.FichaUtils;
 import com.sofis.entities.utils.SsUsuariosUtils;
@@ -100,6 +107,7 @@ import com.sofis.generico.utils.generalutils.HTMLSanitizer;
 import com.sofis.generico.utils.generalutils.StringsUtils;
 import com.sofis.web.componentes.SofisPopupUI;
 import com.sofis.web.delegates.AdquisicionDelegate;
+import com.sofis.web.delegates.AdquisicionInfoDelegate;
 import com.sofis.web.delegates.AdquisicionRangoDelegate;
 import com.sofis.web.delegates.AreaTematicaDelegate;
 import com.sofis.web.delegates.AreasDelegate;
@@ -143,6 +151,7 @@ import com.sofis.web.delegates.RiesgosDelegate;
 import com.sofis.web.delegates.RolesInteresadosDelegate;
 import com.sofis.web.delegates.SsUsuarioDelegate;
 import com.sofis.web.delegates.TipoAdquisicionDelegate;
+import com.sofis.web.delegates.TipoDocumentoDelegate;
 import com.sofis.web.delegates.TipoDocumentoInstanciaDelegate;
 import com.sofis.web.delegates.TipoRiesgoDelegate;
 import com.sofis.web.delegates.TiposMediaDelegate;
@@ -157,12 +166,16 @@ import com.sofis.web.utils.SofisCombo;
 import com.sofis.web.utils.SofisComboG;
 import com.sofis.web.utils.SofisResource;
 import com.sofis.web.utils.WebUtils;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.CharacterIterator;
+import java.text.SimpleDateFormat;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -182,6 +195,7 @@ import java.util.logging.Logger;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -193,22 +207,27 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.icefaces.ace.component.autocompleteentry.AutoCompleteEntry;
 import org.icefaces.ace.component.datatable.DataTable;
 import org.icefaces.ace.component.fileentry.FileEntry;
 import org.icefaces.ace.component.fileentry.FileEntryEvent;
+
 import org.icefaces.ace.component.fileentry.FileEntryResults;
 import org.icefaces.ace.model.tree.NodeState;
 import org.icefaces.ace.model.tree.NodeStateMap;
 import org.icefaces.util.JavaScriptRunner;
-import org.jboss.security.auth.spi.Users.User;
 
 @ManagedBean(name = "fichaMB")
 @ViewScoped
@@ -299,6 +318,8 @@ public class FichaMB implements Serializable {
     @Inject
     private EtapaDelegate etapaDelegate;
     @Inject
+    private TipoDocumentoDelegate tipoDocumentoDelegate;
+    @Inject
     private TiposMediaDelegate tiposMediaDelegate;
     @Inject
     private MediaProyectosDelegate mediaProyectosDelegate;
@@ -331,6 +352,9 @@ public class FichaMB implements Serializable {
     private AdquisicionRangoDelegate adqRangoDelegate;
 
     @Inject
+    private AdquisicionInfoDelegate adquisicionInfoDelegate;
+
+    @Inject
     private TipoRiesgoDelegate tipoRiesgoDelegate;
 
     @Inject
@@ -346,6 +370,7 @@ public class FichaMB implements Serializable {
     //indica si se accede desde el reporte de mis tareas.
     private boolean misTareas = false;
     private boolean frameMax = false;
+    private boolean intentaSubirArchivo = false;
     private Configuracion confAdjPre = null;
     private Configuracion confRiesgoTiempoLimiteAmarillos = null;
     private Configuracion confRiesgoTiempoLimiteRojo = null;
@@ -393,6 +418,7 @@ public class FichaMB implements Serializable {
     private MediaProyectos mediaProyMostrar = null;
     //-- Ficha 
     private SofisCombo listaAreasOrganismoCombo = new SofisCombo();
+    private SofisCombo listaProyectosCombo = new SofisCombo();
     private SofisCombo listaProgramasCombo = new SofisCombo();
     private SofisCombo listaSponsorCombo = new SofisCombo();
     private SofisCombo listaAdjuntoCombo = new SofisCombo();
@@ -442,7 +468,7 @@ public class FichaMB implements Serializable {
     private List<Riesgos> listaRiesgosResumen;
     private Boolean riskFormDataExpanded = false;
     private List<ComboItemTO> listaRiskProbabilidad;
-    private List<Integer> listaRiskImpacto;
+    private List<ComboItemTO> listaRiskImpacto;
     private SofisCombo listaRiskProbabilidadCombo = new SofisCombo();
     private SofisCombo listaRiskImpactoCombo = new SofisCombo();
     private SofisComboG<Entregables> listaRiskEntregablesCombo = new SofisComboG();
@@ -624,8 +650,21 @@ public class FichaMB implements Serializable {
     private String adquisicionUsadaMensajeResultado;
     private Boolean adquisicionMensajeRender;
     private Boolean renderizarSugerenciaAdquisicion = false;
+
+    private Boolean fechaAdquisicionRequerida = false;
     private AdquisicionRango adquisicionRangoSelected;
     private Boolean centroCostoExigido;
+    private Boolean centroCostoLectura;
+    private String mensajeArchivos = "El tamaño del archivo excede el máximo permitido.";
+    private String mensajeArchivosMultimedia = "El tamaño del archivo excede el máximo permitido de ";
+    private String tamanioMaximoArchivos = "";
+
+    private Configuracion confValoresRiesgoX = new Configuracion();
+    private Configuracion confValoresRiesgoY = new Configuracion();
+    private String entregableParaAsociar;
+    private static final String TIPO_DOC_NOMBRE = "tipodocNombre";
+
+    private Boolean centroCostosLectura = false;
 
     @PostConstruct
     public void init() {
@@ -677,6 +716,9 @@ public class FichaMB implements Serializable {
         interesado.setIntRolintFk(new RolesInteresados());
         String programaProyectoId = (String) getFlashContext(ConstantesPresentacion.PROG_PROY_ID);
         if (programaProyectoId == null) {
+
+            LOGGER.info("*********************************** el id de proyecto era null");
+
             /**
              * Busco el parámetro en el request
              */
@@ -699,6 +741,8 @@ public class FichaMB implements Serializable {
         cargarCombosFicha();
 
         if (!StringsUtils.isEmpty(programaProyectoId)) {
+
+            LOGGER.info("*********************************** el proyecto no esta vacio");
             try {
                 editarFichaAction(programaProyectoId);
             } catch (Exception ex) {
@@ -721,11 +765,17 @@ public class FichaMB implements Serializable {
             }
 
         } else {
+
+            LOGGER.info("*********************************** el proyecto si esta vacio");
+
             SsUsuario usuario = inicioMB.getUsuario();
             Organismos org = inicioMB.getOrganismo();
             fichaTO.setTipoFicha(TipoFichaEnum.PROYECTO.getValue());
             fichaTO.setPeso(riesgosCantAltos);
             listaGerenteCombo.setSelected(usuario.getUsuId());
+
+            // LOGGER.info("******************tiene cronograma "+fichaTO.getCroFk().getCroPk());
+            moduloCronogramaMB.limpiarAvances();
 
             /**
              * 12-10-17 Bruno: agregadas las localizaciones
@@ -845,15 +895,43 @@ public class FichaMB implements Serializable {
                 null);
         adquisicionesRango = new ArrayList();
 
+        if (isFirefox) {
+            tamanioMaximoArchivos = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_DOCUMENTO, orgPk).getCnfValor();
+
+            mensajeArchivos = mensajeArchivos + calculoMegas(new Long(tamanioMaximoArchivos));
+
+        }
+
+        tamanioMaximoArchivos = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.TAMANIO_MAX_ARCHIVO_MULTIMEDIA, orgPk).getCnfValor();
+
+        mensajeArchivosMultimedia = mensajeArchivosMultimedia + calculoMegas(new Long(tamanioMaximoArchivos));
+
         renderizarSugerenciaAdquisicion = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.ID_ADQUISICION_REQUERIDO, inicioMB.getOrganismo().getOrgPk()).getCnfValor().equals("true") && configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.ACTIVAR_RANGOS_ID_ADQUISICION, inicioMB.getOrganismo().getOrgPk()).getCnfValor().equals("true");
 
         renderIncluirIdAdquisicionEnCopiaProyecto = idAdquisicionRequerido && inicioMB.isUsuarioOrgaPMO();
+
+        fechaAdquisicionRequerida = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.FECHAS_COMPRA_REQUERIDO, inicioMB.getOrganismo().getOrgPk()).getCnfValor().equals("true");
+
+        centroCostosLectura = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.CENTRO_DE_COSTO_LECTURA, inicioMB.getOrganismo().getOrgPk()).getCnfValor().equals("true");
+
+        confValoresRiesgoX = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_VALORES_EJE_X, orgPk);
+
+        confValoresRiesgoY = configuracionDelegate.obtenerCnfPorCodigoYOrg(ConfiguracionCodigos.RIESGO_VALORES_EJE_Y, orgPk);
 
         centroCostoExigido = configuracionDelegate.obtenerCnfPorCodigoYOrg(
                 ConfiguracionCodigos.CENTRO_DE_COSTO_EXIGIDO,
                 this.getInicioMB().getOrganismo().getOrgPk()
         ).getCnfValor().equalsIgnoreCase("true");
 
+        centroCostoLectura = configuracionDelegate.obtenerCnfPorCodigoYOrg(
+                ConfiguracionCodigos.CENTRO_DE_COSTO_LECTURA,
+                this.getInicioMB().getOrganismo().getOrgPk()
+        ).getCnfValor().equalsIgnoreCase("true");
+
+        centroCostoLectura = configuracionDelegate.obtenerCnfPorCodigoYOrg(
+                ConfiguracionCodigos.CENTRO_DE_COSTO_LECTURA,
+                this.getInicioMB().getOrganismo().getOrgPk()
+        ).getCnfValor().equalsIgnoreCase("true");
     }
 
     @PreDestroy
@@ -1074,12 +1152,6 @@ public class FichaMB implements Serializable {
     public void cargarDocFiles() {
         if (fichaTO != null) {
 
-            if (!carpetaDirArmada) {
-                dir += "/" + fichaTO.getOrgFk().getOrgPk();
-                carpetaDirArmada = true;
-
-            }
-
             if (fichaTO.getResumenEjecutivo() != null) {
                 Integer docPk = fichaTO.getResumenEjecutivo().getDocsPk();
                 DocFile df = documentosDelegate.obtenerDocFilePorDocId(docPk);
@@ -1090,12 +1162,11 @@ public class FichaMB implements Serializable {
             }
             if (fichaTO.getDocumentos() != null) {
                 List<DocFile> listDf = documentosDelegate.obtenerDocFilePorDocId(fichaTO.getDocumentos());
+
                 if (listDf != null && !listDf.isEmpty()) {
                     for (DocFile df : listDf) {
                         if (df != null) {
                             downloadFile.put(df.getDocfileDocFk().getDocsPk(), new SofisResource(df, dir));
-                        } else {
-                            LOGGER.log(Level.INFO, df.getDocfileDocFk().getDocsPk() + "");
                         }
                     }
                 }
@@ -1158,7 +1229,7 @@ public class FichaMB implements Serializable {
                     riesgoActualizacion = fichaTO.getProyIndices().getProyindRiesgoUltact();
                     riesgoActualizacionColor = riesgosDelegate.obtenerColorUltimaActualizacion(riesgoActualizacion, inicioMB.getOrganismo().getOrgPk());
                     exposicionRiesgo = NumbersUtils.redondearDecimales(fichaTO.getProyIndices().getProyindRiesgoExpo());
-                    exposicionRiesgoColor = riesgosDelegate.obtenerExposicionRiesgoColor(exposicionRiesgo, inicioMB.getOrganismo().getOrgPk());
+                    exposicionRiesgoColor = riesgosDelegate.obtenerExposicionRiesgoColorParaResumen(exposicionRiesgo, inicioMB.getOrganismo().getOrgPk());
                     riesgosCantAltos = fichaTO.getProyIndices().getProyindRiesgoAlto();
                 }
             }
@@ -1545,7 +1616,9 @@ public class FichaMB implements Serializable {
             FichaValidacion.validarTexto(fichaTO);
 
             FichaValidacion.validar(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+            LOGGER.severe("estoy acaaaaaaaaaaa");
             obj = progProyDelegate.guardarProgProy(fichaTO, inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+            LOGGER.severe("pase el guardarr");
             if (obj != null) {
                 JSFUtils.agregarMsg(FICHA_MSG_ID, "info_ficha_guardada", null);
             }
@@ -1894,7 +1967,10 @@ public class FichaMB implements Serializable {
             addItemSofisCombo(listaObjetivosEstrategicosCombo, fichaTO.getObjetivoEstrategico(), fichaTO.getObjetivoEstrategico().getObjEstPk(), true);
         }
 
-        cargarResumenes();
+        if (fichaTO != null) {
+            cargarResumenes();
+        }
+
     }
 
     public void onload() {
@@ -2407,13 +2483,14 @@ public class FichaMB implements Serializable {
     }
 
     public String agregarMediaAction() {
-        LOGGER.fine("Agregar Multimedia a la Ficha.");
+        LOGGER.info("Agregar Multimedia a la Ficha.");
         try {
             TiposMedia tm = listaTipoMediaCombo.getSelectedT();
             mediaProy.setMediaTipoFk(tm);
             mediaProy.setMediaProyFk(new Proyectos(fichaTO.getFichaFk()));
 
             try {
+                LOGGER.info("1");
                 mediaProy = mediaProyectosDelegate.guardar(mediaProy, inicioMB.getUsuario().getUsuId(), inicioMB.getOrganismo().getOrgPk());
                 JSFUtils.agregarMsg("", "info_media_guardado", null);
 
@@ -2427,7 +2504,14 @@ public class FichaMB implements Serializable {
                 //List<String> errores = w.getErrores();
                 //JSFUtils.agregarMsgs("multiForm", errores);
                 for (String iterStr : w.getErrores()) {
-                    JSFUtils.agregarMsgError("multiForm", Labels.getValue(iterStr), null);
+
+                    if (iterStr.equalsIgnoreCase(MensajesNegocio.WARN_EXP_VISUA_IMG_SIZE)) {
+                        JSFUtils.agregarMsgError("multiForm", mensajeArchivosMultimedia, null);
+                    } else {
+                        JSFUtils.agregarMsgError("multiForm", Labels.getValue(iterStr), null);
+
+                    }
+
                 }
 
             }
@@ -2532,11 +2616,13 @@ public class FichaMB implements Serializable {
     }
 
     public String agregarRiesgoAction() {
-        LOGGER.fine("Agregar Riesgo a la Ficha.");
+        LOGGER.info("Agregar Riesgo a la Ficha.");
         try {
             ComboItemTO comboItemTO = (ComboItemTO) listaRiskProbabilidadCombo.getSelectedObject();
             riesgo.setRiskProbabilidad(comboItemTO != null ? (Integer) comboItemTO.getItemObject() : null);
-            riesgo.setRiskImpacto((Integer) listaRiskImpactoCombo.getSelectedObject());
+            comboItemTO = (ComboItemTO) listaRiskImpactoCombo.getSelectedObject();
+            riesgo.setRiskImpacto(comboItemTO != null ? (Integer) comboItemTO.getItemObject() : null);
+
             riesgo.setRiskEntregable(listaRiskEntregablesCombo.getSelectedT());
             riesgo.setRiskTipoRiesgoFk(listaRiskTipoRiesgoCombo.getSelectedT());
             riesgo.setRiskProyFk(new Proyectos(fichaTO.getFichaFk()));
@@ -2651,11 +2737,16 @@ public class FichaMB implements Serializable {
             }
 
             limiteGestionRiesgos = new ArrayList<>();
+
+            String[] split = confValoresRiesgoY.getCnfValor().split(",");
+            FilaRiesgosLimite fila0 = new FilaRiesgosLimite(0, riesgosCantidad.get("10-20"), riesgosCantidad.get("10-40"), riesgosCantidad.get("10-60"), riesgosCantidad.get("10-80"), riesgosCantidad.get("10-100"), 2d, 4d, 6d, 8d, 10d);
+
             FilaRiesgosLimite fila1 = new FilaRiesgosLimite(10, riesgosCantidad.get("10-20"), riesgosCantidad.get("10-40"), riesgosCantidad.get("10-60"), riesgosCantidad.get("10-80"), riesgosCantidad.get("10-100"), 2d, 4d, 6d, 8d, 10d);
             FilaRiesgosLimite fila2 = new FilaRiesgosLimite(8, riesgosCantidad.get("8-20"), riesgosCantidad.get("8-40"), riesgosCantidad.get("8-60"), riesgosCantidad.get("8-80"), riesgosCantidad.get("8-100"), 1.6d, 3.2d, 4.8d, 6.4d, 8d);
             FilaRiesgosLimite fila3 = new FilaRiesgosLimite(6, riesgosCantidad.get("6-20"), riesgosCantidad.get("6-40"), riesgosCantidad.get("6-60"), riesgosCantidad.get("6-80"), riesgosCantidad.get("6-100"), 1.2d, 2.4d, 3.6d, 4.8d, 6d);
             FilaRiesgosLimite fila4 = new FilaRiesgosLimite(4, riesgosCantidad.get("4-20"), riesgosCantidad.get("4-40"), riesgosCantidad.get("4-60"), riesgosCantidad.get("4-80"), riesgosCantidad.get("4-100"), 0.8d, 1.6d, 2.4d, 3.2d, 4d);
             FilaRiesgosLimite fila5 = new FilaRiesgosLimite(2, riesgosCantidad.get("2-20"), riesgosCantidad.get("2-40"), riesgosCantidad.get("2-60"), riesgosCantidad.get("2-80"), riesgosCantidad.get("2-100"), 0.4d, 0.8d, 1.2d, 1.6d, 2d);
+            limiteGestionRiesgos.add(fila0);
             limiteGestionRiesgos.add(fila1);
             limiteGestionRiesgos.add(fila2);
             limiteGestionRiesgos.add(fila3);
@@ -2954,8 +3045,14 @@ public class FichaMB implements Serializable {
                     docNoPrivados.add(d);
                 }
             }
+            LOGGER.severe("se vuevlen a setear los documentos a la lista ");
             setListaDocumentosFrame(docNoPrivados);
         } else {
+            for (Documentos docs : fichaTO.getDocumentos()) {
+                LOGGER.severe("version de los documentos" + docs.getDocFile().getDocfileVersion());
+
+            }
+            LOGGER.severe("se vuevlen a setear los documentos a la lista 2" + fichaTO.getDocumentos());
             setListaDocumentosFrame(fichaTO.getDocumentos());
         }
 
@@ -3073,18 +3170,19 @@ public class FichaMB implements Serializable {
         LOGGER.info("[subirArchivoAction] Subiendo archivo...");
 
         JSFUtils.removerMensages();
-
+        intentaSubirArchivo = false;
         if (e != null && e.getComponent() != null) {
             FileEntry fe = (FileEntry) e.getComponent();
-            LOGGER.info(fe.getAbsolutePath());
+
             FileEntryResults results = fe.getResults();
             File archivoS = results.getFiles() != null ? results.getFiles().get(0).getFile() : null;
             if (archivoS == null) {
+                LOGGER.info("los archivos son nulos");
                 JSFUtils.agregarMsg(fe.getClientId(), "error_archivo_subido_fail", null);
             }
             try {
                 String mimeType = new MimetypesFileTypeMap().getContentType(archivoS);
-                LOGGER.log(Level.FINEST, "Mime Type:", mimeType);
+                LOGGER.log(Level.INFO, "Mime Type:", mimeType);
                 if (mimeType != null) {
                     //FIXME FD boolean esValido = archivoHechos.isAValidMimeType(mimeType);
                     boolean esValido = true;
@@ -3100,6 +3198,9 @@ public class FichaMB implements Serializable {
 
                 upFileDoc = archivoS;
             } catch (Exception e2) {
+                if (isFirefox) {
+                    intentaSubirArchivo = true;
+                }
                 JSFUtils.agregarMsg("error_subir_archivo");
                 LOGGER.log(Level.SEVERE, e2.getMessage(), e2);
             }
@@ -3108,18 +3209,18 @@ public class FichaMB implements Serializable {
 
     public void subirArchivoMediaAction(FileEntryEvent e) {
         JSFUtils.removerMensages();
-        LOGGER.info("[subirArchivoAction] Subiendo archivo...");
+        LOGGER.info("[subirArchivoMediaAction] Subiendo archivo...");
         if (e != null && e.getComponent() != null) {
             FileEntry fe = (FileEntry) e.getComponent();
             FileEntryResults results = fe.getResults();
             File archivoS = results.getFiles() != null ? results.getFiles().get(0).getFile() : null;
             if (archivoS == null) {
-                //JSFUtils.agregarMsg(fe.getClientId(), "error_archivo_subido_fail", null);
+                LOGGER.info("los archivos son nulos");
                 JSFUtils.agregarMsgError("multiForm", Labels.getValue("error_archivo_no_permitido"), null);
             } else {
                 try {
                     String mimeType = new MimetypesFileTypeMap().getContentType(archivoS);
-                    LOGGER.log(Level.FINEST, "Mime Type:", mimeType);
+                    LOGGER.log(Level.INFO, "Mime Type:", mimeType);
                     if (mimeType != null) {
                         boolean esValido = false;
                         if (mimeType.matches(configuracionDelegate.obtenerCnfValorPorCodigo("MEDIA_MIMETYPE_REGEX", null))) {
@@ -3146,6 +3247,19 @@ public class FichaMB implements Serializable {
     }
 
     public String abrirDocumentoAction() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        List<FacesMessage> mensajes = new ArrayList<FacesMessage>();
+
+        Iterator<FacesMessage> it = context.getMessages(null);
+        while (it.hasNext()) {
+            mensajes.add(it.next());
+        }
+
+        // No se pueden remover directamente, así que forzamos un “reset”
+        for (FacesMessage msg : mensajes) {
+            context.addMessage(null, null); // reemplaza con un mensaje nulo o vacío
+        }
+
         limpiarDocumento();
         docsFormDataExpanded = true;
         return null;
@@ -3170,16 +3284,13 @@ public class FichaMB implements Serializable {
 
     public void verHistoricoDocumentoAction(Integer docPk) {
         documento = documentosDelegate.obtenerDocumentosPorId(docPk);
+        LOGGER.severe("estoy en verHistoricoAction");
         List<DocFile> docFiles = documentosDelegate.obtenerHistoricoDocFile(documento);
         documento.setDocFileHistorico(docFiles);
         docHistDownloadFile.clear();
 
-        if (!carpetaDirArmada) {
-            dir += "/" + fichaTO.getOrgFk().getOrgPk();
-            carpetaDirArmada = true;
-        }
-
         for (DocFile df : docFiles) {
+
             docHistDownloadFile.put(df.getDocfileVersion(), new SofisResource(df, dir));
         }
         renderPopupDocumentoHistorico = true;
@@ -3234,7 +3345,7 @@ public class FichaMB implements Serializable {
                 documento.setDocsEntregable(ent);
             }
         }
-        LOGGER.info("1" + listaTipoDocCombo.getSelectedObject());
+
         if (listaTipoDocCombo.getSelectedObject() != null) {
             documento.setDocsTipo((TipoDocumentoInstancia) listaTipoDocCombo.getSelectedObject());
         }
@@ -3253,7 +3364,7 @@ public class FichaMB implements Serializable {
         try {
 
             if (upFileDoc != null) {
-                LOGGER.info("2");
+
                 try {
                     fileInputStream = new FileInputStream(upFileDoc);
                     documento.setDocFile(documentosDelegate.obtenerDocFilePorDocId(documento.getDocsPk()));
@@ -3272,23 +3383,27 @@ public class FichaMB implements Serializable {
                     throw te;
                 }
             } else if (documento.getDocsPk() == null) {
-                LOGGER.info("3");
-                JSFUtils.agregarMsg(DOC_MSG_ID, "error_agregar_documento_doc_file_null", null);
+
+                if (intentaSubirArchivo) {
+                    JSFUtils.agregarMsgError(DOC_MSG_ID, mensajeArchivos, null);
+
+                } else {
+                    JSFUtils.agregarMsg(DOC_MSG_ID, "error_agregar_documento_doc_file_null", null);
+
+                }
                 return null;
             }
 
             try {
 
-                LOGGER.info("4");
                 FichaDocumentosValidacion.validar(documento);
-                LOGGER.info("5");
+
                 Object progProy = documentosDelegate.guardarDocumentos(documento, fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
                 JSFUtils.agregarMsg(DOC_MSG_ID, "info_documento_agregado", null);
 
                 actualizarFichaTO(progProy);
                 cargarFrameDocumentos();
-                LOGGER.info("6");
-
+                cargarDocFiles();
                 limpiarDocumento();
                 cerrarFormCollapsable();
 
@@ -3416,7 +3531,7 @@ public class FichaMB implements Serializable {
         //guardamos la metodologia
 
         List<TipoDocumentoInstancia> toUpdate = getFichaTO().getTipoDocumentoInstancias();
-        try {
+        try {          
             getFichaTO().setTipoDocumentoInstancias(tipoDocumentoInstanciaDelegate.guardarTiposDocsIntancia(toUpdate));
             proyectoDelegate.guardarIndicadoresSimple(fichaTO.getFichaFk(), true, false, fichaTO.getOrgFk().getOrgPk(), null, true, true);
             JSFUtils.agregarMsg("info_metodologia_guardada");
@@ -3480,22 +3595,50 @@ public class FichaMB implements Serializable {
     }
 
     public boolean metodologíasHasValues() {
-
+        Boolean distinto = Boolean.FALSE;
         if (fichaTO != null && fichaTO.getTipoDocumentoInstancias()
                 != null) {
-            for (TipoDocumentoInstancia td : fichaTO.getTipoDocumentoInstancias()) {
-                if (td.getTipodocExigidoDesde() != null && td.getTipodocExigidoDesde() > 0) {
-                    return true;
-                }
+            fichaTO.setTipoDocumentoInstancias(TipoDocumentoInstanciaUtils.sortByDocumentosNombre(fichaTO.getTipoDocumentoInstancias(), false));
+            List<TipoDocumento> instobtenida = obtenerTipoDeDocumentos();
+            for (TipoDocumento td : instobtenida) {
+                td.setExigidoDesdeStr(estadosDelegate.estadoStr(td.getTipodocExigidoDesde(), inicioMB.getOrganismoSeleccionado()));
             }
+            List<TipoDocumentoInstancia> instdelaficha = fichaTO.getTipoDocumentoInstancias();
+            List<Integer> estadosObtenidos = new ArrayList<>();
+            List<Integer> estadosDeLaFicha = new ArrayList<>();
+
+            for (TipoDocumento inst : instobtenida) {
+                estadosObtenidos.add(inst.getTipodocExigidoDesde());                
+            }
+            
+            for (TipoDocumentoInstancia inst : instdelaficha) {
+                
+                if (inst.getTipodocExigidoDesde() == null) {
+                    inst.setTipodocExigidoDesde(0);
+                }
+                estadosDeLaFicha.add(inst.getTipodocExigidoDesde());
+            }
+            if (estadosDeLaFicha.equals(estadosObtenidos)) {
+                distinto = Boolean.FALSE;
+            } else {
+                distinto = Boolean.TRUE;
+            }
+
         }
 
-        return false;
+        return distinto;
+    }
+
+    private List<TipoDocumento> obtenerTipoDeDocumentos() {
+        Map<String, Object> mapFiltro = new HashMap<String, Object>();
+        mapFiltro.put(TIPO_DOC_NOMBRE, "");
+        List<TipoDocumento> instobtenida = tipoDocumentoDelegate.busquedaTipoDocFiltro(mapFiltro, TIPO_DOC_NOMBRE, 1, inicioMB.getOrganismo().getOrgPk());
+        return instobtenida;
     }
 
     public boolean notificacionesHasValues() {
         if (fichaTO.getProgPk() != null) {
-            notificacionEnvBean.enviarNotificacion("Riesgos1", proyectoDelegate.obtenerProyPorId(fichaTO.getProgPk()), fichaTO.getOrgFk().getOrgPk(), null);
+            notificacionEnvBean.enviarNotificacion("Riesgos1", proyectoDelegate.obtenerProyPorId(fichaTO.getProgPk()), fichaTO.getOrgFk().getOrgPk(), null, null);
         }
 
         List<NotificacionInstancia> listaNotificaciones = notificacionInstanciaDelegate.obtenerNotificacionInstPorProyId(getFichaTO().getFichaFk(), inicioMB.getOrganismo().getOrgPk());
@@ -3697,7 +3840,9 @@ public class FichaMB implements Serializable {
 
     public String guardarCronograma() {
 
-        LOGGER.log(Level.INFO, "Entrando a Guardar Cronograma");
+        LOGGER.log(Level.FINE, "Entrando a Guardar Cronograma");
+
+        LOGGER.log(Level.FINE, "es aca");
 
         if (moduloCronogramaMB.getDataCron() == null || !StringsUtils.isEmpty(moduloCronogramaMB.getDataCron())) {
             try {
@@ -3974,11 +4119,15 @@ public class FichaMB implements Serializable {
             generarMatrizRiesgos();
             //TODO cambiar el lugar donde se cargan estos valores.
             listaRiskProbabilidad = new ArrayList<>();
-            listaRiskProbabilidad.add(new ComboItemTO(20, "20%"));
-            listaRiskProbabilidad.add(new ComboItemTO(40, "40%"));
-            listaRiskProbabilidad.add(new ComboItemTO(60, "60%"));
-            listaRiskProbabilidad.add(new ComboItemTO(80, "80%"));
-            listaRiskProbabilidad.add(new ComboItemTO(100, "100%"));
+
+            String[] split = confValoresRiesgoX.getCnfValor().split(",");
+
+            listaRiskProbabilidad.add(new ComboItemTO(20, split[0]));
+            listaRiskProbabilidad.add(new ComboItemTO(40, split[1]));
+            listaRiskProbabilidad.add(new ComboItemTO(60, split[2]));
+            listaRiskProbabilidad.add(new ComboItemTO(80, split[3]));
+            listaRiskProbabilidad.add(new ComboItemTO(100, split[4]));
+
             if (listaRiskProbabilidadCombo.getAllObjects().isEmpty()
                     && listaRiskProbabilidad != null && !listaRiskProbabilidad.isEmpty()) {
                 listaRiskProbabilidadCombo = new SofisCombo((List) listaRiskProbabilidad, "itemNombre");
@@ -3986,13 +4135,17 @@ public class FichaMB implements Serializable {
             }
 
             listaRiskImpacto = new ArrayList<>();
-            listaRiskImpacto.add(2);
-            listaRiskImpacto.add(4);
-            listaRiskImpacto.add(6);
-            listaRiskImpacto.add(8);
-            listaRiskImpacto.add(10);
+
+            split = confValoresRiesgoY.getCnfValor().split(",");
+
+            listaRiskImpacto.add(new ComboItemTO(2, split[0]));
+            listaRiskImpacto.add(new ComboItemTO(4, split[1]));
+            listaRiskImpacto.add(new ComboItemTO(6, split[2]));
+            listaRiskImpacto.add(new ComboItemTO(8, split[3]));
+            listaRiskImpacto.add(new ComboItemTO(10, split[4]));
+
             if (listaRiskImpacto != null && !listaRiskImpacto.isEmpty()) {
-                listaRiskImpactoCombo = new SofisCombo((List) listaRiskImpacto);
+                listaRiskImpactoCombo = new SofisCombo((List) listaRiskImpacto, "itemNombre");
                 listaRiskImpactoCombo.addEmptyItem(Labels.getValue("comboEmptyItem"));
             }
 
@@ -4143,7 +4296,7 @@ public class FichaMB implements Serializable {
                 exigeProveedorEnCompra = true;
             }
 
-            FichaAdquisicionValidacion.validar(adquisicion, exigeProveedorEnCompra, existeFuenteProcedimientoCompra(), tipoAdquisicionRequerido, largoMaximoIdAdquisicion, centroCostoExigido, idAdquisicionRequerido);
+            FichaAdquisicionValidacion.validar(adquisicion, exigeProveedorEnCompra, existeFuenteProcedimientoCompra(), tipoAdquisicionRequerido, largoMaximoIdAdquisicion, centroCostoExigido, idAdquisicionRequerido, fechaAdquisicionRequerida);
             adquisicion = adquisicionDelegate.guardarAdquisicion(adquisicion, fichaTO.getFichaFk(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
             JSFUtils.agregarMsg("formAdqMsg", "info_adquisicion_guardada", null);
 
@@ -4172,6 +4325,86 @@ public class FichaMB implements Serializable {
         return null;
     }
 
+    public String copiarAdquisicionAction() {
+
+        if (listaProyectosCombo.getSelected() != -1) {
+
+            ProyectoTO proyActual = ((ProyectoTO) listaProyectosCombo.getSelectedObject());
+
+            guardarLogAdquisicion(true);
+
+            adquisicion.setAdqPk(null);
+
+            Proyectos proyectoSeleccionado = proyectoDelegate.obtenerProyPorId(proyActual.getId());
+
+            adquisicion.setAdqPreFk(proyectoSeleccionado.getProyPreFk() != null ? proyectoSeleccionado.getProyPreFk() : null);
+            CronogramaTO cronograma = cronogramaDelegate.obtenerCronogramaCompletoPorIdProyecto(proyActual.getId());
+            EntregableTO et1 = null;
+            for (EntregableTO ent : cronograma.getEntregables()) {
+                System.out.println(ent.getNombre());
+                et1 = ent;
+                break;
+            }
+            Set<Pagos> pagosSet = adquisicion.getPagosSet();
+            List<Pagos> listaPagos = new ArrayList<>();
+            listaPagos.addAll(pagosSet);
+
+            adquisicion.getPagosSet().clear();
+
+            Adquisicion adquisicionGuardada = adquisicionDelegate.guardarAdquisicion(adquisicion, listaProyectosCombo.getSelected(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+
+            for (Pagos p : listaPagos) {
+                p.setPagPk(null);
+                p.setPagAdqFk(adquisicionGuardada);
+                p.setEntregables(new Entregables(et1.getId()));
+                pagosDelegate.guardarPago(p, proyActual.getId(), null, proyectoSeleccionado.getProyOrgFk().getOrgPk());
+            }
+
+            formPresupuestoRendered = 0;
+        } else {
+            JSFUtils.agregarMsgError(PRESUPUESTO_FORM_MSG_ID, "Seleccione Proyecto", null);
+        }
+
+        return null;
+    }
+
+    public String moverAdquisicionAction() {
+
+        if (listaProyectosCombo.getSelected() != -1) {
+            guardarLogAdquisicion(false);
+            ProyectoTO proyActual = ((ProyectoTO) listaProyectosCombo.getSelectedObject());
+
+            Proyectos proyectoSeleccionado = proyectoDelegate.obtenerProyPorId(proyActual.getId());
+
+            adquisicion.setAdqPreFk(proyectoSeleccionado.getProyPreFk() != null ? proyectoSeleccionado.getProyPreFk() : null);
+            CronogramaTO cronograma = cronogramaDelegate.obtenerCronogramaCompletoPorIdProyecto(proyActual.getId());
+            EntregableTO et1 = null;
+            for (EntregableTO ent : cronograma.getEntregables()) {
+
+                et1 = ent;
+                break;
+            }
+
+            for (Pagos p : adquisicion.getPagosSet()) {
+                //p.setPagPk(null);
+                p.setEntregables(new Entregables(et1.getId()));
+                pagosDelegate.guardarPago(p, proyActual.getId(), null, proyectoSeleccionado.getProyOrgFk().getOrgPk());
+            }
+            adquisicion.getPagosSet().clear();
+            adquisicionDelegate.guardarAdquisicion(adquisicion, listaProyectosCombo.getSelected(), fichaTO.getTipoFicha(), inicioMB.getUsuario(), inicioMB.getOrganismo().getOrgPk());
+
+            formPresupuestoRendered = 0;
+            actualizarFichaTO(null);
+            limpiarAdquisicion();
+            cargarFramePresupuestos(false);
+            cerrarFormCollapsable();
+        } else {
+            JSFUtils.agregarMsgError(PRESUPUESTO_FORM_MSG_ID, "Seleccione Proyecto", null);
+        }
+
+        return null;
+    }
+
     public void adquisicionCompartidaValueChange(ValueChangeEvent ev) {
         this.adquisicion.setAdqCompartida((Boolean) ev.getNewValue());
     }
@@ -4187,6 +4420,8 @@ public class FichaMB implements Serializable {
         if (orga == null) {
             orga = mapOrganizaciones.get("- " + clienteSeleccionadoPago);
         }
+
+        System.out.println(provedorSeleccionado);
         OrganiIntProve prov = mapProvedores.get(provedorSeleccionado);
 
         if (prov == null) {
@@ -4227,6 +4462,7 @@ public class FichaMB implements Serializable {
             Integer progPk = fichaTO.getProgFk() != null ? fichaTO.getProgFk().getProgPk() : null;
             Integer proyPk = fichaTO.getTipoFicha().equals(TipoFichaEnum.PROYECTO.id) ? fichaTO.getFichaFk() : null;
             pagosDelegate.guardarPago(pagos, proyPk, progPk, inicioMB.getOrganismo().getOrgPk());
+
             JSFUtils.agregarMsg("formPagoMsg", "info_pago_guardada", null);
 
             if (edicionPago) {
@@ -4632,6 +4868,7 @@ public class FichaMB implements Serializable {
         adquisicion.setAdqFechaEsperadaInicioEjecucion(original.getAdqFechaEsperadaInicioEjecucion());
         adquisicion.setAdqTipoAdquisicion(original.getAdqTipoAdquisicion());
         adquisicion.setAdqCentroCosto(original.getAdqCentroCosto());
+        adquisicion.setAdqTipoRegistro(original.getAdqTipoRegistro());
 
         cargarCamposAdquisicion();
 
@@ -4644,6 +4881,61 @@ public class FichaMB implements Serializable {
         setFocus("nombreAdquisicion");
 
         return null;
+    }
+
+    public String copiarAdquisicionEnOtroProyecto(Integer adqPk, boolean copiar) {
+        //LOGGER.info("Copiando adqisicion en otro proyecto");
+        adquisicion = adquisicionDelegate.obtenerAdquisicionPorId(adqPk);
+        List<ProyectoTO> listaFinal = new ArrayList<>();
+        FiltroProyectoTO filtro = new FiltroProyectoTO();
+        filtro.setActivo(true);
+        filtro.setIdOrganismo(inicioMB.getOrganismoSeleccionado());
+        List<Integer> estados = new ArrayList<>();
+        estados.add(2);
+        estados.add(3);
+        filtro.setIdGerente(inicioMB.getUsuario().getUsuId());
+        filtro.setEstados(estados);
+        List<ProyectoTO> listaAux = proyectoDelegate.buscar(filtro);
+
+        listaFinal.addAll(listaAux);
+        filtro.setIdGerente(null);
+        filtro.setIdAdjunto(inicioMB.getUsuario().getUsuId());
+
+        listaAux = proyectoDelegate.buscar(filtro);
+
+        listaFinal = quitarRepetidos(listaFinal, listaAux);
+
+        filtro.setIdAdjunto(null);
+
+        if (isPMOF_Gestiona_Proyecto) {
+            filtro.setIdPmof(inicioMB.getUsuario().getUsuId());
+            listaAux = proyectoDelegate.buscar(filtro);
+
+            listaFinal = quitarRepetidos(listaFinal, listaAux);
+        }
+
+        listaFinal = quitarEnReplanificacionSinEdicionPresupuesto(listaFinal);
+        listaFinal = quitarSinEntregables(listaFinal);
+        listaFinal = quitarProyectoActual(fichaTO.getFichaFk(), listaFinal);
+
+        Collections.sort(listaFinal, new Comparator() {
+            @Override
+            public int compare(Object softDrinkOne, Object softDrinkTwo) {
+                //use instance        mostrarAcciones = !mostrarAcciones;
+                return ((ProyectoTO) softDrinkOne).getNombre()
+                        .compareTo(((ProyectoTO) softDrinkTwo).getNombre());
+            }
+        });
+
+        if (listaFinal != null && !listaFinal.isEmpty()) {
+            listaProyectosCombo = new SofisCombo((List) listaFinal, "proyPkNombre");
+            listaProyectosCombo.addEmptyItem(Labels.getValue("seleccionar_proyecto"));
+        }
+
+        formPresupuestoRendered = copiar ? 7 : 8;
+        setFocus("comboProyectosCopiar");
+        return null;
+
     }
 
     public String duplicarAdquisicionAction() {
@@ -4672,7 +4964,7 @@ public class FichaMB implements Serializable {
 
             FichaAdquisicionValidacion.validarDuplicado(adquisicion, exigeProveedorEnCompra,
                     existeFuenteProcedimientoCompra(), idAdquisicionRequerido,
-                    largoMaximoIdAdquisicion, duplicarAdquisicionFechaPrimerPago, duplicarAdquisicionPorcentajeImporte);
+                    largoMaximoIdAdquisicion, duplicarAdquisicionFechaPrimerPago, duplicarAdquisicionPorcentajeImporte, fechaAdquisicionRequerida);
 
             adquisicion = adquisicionDelegate.copiarAdquisicion(adquisicion,
                     duplicarAdquisicionFechaPrimerPago, duplicarAdquisicionPorcentajeImporte,
@@ -4727,6 +5019,11 @@ public class FichaMB implements Serializable {
             pagos.setEntregables(new Entregables());
 
             cargarComboProveedoresPago();
+            if (adq.getAdqProvOrga() != null) {
+                this.provedorSeleccionado = adq.getAdqProvOrga().getMix();
+                provedorSeleccionado = provedorSeleccionado.substring(2, provedorSeleccionado.length());
+                this.proveddorSelected = true;
+            }
 
             // asocio al nuevo pago el proveedor de la adquisición
             OrganiIntProve prov = adq.getAdqProvOrga();
@@ -5016,7 +5313,7 @@ public class FichaMB implements Serializable {
         }
 
         boolean isGerente = SsUsuariosUtils.isUsuarioGerenteOAdjuntoFicha(fichaTO, inicioMB.getUsuario());
-        if (isGerente) {
+        if (isGerente || isPMOF_Gestiona_Proyecto) {
             if (fichaTO.getCroFk() != null && fichaTO.getCroFk().getEntregablesSet() != null) {
                 entregablesListProd = new ArrayList<>(fichaTO.getCroFk().getEntregablesSet());
                 entregablesListProd = EntregablesUtils.entregablesSinPadres(entregablesListProd);
@@ -5141,6 +5438,133 @@ public class FichaMB implements Serializable {
             LOGGER.log(Level.SEVERE, null, ex.getMessage());
         }
         return null;
+    }
+
+    public String exportarSituacionActualAction() {
+        HSSFWorkbook planilla = new HSSFWorkbook();
+        HSSFSheet hoja = planilla.createSheet("situacion_actual");
+
+        HSSFPalette palette = planilla.getCustomPalette();
+        palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 3, (byte) 94, (byte) 159);
+        HSSFColor colorAzul = palette.getColor(HSSFColor.BLUE.index);
+
+        // Fuente blanca negrita
+        HSSFFont fontWhiteBold = planilla.createFont();
+        fontWhiteBold.setColor(HSSFColor.WHITE.index);
+        fontWhiteBold.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+        // Fuente negra negrita
+        HSSFFont fontBlackBold = planilla.createFont();
+        fontBlackBold.setColor(HSSFColor.BLACK.index);
+        fontBlackBold.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+        // Estilo para títulos
+        HSSFCellStyle estiloTitulo = planilla.createCellStyle();
+        estiloTitulo.setFont(fontBlackBold);
+        estiloTitulo.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+
+        // Estilo de área (color azul)
+        HSSFCellStyle areaStyle = planilla.createCellStyle();
+        areaStyle.setFillForegroundColor(colorAzul.getIndex());
+        areaStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        areaStyle.setFont(fontWhiteBold);
+
+        // Estilo de filtro
+        HSSFCellStyle filtroStyle = planilla.createCellStyle();
+        filtroStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+        filtroStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        // Obtener datos
+        historicoSitAct = proySitActHistoricoDelegate.obtenerHistoricoSitActTodos(fichaTO.getFichaFk());
+
+        // Encabezados
+        String[] titulos = new String[]{
+            "Fecha", "Descripción", "Usuario"
+        };
+
+        // Escribir encabezado
+        HSSFRow filaTitulo = hoja.createRow(0);
+        for (int i = 0; i < titulos.length; i++) {
+            HSSFCell celda = filaTitulo.createCell(i);
+            celda.setCellValue(titulos[i]);
+            celda.setCellStyle(estiloTitulo);
+        }
+
+        // Escribir datos
+        int filaActual = 1;
+        for (ProySitactHistorico r : historicoSitAct) {
+            HSSFRow fila = hoja.createRow(filaActual++);
+
+            int col = 0;
+
+            fila.createCell(col++).setCellValue(r.getProySitactFecha() != null ? r.getProySitactFecha().toString() : "");
+            col = eliminarEtiquetasHtml(r, fila, col);
+            fila.createCell(col++).setCellValue(r.getProySitactUsuario() != null ? r.getProySitactUsuario().getNombreApellido() : "");
+        }
+
+        // Autoajustar ancho
+        for (int i = 0; i < titulos.length; i++) {
+            hoja.autoSizeColumn(i);
+        }
+
+        byte[] bytes = null;
+        ByteArrayOutputStream bos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            planilla.write(bos);
+            bytes = bos.toByteArray();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            JSFUtils.agregarMsgError("No se pudo generar la planilla");
+            return null;
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        if (bytes != null && bytes.length > 0) {
+            Calendar cal = new GregorianCalendar();
+            String horaString = String.format("%d_%d_%d_%d_%d_%d",
+                    cal.get(Calendar.DAY_OF_MONTH),
+                    cal.get(Calendar.MONTH) + 1,
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE),
+                    cal.get(Calendar.SECOND)
+            );
+
+            String fileName = "Situación_Actual_" + horaString + ".xls";
+
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            if (session != null) {
+                session.setAttribute("bytes", bytes);
+                session.setAttribute("fileName", fileName);
+
+                HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+                String servlet = req.getContextPath() + "/servlet/descargar?sesId=" + session.getId();
+
+                JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), "window.open('" + servlet + "','Descargar');");
+            }
+        } else {
+            JSFUtils.agregarMsgWarn("No se ha generado la planilla");
+        }
+
+        return null;
+    }
+
+    private int eliminarEtiquetasHtml(ProySitactHistorico r, HSSFRow fila, int col) {
+        if (r.getProySitactDesc() != null && !r.getProySitactDesc().equals("")) {
+            String descripcionSinEtiquetas = r.getProySitactDesc().replaceAll("<.*?>", "").replaceAll("&nbsp;", " ");
+            fila.createCell(col++).setCellValue(descripcionSinEtiquetas);
+        } else {
+            fila.createCell(col++).setCellValue("");
+        }
+        return col;
     }
 
     private void setAreasRestringidasToFichaTO() {
@@ -5564,7 +5988,7 @@ public class FichaMB implements Serializable {
 
         //campo siempre modificable
         if (fieldName.equalsIgnoreCase("Area")) {
-            
+
             boolean pmofModificaMetadatosProyectoAux = pmofModificaMetadatosProyecto && isPMOF;
             //lo ingresa el PM en el alta o lo modifica el PMOT
             if ((deshabilitarFinalizado || !(isAlta || isPMOT)) && !pmofModificaMetadatosProyectoAux) {
@@ -5976,22 +6400,27 @@ public class FichaMB implements Serializable {
 
         if (fieldName.equalsIgnoreCase("agregarProducto")) {
             boolean isCoordAlgunEnt = param != null && param instanceof Boolean ? (Boolean) param : false;
-            if (!isActivo || !((isGerenteOAdjunto || isCoordAlgunEnt) && (isEstadoInicio || isEstadoPlanificacion))) {
+            if (!isActivo
+                    || !((isGerenteOAdjunto || isCoordAlgunEnt || isPMOF_Gestiona_Proyecto_Local) && (isEstadoInicio || isEstadoPlanificacion))) {
+                LOGGER.severe("adentro del agregar");
                 rendered = false;
             }
+
         }
 
         if (fieldName.equalsIgnoreCase("editarProducto")) {
             boolean isCoordEnt = param != null && param instanceof Boolean ? (Boolean) param : false;
-            //            if (!isActivo || (!isGerenteOAdjunto || !isCoordEnt)) {
-            if (isEstadoFinalizado || !(isActivo && (isGerenteOAdjunto || isCoordEnt))) {
+            if (isEstadoFinalizado || !(isActivo && (isGerenteOAdjunto || isCoordEnt || isPMOF_Gestiona_Proyecto_Local))) {
                 rendered = false;
             }
+
         }
 
         if (fieldName.equalsIgnoreCase("eliminarProducto")) {
             boolean isCoordEnt = param != null && param instanceof Boolean ? (Boolean) param : false;
-            if (isEstadoFinalizado || !((isActivo && !isEstadoEjecucion) && (isGerenteOAdjunto || isCoordEnt))) {
+            if (isEstadoFinalizado || !((isActivo && !isEstadoEjecucion) && (isGerenteOAdjunto || isCoordEnt || isPMOF_Gestiona_Proyecto_Local))) {
+                LOGGER.severe("adentro del eliminar" + isEstadoFinalizado + isActivo + isGerenteOAdjunto + isCoordEnt);
+
                 rendered = false;
             }
         }
@@ -6105,8 +6534,11 @@ public class FichaMB implements Serializable {
         }
 
         if (checkDisabled) {
+            if (fieldName.equalsIgnoreCase("agregarProducto")) {
+                LOGGER.severe("entre en checkdisabled");
+            }
             return disabled != null ? disabled : false;
-        } else if (checkRendered) {
+        } else if (checkRendered) {           
             return rendered != null ? rendered : true;
         } else {
             return false;
@@ -6495,11 +6927,11 @@ public class FichaMB implements Serializable {
         this.listaRiskProbabilidad = listaRiskProbabilidad;
     }
 
-    public List<Integer> getListaRiskImpacto() {
+    public List<ComboItemTO> getListaRiskImpacto() {
         return listaRiskImpacto;
     }
 
-    public void setListaRiskImpacto(List<Integer> listaRiskImpacto) {
+    public void setListaRiskImpacto(List<ComboItemTO> listaRiskImpacto) {
         this.listaRiskImpacto = listaRiskImpacto;
     }
 
@@ -6648,13 +7080,21 @@ public class FichaMB implements Serializable {
     }
 
     public Map<Integer, SofisResource> getDownloadFile() {
+
+        if (fichaTO.getOrgFk() != null) {
+            String rutaDelArchivo = dir + "/" + fichaTO.getOrgFk().getOrgPk();
+            for (Map.Entry<Integer, SofisResource> entry : downloadFile.entrySet()) {
+
+                entry.getValue().setDir(rutaDelArchivo);
+            }
+        }
+
         return downloadFile;
     }
 
-    public void setDownloadFile(Map<Integer, SofisResource> downloadFile) {
-        this.downloadFile = downloadFile;
-    }
-
+//    public void setDownloadFile(Map<Integer, SofisResource> downloadFile) {
+//        this.downloadFile = downloadFile;
+//    }
     public SofisCombo getListaEntregablesCombo() {
         return listaEntregablesCombo;
     }
@@ -8280,6 +8720,13 @@ public class FichaMB implements Serializable {
      * @return the docHistDownloadFile
      */
     public Map<Integer, SofisResource> getDocHistDownloadFile() {
+
+        String rutaDelArchivo = dir + "/" + fichaTO.getOrgFk().getOrgPk();
+
+        for (Map.Entry<Integer, SofisResource> entry : docHistDownloadFile.entrySet()) {
+
+            entry.getValue().setDir(rutaDelArchivo);
+        }
         return docHistDownloadFile;
     }
 
@@ -9151,6 +9598,14 @@ public class FichaMB implements Serializable {
         this.incluirIdAdquisicionEnCopiaProyecto = incluirIdAdquisicionEnCopiaProyecto;
     }
 
+    public Boolean getFechaAdquisicionRequerida() {
+        return fechaAdquisicionRequerida;
+    }
+
+    public void setFechaAdquisicionRequerida(Boolean fechaAdquisicionRequerida) {
+        this.fechaAdquisicionRequerida = fechaAdquisicionRequerida;
+    }
+
     private void buscarSugerenciaAdquisicionSoloPorArea() {
 
         List<AdquisicionRango> listarPorOrganismoYArea = adqRangoDelegate.listarPorOrganismoYAreaDivisionNull(fichaTO.getOrgFk().getOrgPk(), listaAreasOrganismoCombo.getSelected());
@@ -9168,6 +9623,147 @@ public class FichaMB implements Serializable {
                 }
             }
         }
+    }
+
+    public String calculoMegas(long bytes) {
+        if (-1000 < bytes && bytes < 1000) {
+            return bytes + " B";
+        }
+        CharacterIterator ci = new StringCharacterIterator("kMGTPE");
+        while (bytes <= -999_950 || bytes >= 999_950) {
+            bytes /= 1000;
+            ci.next();
+        }
+        return String.format("%.1f %cB", bytes / 1000.0, ci.current());
+    }
+
+    private List<ProyectoTO> quitarRepetidos(List<ProyectoTO> listaFinal, List<ProyectoTO> listaAux) {
+        boolean existe = false;
+        for (ProyectoTO p : listaAux) {
+            existe = false;
+            for (ProyectoTO p2 : listaFinal) {
+                if (p2.getId().equals(p.getId())) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (!existe) {
+                listaFinal.add(p);
+            }
+
+        }
+        return listaFinal;
+    }
+
+    private List<ProyectoTO> quitarEnReplanificacionSinEdicionPresupuesto(List<ProyectoTO> listaFinal) {
+
+        List<ProyectoTO> listaRetorno = new ArrayList<>();
+
+        for (ProyectoTO p : listaFinal) {
+
+            if (p.getEstado().getId().equals(2)) {
+                listaRetorno.add(p);
+            } else {
+                ProyReplanificacion obtenerUltimaSolicitud = proyReplanificacionDelegate.obtenerUltimaSolicitud(p.getId());
+                boolean habilitadoReplan = obtenerUltimaSolicitud == null ? true : obtenerUltimaSolicitud.isProyreplanPermitEditar();
+                if (habilitadoReplan) {
+                    listaRetorno.add(p);
+                }
+            }
+
+        }
+        return listaRetorno;
+
+    }
+
+    private List<ProyectoTO> quitarSinEntregables(List<ProyectoTO> listaFinal) {
+        List<ProyectoTO> listaRetorno = new ArrayList<>();
+        for (ProyectoTO p : listaFinal) {
+            CronogramaTO obtenerCronogramaCompletoPorIdProyecto = cronogramaDelegate.obtenerCronogramaCompletoPorIdProyecto(p.getId());
+
+            List<EntregableTO> listantregables = obtenerCronogramaCompletoPorIdProyecto.getEntregables();
+            if (!listantregables.isEmpty()) {
+                listaRetorno.add(p);
+            }
+        }
+        return listaRetorno;
+
+    }
+
+    public SofisCombo getListaProyectosCombo() {
+        return listaProyectosCombo;
+    }
+
+    public void setListaProyectosCombo(SofisCombo listaProyectosCombo) {
+        this.listaProyectosCombo = listaProyectosCombo;
+    }
+
+    public Boolean getCentroCostosLectura() {
+        return centroCostosLectura;
+    }
+
+    public void setCentroCostosLectura(Boolean centroCostosLectura) {
+        this.centroCostosLectura = centroCostosLectura;
+    }
+
+    private List<ProyectoTO> quitarProyectoActual(Integer fichaFk, List<ProyectoTO> listaFinal) {
+        List<ProyectoTO> listaRetorno = new ArrayList<>();
+        for (ProyectoTO p : listaFinal) {
+
+            if (!fichaFk.equals(p.getId())) {
+                listaRetorno.add(p);
+            }
+
+        }
+        return listaRetorno;
+
+    }
+
+    public boolean proyectoSeleccionado() {
+        try {
+            if (listaProyectosCombo != null && listaProyectosCombo.getSelected() != -1) {
+                CronogramaTO obtenerCronogramaCompletoPorIdProyecto = cronogramaDelegate.obtenerCronogramaCompletoPorIdProyecto(listaProyectosCombo.getSelected());
+
+                List<EntregableTO> listantregables = obtenerCronogramaCompletoPorIdProyecto.getEntregables();
+                entregableParaAsociar = "Los pagos serán asociados a " + listantregables.get(0).getNombre();
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+    public String getEntregableParaAsociar() {
+        return entregableParaAsociar;
+    }
+
+    public void setEntregableParaAsociar(String entregableParaAsociar) {
+        this.entregableParaAsociar = entregableParaAsociar;
+    }
+
+    private void guardarLogAdquisicion(boolean copiar) {
+        ProyectoTO proyActual = ((ProyectoTO) listaProyectosCombo.getSelectedObject());
+        LogAdquisicion logAdquisicion = new LogAdquisicion();
+        logAdquisicion.setLadAquisicionFk(adquisicion);
+        logAdquisicion.setLadFecha(new Date());
+        logAdquisicion.setLadUsuario(inicioMB.getUsuario().getNombreApellido());
+        if (copiar) {
+            logAdquisicion.setLadDetalle("Adquisición copiada a proyecto " + proyActual.getId());
+        } else {
+            logAdquisicion.setLadDetalle("Adquisición movida desde proyecto " + fichaTO.getFichaFk() + " a proyecto " + proyActual.getId());
+        }
+
+        adquisicionInfoDelegate.guardarLogAdquisicion(logAdquisicion);
+    }
+
+    public Boolean getCentroCostoLectura() {
+        return centroCostoLectura;
+    }
+
+    public void setCentroCostoLectura(Boolean centroCostoLectura) {
+        this.centroCostoLectura = centroCostoLectura;
     }
 
 }
